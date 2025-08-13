@@ -52,7 +52,7 @@ const MyProducts = () => {
         </div>
 
         <div className="flex gap-4 w-full justify-between mb-8">
-          <h2 className="text-white font-bold text-3xl">My Products</h2>
+          <h2 className="text-white font-bold text-3xl">Storefront Products</h2>
         </div>
 
         {/* Category Tabs */}

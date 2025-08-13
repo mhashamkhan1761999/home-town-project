@@ -189,10 +189,15 @@ const Settings = () => {
                         </div>
                     </div>
 
-    {/* Notice */}
-    <p className="text-xs text-gray-400 italic mt-6">
-        We will never place any charges on cards without prior information and authorization.
-    </p>
+        {/* Notice */}
+            <div className="mt-6 p-4 bg-yellow-50 border border-yellow-300 rounded-lg flex items-start gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-yellow-700 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01M12 5a7 7 0 100 14 7 7 0 000-14z" />
+                </svg>
+                <p className="text-sm font-medium text-yellow-800">
+                    We will never place any charges on cards without prior information and authorization.
+                </p>
+            </div>
 </div>
 
 

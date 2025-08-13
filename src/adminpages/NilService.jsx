@@ -7,6 +7,7 @@ import { queryClient } from '../main';
 import Select from 'react-select';
 import { Link, useNavigate } from 'react-router-dom';
 import { convertToFormData } from './helpers';
+import { X as CloseIcon } from "lucide-react";
 
 // --- keep images object with unique keys only
 const categoryImages = {
@@ -817,18 +818,6 @@ const ItemModal2 = ({ item = null, onClose, onSuccesActive }) => {
 
 
 
-    const options = [
-        { label: 'Crimson', value: 'crimson' },
-        { label: 'Teal', value: 'teal' },
-        { label: 'OrangeRed', value: 'orangered' },
-        { label: 'MediumSeaGreen', value: 'mediumseagreen' },
-        { label: 'SlateBlue', value: 'slateblue' },
-        { label: 'Tomato', value: 'tomato' },
-        { label: 'DarkCyan', value: 'darkcyan' },
-        { label: 'GoldenRod', value: 'goldenrod' },
-        { label: 'DeepPink', value: 'deeppink' },
-        { label: 'OliveDrab', value: 'olivedrab' },
-    ];
 
     return (
        <div className="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-[100]">
@@ -838,7 +827,6 @@ const ItemModal2 = ({ item = null, onClose, onSuccesActive }) => {
                 <div className="h-[400px] overflow-y-auto pr-2 space-y-8">
                     
                     {/* Multiple Image Upload */}
-                    <div>
                     <label className="text-base font-semibold text-[#D4BC6D] mb-3 block">
                         Upload Your Exact Photos (Multiple Allowed)
                     </label>
@@ -847,23 +835,36 @@ const ItemModal2 = ({ item = null, onClose, onSuccesActive }) => {
                         accept="image/*"
                         multiple
                         onChange={(e) => {
-                        const existing = watch("image2") || [];
-                        const files = Array.from(e.target.files);
-                        setValue("image2", [...existing, ...files]); // APPEND instead of replace
+                            const existing = watch("image2") || [];
+                            const files = Array.from(e.target.files);
+                            setValue("image2", [...existing, ...files]);
                         }}
                         className="block w-full text-sm text-gray-300 bg-transparent border border-[#4B4C46] rounded-lg p-2 focus:outline-none"
                     />
+
                     {/* Preview */}
                     <div className="flex flex-wrap gap-2 mt-3">
                         {watch("image2")?.map((file, idx) => (
-                        <img
-                            key={idx}
-                            src={URL.createObjectURL(file)}
-                            alt="preview"
-                            className="w-20 h-20 object-cover rounded-lg border border-gray-600"
-                        />
+                            <div key={idx} className="relative w-20 h-20 group">
+                                <img
+                                    src={URL.createObjectURL(file)}
+                                    alt="preview"
+                                    className="w-20 h-20 object-cover rounded-lg border border-gray-600"
+                                />
+                                {/* Remove Button */}
+                                <button
+                                    type="button"
+                                    onClick={() => {
+                                        const updated = watch("image2").filter((_, i) => i !== idx);
+                                        setValue("image2", updated);
+                                    }}
+                                    className="absolute -top-2 -right-2 bg-red-600 hover:bg-red-700 text-white rounded-full shadow-md p-1 flex items-center justify-center transition-opacity duration-200 group-hover:opacity-100 opacity-90"
+                                    style={{ width: "20px", height: "20px" }}
+                                >
+                                    <CloseIcon size={14} strokeWidth={3} />
+                                </button>
+                            </div>
                         ))}
-                    </div>
                     </div>
 
                     {/* Content / Theme Ideas */}
