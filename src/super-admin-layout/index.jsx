@@ -124,7 +124,7 @@ const SuperAdminLayout = () => {
                                 type='button'
                                 className="bg-[#d4bc6d] h-[40px] inline-flex items-center justify-center rounded-full uppercase px-6 py-3 text-black text-sm font-semibold"
                             >
-                                Go Back To Home
+                                Visit Your Storefront
                             </NavLink>
 
 

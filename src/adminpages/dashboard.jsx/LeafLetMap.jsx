@@ -18,20 +18,20 @@ const customMarkerIcon = L.divIcon({
 
 
 const locations = [
-    { id: 1, lat: 51.505, lng: -0.09, name: 'London', orders: 51 },
-    { id: 2, lat: 48.8566, lng: 2.3522, name: 'Paris', orders: 51 },
-    { id: 3, lat: 34.0522, lng: -118.2437, name: 'Los Angeles', orders: 51 },
-    { id: 4, lat: 35.6895, lng: 139.6917, name: 'Tokyo', orders: 51 },
-    { id: 5, lat: -33.8688, lng: 151.2093, name: 'Sydney', orders: 51 },
-    { id: 6, lat: 40.7128, lng: -74.0060, name: 'New York', orders: 51 },
-    { id: 7, lat: 30.0444, lng: 31.2357, name: 'Cairo', orders: 51 },
-    { id: 8, lat: -23.5505, lng: -46.6333, name: 'São Paulo', orders: 51 },
-    { id: 9, lat: 19.0760, lng: 72.8777, name: 'Mumbai', orders: 51 },
-    { id: 10, lat: 55.7558, lng: 37.6173, name: 'Moscow', orders: 51 },
-    { id: 11, lat: 28.6139, lng: 77.2090, name: 'Delhi', orders: 51 },
-    { id: 12, lat: 39.9042, lng: 116.4074, name: 'Beijing', orders: 51 },
-    { id: 13, lat: 37.7749, lng: -122.4194, name: 'San Francisco', orders: 51 },
-    { id: 14, lat: 52.5200, lng: 13.4050, name: 'Berlin', orders: 51 },
+    { id: 1, lat: 51.505, lng: -0.09, name: 'London' },
+    { id: 2, lat: 48.8566, lng: 2.3522, name: 'Paris'},
+    { id: 3, lat: 34.0522, lng: -118.2437, name: 'Los Angeles' },
+    { id: 4, lat: 35.6895, lng: 139.6917, name: 'Tokyo' },
+    { id: 5, lat: -33.8688, lng: 151.2093, name: 'Sydney'  },
+    { id: 6, lat: 40.7128, lng: -74.0060, name: 'New York' },
+    { id: 7, lat: 30.0444, lng: 31.2357, name: 'Cairo' },
+    { id: 8, lat: -23.5505, lng: -46.6333, name: 'São Paulo' },
+    { id: 9, lat: 19.0760, lng: 72.8777, name: 'Mumbai' },
+    { id: 10, lat: 55.7558, lng: 37.6173, name: 'Moscow'  },
+    { id: 11, lat: 28.6139, lng: 77.2090, name: 'Delhi' },
+    { id: 12, lat: 39.9042, lng: 116.4074, name: 'Beijing' },
+    { id: 13, lat: 37.7749, lng: -122.4194, name: 'San Francisco' },
+    { id: 14, lat: 52.5200, lng: 13.4050, name: 'Berlin' },
 ];
 
 

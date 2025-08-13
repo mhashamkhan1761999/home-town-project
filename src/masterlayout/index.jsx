@@ -154,7 +154,7 @@ const MasterLayout = () => {
                                 type='button'
                                 className="bg-[#d4bc6d] h-[40px] inline-flex items-center justify-center rounded-full uppercase px-6 py-3 text-black text-sm font-semibold"
                             >
-                                Go Back To Home
+                                Visit Your Storefront
                             </NavLink>
 
                             <div className="w-[4.563rem] h-[4.563rem] rounded-full overflow-hidden">
@@ -217,20 +217,41 @@ const MasterLayout = () => {
                             </>
 
 
-                            <div className="relative w-[4.563rem] h-[4.563rem]">
+                            <div className="relative w-[4.563rem] h-[4.563rem] cursor-pointer group">
+                                {/* Outer animated gradient ring */}
+                                <div className="absolute inset-0 rounded-full p-[3px] bg-gradient-to-r from-pink-500 via-purple-500 to-pink-500 animate-spin-slow">
+                                    <div className="w-full h-full rounded-full bg-black"></div>
+                                </div>
+
                                 {/* Avatar Image */}
                                 <img
                                     src="/alek.jpeg"
                                     onError={(e) => (e.target.src = '/default-avatar.png')}
-                                    alt="Admin Avatar"
-                                    className="w-full h-full object-cover object-center rounded-full border border-gray-300"
+                                    alt="Agent Avatar"
+                                    className="absolute inset-[3px] w-[calc(100%-6px)] h-[calc(100%-6px)] object-cover object-center rounded-full border border-gray-700 shadow-lg"
                                 />
 
                                 {/* Notification Badge */}
-                                <div className="absolute -top-1 -right-1 flex items-center justify-center w-4 h-4 bg-red-500 text-white text-[10px] font-bold rounded-full shadow-md">
-
+                                <div className="absolute -top-1 -right-1 flex items-center justify-center w-5 h-5 bg-red-500 text-white text-[10px] font-bold rounded-full shadow-md">
+                                    1
                                 </div>
-                            </div>
+
+                                {/* Hover Label */}
+                                <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 bg-gradient-to-r from-pink-500 to-purple-500 text-white text-xs font-semibold px-5 py-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 shadow-md">
+                                    Chat Now
+                                </div>
+                                </div>
+
+                                <style jsx>{`
+                                @keyframes spin-slow {
+                                    from { transform: rotate(0deg); }
+                                    to { transform: rotate(360deg); }
+                                }
+                                .animate-spin-slow {
+                                    animation: spin-slow 6s linear infinite;
+                                }
+                                `}</style>
+
                         </div>
                     </div>
 
