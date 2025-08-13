@@ -29,6 +29,8 @@ const Dashboard = () => {
         },
     ];
 
+    
+
     const getTierLevel = (amount) => {
         if (amount <= 250) return 16.6666666667; // Bronze
         if (amount <= 1000) return 33.3333333334; // Silver
@@ -81,21 +83,24 @@ const Dashboard = () => {
             <div className="flex gap-5 mb-4">
                 <div className="w-[27.313rem] overflow-y-auto card-gradient border-[1.5px] py-8 px-6 rounded-3xl">
                     <div className="">
-                        <div className="flex justify-between items-center mb-2">
-                            <p className='text-white font-bold text-base'>
-                                Cash out
-                            </p>
-                            <div className="card-gradient border-[1.5px] px-2 rounded-full">
-                                <select className=' text-white p-3 outline-0 text-sm font-bold'>
-                                    <option value="">24 hours</option>
-                                    <option value="">1 week</option>
-                                    <option value="">3 month</option>
-                                    <option value="">6 month</option>
-                                    <option value="">1 year</option>
-                                    <option value="">All time</option>
-                                </select>
+                       <div className="flex justify-end items-center mb-2">
+                                <div className="card-gradient border border-gray-600 rounded-full">
+                                    <select
+                                    className="bg-transparent text-white p-3 outline-none text-sm font-bold cursor-pointer"
+                                    style={{
+                                        background: 'linear-gradient(90deg, #1e1e1e, #2a2a2a)',
+                                        borderRadius: '9999px',
+                                    }}
+                                    >
+                                    <option className="bg-[#1e1e1e] text-white" value="">24 hours</option>
+                                    <option className="bg-[#1e1e1e] text-white" value="">1 week</option>
+                                    <option className="bg-[#1e1e1e] text-white" value="">3 month</option>
+                                    <option className="bg-[#1e1e1e] text-white" value="">6 month</option>
+                                    <option className="bg-[#1e1e1e] text-white" value="">1 year</option>
+                                    <option className="bg-[#1e1e1e] text-white" value="">All time</option>
+                                    </select>
+                                </div>
                             </div>
-                        </div>
                     </div>
                     <div className="flex flex-col w-full gap-9">
                         <div className="">
@@ -133,15 +138,21 @@ const Dashboard = () => {
                 <div className="grow">
                     <div className="w-full overflow-y-auto card-gradient border-[1.5px] py-8 px-6 rounded-3xl">
                         <div className="">
-                            <div className="flex justify-between items-center mb-2">
-                                <p className='text-white font-bold text-base'>
-                                    Cash out
-                                </p>
-                                <div className="card-gradient border-[1.5px] px-2 rounded-full">
-                                    <select className=' text-white p-3 outline-0 text-sm font-bold'>
-                                        <option value="">July 2025</option>
-                                        <option value="">June 2025</option>
-                                        <option value="">May 2025</option>
+                            <div className="flex justify-end items-center mb-2">
+                                    <div className="card-gradient border border-gray-600 rounded-full">
+                                    <select
+                                    className="bg-transparent text-white p-3 outline-none text-sm font-bold cursor-pointer"
+                                    style={{
+                                        background: 'linear-gradient(90deg, #1e1e1e, #2a2a2a)',
+                                        borderRadius: '9999px',
+                                    }}
+                                    >
+                                    <option className="bg-[#1e1e1e] text-white" value="">24 hours</option>
+                                    <option className="bg-[#1e1e1e] text-white" value="">1 week</option>
+                                    <option className="bg-[#1e1e1e] text-white" value="">3 month</option>
+                                    <option className="bg-[#1e1e1e] text-white" value="">6 month</option>
+                                    <option className="bg-[#1e1e1e] text-white" value="">1 year</option>
+                                    <option className="bg-[#1e1e1e] text-white" value="">All time</option>
                                     </select>
                                 </div>
                             </div>
@@ -160,7 +171,7 @@ const Dashboard = () => {
             </div>
             <div className="card-gradient border-[1.5px] py-8 px-14 rounded-3xl">
                 <div className="">
-                    <div className="flex justify-between items-center mb-16">
+                    {/* <div className="flex justify-between items-center mb-16">
                         <p className='text-white font-bold text-base'>
                             Reviews
                         </p>
@@ -171,13 +182,13 @@ const Dashboard = () => {
                                 <option value="">May 2025</option>
                             </select>
                         </div>
-                    </div>
+                    </div> */}
                     <div className="">
                         <table className="min-w-full bg-transparent border-0 rounded-lg shadow-sm h-[300px] overflow-y-auto">
                             <thead>
                                 <tr className="bg-[rgba(0,0,0,0.02)] text-left text-sm font-bold text-[#838383]">
-                                    <th className="px-6 py-3 border-b border-[#323232]">ITEM NAME / TOTAL SHOP</th>
-                                    <th className="px-6 py-3 border-b border-[#323232]">TOTAL ITEM</th>
+                                    <th className="px-6 py-3 border-b border-[#323232]">Service Launch </th>
+                                    <th className="px-6 py-3 border-b border-[#323232]">Total Item Sold</th>
                                     <th className="px-6 py-3 border-b border-[#323232]">TOTAL PROFITS</th>
                                     <th className="px-6 py-3 border-b border-[#323232]">COMPLETION</th>
                                     <th className="px-6 py-3 border-b border-[#323232] w-10">ACTION</th>

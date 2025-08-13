@@ -51,23 +51,58 @@ const Settings = () => {
             label: "Store Policies",
             content: (
                 <>
-                    <h2 className='text-white font-bold text-xl mb-6'>
-                        Store Policies
-                    </h2>
                     <h2 className='text-[#D4BC6D] font-black text-lg mb-2.5'>
-                        Terms & Conditions:
+                        Privay Policy:
                     </h2>
-                    <p className='text-white font-medium text-sm mb-7'>
-                        Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
-                    </p>
-                    <h2 className='text-[#D4BC6D] font-black text-lg mb-2.5'>
-                        Privacy Policy:
-                    </h2>
-                    <p className='text-white font-medium text-sm mb-7'>
-                        Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
-                    </p>
+                    <div className='text-white font-medium text-sm mb-7 space-y-4'>
+                        <p><strong>1. Introduction</strong><br />
+                        Hometown Hero ("we," "us," or "our") operates a web and mobile app that connects athletes with fans and sells custom merchandise. This Privacy Policy explains how we collect, use, and protect your personal information.</p>
+
+                        <p><strong>2. What We Collect</strong><br />
+                        We may collect the following types of information:<br />
+                        - Personal details like your name, email address, and social media handles.<br />
+                        - Information related to athletes and users such as clicks, interactions, and activity on the platform.<br />
+                        - Technical data like your IP address, browser, and device type.</p>
+
+                        <p><strong>3. How We Collect It</strong><br />
+                        We gather information when you:<br />
+                        - Fill out forms on our website or app<br />
+                        - Interact with our platform (clicks, navigation, logins, etc.)<br />
+                        - Use third-party tools (like Google Analytics or others we may integrate)<br />
+                        - Receive cookies and tracking data from your browser</p>
+
+                        <p><strong>4. Why We Collect It</strong><br />
+                        We collect data to:<br />
+                        - Process orders and deliver merchandise<br />
+                        - Personalize your experience and recommend content<br />
+                        - Improve our platform through analytics<br />
+                        - Send updates, product news, and occasional promotions via email or in-app messages</p>
+
+                        <p><strong>5. Who We Share It With</strong><br />
+                        We don’t sell or rent your personal information.<br />
+                        We only share necessary data with trusted service providers like payment processors, email tools, or shipping services — just to help us run the business.</p>
+
+                        <p><strong>6. Your Rights</strong><br />
+                        You have the right to:<br />
+                        - View or update your personal info<br />
+                        - Request your data be deleted<br />
+                        - Opt out of marketing emails at any time</p>
+
+                        <p><strong>7. How We Protect Your Info</strong><br />
+                        We use secure servers, encrypted connections, and password protections to keep your data safe. Only authorized team members can access sensitive info.</p>
+
+                        <p><strong>8. For All Ages</strong><br />
+                        Hometown Hero is open to users of all ages. We do not knowingly collect personal information from kids under 13 without parental consent.</p>
+
+                        <p><strong>9. Updates to This Policy</strong><br />
+                        If anything changes in how we handle your data, we’ll notify you through in-app notifications or email.</p>
+
+                        <p><strong>10. Contact Us</strong><br />
+                        If you have any questions or concerns, reach out anytime through the NIL agent.</p>
+                    </div>
                 </>
             )
+
         },
         {
             id: "tab3",
@@ -75,20 +110,39 @@ const Settings = () => {
             content: (
                 <>
                     <h2 className='text-white font-bold text-xl mb-6'>
-                        Store Settings
+                        Add Card Details
                     </h2>
 
-                    <div className="w-[1440px]">
-                        <div className="mb-12">
+                   <div className="w-[1440px]">
+                    <div className="mb-12">
+                        <label className='text-lg font-semibold text-[#D4BC6D] mb-5 inline-block'>
+                            Card Number
+                        </label>
+                        <div className="flex items-center rounded-t-lg bg-[rgba(217,217,217,0.03)] border-b border-[#4B4C46] h-[4rem]">
+                            <div className="p-4">
+                                <CreditCard color='#fff' />
+                            </div>
+                            <div className="grow">
+                                <input type="number" placeholder='123 **** **** ****' className='h-full w-full border-0 outline-0 text-[#D4BC6D]' />
+                            </div>
+                            <div className="p-2">
+                                <button className='bg-[#D4BC6D] py-2 px-8 text-sm font-bold text-white rounded-full' type='button'>
+                                    Edit
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="flex gap-6 w-full">
+                        <div className="mb-12 grow">
                             <label className='text-lg font-semibold text-[#D4BC6D] mb-5 inline-block'>
-                                Card Number
+                                Expiration Date
                             </label>
                             <div className="flex items-center rounded-t-lg bg-[rgba(217,217,217,0.03)] border-b border-[#4B4C46] h-[4rem]">
                                 <div className="p-4">
-                                    <CreditCard color='#fff' />
+                                    <CalendarClock color='#fff' />
                                 </div>
                                 <div className="grow">
-                                    <input type="number" placeholder='123 **** **** ****' className='h-full w-full border-0 outline-0 text-[#D4BC6D]' />
+                                    <input type="date" className='h-full w-full border-0 outline-0 text-[#D4BC6D]' />
                                 </div>
                                 <div className="p-2">
                                     <button className='bg-[#D4BC6D] py-2 px-8 text-sm font-bold text-white rounded-full' type='button'>
@@ -97,54 +151,16 @@ const Settings = () => {
                                 </div>
                             </div>
                         </div>
-                        <div className="flex gap-6 w-full">
-                            <div className="mb-12 grow">
-                                <label className='text-lg font-semibold text-[#D4BC6D] mb-5 inline-block'>
-                                    Expiration Date
-                                </label>
-                                <div className="flex items-center rounded-t-lg bg-[rgba(217,217,217,0.03)] border-b border-[#4B4C46] h-[4rem]">
-                                    <div className="p-4">
-                                        <CalendarClock color='#fff' />
-                                    </div>
-                                    <div className="grow">
-                                        <input type="date" className='h-full w-full border-0 outline-0 text-[#D4BC6D]' />
-                                    </div>
-                                    <div className="p-2">
-                                        <button className='bg-[#D4BC6D] py-2 px-8 text-sm font-bold text-white rounded-full' type='button'>
-                                            Edit
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="mb-12 grow">
-                                <label className='text-lg font-semibold text-[#D4BC6D] mb-5 inline-block'>
-                                    Security Code
-                                </label>
-                                <div className="flex items-center rounded-t-lg bg-[rgba(217,217,217,0.03)] border-b border-[#4B4C46] h-[4rem]">
-                                    <div className="p-4">
-                                        <Lock color='#fff' />
-                                    </div>
-                                    <div className="grow">
-                                        <input type="number" placeholder='123' className='h-full w-full border-0 outline-0 text-[#D4BC6D]' />
-                                    </div>
-                                    <div className="p-2">
-                                        <button className='bg-[#D4BC6D] py-2 px-8 text-sm font-bold text-white rounded-full' type='button'>
-                                            Edit
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="mb-12">
+                        <div className="mb-12 grow">
                             <label className='text-lg font-semibold text-[#D4BC6D] mb-5 inline-block'>
-                                Card Holder Name
+                                Security Code
                             </label>
                             <div className="flex items-center rounded-t-lg bg-[rgba(217,217,217,0.03)] border-b border-[#4B4C46] h-[4rem]">
                                 <div className="p-4">
-                                    <User color='#fff' />
+                                    <Lock color='#fff' />
                                 </div>
                                 <div className="grow">
-                                    <input type="text" placeholder='Sam raye' className='h-full w-full border-0 outline-0 text-[#D4BC6D]' />
+                                    <input type="number" placeholder='123' className='h-full w-full border-0 outline-0 text-[#D4BC6D]' />
                                 </div>
                                 <div className="p-2">
                                     <button className='bg-[#D4BC6D] py-2 px-8 text-sm font-bold text-white rounded-full' type='button'>
@@ -154,6 +170,31 @@ const Settings = () => {
                             </div>
                         </div>
                     </div>
+                    <div className="mb-12">
+                        <label className='text-lg font-semibold text-[#D4BC6D] mb-5 inline-block'>
+                            Card Holder Name
+                        </label>
+                        <div className="flex items-center rounded-t-lg bg-[rgba(217,217,217,0.03)] border-b border-[#4B4C46] h-[4rem]">
+                            <div className="p-4">
+                                <User color='#fff' />
+                            </div>
+                            <div className="grow">
+                                <input type="text" placeholder='Sam raye' className='h-full w-full border-0 outline-0 text-[#D4BC6D]' />
+                            </div>
+                            <div className="p-2">
+                                <button className='bg-[#D4BC6D] py-2 px-8 text-sm font-bold text-white rounded-full' type='button'>
+                                    Edit
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+    {/* Notice */}
+    <p className="text-xs text-gray-400 italic mt-6">
+        We will never place any charges on cards without prior information and authorization.
+    </p>
+</div>
+
 
                 </>
             )
