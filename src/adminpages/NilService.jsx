@@ -1,5 +1,6 @@
 // NilService.jsx
 import React, { useState } from 'react'
+import serviceCategoryContent from '../data/serviceCategoryContent'
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { getRequest, postRequest } from '../api';
 import { useForm } from 'react-hook-form';
@@ -136,70 +137,70 @@ const NilCategory = () => {
         )}
 
         {showLaunchService && (
-             <div className="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-50">
-            <div className="bg-black border border-[#4B4C46] rounded-2xl p-6 w-full max-w-xl">
-                {/* Video Section */}
-                <div className="mb-6">
+               <div className="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-50 overflow-auto">
+              <div className="bg-black border border-[#4B4C46] rounded-2xl p-6 w-full max-w-xl" style={{ maxHeight: '95vh', minHeight: '70vh', overflowY: 'auto', display: 'flex', flexDirection: 'column', justifyContent: 'flex-start', zIndex: 9999 }}>
+                  {/* Video Section */}
+                  <div className="mb-6" style={{ background: 'black', borderRadius: '12px', padding: '12px' }}>
                     <video
-                        className="w-full h-[300px] rounded-lg"
-                        src="/video23.mp4"
-                        muted
-                        autoPlay
+                      className="w-full h-[300px] rounded-lg"
+                      src="/video23.mp4"
+                      muted
+                      autoPlay
+                      style={{ background: 'black' }}
                     >
-                        Your browser does not support the video tag.
+                      Your browser does not support the video tag.
                     </video>
-                </div>
-
-                {/* Text Content */}
-                <div className="text-[#D4BC6D] space-y-4">
-                    <h2 className="text-2xl font-bold text-center">
-                        Start Your Own Clothing Line — Free to Launch
-                    </h2>
-                    <p className="text-sm">
-                        Create custom, premium-quality merch for your fans — and earn from it through NIL.
-                    </p>
-                    <ul className="space-y-2 text-sm">
-                        <li className="flex items-start">
-                            <span className="mr-2">🧢</span> Free to Start — No setup cost
-                        </li>
-                        <li className="flex items-start">
-                            <span className="mr-2">🎨</span> 1 Free Custom Graphic — Designed by our team, unlimited revisions
-                        </li>
-                        <li className="flex items-start">
-                            <span className="mr-2">🛠️</span> Full Customization — Choose colors, pricing, placements & more
-                        </li>
-                        <li className="flex items-start">
-                            <span className="mr-2">🚀</span> Fast Turnaround — Graphic in 12 hrs, products live in 12 hrs
-                        </li>
-                        <li className="flex items-start">
-                            <span className="mr-2">📱</span> Social Media Feature — Boost visibility on our NIL platforms
-                        </li>
-                        <li className="flex items-start">
-                            <span className="mr-2">💸</span> No Fees After 1 Sale — Make 1 sale, keep it fee-free forever
-                        </li>
-                    </ul>
-                    <p className="text-sm italic">
-                        NIL earnings available for college & pro athletes (HS NIL not allowed in TX, MO, NJ, NY, IL, IA)
-                    </p>
-                    <p className="text-sm">
-                        <span className="mr-2">👉</span> Click “Launch Service” to drop your first line and build your brand
-                    </p>
-                </div>
-
-                {/* Footer with Submit Button */}
-                <div className="mt-8 flex justify-end">
-                    <button
-                        type='button'
-                        onClick={() => { // Hide product type modal
-                            setIsShowForm(true); // Show form modal
+                    {(() => {
+                      const selectedCategory = serviceCategoryContent.find(
+                        c => c.key === Object.keys(categoryImages).find(
+                          k => k === Object.keys(categoryImages).find(
+                            cat => cat === Object.entries(categoryImages).find(([name, _]) => selectedCardId && name === selectedCardId)?.[0]
+                          )
+                        ) || serviceCategoryContent.find(c => c.key === 'Clothing')
+                      )
+                      // fallback to Clothing if not found
+                      console.log('Selected Category:', selectedCategory);
+                      return (
+                        <h2 className="text-2xl font-bold text-center mt-4" style={{ color: '#D4BC6D' }}>{selectedCategory.title}</h2>
+                      );
+                    })()}
+                  </div>
+                  {/* Content */}
+                  {(() => {
+                    const selectedCategory = serviceCategoryContent.find(
+                      c => c.key === Object.keys(categoryImages).find(
+                        k => k === Object.keys(categoryImages).find(
+                          cat => cat === Object.entries(categoryImages).find(([name, _]) => selectedCardId && name === selectedCardId)?.[0]
+                        )
+                      )
+                    ) || serviceCategoryContent.find(c => c.key === 'Clothing');
+                    // fallback to Clothing if not found
+                    return (
+                      <div
+                        className="text-[#D4BC6D] text-sm whitespace-pre-line mt-4"
+                        dangerouslySetInnerHTML={{
+                          __html: selectedCategory.content
+                            .replace(/(Step \d+ — [^\n]+)/g, '<span style="font-size:1.15em;font-weight:600;display:block;margin-top:1em;">$1</span>')
+                            .replace(/(Service Policy|NIL Policy & Legal Information|Additional Notes|Pro Tip:|Ready to Launch [^\n]+\?)/g, '<span style="font-size:1.15em; color: #D4BC6D; font-weight:600;display:block;margin-top:1em;">$1</span>')
                         }}
-                        className="px-6 py-2 bg-[#D4BC6D] text-black rounded-full hover:bg-[#b89f4e] transition"
-                    >
-                        Launch Service
-                    </button>
-                </div>
-            </div>
-        </div>
+                      />
+                    );
+                  })()}
+
+                  {/* Footer with Submit Button */}
+                  <div className="mt-8 flex justify-end">
+                      <button
+                          type='button'
+                          onClick={() => { // Hide product type modal
+                              setIsShowForm(true); // Show form modal
+                          }}
+                          className="px-6 py-2 bg-[#D4BC6D] text-black rounded-full hover:bg-[#b89f4e] transition"
+                      >
+                          Launch Service
+                      </button>
+                  </div>
+              </div>
+          </div>
         )}
       
 

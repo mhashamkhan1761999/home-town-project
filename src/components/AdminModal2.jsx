@@ -92,26 +92,24 @@ const AdminModal2 = ({ onClose, userAge: passedUserAge }) => {
                     <main className="max-w-4xl mx-auto px-6 py-12 space-y-16">
                         <section>
                             {/* Agreement text */}
-                            <h2 className="text-2xl font-semibold text-gray-900 mb-4">Hometown Hero Platform Agreement</h2>
-                            <p className="text-lg mb-4">This contract ("Agreement") is made between Hometown Hero ("Company") and the undersigned athlete or representative ("Athlete").</p>
 
-                            <h3 className="text-xl font-semibold text-gray-900 mb-4">1. Agreement to Terms & Conditions</h3>
-                            <p className="text-lg mb-4">By signing this agreement, you agree to the Hometown Hero Terms & Conditions.</p>
+                            <h2 className="text-2xl font-semibold text-gray-900 mb-4">Hometown Hero Platform Agreement</h2>
+                            <p className="text-lg mb-4">1. Agreement to Terms & Conditions<br/>By signing this agreement, you agree to the Hometown Hero Terms & Conditions.</p>
 
                             <h3 className="text-xl font-semibold text-gray-900 mb-4">2. Compensation</h3>
-                            <p className="text-lg mb-4">You will be compensated based on the rates in your dashboard. Compensation is only available if you are NIL eligible or legally able to receive payment.</p>
+                            <p className="text-lg mb-4">You will be compensated based on the rates, percentages, and commissions displayed in your personal athlete dashboard. These amounts may vary per service and are subject to any applicable platform rules or service-specific adjustments.<br/>Note: Compensation is only available if you are NIL eligible or otherwise legally able to connect with brands and receive payment under your local laws.</p>
 
                             <h3 className="text-xl font-semibold text-gray-900 mb-4">3. Service Guidelines & Requirements</h3>
-                            <p className="text-lg mb-4">You agree to perform the services outlined in your dashboard. You may remove your storefront or products at any time.</p>
+                            <p className="text-lg mb-4">You agree to perform the services outlined in your dashboard and follow the specific guidelines for your chosen service(s).<br/>You may remove your storefront or products at any time.</p>
 
                             <h3 className="text-xl font-semibold text-gray-900 mb-4">4. Confidentiality</h3>
-                            <p className="text-lg mb-4">All information shared through Hometown Hero is confidential.</p>
+                            <p className="text-lg mb-4">All information, communications, and materials shared with you through Hometown Hero are confidential and may not be sold, shared, or disclosed to third parties without written permission.</p>
 
                             <h3 className="text-xl font-semibold text-gray-900 mb-4">5. Service Fee Clause</h3>
-                            <p className="text-lg mb-4">Free to launch, but if no sale in 60 days, a $25 service fee will be deducted.</p>
+                            <p className="text-lg mb-4">It is free to launch your service on the Hometown Hero platform.<br/>However, if you do not record at least one sale within 60 days of launch, a $25 service fee will be deducted from your account balance (or invoiced if there is no balance). You agree to this upon signing.</p>
 
                             <h3 className="text-xl font-semibold text-gray-900 mb-4">6. Eligibility & Legal Responsibility</h3>
-                            <p className="text-lg mb-4">You confirm your NIL eligibility. Hometown Hero is not liable for ineligible participation.</p>
+                            <p className="text-lg mb-4">You confirm that all information you provide is accurate and truthful.<br/>You are solely responsible for confirming your NIL (Name, Image, Likeness) eligibility based on your state or country’s laws before participating in paid services.<br/>Hometown Hero will not be held liable if you participate in a service you are not eligible for under applicable laws.<br/>If you are not NIL eligible, you may still participate in the platform’s non-compensated features but will not receive payment until you are eligible.</p>
 
                             {/* Conditional Parental Section */}
                             {userAge < 18 && (
