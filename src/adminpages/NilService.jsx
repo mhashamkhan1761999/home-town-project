@@ -817,7 +817,7 @@ const ItemModal2 = ({ item = null, onClose, onSuccesActive }) => {
     };
 
 
-
+  
 
     return (
        <div className="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-[100]">
@@ -827,20 +827,31 @@ const ItemModal2 = ({ item = null, onClose, onSuccesActive }) => {
                 <div className="h-[400px] overflow-y-auto pr-2 space-y-8">
                     
                     {/* Multiple Image Upload */}
-                    <label className="text-base font-semibold text-[#D4BC6D] mb-3 block">
-                        Upload Your Exact Photos (Multiple Allowed)
-                    </label>
-                    <input
-                        type="file"
-                        accept="image/*"
-                        multiple
-                        onChange={(e) => {
-                            const existing = watch("image2") || [];
-                            const files = Array.from(e.target.files);
-                            setValue("image2", [...existing, ...files]);
-                        }}
-                        className="block w-full text-sm text-gray-300 bg-transparent border border-[#4B4C46] rounded-lg p-2 focus:outline-none"
-                    />
+            <label className="text-base font-semibold text-[#D4BC6D] mb-3 block">
+              Upload Your Exact Photos (Multiple Allowed)
+            </label>
+            <div style={{ display: 'flex', alignItems: 'center' }}>
+              <input
+                type="file"
+                accept="image/*"
+                multiple
+                onChange={(e) => {
+                  const existing = watch("image2") || [];
+                  const files = Array.from(e.target.files);
+                  setValue("image2", [...existing, ...files]);
+                }}
+                className="text-sm text-gray-300 bg-transparent border border-[#4B4C46] rounded-lg p-2 focus:outline-none"
+                style={{ width: '70%' }}
+              />
+              <button
+                type="button"
+                onClick={() => document.querySelector('input[type=file][multiple]').click()}
+                className="ml-2 px-3 py-1 bg-[#D4BC6D] text-black rounded-full text-lg font-bold hover:bg-[#b89f4e] transition"
+                title="Add more photos"
+              >
+                + <span>Add more photos</span>
+              </button>
+            </div>
 
                     {/* Preview */}
                     <div className="flex flex-wrap gap-2 mt-3">
