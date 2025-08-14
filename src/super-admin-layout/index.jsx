@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { logout } from '../redux/slices/authSlice.js';
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { BadgeDollarSign, Home, Image, Layers, LogOut, Settings, User } from "lucide-react";
+import { BarChart3, Package, Home, LogOut } from "lucide-react";
 import AdminModal from "../components/AdminModal.jsx";
 import AdminModal2 from '../components/AdminModal2.jsx';
 
@@ -86,14 +86,14 @@ const SuperAdminLayout = () => {
                     <div className="flex flex-col items-center justify-center gap-6 pb-4">
                         <NavLink to="/admin/dashboard"
                             className={({ isActive }) => isActive ? 'text-[#CAB265] font-bold text-base flex flex-col items-center gap-2' : 'text-[#6A6A69] font-bold text-base flex items-center gap-2 flex-col'}>
-                            <Home size={18} />
-                            Home
+                            <BarChart3 size={18} />
+                            Dashboard
                         </NavLink>
 
-                        <NavLink to="/admin/my-products"
+                        <NavLink to="/admin/products"
                             className={({ isActive }) => isActive ? 'text-[#CAB265] font-bold text-base flex flex-col items-center gap-2 text-center' : 'text-[#6A6A69] font-bold text-base flex items-center gap-2 text-center flex-col'}>
-                            <Layers size={18} />
-                            My Products
+                            <Package size={18} />
+                            Products
                         </NavLink>
                     </div>
                     <div className="mb-[2.75rem] mt-[3.125rem]">
@@ -124,7 +124,7 @@ const SuperAdminLayout = () => {
                                 type='button'
                                 className="bg-[#d4bc6d] h-[40px] inline-flex items-center justify-center rounded-full uppercase px-6 py-3 text-black text-sm font-semibold"
                             >
-                                Visit Your Storefront
+                                Admin Panel
                             </NavLink>
 
 
