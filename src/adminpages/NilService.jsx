@@ -14,6 +14,7 @@ import { X as CloseIcon } from "lucide-react";
 const categoryImages = {
   "Clothing": "/serviceImages/clothes.jpg",
   "Acid Wash": "/serviceImages/acid-wash.jpg",
+  "Player Card": "/serviceImages/player-card.jpg",
   "Jersey": "/serviceImages/Jerseys.jpg",
   "Footwear": "/serviceImages/footwear.png",
   "Home & Lifestyle": "/serviceImages/home-and-lifestyle.jpg",
@@ -22,7 +23,6 @@ const categoryImages = {
   "Self Care": "/serviceImages/self-care.jpg",
   "Health": "/serviceImages/health.jpg",
   "Coffee": "/serviceImages/coffee.jpg",
-  "Player Card": "/serviceImages/player-card.jpg"
 };
 
 const NilService = () => {
@@ -70,6 +70,12 @@ const NilCategory = () => {
   const [showLaunchService, setShowLaunchService] = useState(false);
 
     const [isShowForm, setIsShowForm] = useState(false);
+
+  // Get categories data to find category name by ID
+  const { data: categoriesData } = useQuery({
+    queryKey: ['category'],
+    queryFn: () => getRequest('/categories'),
+  });
 
   // 1️⃣ Click category → open Launch Service modal
   const handleCategoryClick = (id) => {
@@ -151,15 +157,15 @@ const NilCategory = () => {
                       Your browser does not support the video tag.
                     </video>
                     {(() => {
-                      const selectedCategory = serviceCategoryContent.find(
-                        c => c.key === Object.keys(categoryImages).find(
-                          k => k === Object.keys(categoryImages).find(
-                            cat => cat === Object.entries(categoryImages).find(([name, _]) => selectedCardId && name === selectedCardId)?.[0]
-                          )
-                        ) || serviceCategoryContent.find(c => c.key === 'Clothing')
-                      )
-                      // fallback to Clothing if not found
-                      console.log('Selected Category:', selectedCategory);
+                      // Find the category name from the categories data using selectedCardId
+                      const selectedCategoryName = categoriesData?.find(cat => cat.id === selectedCardId)?.name;
+                      // Find the corresponding content using the category name
+                      const selectedCategory = serviceCategoryContent.find(c => c.key === selectedCategoryName) || serviceCategoryContent.find(c => c.key === 'Clothing');
+                      
+                      // console.log('Selected Category ID:', selectedCardId);
+                      // console.log('Selected Category Name:', selectedCategoryName);
+                      // console.log('Selected Category Content:', selectedCategory);
+                      
                       return (
                         <h2 className="text-2xl font-bold text-center mt-4" style={{ color: '#D4BC6D' }}>{selectedCategory.title}</h2>
                       );
@@ -167,14 +173,11 @@ const NilCategory = () => {
                   </div>
                   {/* Content */}
                   {(() => {
-                    const selectedCategory = serviceCategoryContent.find(
-                      c => c.key === Object.keys(categoryImages).find(
-                        k => k === Object.keys(categoryImages).find(
-                          cat => cat === Object.entries(categoryImages).find(([name, _]) => selectedCardId && name === selectedCardId)?.[0]
-                        )
-                      )
-                    ) || serviceCategoryContent.find(c => c.key === 'Clothing');
-                    // fallback to Clothing if not found
+                    // Find the category name from the categories data using selectedCardId
+                    const selectedCategoryName = categoriesData?.find(cat => cat.id === selectedCardId)?.name;
+                    // Find the corresponding content using the category name
+                    const selectedCategory = serviceCategoryContent.find(c => c.key === selectedCategoryName) || serviceCategoryContent.find(c => c.key === 'Clothing');
+                    
                     return (
                       <div
                         className="text-[#D4BC6D] text-sm whitespace-pre-line mt-4"
