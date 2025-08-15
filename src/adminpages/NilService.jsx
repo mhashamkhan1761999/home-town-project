@@ -144,10 +144,10 @@ const NilCategory = () => {
 
         {showLaunchService && (
                <div className="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-50 overflow-auto">
-              <div className="bg-black border border-[#4B4C46] rounded-2xl p-6 w-full max-w-xl" style={{ maxHeight: '95vh', minHeight: '70vh', overflowY: 'auto', display: 'flex', flexDirection: 'column', justifyContent: 'flex-start', zIndex: 9999 }}>
+              <div className="bg-black border border-[#4B4C46] rounded-2xl p-6 w-full max-w-xl custom-scrollbar" style={{ maxHeight: '95vh', minHeight: '70vh', overflowY: 'auto', display: 'flex', flexDirection: 'column', justifyContent: 'flex-start', zIndex: 9999 }}>
                   {/* Video Section */}
                   <div className="mb-6" style={{ background: 'black', borderRadius: '12px', padding: '12px' }}>
-                    <video
+                    {/* <video
                       className="w-full h-[300px] rounded-lg"
                       src="/video23.mp4"
                       muted
@@ -155,7 +155,7 @@ const NilCategory = () => {
                       style={{ background: 'black' }}
                     >
                       Your browser does not support the video tag.
-                    </video>
+                    </video> */}
                     {(() => {
                       // Find the category name from the categories data using selectedCardId
                       const selectedCategoryName = categoriesData?.find(cat => cat.id === selectedCardId)?.name;

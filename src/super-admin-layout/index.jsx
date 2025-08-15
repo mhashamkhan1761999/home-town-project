@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { logout } from '../redux/slices/authSlice.js';
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { BarChart3, Package, Home, LogOut } from "lucide-react";
+import { BarChart3, Package, Home, LogOut, Users } from "lucide-react";
 import AdminModal from "../components/AdminModal.jsx";
 import AdminModal2 from '../components/AdminModal2.jsx';
 
@@ -94,6 +94,12 @@ const SuperAdminLayout = () => {
                             className={({ isActive }) => isActive ? 'text-[#CAB265] font-bold text-base flex flex-col items-center gap-2 text-center' : 'text-[#6A6A69] font-bold text-base flex items-center gap-2 text-center flex-col'}>
                             <Package size={18} />
                             Products
+                        </NavLink>
+
+                        <NavLink to="/admin/users"
+                            className={({ isActive }) => isActive ? 'text-[#CAB265] font-bold text-base flex flex-col items-center gap-2 text-center' : 'text-[#6A6A69] font-bold text-base flex items-center gap-2 text-center flex-col'}>
+                            <Users size={18} />
+                            Users
                         </NavLink>
                     </div>
                     <div className="mb-[2.75rem] mt-[3.125rem]">
