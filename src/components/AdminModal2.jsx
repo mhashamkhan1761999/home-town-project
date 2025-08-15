@@ -33,7 +33,8 @@ const AdminModal2 = ({ onClose, userAge: passedUserAge }) => {
         const newData = new FormData();
         newData.append('athlete_name', name);
         newData.append('signature', signatureData);
-        newData.append('date', date);
+        // Always send current system date in YYYY-MM-DD format
+        newData.append('date', new Date().toISOString().split('T')[0]);
         mutation.mutate(newData);
     };
 
@@ -188,17 +189,6 @@ const AdminModal2 = ({ onClose, userAge: passedUserAge }) => {
                                     <button type="button" onClick={handleClear}>Clear</button>
                                     <button type="button" onClick={saveSignature}>SAVE</button>
                                 </div>
-
-                                {/* Read-only Date */}
-                                <label htmlFor="signature-date" className="block text-lg mb-2">Date:</label>
-                                <input
-                                    type="date"
-                                    id="signature-date"
-                                    name="signature-date"
-                                    className="w-full p-2 border border-gray-300 rounded-md mb-4"
-                                    value={date}
-                                    readOnly
-                                />
                             </form>
                         </section>
                     </main>
