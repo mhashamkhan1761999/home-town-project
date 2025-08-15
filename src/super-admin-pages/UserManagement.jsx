@@ -53,7 +53,7 @@ const UserManagement = () => {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
 
-  const roleTypes = ['Admin', 'SuperAdmin'];
+  const roleTypes = ['Admin', 'SuperAdmin', 'User'];
   const filterOptions = ['All', ...roleTypes];
 
   // Filter users based on search term and role
