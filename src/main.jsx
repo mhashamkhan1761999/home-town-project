@@ -41,6 +41,8 @@ import SuperAdminLayout from './super-admin-layout/index.jsx'
 import SuperAdminHome from './super-admin-pages/index.jsx'
 import SuperAdminDashboard from './super-admin-pages/dashboard.jsx/index.jsx'
 import SuperAdminMyProducts from './super-admin-pages/MyProducts.jsx'
+import SuperAdminProducts from './super-admin-pages/Products.jsx'
+import UserManagement from './super-admin-pages/UserManagement.jsx'
 export const queryClient = new QueryClient();
 
 
@@ -83,6 +85,8 @@ const AllRoutes = () => {
         <Route path='admin' element={<SuperAdminLayout />}>
           <Route  path='home' element={<SuperAdminHome />} />
           <Route path='dashboard' element={<SuperAdminDashboard />} />
+          <Route path='products' element={<SuperAdminProducts />} />
+          <Route path='users' element={<UserManagement />} />
           <Route path='my-products' element={<SuperAdminMyProducts />} />
         </Route>
       </Route>

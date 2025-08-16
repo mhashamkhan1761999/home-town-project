@@ -19,6 +19,7 @@ const Signup2 = ({ next, setData, goBack }) => {
         <>
             <form onSubmit={handleSubmit(onSubmit)} className='max-w-[87.5rem] w-full mx-auto px-4 sm:px-6'>
                 <h2 className='text-lg sm:text-xl font-bold text-center text-[#D4BC6D] mb-6'>Referral Code</h2>
+                <p className='text-white text-lg mb-5 font-bold'>If you have a referral code, please enter it here. If not, you can press next</p>
 
                 <div className="max-h-[37.5rem]">
                     <div className="mb-12">
