@@ -48,36 +48,36 @@ const Subscription = () => {
 
     return (
         <>
-            <div className="card-gradient !border-[1.5px] p-6 rounded-3xl">
-                <h2 className='text-white font-bold text-3xl mb-16'>
+            <div className="card-gradient !border-[1.5px] p-3 sm:p-6 rounded-3xl">
+                <h2 className='text-white font-bold text-xl sm:text-2xl lg:text-3xl mb-8 sm:mb-12 lg:mb-16'>
                     Subscription Breakdown
                 </h2>
 
                 <div className="max-h-[75dvh] overflow-y-auto">
-                    <div className="mb-24">
-                        <div className="flex gap-7">
-                            {data?.map((item) => (
+                    <div className="mb-12 sm:mb-16 lg:mb-24">
+                        <div className="flex flex-col sm:flex-row gap-4 sm:gap-7">{data?.map((item) => (
                                 item?.is_active == 1 && (
-                                    <div key={item?.id} className="relative px-8 pt-16 pb-10 card-gradient !border-[1.5px] rounded-3xl w-[25.375rem]">
-                                        <div className={`absolute top-5 right-0 -translate-x-1/2 text-white text-base capitalize font-semibold px-4 py-1 rounded-full shadow-md ${getColor(item?.type)}`}>
+                                    <div key={item?.id} className="relative px-4 sm:px-6 lg:px-8 pt-12 sm:pt-14 lg:pt-16 pb-6 sm:pb-8 lg:pb-10 card-gradient !border-[1.5px] rounded-3xl w-full sm:w-[25.375rem]">
+                                        <div className={`absolute top-3 sm:top-4 lg:top-5 right-4 sm:right-0 sm:-translate-x-1/2 text-white text-sm sm:text-base capitalize font-semibold px-3 sm:px-4 py-1 rounded-full shadow-md ${getColor(item?.type)}`}>
                                             {item?.type}
                                         </div>
                                         <div className="">
-                                            <h4 className='text-white font-semibold text-2xl capitalize mb-2'>
+                                            <h4 className='text-white font-semibold text-lg sm:text-xl lg:text-2xl capitalize mb-2'>
                                                 {item?.name}
                                             </h4>
-                                            <p className='text-white font-normal text-sm mb-4'>
+                                            <p className='text-white font-normal text-xs sm:text-sm mb-3 sm:mb-4'>
                                                 {item?.description}
                                             </p>
-                                            <img src="/line2.svg" alt="line" className='w-full mb-11' />
+                                            <img src="/line2.svg" alt="line" className='w-full mb-6 sm:mb-8 lg:mb-11' />
                                         </div>
-                                        <div className="flex gap-5 flex-col">
+                                        <div className="flex gap-3 sm:gap-4 lg:gap-5 flex-col">
                                             {item?.points?.replaceAll('•', '')?.replaceAll(',', '')?.split('\n').map(item => item.trim())?.map((point, index) => (
-                                                <div className="flex gap-5 items-center">
+                                                <div key={index} className="flex gap-3 sm:gap-4 lg:gap-5 items-center">
                                                     <div className="">
                                                         <svg
-                                                            width={'1.813rem'}
-                                                            height={'1.813rem'}
+                                                            width={'1.2rem'}
+                                                            height={'1.2rem'}
+                                                            className="sm:w-[1.5rem] sm:h-[1.5rem] lg:w-[1.813rem] lg:h-[1.813rem]"
                                                             viewBox="0 0 29 29"
                                                             fill="none"
                                                             xmlns="http://www.w3.org/2000/svg"
@@ -90,23 +90,23 @@ const Subscription = () => {
                                                         </svg>
 
                                                     </div>
-                                                    <p className='text-white font-normal text-sm'>
+                                                    <p className='text-white font-normal text-xs sm:text-sm'>
                                                         {point}
                                                     </p>
                                                 </div>
                                             ))}
                                         </div>
-                                        <div className="my-9">
-                                            <p className='text-5xl font-medium text-white mb-2'>
+                                        <div className="my-6 sm:my-7 lg:my-9">
+                                            <p className='text-2xl sm:text-3xl lg:text-5xl font-medium text-white mb-2'>
                                                 ${item?.price}
-                                                <span className='font-normal text-sm'>
+                                                <span className='font-normal text-xs sm:text-sm'>
                                                     /per {item?.duration_in_days} days
                                                 </span>
                                             </p>
                                         </div>
                                         <button
                                             type='button'
-                                            className='bg-[rgba(255,255,255,0.05)] border border-[#828282] text-white font-normal text-sm px-7 py-2 rounded-full'
+                                            className='bg-[rgba(255,255,255,0.05)] border border-[#828282] text-white font-normal text-xs sm:text-sm px-5 sm:px-6 lg:px-7 py-2 rounded-full w-full sm:w-auto'
                                             onClick={() => handleGetStarted(item)}
                                         >
                                             Get Started

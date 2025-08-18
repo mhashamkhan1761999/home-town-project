@@ -904,11 +904,12 @@ const ItemModal2 = ({ item = null, onClose, onSuccesActive }) => {
                     <label className="text-base font-semibold text-[#D4BC6D] mb-3 block">
                         Select One Category
                     </label>
-                    <div className="grid grid-cols-3 gap-4">
+                    <div className="grid grid-cols-2 gap-4">
                         {[
                         { id: "merch", label: "Merch Collage", example: "/2.jpeg" },
                         { id: "favorite", label: "Favorite Picture", example: "/1.jpeg" },
                         { id: "logo", label: "Logo", example: "/3.jpeg" },
+                        { id: "other", label: "Other", example: "/default.jpg" },
                         ].map(({ id, label, example }) => {
                         const isSelected = watch("selectedCategory") === id;
                         return (

@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { logout } from '../redux/slices/authSlice.js';
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { BarChart3, Package, Home, LogOut, Users, ShoppingCart, Trophy } from "lucide-react";
+import { BarChart3, Package, Home, LogOut, Users, ShoppingCart, Trophy, Menu, X } from "lucide-react";
 import AdminModal from "../components/AdminModal.jsx";
 import AdminModal2 from '../components/AdminModal2.jsx';
 
@@ -15,6 +15,7 @@ const SuperAdminLayout = () => {
     const navigate = useNavigate();
     const [isShow, setIsShow] = React.useState(false);
     const [isShow2, setIsShow2] = React.useState(false);
+    const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false);
 
     const profileImage = user?.profile_picture_url ? user.profile_picture_url : '/default.jpg';
 
@@ -65,8 +66,121 @@ const SuperAdminLayout = () => {
 
     return (
         <>
-            <div className="p-4 flex bg-black h-[100dvh] overflow-y-auto">
-                <div className="w-[10rem] min-w-[10rem] max-w-[10rem] h-full flex flex-col bg-black card-gradient !border-[1.5px] rounded-3xl">
+            {/* Mobile Header */}
+            <div className="lg:hidden bg-black p-4 flex items-center justify-between relative z-[100]">
+                <img src="/admin-logo.svg" alt="Logo" className="w-[3rem] h-auto" />
+                
+                <button
+                    onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                    className="text-white p-2"
+                >
+                    {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+                </button>
+            </div>
+
+            {/* Mobile Sidebar Overlay */}
+            {isMobileMenuOpen && (
+                <div className="lg:hidden fixed inset-0 bg-black bg-opacity-50 z-[90]" onClick={() => setIsMobileMenuOpen(false)} />
+            )}
+
+            {/* Mobile Sidebar */}
+            <div className={`lg:hidden fixed top-0 left-0 h-full w-80 bg-black card-gradient border-r-[1.5px] transform transition-transform duration-300 z-[110] ${
+                isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'
+            }`}>
+                <div className="p-4">
+                    <img src="/admin-logo.svg" alt="Logo" className="w-[4.438rem] h-auto mx-auto mb-6" />
+                    
+                    <div className="mb-4 flex justify-center">
+                        <NavLink
+                            to="/athlete/profile"
+                            className="w-[3.5rem] h-[3.5rem] rounded-full overflow-hidden border-[2px] border-[#CAB265]"
+                            onClick={() => setIsMobileMenuOpen(false)}
+                        >
+                            <img
+                                src={profileImage}
+                                alt="User Profile"
+                                className="w-full h-full object-cover object-center"
+                            />
+                        </NavLink>
+                    </div>
+                    
+                    <div className="mb-6">
+                        <img src="/line.svg" alt="line" className="h-[1px] w-full" />
+                    </div>
+                    
+                    <div className="flex flex-col gap-6">
+                        <NavLink to="/admin/dashboard"
+                            className={({ isActive }) => isActive ? 'text-[#CAB265] font-bold text-base flex items-center gap-3' : 'text-[#6A6A69] font-bold text-base flex items-center gap-3'}
+                            onClick={() => setIsMobileMenuOpen(false)}
+                        >
+                            <BarChart3 size={18} />
+                            Dashboard
+                        </NavLink>
+
+                        <NavLink to="/admin/products"
+                            className={({ isActive }) => isActive ? 'text-[#CAB265] font-bold text-base flex items-center gap-3' : 'text-[#6A6A69] font-bold text-base flex items-center gap-3'}
+                            onClick={() => setIsMobileMenuOpen(false)}
+                        >
+                            <Package size={18} />
+                            Products
+                        </NavLink>
+
+                        <NavLink to="/admin/users"
+                            className={({ isActive }) => isActive ? 'text-[#CAB265] font-bold text-base flex items-center gap-3' : 'text-[#6A6A69] font-bold text-base flex items-center gap-3'}
+                            onClick={() => setIsMobileMenuOpen(false)}
+                        >
+                            <Users size={18} />
+                            Users
+                        </NavLink>
+
+                        <NavLink to="/admin/orders"
+                            className={({ isActive }) => isActive ? 'text-[#CAB265] font-bold text-base flex items-center gap-3' : 'text-[#6A6A69] font-bold text-base flex items-center gap-3'}
+                            onClick={() => setIsMobileMenuOpen(false)}
+                        >
+                            <ShoppingCart size={18} />
+                            Orders
+                        </NavLink>
+
+                        <NavLink to="/admin/athletes"
+                            className={({ isActive }) => isActive ? 'text-[#CAB265] font-bold text-base flex items-center gap-3' : 'text-[#6A6A69] font-bold text-base flex items-center gap-3'}
+                            onClick={() => setIsMobileMenuOpen(false)}
+                        >
+                            <Trophy size={18} />
+                            Athletes
+                        </NavLink>
+
+                        <NavLink to="/admin/athlete-products"
+                            className={({ isActive }) => isActive ? 'text-[#CAB265] font-bold text-base flex items-center gap-3' : 'text-[#6A6A69] font-bold text-base flex items-center gap-3'}
+                            onClick={() => setIsMobileMenuOpen(false)}
+                        >
+                            <Package size={18} />
+                            Athlete Products
+                        </NavLink>
+                    </div>
+                    
+                    <div className="mt-8 mb-6">
+                        <img src="/line.svg" alt="line" className="h-[1px] w-full" />
+                    </div>
+                    
+                    <div className="flex justify-center">
+                        <button
+                            className="text-[#6A6A69] font-bold text-base hover:text-red-600 transition flex items-center gap-3"
+                            onClick={() => {
+                                handleLogout();
+                                setIsMobileMenuOpen(false);
+                            }}
+                        >
+                            <LogOut size={18} />
+                            Log Out
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            {/* Main Layout */}
+            <div className="flex bg-black h-[100dvh] overflow-hidden">
+                {/* Desktop Sidebar */}
+                <div className="hidden lg:flex w-[10rem] min-w-[10rem] max-w-[10rem] h-full flex-col bg-black card-gradient !border-[1.5px] rounded-3xl m-4">
                     <img src="/admin-logo.svg" alt="Logo" className="w-[4.438rem] h-auto mt-6 mx-auto" />
 
                     <div className="mt-6 mb-4 flex justify-center">
@@ -117,7 +231,7 @@ const SuperAdminLayout = () => {
                         <NavLink to="/admin/athlete-products"
                             className={({ isActive }) => isActive ? 'text-[#CAB265] font-bold text-base flex flex-col items-center gap-2 text-center' : 'text-[#6A6A69] font-bold text-base flex items-center gap-2 text-center flex-col'}>
                             <Package size={18} />
-                            Athelete Products
+                            Athlete Products
                         </NavLink>
                     </div>
                     <div className="mb-[2.75rem] mt-[3.125rem]">
@@ -134,15 +248,13 @@ const SuperAdminLayout = () => {
                     </div>
                 </div>
 
-                <div className="grow">
-                    <div className="w-full p-4 flex items-center">
+                {/* Main Content Area */}
+                <div className="flex-1 flex flex-col overflow-hidden">
+                    {/* Desktop Header */}
+                    <div className="hidden lg:flex w-full p-4 items-center">
                         <img src="/hometown-logo.svg" alt="Header" className="w-[23.188rem] h-auto" />
 
-
-
-
                         <div className="flex items-center justify-end grow gap-5">
-
                             <NavLink
                                 to="/"
                                 type='button'
@@ -150,9 +262,6 @@ const SuperAdminLayout = () => {
                             >
                                 Admin Panel
                             </NavLink>
-
-
-
 
                             <>
                                 {/* Header Container */}
@@ -200,7 +309,6 @@ const SuperAdminLayout = () => {
                                 </div>
                             </>
 
-
                             <div className="relative w-[4.563rem] h-[4.563rem]">
                                 {/* Avatar Image */}
                                 <img
@@ -212,18 +320,17 @@ const SuperAdminLayout = () => {
 
                                 {/* Notification Badge */}
                                 <div className="absolute -top-1 -right-1 flex items-center justify-center w-4 h-4 bg-red-500 text-white text-[10px] font-bold rounded-full shadow-md">
-
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <div className="p-4">
+                    {/* Content Area */}
+                    <div className="flex-1 overflow-y-auto p-2 lg:p-4">
                         <Outlet />
                     </div>
                 </div>
             </div>
-
 
             {/* {isShow && (
                 <AdminModal onClose={() => setIsShow(false)} />
@@ -232,7 +339,6 @@ const SuperAdminLayout = () => {
             {/* {isShow2 && (
                 <AdminModal2 onClose={() => setIsShow2(false)} />
             )} */}
-
         </>
     );
 };
