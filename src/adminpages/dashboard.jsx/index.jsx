@@ -60,10 +60,10 @@ const Dashboard = () => {
                                 Gold
                             </div>
                             <div className='text-white font-bold mb-0.5 h-full border-r flex items-center justify-center grow text-[7px] sm:text-sm px-0.5'>
-                                Diamond
+                                Emerald
                             </div>
                             <div className='text-white font-bold mb-0.5 h-full border-r flex items-center justify-center grow text-[7px] sm:text-sm px-0.5'>
-                                Emerald
+                                Diamond
                             </div>
                             <div className='text-white font-bold mb-0.5 h-full flex items-center justify-center grow text-[7px] sm:text-sm px-0.5'>
                                 Royal
