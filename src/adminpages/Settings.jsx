@@ -109,80 +109,80 @@ const Settings = () => {
             label: "Payment Info",
             content: (
                 <>
-                    <h2 className='text-white font-bold text-xl mb-6'>
+                    <h2 className='text-white font-bold text-lg sm:text-xl mb-4 sm:mb-6'>
                         Add Card Details
                     </h2>
 
-                   <div className="w-[1440px]">
-                    <div className="mb-12">
-                        <label className='text-lg font-semibold text-[#D4BC6D] mb-5 inline-block'>
+                   <div className="w-full max-w-full">
+                    <div className="mb-8 sm:mb-12">
+                        <label className='text-base sm:text-lg font-semibold text-[#D4BC6D] mb-3 sm:mb-5 inline-block'>
                             Card Number
                         </label>
-                        <div className="flex items-center rounded-t-lg bg-[rgba(217,217,217,0.03)] border-b border-[#4B4C46] h-[4rem]">
-                            <div className="p-4">
-                                <CreditCard color='#fff' />
+                        <div className="flex items-center rounded-t-lg bg-[rgba(217,217,217,0.03)] border-b border-[#4B4C46] h-[3rem] sm:h-[4rem]">
+                            <div className="p-2 sm:p-4">
+                                <CreditCard color='#fff' className="w-4 h-4 sm:w-5 sm:h-5" />
                             </div>
                             <div className="grow">
-                                <input type="number" placeholder='123 **** **** ****' className='h-full w-full border-0 outline-0 text-[#D4BC6D]' />
+                                <input type="number" placeholder='123 **** **** ****' className='h-full w-full border-0 outline-0 text-[#D4BC6D] text-sm sm:text-base px-2 sm:px-0' />
                             </div>
-                            <div className="p-2">
-                                <button className='bg-[#D4BC6D] py-2 px-8 text-sm font-bold text-white rounded-full' type='button'>
+                            <div className="p-1 sm:p-2">
+                                <button className='bg-[#D4BC6D] py-1.5 sm:py-2 px-4 sm:px-8 text-xs sm:text-sm font-bold text-white rounded-full' type='button'>
                                     Edit
                                 </button>
                             </div>
                         </div>
                     </div>
-                    <div className="flex gap-6 w-full">
-                        <div className="mb-12 grow">
-                            <label className='text-lg font-semibold text-[#D4BC6D] mb-5 inline-block'>
+                    <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 w-full">
+                        <div className="mb-8 sm:mb-12 w-full sm:grow">
+                            <label className='text-base sm:text-lg font-semibold text-[#D4BC6D] mb-3 sm:mb-5 inline-block'>
                                 Expiration Date
                             </label>
-                            <div className="flex items-center rounded-t-lg bg-[rgba(217,217,217,0.03)] border-b border-[#4B4C46] h-[4rem]">
-                                <div className="p-4">
-                                    <CalendarClock color='#fff' />
+                            <div className="flex items-center rounded-t-lg bg-[rgba(217,217,217,0.03)] border-b border-[#4B4C46] h-[3rem] sm:h-[4rem]">
+                                <div className="p-2 sm:p-4">
+                                    <CalendarClock color='#fff' className="w-4 h-4 sm:w-5 sm:h-5" />
                                 </div>
                                 <div className="grow">
-                                    <input type="date" className='h-full w-full border-0 outline-0 text-[#D4BC6D]' />
+                                    <input type="date" className='h-full w-full border-0 outline-0 text-[#D4BC6D] text-sm sm:text-base px-2 sm:px-0' />
                                 </div>
-                                <div className="p-2">
-                                    <button className='bg-[#D4BC6D] py-2 px-8 text-sm font-bold text-white rounded-full' type='button'>
+                                <div className="p-1 sm:p-2">
+                                    <button className='bg-[#D4BC6D] py-1.5 sm:py-2 px-4 sm:px-8 text-xs sm:text-sm font-bold text-white rounded-full' type='button'>
                                         Edit
                                     </button>
                                 </div>
                             </div>
                         </div>
-                        <div className="mb-12 grow">
-                            <label className='text-lg font-semibold text-[#D4BC6D] mb-5 inline-block'>
+                        <div className="mb-8 sm:mb-12 w-full sm:grow">
+                            <label className='text-base sm:text-lg font-semibold text-[#D4BC6D] mb-3 sm:mb-5 inline-block'>
                                 Security Code
                             </label>
-                            <div className="flex items-center rounded-t-lg bg-[rgba(217,217,217,0.03)] border-b border-[#4B4C46] h-[4rem]">
-                                <div className="p-4">
-                                    <Lock color='#fff' />
+                            <div className="flex items-center rounded-t-lg bg-[rgba(217,217,217,0.03)] border-b border-[#4B4C46] h-[3rem] sm:h-[4rem]">
+                                <div className="p-2 sm:p-4">
+                                    <Lock color='#fff' className="w-4 h-4 sm:w-5 sm:h-5" />
                                 </div>
                                 <div className="grow">
-                                    <input type="number" placeholder='123' className='h-full w-full border-0 outline-0 text-[#D4BC6D]' />
+                                    <input type="number" placeholder='123' className='h-full w-full border-0 outline-0 text-[#D4BC6D] text-sm sm:text-base px-2 sm:px-0' />
                                 </div>
-                                <div className="p-2">
-                                    <button className='bg-[#D4BC6D] py-2 px-8 text-sm font-bold text-white rounded-full' type='button'>
+                                <div className="p-1 sm:p-2">
+                                    <button className='bg-[#D4BC6D] py-1.5 sm:py-2 px-4 sm:px-8 text-xs sm:text-sm font-bold text-white rounded-full' type='button'>
                                         Edit
                                     </button>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div className="mb-12">
-                        <label className='text-lg font-semibold text-[#D4BC6D] mb-5 inline-block'>
+                    <div className="mb-8 sm:mb-12">
+                        <label className='text-base sm:text-lg font-semibold text-[#D4BC6D] mb-3 sm:mb-5 inline-block'>
                             Card Holder Name
                         </label>
-                        <div className="flex items-center rounded-t-lg bg-[rgba(217,217,217,0.03)] border-b border-[#4B4C46] h-[4rem]">
-                            <div className="p-4">
-                                <User color='#fff' />
+                        <div className="flex items-center rounded-t-lg bg-[rgba(217,217,217,0.03)] border-b border-[#4B4C46] h-[3rem] sm:h-[4rem]">
+                            <div className="p-2 sm:p-4">
+                                <User color='#fff' className="w-4 h-4 sm:w-5 sm:h-5" />
                             </div>
                             <div className="grow">
-                                <input type="text" placeholder='Sam raye' className='h-full w-full border-0 outline-0 text-[#D4BC6D]' />
+                                <input type="text" placeholder='Sam raye' className='h-full w-full border-0 outline-0 text-[#D4BC6D] text-sm sm:text-base px-2 sm:px-0' />
                             </div>
-                            <div className="p-2">
-                                <button className='bg-[#D4BC6D] py-2 px-8 text-sm font-bold text-white rounded-full' type='button'>
+                            <div className="p-1 sm:p-2">
+                                <button className='bg-[#D4BC6D] py-1.5 sm:py-2 px-4 sm:px-8 text-xs sm:text-sm font-bold text-white rounded-full' type='button'>
                                     Edit
                                 </button>
                             </div>
@@ -190,11 +190,11 @@ const Settings = () => {
                     </div>
 
         {/* Notice */}
-            <div className="mt-6 p-4 bg-yellow-50 border border-yellow-300 rounded-lg flex items-start gap-2">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-yellow-700 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <div className="mt-4 sm:mt-6 p-3 sm:p-4 bg-yellow-50 border border-yellow-300 rounded-lg flex items-start gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 sm:h-5 sm:w-5 text-yellow-700 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01M12 5a7 7 0 100 14 7 7 0 000-14z" />
                 </svg>
-                <p className="text-sm font-medium text-yellow-800">
+                <p className="text-xs sm:text-sm font-medium text-yellow-800">
                     We will never place any charges on cards without prior information and authorization.
                 </p>
             </div>
@@ -279,18 +279,18 @@ const Settings = () => {
 
     return (
         <>
-            <div className="border-2 border-[#D4BC6D] px-8 p-6 rounded-3xl">
-                <h2 className='text-white font-bold text-3xl mb-16'>
+            <div className="border-2 border-[#D4BC6D] px-3 sm:px-6 lg:px-8 p-3 sm:p-6 rounded-3xl">
+                <h2 className='text-white font-bold text-xl sm:text-2xl lg:text-3xl mb-8 sm:mb-12 lg:mb-16'>
                     Settings
                 </h2>
 
-                <div className="max-h-[75dvh] overflow-y-auto">
-                    <div className="flex gap-4 mb-9">
+                <div className="max-h-[75dvh] max-w-full overflow-y-auto overflow-x-hidden">
+                    <div className="flex flex-wrap gap-2 sm:gap-4 mb-6 sm:mb-9">
                         {tabs?.map((tab) => (
                             <button
                                 key={tab?.id}
                                 onClick={() => setActiveTab(tab?.id)}
-                                className={`${activeTab == tab?.id ? 'bg-[#D4BC6D]' : 'border border-[#D4BC6D]'} py-3.5 px-10 text-sm font-bold rounded-full text-white`}
+                                className={`${activeTab == tab?.id ? 'bg-[#D4BC6D] px-2' : 'border border-[#D4BC6D]'} py-2 sm:py-3.5 px-2 md:px-10 text-xs sm:text-sm font-bold rounded-full text-white`}
                                 type='button'
                             >
                                 {tab?.label}
