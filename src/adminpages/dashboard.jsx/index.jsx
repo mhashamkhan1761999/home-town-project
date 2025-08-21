@@ -2,6 +2,9 @@ import { EllipsisVertical, EyeIcon, Trash } from 'lucide-react';
 import React, { useState } from 'react'
 import LeafLetMap from './LeafLetMap';
 import { useSelector } from 'react-redux';
+import { useMutation } from '@tanstack/react-query';
+import { postRequest } from '../../api';
+import toast from 'react-hot-toast';
 
 const Dashboard = () => {
     const user = useSelector((state) => state.authenticate.user);
@@ -262,26 +265,38 @@ const Dashboard = () => {
 // Cash Out Modal Component
 const CashOutModal = ({ isOpen, onClose }) => {
     const [amount, setAmount] = React.useState('');
-    const [isSubmitting, setIsSubmitting] = React.useState(false);
+
+    const cashOutMutation = useMutation({
+        mutationFn: (data) => postRequest('/store-cashout', data),
+        onSuccess: (response) => {
+            console.log('Cash out request successful:', response);
+            toast.success(response?.message || `Cash out request for $${amount} has been submitted successfully!`);
+            setAmount('');
+            onClose();
+        },
+        onError: (error) => {
+            console.error('Cash out request failed:', error);
+            toast.error('Failed to submit cash out request. Please try again.');
+        }
+    });
 
     if (!isOpen) return null;
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (!amount || parseFloat(amount) <= 0) {
-            alert('Please enter a valid amount');
+            toast.error('Please enter a valid amount');
             return;
         }
 
-        setIsSubmitting(true);
-        
-        // Simulate API call
-        setTimeout(() => {
-            alert(`Cash out request for $${amount} has been submitted successfully!`);
-            setAmount('');
-            setIsSubmitting(false);
-            onClose();
-        }, 1000);
+        if (parseFloat(amount) < 10) {
+            toast.error('Minimum withdrawal amount is $10.00');
+            return;
+        }
+
+        // Convert amount to number and send to API
+        const amountNumber = parseFloat(amount);
+        cashOutMutation.mutate({ amount: amountNumber });
     };
 
     return (
@@ -292,7 +307,7 @@ const CashOutModal = ({ isOpen, onClose }) => {
                     <button
                         onClick={onClose}
                         className="text-gray-400 hover:text-white transition-colors"
-                        disabled={isSubmitting}
+                        disabled={cashOutMutation.isPending}
                     >
                         <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -319,7 +334,7 @@ const CashOutModal = ({ isOpen, onClose }) => {
                                 step="0.01"
                                 className="w-full pl-8 pr-4 py-3 bg-[#1a1a1a] border border-[#4B4C46] rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-[#D4BC6D] text-lg"
                                 required
-                                disabled={isSubmitting}
+                                disabled={cashOutMutation.isPending}
                             />
                         </div>
                         <p className="text-xs text-gray-400 mt-2">
@@ -332,16 +347,16 @@ const CashOutModal = ({ isOpen, onClose }) => {
                             type="button"
                             onClick={onClose}
                             className="flex-1 py-3 px-4 bg-transparent border border-gray-600 text-gray-300 rounded-lg hover:bg-gray-600 transition-colors font-medium"
-                            disabled={isSubmitting}
+                            disabled={cashOutMutation.isPending}
                         >
                             Cancel
                         </button>
                         <button
                             type="submit"
                             className="flex-1 py-3 px-4 bg-[#57430D] text-white rounded-lg hover:bg-[#ab965d] transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
-                            disabled={isSubmitting || !amount || parseFloat(amount) < 10}
+                            disabled={cashOutMutation.isPending || !amount || parseFloat(amount) < 10}
                         >
-                            {isSubmitting ? 'Processing...' : 'Request Cash Out'}
+                            {cashOutMutation.isPending ? 'Processing...' : 'Request Cash Out'}
                         </button>
                     </div>
                 </form>
