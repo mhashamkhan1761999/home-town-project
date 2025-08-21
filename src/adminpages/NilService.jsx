@@ -180,10 +180,10 @@ const NilCategory = () => {
                     
                     return (
                       <div
-                        className="text-[#D4BC6D] text-sm whitespace-pre-line mt-4"
+                        className="text-white text-sm whitespace-pre-line mt-4"
                         dangerouslySetInnerHTML={{
                           __html: selectedCategory.content
-                            .replace(/(Step \d+ — [^\n]+)/g, '<span style="font-size:1.15em;font-weight:600;display:block;margin-top:1em;">$1</span>')
+                            .replace(/(Step \d+ — [^\n]+)/g, '<span style="font-size:1.15em;color: #D4BC6D;font-weight:600;display:block;margin-top:1em;">$1</span>')
                             .replace(/(Service Policy|NIL Policy & Legal Information|Additional Notes|Pro Tip:|Ready to Launch [^\n]+\?)/g, '<span style="font-size:1.15em; color: #D4BC6D; font-weight:600;display:block;margin-top:1em;">$1</span>')
                         }}
                       />
@@ -365,7 +365,7 @@ const ProductType = ({ handleActive, selectedCard, category, reload, selectedPro
             onClick={() => reload()}
             className="bg-[#d4bc6d] rounded-full h-[40px] uppercase px-6 py-3 text-black text-sm font-semibold"
           >
-            Back to Service
+            Cancel Service
           </button>
              <button
                 onClick={() => setShowFinalizeConfirm(true)}
@@ -925,9 +925,9 @@ const ItemModal2 = ({ item = null, onClose, onSuccesActive }) => {
                                 className="absolute top-2 left-2"
                             />
                             <span className="block font-semibold text-[#D4BC6D] mb-2 px-5">{label}</span>
-                            <img src={example} alt={label} className="w-full h-24 object-cover rounded-md" />
+                            <img src={example} alt={label} className="w-full h-full object-cover rounded-md" />
                             </label>
-                        );
+                        )
                         })}
                     </div>
                     {errors?.selectedCategory && (

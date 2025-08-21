@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { logout } from '../redux/slices/authSlice.js';
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { BarChart3, Package, Home, LogOut, Users, ShoppingCart, Trophy, Menu, X } from "lucide-react";
+import { BarChart3, Package, Home, LogOut, Users, ShoppingCart, Trophy, Menu, X, DollarSign } from "lucide-react";
 import AdminModal from "../components/AdminModal.jsx";
 import AdminModal2 from '../components/AdminModal2.jsx';
 
@@ -153,7 +153,15 @@ const SuperAdminLayout = () => {
                             onClick={() => setIsMobileMenuOpen(false)}
                         >
                             <Package size={18} />
-                            Athlete Products
+                            Athlete Launch
+                        </NavLink>
+
+                        <NavLink to="/admin/manage-cashout"
+                            className={({ isActive }) => isActive ? 'text-[#CAB265] font-bold text-base flex items-center gap-3' : 'text-[#6A6A69] font-bold text-base flex items-center gap-3'}
+                            onClick={() => setIsMobileMenuOpen(false)}
+                        >
+                            <DollarSign size={18} />
+                            Manage Cashout
                         </NavLink>
                     </div>
                     
@@ -182,7 +190,7 @@ const SuperAdminLayout = () => {
                 <div className="hidden lg:flex w-[10rem] min-w-[10rem] max-w-[10rem] h-full flex-col bg-black card-gradient !border-[1.5px] rounded-3xl m-4">
                     <img src="/admin-logo.svg" alt="Logo" className="w-[4.438rem] h-auto mt-6 mx-auto" />
 
-                    <div className="mt-6 mb-4 flex justify-center">
+                    <div className="mt-2 mb-1 flex justify-center">
                         <NavLink
                             className="w-[3.5rem] h-[3.5rem] rounded-full overflow-hidden border-[2px] border-[#CAB265]">
                             <img
@@ -192,7 +200,7 @@ const SuperAdminLayout = () => {
                             />
                         </NavLink>
                     </div>
-                    <div className="mb-[2.75rem] mt-[3.125rem]">
+                    <div className="mb-[2rem] mt-[3.125rem]">
                         <img src="/line.svg" alt="line" className="h-[1px] w-full" />
                     </div>
                     <div className="flex flex-col items-center justify-center gap-6 pb-4">
@@ -229,7 +237,13 @@ const SuperAdminLayout = () => {
                         <NavLink to="/admin/athlete-products"
                             className={({ isActive }) => isActive ? 'text-[#CAB265] font-bold text-base flex flex-col items-center gap-2 text-center' : 'text-[#6A6A69] font-bold text-base flex items-center gap-2 text-center flex-col'}>
                             <Package size={18} />
-                            Athlete Products
+                            Athlete Launch
+                        </NavLink>
+
+                        <NavLink to="/admin/manage-cashout"
+                            className={({ isActive }) => isActive ? 'text-[#CAB265] font-bold text-base flex flex-col items-center gap-2 text-center' : 'text-[#6A6A69] font-bold text-base flex items-center gap-2 text-center flex-col'}>
+                            <DollarSign size={18} />
+                            Manage Cashout
                         </NavLink>
                     </div>
                     <div className="mb-[2.75rem] mt-[3.125rem]">

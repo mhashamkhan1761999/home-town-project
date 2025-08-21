@@ -1,10 +1,11 @@
 import { EllipsisVertical, EyeIcon, Trash } from 'lucide-react';
-import React from 'react'
+import React, { useState } from 'react'
 import LeafLetMap from './LeafLetMap';
 import { useSelector } from 'react-redux';
 
 const Dashboard = () => {
     const user = useSelector((state) => state.authenticate.user);
+    const [isCashOutModalOpen, setIsCashOutModalOpen] = useState(false);
 
     const data = [
         {
@@ -75,6 +76,7 @@ const Dashboard = () => {
                     <button
                         className={`text-white text-sm sm:text-lg font-medium py-2 sm:py-3 px-4 sm:px-6 rounded-xl bg-[#57430D] hover:bg-[#ab965d] transition duration-300`}
                         type='button'
+                        onClick={() => setIsCashOutModalOpen(true)}
                     >
                         Cash Out
                     </button>
@@ -245,8 +247,107 @@ const Dashboard = () => {
                 </div>
 
             </div>
+            
+            {/* Cash Out Modal */}
+            {isCashOutModalOpen && (
+                <CashOutModal
+                    isOpen={isCashOutModalOpen}
+                    onClose={() => setIsCashOutModalOpen(false)}
+                />
+            )}
         </div>
     )
 }
+
+// Cash Out Modal Component
+const CashOutModal = ({ isOpen, onClose }) => {
+    const [amount, setAmount] = React.useState('');
+    const [isSubmitting, setIsSubmitting] = React.useState(false);
+
+    if (!isOpen) return null;
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        if (!amount || parseFloat(amount) <= 0) {
+            alert('Please enter a valid amount');
+            return;
+        }
+
+        setIsSubmitting(true);
+        
+        // Simulate API call
+        setTimeout(() => {
+            alert(`Cash out request for $${amount} has been submitted successfully!`);
+            setAmount('');
+            setIsSubmitting(false);
+            onClose();
+        }, 1000);
+    };
+
+    return (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[9999] p-4">
+            <div className="bg-[#282828] card-gradient border-[1.5px] rounded-3xl p-4 sm:p-6 w-full max-w-md mx-4">
+                <div className="flex justify-between items-center mb-6">
+                    <h2 className="text-xl sm:text-2xl font-bold text-[#D4BC6D]">Cash Out Request</h2>
+                    <button
+                        onClick={onClose}
+                        className="text-gray-400 hover:text-white transition-colors"
+                        disabled={isSubmitting}
+                    >
+                        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                </div>
+
+                <form onSubmit={handleSubmit}>
+                    <div className="mb-6">
+                        <label htmlFor="amount" className="block text-sm font-medium text-white mb-2">
+                            Amount to Withdraw
+                        </label>
+                        <div className="relative">
+                            <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[#D4BC6D] font-semibold">
+                                $
+                            </span>
+                            <input
+                                type="number"
+                                id="amount"
+                                value={amount}
+                                onChange={(e) => setAmount(e.target.value)}
+                                placeholder="0.00"
+                                min="0"
+                                step="0.01"
+                                className="w-full pl-8 pr-4 py-3 bg-[#1a1a1a] border border-[#4B4C46] rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-[#D4BC6D] text-lg"
+                                required
+                                disabled={isSubmitting}
+                            />
+                        </div>
+                        <p className="text-xs text-gray-400 mt-2">
+                            Minimum withdrawal amount: $10.00
+                        </p>
+                    </div>
+
+                    <div className="flex gap-3">
+                        <button
+                            type="button"
+                            onClick={onClose}
+                            className="flex-1 py-3 px-4 bg-transparent border border-gray-600 text-gray-300 rounded-lg hover:bg-gray-600 transition-colors font-medium"
+                            disabled={isSubmitting}
+                        >
+                            Cancel
+                        </button>
+                        <button
+                            type="submit"
+                            className="flex-1 py-3 px-4 bg-[#57430D] text-white rounded-lg hover:bg-[#ab965d] transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                            disabled={isSubmitting || !amount || parseFloat(amount) < 10}
+                        >
+                            {isSubmitting ? 'Processing...' : 'Request Cash Out'}
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    );
+};
 
 export default Dashboard

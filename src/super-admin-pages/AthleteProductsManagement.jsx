@@ -1,5 +1,9 @@
 import React, { useState } from 'react';
 import { Search, Eye, Package, ShoppingBag, Tag, Upload, Plus, X } from 'lucide-react';
+import { useMutation, useQuery } from '@tanstack/react-query';
+import { getRequest, postRequest } from '../api';
+import { queryClient } from '../main';
+import { toast } from 'react-hot-toast';
 
 const AthleteProductsManagement = () => {
   const [products, setProducts] = useState([
@@ -32,7 +36,7 @@ const AthleteProductsManagement = () => {
       athleteName: 'Cristiano Ronaldo',
       productName: 'CR7 Football Boots',
       category: 'Footwear',
-      status: 'Completed',
+      status: 'Active',
       description: 'High-performance football boots designed for speed and precision on the field.',
       price: '$249.99',
       colors: ['White/Gold', 'Black/Silver', 'Red/Black'],
@@ -44,7 +48,7 @@ const AthleteProductsManagement = () => {
       athleteName: 'Katie Ledecky',
       productName: 'Pro Swimming Goggles',
       category: 'Swimming Gear',
-      status: 'Shipped',
+      status: 'Inactive',
       description: 'Anti-fog swimming goggles with UV protection for competitive swimming.',
       price: '$49.99',
       colors: ['Blue', 'Clear', 'Black'],
@@ -56,7 +60,7 @@ const AthleteProductsManagement = () => {
       athleteName: 'LeBron James',
       productName: 'King James Training Jersey',
       category: 'Apparel',
-      status: 'Completed',
+      status: 'Active',
       description: 'Moisture-wicking training jersey with advanced fabric technology.',
       price: '$89.99',
       colors: ['Purple/Gold', 'Black/White', 'Blue/Yellow'],
@@ -80,19 +84,70 @@ const AthleteProductsManagement = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedStatus, setSelectedStatus] = useState('All');
   const [isViewModalOpen, setIsViewModalOpen] = useState(false);
+  const [isCreateAthleteModalOpen, setIsCreateAthleteModalOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [uploadedImages, setUploadedImages] = useState([]);
 
-  const statusTypes = ['Pending', 'Completed', 'Shipped'];
+  const statusTypes = ['Pending', 'Active', 'Inactive'];
   const filterOptions = ['All', ...statusTypes];
   const categories = ['All', 'Sports Equipment', 'Footwear', 'Apparel', 'Swimming Gear'];
 
+  // API Query for fetching athlete launches
+  const { data: athleteProducts, isLoading, error } = useQuery({
+    queryKey: ['admin-athlete-products'],
+    queryFn: () => getRequest('/admin/athlete-products'),
+    onError: (error) => {
+      console.log('Backend not available, using fallback data');
+    }
+  });
+
+  // Mutation for updating product status
+  const updateStatusMutation = useMutation({
+    mutationFn: ({ id, status }) => {
+      const formData = new FormData();
+      formData.append('status', status);
+      return postRequest(`/admin/update-status-product/${id}`, formData, true);
+    },
+    onSuccess: (res) => {
+      queryClient.invalidateQueries(['admin-athlete-products']);
+      toast.success(res?.message || 'Status updated successfully');
+    },
+    onError: (error) => {
+      console.error('Error updating status:', error);
+      toast.error('Failed to update status');
+    }
+  });
+
+  // Mutation for viewing athlete product details
+  const viewProductMutation = useMutation({
+    mutationFn: (id) => getRequest(`/admin/view-athlete-product/${id}`),
+    onSuccess: (res) => {
+      console.log('Product details fetched:', res);
+      // Update selected product with API data if needed
+      if (res && res.data) {
+        setSelectedProduct(prevProduct => ({
+          ...prevProduct,
+          ...res.data
+        }));
+      }
+    },
+    onError: (error) => {
+      console.error('Error fetching product details:', error);
+      toast.error('Failed to fetch product details');
+    }
+  });
+
+  // Use API data if available, otherwise fallback to static data
+  const displayProducts = athleteProducts || products;
+
   // Filter products based on search term and status
-  const filteredProducts = products.filter(product => {
+  const filteredProducts = displayProducts.filter(product => {
     const matchesSearch = 
-      product.athleteName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      product.productName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      product.category.toLowerCase().includes(searchTerm.toLowerCase());
+      product.athleteName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      product.productName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      product.category?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      product.athlete_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      product.product_name?.toLowerCase().includes(searchTerm.toLowerCase());
     
     const matchesStatus = selectedStatus === 'All' || product.status === selectedStatus;
     
@@ -100,20 +155,23 @@ const AthleteProductsManagement = () => {
   });
 
   const handleStatusChange = (productId, newStatus) => {
+    // Update local state immediately for better UX
     setProducts(products.map(product => 
       product.id === productId ? { ...product, status: newStatus } : product
     ));
+    
+    // Call API to update status
+    updateStatusMutation.mutate({ id: productId, status: newStatus });
   };
 
   const getStatusBadgeClass = (status) => {
     switch (status) {
-      case 'Completed':
+      case 'Active':
         return 'bg-green-600 text-white';
-      case 'Shipped':
+      case 'Inactive':
         return 'bg-gray-600 text-white';
       case 'Pending':
         return 'bg-yellow-600 text-white';
-        return 'bg-red-600 text-white';
       default:
         return 'bg-gray-600 text-white';
     }
@@ -123,6 +181,9 @@ const AthleteProductsManagement = () => {
     setSelectedProduct(product);
     setUploadedImages([]); // Start with empty array for demo purposes
     setIsViewModalOpen(true);
+    
+    // Fetch detailed product information
+    viewProductMutation.mutate(product.id);
   };
 
   const handleImageUpload = (event) => {
@@ -140,9 +201,19 @@ const AthleteProductsManagement = () => {
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-6 sm:mb-8">
-          <h1 className="text-2xl sm:text-3xl font-bold text-[#D4BC6D] mb-2">Athlete Products Management</h1>
-          <p className="text-gray-400 text-sm sm:text-base">Manage athlete products, categories and placements</p>
+          <h1 className="text-2xl sm:text-3xl font-bold text-[#D4BC6D] mb-2">Athlete Launch</h1>
+          <p className="text-gray-400 text-sm sm:text-base">Manage athlete product launches and service rollouts</p>
         </div>
+
+        {/* Loading State */}
+        {isLoading && (
+          <div className="bg-[#282828] border border-[#4B4C46] rounded-lg p-8 mb-6">
+            <div className="flex items-center justify-center">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#D4BC6D]"></div>
+              <span className="ml-3 text-gray-400">Loading athlete launches...</span>
+            </div>
+          </div>
+        )}
 
         {/* Stats Cards */}
         <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6 mb-6 sm:mb-8">
@@ -150,7 +221,7 @@ const AthleteProductsManagement = () => {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-gray-400 text-xs sm:text-sm">Total Products</p>
-                <p className="text-lg sm:text-2xl font-bold text-white">{products.length}</p>
+                <p className="text-lg sm:text-2xl font-bold text-white">{displayProducts.length}</p>
               </div>
               <Package className="h-6 w-6 sm:h-8 sm:w-8 text-[#D4BC6D]" />
             </div>
@@ -159,24 +230,24 @@ const AthleteProductsManagement = () => {
           <div className="bg-[#282828] border border-[#4B4C46] rounded-lg p-3 sm:p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-gray-400 text-xs sm:text-sm">Pending Products</p>
+                <p className="text-gray-400 text-xs sm:text-sm">Pending Upload</p>
                 <p className="text-lg sm:text-2xl font-bold text-white">
-                  {products.filter(p => p.status === 'Pending').length}
+                  {displayProducts.filter(p => p.status === 'Pending').length}
                 </p>
               </div>
-              <ShoppingBag className="h-6 w-6 sm:h-8 sm:w-8 text-green-500" />
+              <ShoppingBag className="h-6 w-6 sm:h-8 sm:w-8 text-yellow-500" />
             </div>
           </div>
           
           <div className="bg-[#282828] border border-[#4B4C46] rounded-lg p-3 sm:p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-gray-400 text-xs sm:text-sm">Categories</p>
+                <p className="text-gray-400 text-xs sm:text-sm">Active Products</p>
                 <p className="text-lg sm:text-2xl font-bold text-white">
-                  {new Set(products.map(p => p.category)).size}
+                  {displayProducts.filter(p => p.status === 'Active').length}
                 </p>
               </div>
-              <Tag className="h-6 w-6 sm:h-8 sm:w-8 text-blue-500" />
+              <Tag className="h-6 w-6 sm:h-8 sm:w-8 text-green-500" />
             </div>
           </div>
         </div>
@@ -220,13 +291,13 @@ const AthleteProductsManagement = () => {
               <thead>
                 <tr className="bg-[#1a1a1a] border-b border-[#4B4C46]">
                   <th className="text-left py-3 sm:py-4 px-3 sm:px-6 text-gray-400 font-medium text-xs sm:text-sm">
-                    Athlete Name
+                    Storefront Name
                   </th>
                   <th className="text-left py-3 sm:py-4 px-3 sm:px-6 text-gray-400 font-medium text-xs sm:text-sm">
                     Product Name
                   </th>
                   <th className="text-left py-3 sm:py-4 px-3 sm:px-6 text-gray-400 font-medium text-xs sm:text-sm">
-                    Category
+                    Service Type
                   </th>
                   <th className="text-left py-3 sm:py-4 px-3 sm:px-6 text-gray-400 font-medium text-xs sm:text-sm">
                     Status
@@ -241,17 +312,17 @@ const AthleteProductsManagement = () => {
                   <tr key={product.id} className="border-b border-[#4B4C46] hover:bg-[#2a2a2a] transition-colors">
                     <td className="py-3 sm:py-4 px-3 sm:px-6">
                       <div className="text-white font-medium text-xs sm:text-sm">
-                        {product.athleteName}
+                        {product.athleteName || product.athlete_name || 'N/A'}
                       </div>
                     </td>
                     <td className="py-3 sm:py-4 px-3 sm:px-6">
                       <div className="text-[#D4BC6D] font-medium text-xs sm:text-sm">
-                        {product.productName}
+                        {product.productName || product.product_name || 'N/A'}
                       </div>
                     </td>
                     <td className="py-3 sm:py-4 px-3 sm:px-6">
                       <div className="text-gray-300 text-xs sm:text-sm">
-                        {product.category}
+                        {product.category || 'N/A'}
                       </div>
                     </td>
                     <td className="py-3 sm:py-4 px-3 sm:px-6">
@@ -259,6 +330,7 @@ const AthleteProductsManagement = () => {
                         value={product.status}
                         onChange={(e) => handleStatusChange(product.id, e.target.value)}
                         className={`px-2 sm:px-3 py-1 rounded-full text-xs font-medium cursor-pointer border-0 ${getStatusBadgeClass(product.status)}`}
+                        disabled={updateStatusMutation.isLoading}
                       >
                         {statusTypes.map(status => (
                           <option key={status} value={status} className="bg-[#1a1a1a] text-white">
@@ -273,6 +345,7 @@ const AthleteProductsManagement = () => {
                           onClick={() => handleViewProduct(product)}
                           className="p-1 sm:p-2 text-blue-400 hover:text-blue-300 transition-colors"
                           title="View Details"
+                          disabled={viewProductMutation.isLoading}
                         >
                           <Eye className="h-4 w-4" />
                         </button>
@@ -300,6 +373,7 @@ const AthleteProductsManagement = () => {
           uploadedImages={uploadedImages}
           onImageUpload={handleImageUpload}
           onRemoveImage={removeImage}
+          isLoadingDetails={viewProductMutation.isLoading}
           onClose={() => {
             setIsViewModalOpen(false);
             setSelectedProduct(null);
@@ -312,7 +386,7 @@ const AthleteProductsManagement = () => {
 };
 
 // Product View Modal Component
-const ProductViewModal = ({ product, uploadedImages, onImageUpload, onRemoveImage, onClose }) => {
+const ProductViewModal = ({ product, uploadedImages, onImageUpload, onRemoveImage, onClose, isLoadingDetails }) => {
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[9999] p-4">
       <div className="bg-[#282828] border border-[#4B4C46] rounded-lg p-4 sm:p-6 w-full max-w-6xl mx-4 max-h-[90vh] overflow-y-auto">
@@ -326,6 +400,15 @@ const ProductViewModal = ({ product, uploadedImages, onImageUpload, onRemoveImag
           </button>
         </div>
 
+        {isLoadingDetails && (
+          <div className="bg-[#1a1a1a] border border-[#4B4C46] rounded-lg p-8 mb-6">
+            <div className="flex items-center justify-center">
+              <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-[#D4BC6D]"></div>
+              <span className="ml-3 text-gray-400">Loading product details...</span>
+            </div>
+          </div>
+        )}
+
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8">
           {/* Product Information */}
           <div className="space-y-6">
@@ -335,40 +418,52 @@ const ProductViewModal = ({ product, uploadedImages, onImageUpload, onRemoveImag
               <div className="space-y-4">
                 <div>
                   <label className="block text-gray-400 text-sm mb-1">Athlete Name</label>
-                  <p className="text-white font-medium">{product.athleteName}</p>
+                  <p className="text-white font-medium">{product.athleteName || product.athlete_name || 'N/A'}</p>
                 </div>
                 
                 <div>
                   <label className="block text-gray-400 text-sm mb-1">Product Name</label>
-                  <p className="text-[#D4BC6D] font-medium">{product.productName}</p>
+                  <p className="text-[#D4BC6D] font-medium">{product.productName || product.product_name || 'N/A'}</p>
                 </div>
                 
                 <div>
                   <label className="block text-gray-400 text-sm mb-1">Category</label>
-                  <p className="text-white">{product.category}</p>
+                  <p className="text-white">{product.category || 'N/A'}</p>
+                </div>
+                
+                <div>
+                  <label className="block text-gray-400 text-sm mb-1">Status</label>
+                  <span className={`px-3 py-1 rounded-full text-xs font-medium ${
+                    product.status === 'Active' ? 'bg-green-600 text-white' :
+                    product.status === 'Inactive' ? 'bg-gray-600 text-white' :
+                    product.status === 'Pending' ? 'bg-yellow-600 text-white' :
+                    'bg-gray-600 text-white'
+                  }`}>
+                    {product.status || 'N/A'}
+                  </span>
                 </div>
                 
                 <div>
                   <label className="block text-gray-400 text-sm mb-1">Description</label>
-                  <p className="text-gray-300 text-sm leading-relaxed">{product.description}</p>
+                  <p className="text-gray-300 text-sm leading-relaxed">{product.description || 'No description available'}</p>
                 </div>
                 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className="block text-gray-400 text-sm mb-1">Price</label>
-                    <p className="text-green-400 font-bold text-lg">{product.price}</p>
+                    <p className="text-green-400 font-bold text-lg">{product.price || 'N/A'}</p>
                   </div>
                   
                   <div>
                     <label className="block text-gray-400 text-sm mb-1">Placement</label>
-                    <p className="text-yellow-400 font-medium">{product.placement}</p>
+                    <p className="text-yellow-400 font-medium">{product.placement || 'N/A'}</p>
                   </div>
                 </div>
                 
                 <div>
                   <label className="block text-gray-400 text-sm mb-2">Available Colors</label>
                   <div className="flex flex-wrap gap-2">
-                    {product.colors.map((color, index) => (
+                    {(product.colors || []).map((color, index) => (
                       <span
                         key={index}
                         className="px-3 py-1 bg-[#4B4C46] text-white text-sm rounded-full border border-[#6B6C66]"
@@ -376,6 +471,9 @@ const ProductViewModal = ({ product, uploadedImages, onImageUpload, onRemoveImag
                         {color}
                       </span>
                     ))}
+                    {(!product.colors || product.colors.length === 0) && (
+                      <span className="text-gray-400 text-sm">No colors available</span>
+                    )}
                   </div>
                 </div>
               </div>
@@ -468,6 +566,373 @@ const ProductViewModal = ({ product, uploadedImages, onImageUpload, onRemoveImag
             Close
           </button>
         </div>
+      </div>
+    </div>
+  );
+};
+
+// Create Athlete Modal Component
+const CreateAthleteModal = ({ onClose, onSubmit, isLoading }) => {
+  const [formData, setFormData] = useState({
+    phone: '',
+    email: '',
+    referral_code: '',
+    age: '',
+    gender: 'Male',
+    country: '',
+    city: '',
+    level_of_athlete: 'Intermediate',
+    grand_level: 'National',
+    team_name: '',
+    team_email: '',
+    team_email_2: '',
+    director_info: '',
+    coach_info: '',
+    school_name: '',
+    school_email: '',
+    school_phone: '',
+    instagram: '',
+    tiktok: '',
+    twitter: '',
+    youtube: '',
+    twitch: '',
+    other: ''
+  });
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    onSubmit(formData);
+  };
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[9999] p-4">
+      <div className="bg-[#282828] border border-[#4B4C46] rounded-lg p-4 sm:p-6 w-full max-w-4xl mx-4 max-h-[90vh] overflow-y-auto">
+        <div className="flex justify-between items-center mb-6">
+          <h2 className="text-xl sm:text-2xl font-bold text-[#D4BC6D]">Create New Athlete</h2>
+          <button
+            onClick={onClose}
+            className="text-gray-400 hover:text-white transition-colors"
+          >
+            <X className="h-6 w-6" />
+          </button>
+        </div>
+
+        <form onSubmit={handleSubmit}>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Personal Information */}
+            <div className="space-y-4">
+              <h3 className="text-lg font-semibold text-[#D4BC6D] mb-4">Personal Information</h3>
+              
+              <div>
+                <label className="block text-gray-400 text-sm mb-2">Phone *</label>
+                <input
+                  type="tel"
+                  name="phone"
+                  value={formData.phone}
+                  onChange={handleInputChange}
+                  required
+                  className="w-full px-4 py-2 bg-[#1a1a1a] border border-[#4B4C46] rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-[#D4BC6D]"
+                />
+              </div>
+
+              <div>
+                <label className="block text-gray-400 text-sm mb-2">Email *</label>
+                <input
+                  type="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleInputChange}
+                  required
+                  className="w-full px-4 py-2 bg-[#1a1a1a] border border-[#4B4C46] rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-[#D4BC6D]"
+                />
+              </div>
+
+              <div>
+                <label className="block text-gray-400 text-sm mb-2">Referral Code</label>
+                <input
+                  type="text"
+                  name="referral_code"
+                  value={formData.referral_code}
+                  onChange={handleInputChange}
+                  className="w-full px-4 py-2 bg-[#1a1a1a] border border-[#4B4C46] rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-[#D4BC6D]"
+                />
+              </div>
+
+              <div>
+                <label className="block text-gray-400 text-sm mb-2">Age</label>
+                <input
+                  type="number"
+                  name="age"
+                  value={formData.age}
+                  onChange={handleInputChange}
+                  className="w-full px-4 py-2 bg-[#1a1a1a] border border-[#4B4C46] rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-[#D4BC6D]"
+                />
+              </div>
+
+              <div>
+                <label className="block text-gray-400 text-sm mb-2">Gender</label>
+                <select
+                  name="gender"
+                  value={formData.gender}
+                  onChange={handleInputChange}
+                  className="w-full px-4 py-2 bg-[#1a1a1a] border border-[#4B4C46] rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-[#D4BC6D]"
+                >
+                  <option value="Male">Male</option>
+                  <option value="Female">Female</option>
+                  <option value="Other">Other</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-gray-400 text-sm mb-2">Country</label>
+                <input
+                  type="text"
+                  name="country"
+                  value={formData.country}
+                  onChange={handleInputChange}
+                  className="w-full px-4 py-2 bg-[#1a1a1a] border border-[#4B4C46] rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-[#D4BC6D]"
+                />
+              </div>
+
+              <div>
+                <label className="block text-gray-400 text-sm mb-2">City</label>
+                <input
+                  type="text"
+                  name="city"
+                  value={formData.city}
+                  onChange={handleInputChange}
+                  className="w-full px-4 py-2 bg-[#1a1a1a] border border-[#4B4C46] rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-[#D4BC6D]"
+                />
+              </div>
+            </div>
+
+            {/* Athletic Information */}
+            <div className="space-y-4">
+              <h3 className="text-lg font-semibold text-[#D4BC6D] mb-4">Athletic Information</h3>
+
+              <div>
+                <label className="block text-gray-400 text-sm mb-2">Level of Athlete</label>
+                <select
+                  name="level_of_athlete"
+                  value={formData.level_of_athlete}
+                  onChange={handleInputChange}
+                  className="w-full px-4 py-2 bg-[#1a1a1a] border border-[#4B4C46] rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-[#D4BC6D]"
+                >
+                  <option value="Beginner">Beginner</option>
+                  <option value="Intermediate">Intermediate</option>
+                  <option value="Advanced">Advanced</option>
+                  <option value="Professional">Professional</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-gray-400 text-sm mb-2">Grand Level</label>
+                <select
+                  name="grand_level"
+                  value={formData.grand_level}
+                  onChange={handleInputChange}
+                  className="w-full px-4 py-2 bg-[#1a1a1a] border border-[#4B4C46] rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-[#D4BC6D]"
+                >
+                  <option value="Local">Local</option>
+                  <option value="Regional">Regional</option>
+                  <option value="National">National</option>
+                  <option value="International">International</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-gray-400 text-sm mb-2">Team Name</label>
+                <input
+                  type="text"
+                  name="team_name"
+                  value={formData.team_name}
+                  onChange={handleInputChange}
+                  className="w-full px-4 py-2 bg-[#1a1a1a] border border-[#4B4C46] rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-[#D4BC6D]"
+                />
+              </div>
+
+              <div>
+                <label className="block text-gray-400 text-sm mb-2">Team Email</label>
+                <input
+                  type="email"
+                  name="team_email"
+                  value={formData.team_email}
+                  onChange={handleInputChange}
+                  className="w-full px-4 py-2 bg-[#1a1a1a] border border-[#4B4C46] rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-[#D4BC6D]"
+                />
+              </div>
+
+              <div>
+                <label className="block text-gray-400 text-sm mb-2">Team Email 2</label>
+                <input
+                  type="email"
+                  name="team_email_2"
+                  value={formData.team_email_2}
+                  onChange={handleInputChange}
+                  className="w-full px-4 py-2 bg-[#1a1a1a] border border-[#4B4C46] rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-[#D4BC6D]"
+                />
+              </div>
+
+              <div>
+                <label className="block text-gray-400 text-sm mb-2">Director Info</label>
+                <input
+                  type="text"
+                  name="director_info"
+                  value={formData.director_info}
+                  onChange={handleInputChange}
+                  className="w-full px-4 py-2 bg-[#1a1a1a] border border-[#4B4C46] rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-[#D4BC6D]"
+                />
+              </div>
+
+              <div>
+                <label className="block text-gray-400 text-sm mb-2">Coach Info</label>
+                <input
+                  type="text"
+                  name="coach_info"
+                  value={formData.coach_info}
+                  onChange={handleInputChange}
+                  className="w-full px-4 py-2 bg-[#1a1a1a] border border-[#4B4C46] rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-[#D4BC6D]"
+                />
+              </div>
+            </div>
+
+            {/* School Information */}
+            <div className="space-y-4">
+              <h3 className="text-lg font-semibold text-[#D4BC6D] mb-4">School Information</h3>
+
+              <div>
+                <label className="block text-gray-400 text-sm mb-2">School Name</label>
+                <input
+                  type="text"
+                  name="school_name"
+                  value={formData.school_name}
+                  onChange={handleInputChange}
+                  className="w-full px-4 py-2 bg-[#1a1a1a] border border-[#4B4C46] rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-[#D4BC6D]"
+                />
+              </div>
+
+              <div>
+                <label className="block text-gray-400 text-sm mb-2">School Email</label>
+                <input
+                  type="email"
+                  name="school_email"
+                  value={formData.school_email}
+                  onChange={handleInputChange}
+                  className="w-full px-4 py-2 bg-[#1a1a1a] border border-[#4B4C46] rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-[#D4BC6D]"
+                />
+              </div>
+
+              <div>
+                <label className="block text-gray-400 text-sm mb-2">School Phone</label>
+                <input
+                  type="tel"
+                  name="school_phone"
+                  value={formData.school_phone}
+                  onChange={handleInputChange}
+                  className="w-full px-4 py-2 bg-[#1a1a1a] border border-[#4B4C46] rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-[#D4BC6D]"
+                />
+              </div>
+            </div>
+
+            {/* Social Media */}
+            <div className="space-y-4">
+              <h3 className="text-lg font-semibold text-[#D4BC6D] mb-4">Social Media</h3>
+
+              <div>
+                <label className="block text-gray-400 text-sm mb-2">Instagram</label>
+                <input
+                  type="url"
+                  name="instagram"
+                  value={formData.instagram}
+                  onChange={handleInputChange}
+                  className="w-full px-4 py-2 bg-[#1a1a1a] border border-[#4B4C46] rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-[#D4BC6D]"
+                />
+              </div>
+
+              <div>
+                <label className="block text-gray-400 text-sm mb-2">TikTok</label>
+                <input
+                  type="url"
+                  name="tiktok"
+                  value={formData.tiktok}
+                  onChange={handleInputChange}
+                  className="w-full px-4 py-2 bg-[#1a1a1a] border border-[#4B4C46] rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-[#D4BC6D]"
+                />
+              </div>
+
+              <div>
+                <label className="block text-gray-400 text-sm mb-2">Twitter</label>
+                <input
+                  type="url"
+                  name="twitter"
+                  value={formData.twitter}
+                  onChange={handleInputChange}
+                  className="w-full px-4 py-2 bg-[#1a1a1a] border border-[#4B4C46] rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-[#D4BC6D]"
+                />
+              </div>
+
+              <div>
+                <label className="block text-gray-400 text-sm mb-2">YouTube</label>
+                <input
+                  type="url"
+                  name="youtube"
+                  value={formData.youtube}
+                  onChange={handleInputChange}
+                  className="w-full px-4 py-2 bg-[#1a1a1a] border border-[#4B4C46] rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-[#D4BC6D]"
+                />
+              </div>
+
+              <div>
+                <label className="block text-gray-400 text-sm mb-2">Twitch</label>
+                <input
+                  type="url"
+                  name="twitch"
+                  value={formData.twitch}
+                  onChange={handleInputChange}
+                  className="w-full px-4 py-2 bg-[#1a1a1a] border border-[#4B4C46] rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-[#D4BC6D]"
+                />
+              </div>
+
+              <div>
+                <label className="block text-gray-400 text-sm mb-2">Other</label>
+                <textarea
+                  name="other"
+                  value={formData.other}
+                  onChange={handleInputChange}
+                  rows={3}
+                  className="w-full px-4 py-2 bg-[#1a1a1a] border border-[#4B4C46] rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-[#D4BC6D] resize-none"
+                  placeholder="Other social media or additional information"
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Action Buttons */}
+          <div className="flex flex-col sm:flex-row gap-3 mt-6 pt-6 border-t border-[#4B4C46]">
+            <button
+              type="submit"
+              disabled={isLoading}
+              className="flex-1 px-6 py-3 bg-[#D4BC6D] text-black font-medium rounded-lg hover:bg-[#C4AC5D] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {isLoading ? 'Creating...' : 'Create Athlete'}
+            </button>
+            <button
+              type="button"
+              onClick={onClose}
+              className="flex-1 px-6 py-3 bg-[#4B4C46] text-white font-medium rounded-lg hover:bg-[#5B5C56] transition-colors"
+            >
+              Cancel
+            </button>
+          </div>
+        </form>
       </div>
     </div>
   );

@@ -47,6 +47,7 @@ import OrderManagement from './super-admin-pages/OrderManagement.jsx'
 import AthleteManagement from './super-admin-pages/AthleteManagement.jsx'
 import AthleteProductsManagement from './super-admin-pages/AthleteProductsManagement.jsx'
 import AdminLoginPage from './super-admin-pages/AdminLoginPage.jsx'
+import ManageCashout from './super-admin-pages/ManageCashout.jsx'
 
 
 export const queryClient = new QueryClient();
@@ -99,6 +100,7 @@ const AllRoutes = () => {
           <Route path='athletes' element={<AthleteManagement />} />
           <Route path='athlete-products' element={<AthleteProductsManagement />} />
           <Route path='my-products' element={<SuperAdminMyProducts />} />
+          <Route path='manage-cashout' element={<ManageCashout />} />
         </Route>
       </Route>
     </Routes>

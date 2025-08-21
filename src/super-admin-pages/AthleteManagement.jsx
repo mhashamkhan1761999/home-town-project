@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Search, Eye, User, Users, Trophy, Star, Phone, Mail } from 'lucide-react';
+import { Search, Eye, User, Users, Trophy, Star, Instagram, Twitter, Facebook, ExternalLink } from 'lucide-react';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { getRequest, postRequest } from '../api';
 import { queryClient } from '../main';
@@ -131,25 +131,16 @@ const AthleteManagement = () => {
     }
   });
 
-  const [searchTerm, setSearchTerm] = useState('');
   const [selectedStatus, setSelectedStatus] = useState('All');
   const [isViewModalOpen, setIsViewModalOpen] = useState(false);
   const [selectedAthlete, setSelectedAthlete] = useState(null);
 
-  const statusTypes = ['Active', 'Inactive', 'Pending', 'Suspended'];
-  const filterOptions = ['All', ...statusTypes];
+  const statusTypes = ['Pending', 'Standard', 'Pro Dashboard'];
 
-  // Filter athletes based on search term and status
+  // Filter athletes based on status only (since search is now dropdown-based)
   const filteredAthletes = athletes?.filter(athlete => {
-    const matchesSearch =
-      athlete?.athlete_name?.toLowerCase().includes(searchTerm?.toLowerCase()) ||
-      athlete?.phone?.toLowerCase().includes(searchTerm?.toLowerCase()) ||
-      athlete?.email?.toLowerCase().includes(searchTerm?.toLowerCase()) ||
-      athlete?.sport_name?.toLowerCase().includes(searchTerm?.toLowerCase());
-
-    const matchesStatus = selectedStatus == 'All' || athlete?.status == selectedStatus;
-
-    return matchesSearch && matchesStatus;
+    const matchesStatus = selectedStatus === 'All' || athlete?.status === selectedStatus.toLowerCase();
+    return matchesStatus;
   });
 
   const handleViewAthlete = (athlete) => {
@@ -251,25 +242,14 @@ const AthleteManagement = () => {
         <div className="bg-[#282828] border border-[#4B4C46] rounded-lg p-3 sm:p-6 mb-6">
           <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
             <div className="flex flex-col sm:flex-row gap-4 flex-1 w-full">
-              {/* Search */}
-              <div className="relative flex-1 max-w-md">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-                <input
-                  type="text"
-                  placeholder="Search athletes..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2 bg-[#1a1a1a] border border-[#4B4C46] rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-[#D4BC6D] text-sm"
-                />
-              </div>
-
-              {/* Status Filter */}
+              {/* Filter Athletes by Status */}
               <select
                 value={selectedStatus}
                 onChange={(e) => setSelectedStatus(e.target.value)}
-                className="px-4 py-2 bg-[#1a1a1a] border border-[#4B4C46] rounded-lg text-white focus:outline-none focus:border-[#D4BC6D] text-sm"
+                className="px-4 py-2 bg-[#1a1a1a] border border-[#4B4C46] rounded-lg text-white focus:outline-none focus:border-[#D4BC6D] text-sm min-w-[200px]"
               >
-                {filterOptions.map(status => (
+                <option value="All">All Athletes</option>
+                {statusTypes.map(status => (
                   <option key={status} value={status} className="bg-[#1a1a1a]">
                     {status}
                   </option>
@@ -290,19 +270,13 @@ const AthleteManagement = () => {
                       Athlete
                     </th>
                     <th className="px-3 sm:px-6 py-4 text-left text-xs sm:text-sm font-medium text-gray-400 uppercase tracking-wider">
-                      Phone
-                    </th>
-                    <th className="px-3 sm:px-6 py-4 text-left text-xs sm:text-sm font-medium text-gray-400 uppercase tracking-wider">
-                      Email
-                    </th>
-                    <th className="px-3 sm:px-6 py-4 text-left text-xs sm:text-sm font-medium text-gray-400 uppercase tracking-wider">
-                      Sport
+                      Social Media
                     </th>
                     <th className="px-3 sm:px-6 py-4 text-left text-xs sm:text-sm font-medium text-gray-400 uppercase tracking-wider">
                       Status
                     </th>
                     <th className="px-3 sm:px-6 py-4 text-left text-xs sm:text-sm font-medium text-gray-400 uppercase tracking-wider">
-                      Actions
+                      Full Profile Info
                     </th>
                   </tr>
                 </thead>
@@ -332,20 +306,25 @@ const AthleteManagement = () => {
                         </div>
                       </td>
                       <td className="px-3 sm:px-6 py-4 whitespace-nowrap">
-                        <div className="flex items-center">
-                          <Phone className="h-4 w-4 text-gray-400 mr-2" />
-                          <span className="text-xs sm:text-sm text-gray-300">{athlete?.phone}</span>
-                        </div>
-                      </td>
-                      <td className="px-3 sm:px-6 py-4 whitespace-nowrap">
-                        <div className="flex items-center">
-                          <Mail className="h-4 w-4 text-gray-400 mr-2" />
-                          <span className="text-xs sm:text-sm text-gray-300">{athlete?.email}</span>
-                        </div>
-                      </td>
-                      <td className="px-3 sm:px-6 py-4 whitespace-nowrap">
-                        <div className="text-xs sm:text-sm font-medium text-[#D4BC6D]">
-                          {athlete?.sport}
+                        <div className="flex items-center space-x-2">
+                          {athlete?.social_media?.instagram && (
+                            <a href={athlete.social_media.instagram} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-pink-500 transition-colors">
+                              <Instagram className="h-4 w-4" />
+                            </a>
+                          )}
+                          {athlete?.social_media?.twitter && (
+                            <a href={athlete.social_media.twitter} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-blue-400 transition-colors">
+                              <Twitter className="h-4 w-4" />
+                            </a>
+                          )}
+                          {athlete?.social_media?.facebook && (
+                            <a href={athlete.social_media.facebook} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-blue-600 transition-colors">
+                              <Facebook className="h-4 w-4" />
+                            </a>
+                          )}
+                          {(!athlete?.social_media?.instagram && !athlete?.social_media?.twitter && !athlete?.social_media?.facebook) && (
+                            <span className="text-xs text-gray-500">No social media</span>
+                          )}
                         </div>
                       </td>
                       <td className="px-3 sm:px-6 py-4 whitespace-nowrap">
@@ -365,7 +344,7 @@ const AthleteManagement = () => {
                         <button
                           onClick={() => handleViewAthlete(athlete)}
                           className="p-2 text-gray-400 hover:text-[#D4BC6D] transition-colors"
-                          title="View Athlete"
+                          title="Full Profile Info"
                         >
                           <Eye className="h-4 w-4" />
                         </button>
@@ -492,19 +471,40 @@ const ViewAthleteModal = ({ isOpen, onClose, athlete }) => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-400 mb-1">Phone</label>
-                <div className="flex items-center">
-                  <Phone className="h-4 w-4 text-gray-400 mr-2" />
-                  <p className="text-white">{athlete?.phone}</p>
+                <label className="block text-sm font-medium text-gray-400 mb-1">Social Media</label>
+                <div className="flex items-center space-x-4">
+                  {athlete?.social_media?.instagram && (
+                    <a href={athlete.social_media.instagram} target="_blank" rel="noopener noreferrer" className="flex items-center text-gray-300 hover:text-pink-500 transition-colors">
+                      <Instagram className="h-4 w-4 mr-1" />
+                      <span className="text-sm">Instagram</span>
+                    </a>
+                  )}
+                  {athlete?.social_media?.twitter && (
+                    <a href={athlete.social_media.twitter} target="_blank" rel="noopener noreferrer" className="flex items-center text-gray-300 hover:text-blue-400 transition-colors">
+                      <Twitter className="h-4 w-4 mr-1" />
+                      <span className="text-sm">Twitter</span>
+                    </a>
+                  )}
+                  {athlete?.social_media?.facebook && (
+                    <a href={athlete.social_media.facebook} target="_blank" rel="noopener noreferrer" className="flex items-center text-gray-300 hover:text-blue-600 transition-colors">
+                      <Facebook className="h-4 w-4 mr-1" />
+                      <span className="text-sm">Facebook</span>
+                    </a>
+                  )}
+                  {(!athlete?.social_media?.instagram && !athlete?.social_media?.twitter && !athlete?.social_media?.facebook) && (
+                    <span className="text-sm text-gray-500">No social media accounts</span>
+                  )}
                 </div>
               </div>
 
               <div>
+                <label className="block text-sm font-medium text-gray-400 mb-1">Contact Phone</label>
+                <p className="text-white">{athlete?.phone || 'Not provided'}</p>
+              </div>
+
+              <div>
                 <label className="block text-sm font-medium text-gray-400 mb-1">Email</label>
-                <div className="flex items-center">
-                  <Mail className="h-4 w-4 text-gray-400 mr-2" />
-                  <p className="text-white">{athlete?.email}</p>
-                </div>
+                <p className="text-white">{athlete?.email || 'Not provided'}</p>
               </div>
 
               <div className="grid grid-cols-2 gap-4">

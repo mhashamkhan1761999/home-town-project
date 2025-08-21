@@ -107,7 +107,7 @@ const OrderManagement = () => {
   const [isViewModalOpen, setIsViewModalOpen] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState(null);
 
-  const statusTypes = ['Pending', 'Processing', 'Shipped', 'Delivered', 'Cancelled'];
+  const statusTypes = ['Pending', 'Processing', 'Shipped', 'Delivered', 'Cancelled', 'Return Request', 'Returned'];
   const filterOptions = ['All', ...statusTypes];
 
   // Filter orders based on search term and status
@@ -149,6 +149,10 @@ const OrderManagement = () => {
         return 'bg-green-600 text-white';
       case 'cancelled':
         return 'bg-red-600 text-white';
+      case 'return request':
+        return 'bg-orange-600 text-white';
+      case 'returned':
+        return 'bg-gray-600 text-white';
       default:
         return 'bg-gray-600 text-white';
     }
@@ -164,7 +168,7 @@ const OrderManagement = () => {
         </div>
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-2 lg:grid-cols-5 gap-3 sm:gap-6 mb-6 sm:mb-8">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6 mb-6 sm:mb-8">
           <div className="bg-[#282828] border border-[#4B4C46] rounded-lg p-3 sm:p-6">
             <div className="flex items-center justify-between">
               <div>
@@ -208,18 +212,6 @@ const OrderManagement = () => {
                 </p>
               </div>
               <Package className="h-6 w-6 sm:h-8 sm:w-8 text-green-500" />
-            </div>
-          </div>
-
-          <div className="bg-[#282828] border border-[#4B4C46] rounded-lg p-3 sm:p-6 col-span-2 lg:col-span-1">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-gray-400 text-xs sm:text-sm">Total Revenue</p>
-                <p className="text-lg sm:text-2xl font-bold text-white">
-                  ${orders?.reduce((sum, order) => sum + order?.totalPrice, 0)?.toFixed(2)}
-                </p>
-              </div>
-              <DollarSign className="h-6 w-6 sm:h-8 sm:w-8 text-[#D4BC6D]" />
             </div>
           </div>
         </div>
@@ -267,6 +259,9 @@ const OrderManagement = () => {
                       Order ID
                     </th>
                     <th className="px-3 sm:px-6 py-4 text-left text-xs sm:text-sm font-medium text-gray-400 uppercase tracking-wider">
+                      Shop Name
+                    </th>
+                    <th className="px-3 sm:px-6 py-4 text-left text-xs sm:text-sm font-medium text-gray-400 uppercase tracking-wider">
                       Full Name
                     </th>
                     <th className="px-3 sm:px-6 py-4 text-left text-xs sm:text-sm font-medium text-gray-400 uppercase tracking-wider">
@@ -289,6 +284,11 @@ const OrderManagement = () => {
                       <td className="px-3 sm:px-6 py-4 whitespace-nowrap">
                         <div className="text-xs sm:text-sm font-medium text-[#D4BC6D]">
                           {order?.id}
+                        </div>
+                      </td>
+                      <td className="px-3 sm:px-6 py-4 whitespace-nowrap">
+                        <div className="text-xs sm:text-sm font-medium text-white">
+                          {order?.shop_name || 'N/A'}
                         </div>
                       </td>
                       <td className="px-3 sm:px-6 py-4 whitespace-nowrap">
@@ -372,6 +372,10 @@ const ViewOrderModal = ({ isOpen, onClose, order }) => {
         return 'bg-green-600 text-white';
       case 'Cancelled':
         return 'bg-red-600 text-white';
+      case 'Return Request':
+        return 'bg-orange-600 text-white';
+      case 'Returned':
+        return 'bg-gray-600 text-white';
       default:
         return 'bg-gray-600 text-white';
     }
