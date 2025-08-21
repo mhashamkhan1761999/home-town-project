@@ -1,8 +1,12 @@
 import React, { useState } from 'react';
 import { Search, Eye, Package, DollarSign, ShoppingCart, MapPin, Plus } from 'lucide-react';
+import { useMutation, useQuery } from '@tanstack/react-query';
+import { getRequest, postRequest } from '../api';
+import { queryClient } from '../main';
+import toast from 'react-hot-toast';
 
 const OrderManagement = () => {
-  const [orders, setOrders] = useState([
+  const [orderss, setOrders] = useState([
     {
       id: 'ORD-001',
       fullName: 'John Doe',
@@ -78,6 +82,26 @@ const OrderManagement = () => {
     }
   ]);
 
+  const { data: orders, isLoading, error } = useQuery({
+    queryKey: ['admin-orders'],
+    queryFn: () => getRequest('/admin/get-orders'),
+    onError: (error) => {
+      console.log('Backend not available, using fallback data');
+    }
+  });
+
+  const mutation = useMutation({
+    mutationFn: ({ id, data }) => postRequest(`/admin/update-status/${id}`, data),
+    onSuccess: (res) => {
+      queryClient.invalidateQueries(['admin-orders']);
+      toast.success(res?.message)
+    },
+    onError: (error) => {
+      console.error('Error adding product:', error);
+      // You could add error handling/toast here
+    }
+  });
+
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedStatus, setSelectedStatus] = useState('All');
   const [isViewModalOpen, setIsViewModalOpen] = useState(false);
@@ -87,14 +111,14 @@ const OrderManagement = () => {
   const filterOptions = ['All', ...statusTypes];
 
   // Filter orders based on search term and status
-  const filteredOrders = orders.filter(order => {
-    const matchesSearch = 
-      order.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      order.fullName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      order.email.toLowerCase().includes(searchTerm.toLowerCase());
-    
-    const matchesStatus = selectedStatus === 'All' || order.status === selectedStatus;
-    
+  const filteredOrders = orders?.filter(order => {
+    const matchesSearch =
+      order?.id?.toString()?.includes(searchTerm?.toLowerCase()) ||
+      order?.full_name?.toLowerCase()?.includes(searchTerm?.toLowerCase()) ||
+      order.email?.toLowerCase()?.includes(searchTerm?.toLowerCase());
+
+    const matchesStatus = selectedStatus == 'All' || order?.status == selectedStatus;
+
     return matchesSearch && matchesStatus;
   });
 
@@ -104,22 +128,26 @@ const OrderManagement = () => {
   };
 
   const handleStatusChange = (orderId, newStatus) => {
-    setOrders(orders.map(order => 
-      order.id === orderId ? { ...order, status: newStatus } : order
-    ));
+    mutation.mutate({
+      id: orderId,
+      data: { status: newStatus?.toLowerCase() }
+    })
+    // setOrders(orders.map(order =>
+    //   order.id === orderId ? { ...order, status: newStatus } : order
+    // ));
   };
 
   const getStatusColor = (status) => {
     switch (status) {
-      case 'Pending':
+      case 'pending':
         return 'bg-yellow-600 text-white';
-      case 'Processing':
+      case 'processing':
         return 'bg-blue-600 text-white';
-      case 'Shipped':
+      case 'shipped':
         return 'bg-purple-600 text-white';
-      case 'Delivered':
+      case 'delivered':
         return 'bg-green-600 text-white';
-      case 'Cancelled':
+      case 'cancelled':
         return 'bg-red-600 text-white';
       default:
         return 'bg-gray-600 text-white';
@@ -141,54 +169,54 @@ const OrderManagement = () => {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-gray-400 text-xs sm:text-sm">Total Orders</p>
-                <p className="text-lg sm:text-2xl font-bold text-white">{orders.length}</p>
+                <p className="text-lg sm:text-2xl font-bold text-white">{orders?.length}</p>
               </div>
               <Package className="h-6 w-6 sm:h-8 sm:w-8 text-[#D4BC6D]" />
             </div>
           </div>
-          
+
           <div className="bg-[#282828] border border-[#4B4C46] rounded-lg p-3 sm:p-6">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-gray-400 text-xs sm:text-sm">Pending</p>
                 <p className="text-lg sm:text-2xl font-bold text-white">
-                  {orders.filter(o => o.status === 'Pending').length}
+                  {orders?.filter(o => o.status === 'pending')?.length}
                 </p>
               </div>
               <ShoppingCart className="h-6 w-6 sm:h-8 sm:w-8 text-yellow-500" />
             </div>
           </div>
-          
+
           <div className="bg-[#282828] border border-[#4B4C46] rounded-lg p-3 sm:p-6">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-gray-400 text-xs sm:text-sm">Processing</p>
                 <p className="text-lg sm:text-2xl font-bold text-white">
-                  {orders.filter(o => o.status === 'Processing').length}
+                  {orders?.filter(o => o.status == 'processing')?.length}
                 </p>
               </div>
               <Package className="h-6 w-6 sm:h-8 sm:w-8 text-blue-500" />
             </div>
           </div>
-          
+
           <div className="bg-[#282828] border border-[#4B4C46] rounded-lg p-3 sm:p-6">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-gray-400 text-xs sm:text-sm">Delivered</p>
                 <p className="text-lg sm:text-2xl font-bold text-white">
-                  {orders.filter(o => o.status === 'Delivered').length}
+                  {orders?.filter(o => o.status === 'delivered')?.length}
                 </p>
               </div>
               <Package className="h-6 w-6 sm:h-8 sm:w-8 text-green-500" />
             </div>
           </div>
-          
+
           <div className="bg-[#282828] border border-[#4B4C46] rounded-lg p-3 sm:p-6 col-span-2 lg:col-span-1">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-gray-400 text-xs sm:text-sm">Total Revenue</p>
                 <p className="text-lg sm:text-2xl font-bold text-white">
-                  ${orders.reduce((sum, order) => sum + order.totalPrice, 0).toFixed(2)}
+                  ${orders?.reduce((sum, order) => sum + order?.totalPrice, 0)?.toFixed(2)}
                 </p>
               </div>
               <DollarSign className="h-6 w-6 sm:h-8 sm:w-8 text-[#D4BC6D]" />
@@ -256,16 +284,16 @@ const OrderManagement = () => {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-[#4B4C46]">
-                  {filteredOrders.map((order) => (
-                    <tr key={order.id} className="hover:bg-[#1a1a1a] transition-colors">
+                  {filteredOrders?.map((order) => (
+                    <tr key={order?.id} className="hover:bg-[#1a1a1a] transition-colors">
                       <td className="px-3 sm:px-6 py-4 whitespace-nowrap">
                         <div className="text-xs sm:text-sm font-medium text-[#D4BC6D]">
-                          {order.id}
+                          {order?.id}
                         </div>
                       </td>
                       <td className="px-3 sm:px-6 py-4 whitespace-nowrap">
                         <div className="text-xs sm:text-sm font-medium text-white">
-                          {order.fullName}
+                          {order?.full_name}
                         </div>
                       </td>
                       <td className="px-3 sm:px-6 py-4 whitespace-nowrap">
@@ -275,17 +303,17 @@ const OrderManagement = () => {
                       </td>
                       <td className="px-3 sm:px-6 py-4 whitespace-nowrap">
                         <div className="text-xs sm:text-sm font-medium text-[#D4BC6D]">
-                          ${order.totalPrice.toFixed(2)}
+                          ${parseFloat(order?.total_price)?.toFixed(2)}
                         </div>
                       </td>
                       <td className="px-3 sm:px-6 py-4 whitespace-nowrap">
                         <select
-                          value={order.status}
-                          onChange={(e) => handleStatusChange(order.id, e.target.value)}
+                          value={order?.status}
+                          onChange={(e) => handleStatusChange(order?.id, e.target.value)}
                           className={`text-xs font-semibold rounded-full px-2 py-1 focus:outline-none focus:ring-2 focus:ring-[#D4BC6D] ${getStatusColor(order.status)}`}
                         >
-                          {statusTypes.map(status => (
-                            <option key={status} value={status} className="bg-[#1a1a1a] text-white">
+                          {statusTypes?.map(status => (
+                            <option key={status} value={status?.toLowerCase()} className="bg-[#1a1a1a] text-white">
                               {status}
                             </option>
                           ))}
@@ -307,7 +335,7 @@ const OrderManagement = () => {
             </div>
           </div>
 
-          {filteredOrders.length === 0 && (
+          {filteredOrders?.length === 0 && (
             <div className="text-center py-12">
               <Package className="h-12 w-12 text-gray-400 mx-auto mb-4" />
               <p className="text-gray-400">No orders found matching your criteria</p>
@@ -368,31 +396,31 @@ const ViewOrderModal = ({ isOpen, onClose, order }) => {
           {/* Order Information */}
           <div className="space-y-4">
             <h3 className="text-lg font-semibold text-white mb-4">Order Information</h3>
-            
+
             <div className="space-y-3">
               <div>
                 <label className="block text-sm font-medium text-gray-400 mb-1">Order ID</label>
                 <p className="text-[#D4BC6D] font-medium">{order.id}</p>
               </div>
-              
+
               <div>
                 <label className="block text-sm font-medium text-gray-400 mb-1">Full Name</label>
                 <p className="text-white">{order.fullName}</p>
               </div>
-              
+
               <div>
                 <label className="block text-sm font-medium text-gray-400 mb-1">Email</label>
                 <p className="text-white">{order.email}</p>
               </div>
-              
+
               <div>
                 <label className="block text-sm font-medium text-gray-400 mb-1">Total Price</label>
-                <p className="text-[#D4BC6D] font-bold text-lg">${order.totalPrice.toFixed(2)}</p>
+                <p className="text-[#D4BC6D] font-bold text-lg">${parseFloat(order.totalPrice)?.toFixed(2)}</p>
               </div>
-              
+
               <div>
                 <label className="block text-sm font-medium text-gray-400 mb-1">Status</label>
-                <span className={`inline-flex px-3 py-1 text-sm font-semibold rounded-full ${getStatusColor(order.status)}`}>
+                <span className={`inline-flex px-3 py-1 text-sm font-semibold rounded-full ${getStatusColor(order?.status)}`}>
                   {order.status}
                 </span>
               </div>
@@ -402,23 +430,23 @@ const ViewOrderModal = ({ isOpen, onClose, order }) => {
           {/* Shipping Information */}
           <div className="space-y-4">
             <h3 className="text-lg font-semibold text-white mb-4">Shipping Information</h3>
-            
+
             <div className="space-y-3">
               <div>
                 <label className="block text-sm font-medium text-gray-400 mb-1">Address</label>
                 <p className="text-white">{order.address}</p>
               </div>
-              
+
               <div>
                 <label className="block text-sm font-medium text-gray-400 mb-1">City</label>
                 <p className="text-white">{order.city}</p>
               </div>
-              
+
               <div>
                 <label className="block text-sm font-medium text-gray-400 mb-1">Postal Code</label>
                 <p className="text-white">{order.postalCode}</p>
               </div>
-              
+
               <div>
                 <label className="block text-sm font-medium text-gray-400 mb-1">Country</label>
                 <p className="text-white">{order.country}</p>
@@ -430,7 +458,7 @@ const ViewOrderModal = ({ isOpen, onClose, order }) => {
         {/* Order Items */}
         <div className="mt-6">
           <h3 className="text-lg font-semibold text-white mb-4">Order Items</h3>
-          
+
           <div className="bg-[#1a1a1a] border border-[#4B4C46] rounded-lg overflow-hidden">
             <div className="overflow-x-auto">
               <table className="w-full">
@@ -451,19 +479,19 @@ const ViewOrderModal = ({ isOpen, onClose, order }) => {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-[#4B4C46]">
-                  {order.orderItems.map((item) => (
+                  {order?.items?.map((item) => (
                     <tr key={item.id} className="hover:bg-[#282828] transition-colors">
                       <td className="px-4 py-3 text-sm text-white">
-                        {item.productName}
+                        {item?.product?.name}
                       </td>
                       <td className="px-4 py-3 text-sm text-[#D4BC6D]">
-                        ${item.price.toFixed(2)}
+                        ${parseFloat(item?.product?.price).toFixed(2)}
                       </td>
                       <td className="px-4 py-3 text-sm text-white">
-                        {item.qty}
+                        {item?.quantity}
                       </td>
                       <td className="px-4 py-3 text-sm text-[#D4BC6D] font-medium">
-                        ${(item.price * item.qty).toFixed(2)}
+                        ${parseFloat(item?.price * item?.quantity).toFixed(2)}
                       </td>
                     </tr>
                   ))}
@@ -474,7 +502,8 @@ const ViewOrderModal = ({ isOpen, onClose, order }) => {
                       Total Amount:
                     </td>
                     <td className="px-4 py-3 text-sm font-bold text-[#D4BC6D]">
-                      ${order.totalPrice.toFixed(2)}
+                      ${order?.items?.reduce((sum, item) => sum + (item?.price * item?.quantity), 0)?.toFixed(2)}
+
                     </td>
                   </tr>
                 </tfoot>

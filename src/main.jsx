@@ -46,6 +46,9 @@ import UserManagement from './super-admin-pages/UserManagement.jsx'
 import OrderManagement from './super-admin-pages/OrderManagement.jsx'
 import AthleteManagement from './super-admin-pages/AthleteManagement.jsx'
 import AthleteProductsManagement from './super-admin-pages/AthleteProductsManagement.jsx'
+import AdminLoginPage from './super-admin-pages/AdminLoginPage.jsx'
+
+
 export const queryClient = new QueryClient();
 
 
@@ -85,8 +88,10 @@ const AllRoutes = () => {
           <Route path='settings' element={<Settings />} />
         </Route>
 
+        <Route path='admin/login' element={<AdminLoginPage />} />
+
         <Route path='admin' element={<SuperAdminLayout />}>
-          <Route  path='home' element={<SuperAdminHome />} />
+          <Route path='home' element={<SuperAdminHome />} />
           <Route path='dashboard' element={<SuperAdminDashboard />} />
           <Route path='products' element={<SuperAdminProducts />} />
           <Route path='users' element={<UserManagement />} />

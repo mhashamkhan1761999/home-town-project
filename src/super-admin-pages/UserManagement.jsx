@@ -1,8 +1,11 @@
 import React, { useState } from 'react';
 import { Plus, Search, Edit, Trash2, Eye, User, Mail, Shield, EyeOff } from 'lucide-react';
+import { useMutation, useQuery } from '@tanstack/react-query';
+import { deleteRequest, getRequest, postRequest } from '../api';
+import { queryClient } from '../main';
 
 const UserManagement = () => {
-  const [users, setUsers] = useState([
+  const [userss, setUsers] = useState([
     {
       id: 1,
       firstName: 'John',
@@ -53,18 +56,26 @@ const UserManagement = () => {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
 
+
+  const { data: users, isLoading, error } = useQuery({
+    queryKey: ['admin-users'],
+    queryFn: () => getRequest('/admin/users'),
+    onError: (error) => {
+      console.log('Backend not available, using fallback data');
+    }
+  });
+
   const roleTypes = ['Admin', 'SuperAdmin', 'User'];
   const filterOptions = ['All', ...roleTypes];
 
   // Filter users based on search term and role
-  const filteredUsers = users.filter(user => {
-    const matchesSearch = 
-      user.firstName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      user.lastName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      user.email.toLowerCase().includes(searchTerm.toLowerCase());
-    
-    const matchesRole = selectedRole === 'All' || user.roleType === selectedRole;
-    
+  const filteredUsers = users?.filter(user => {
+    const matchesSearch =
+      user?.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      user?.email?.toLowerCase().includes(searchTerm.toLowerCase());
+
+    const matchesRole = selectedRole == 'All' || user?.role_type == selectedRole;
+
     return matchesSearch && matchesRole;
   });
 
@@ -116,43 +127,40 @@ const UserManagement = () => {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-gray-400 text-sm">Total Users</p>
-                <p className="text-2xl font-bold text-white">{users.length}</p>
+                <p className="text-2xl font-bold text-white">{users?.length}</p>
               </div>
               <User className="h-8 w-8 text-[#D4BC6D]" />
             </div>
           </div>
-          
+
           <div className="bg-[#282828] border border-[#4B4C46] rounded-lg p-6">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-gray-400 text-sm">Admins</p>
                 <p className="text-2xl font-bold text-white">
-                  {users.filter(u => u.roleType === 'Admin').length}
-                </p>
+                  {users?.filter(u => u.role_type == 'Admin')?.length}</p>
               </div>
               <Shield className="h-8 w-8 text-red-500" />
             </div>
           </div>
-          
+
           <div className="bg-[#282828] border border-[#4B4C46] rounded-lg p-6">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-gray-400 text-sm">SuperAdmins</p>
                 <p className="text-2xl font-bold text-white">
-                  {users.filter(u => u.roleType === 'SuperAdmin').length}
-                </p>
+                  {users?.filter(u => u.role_type == 'SuperAdmin')?.length}</p>
               </div>
               <Shield className="h-8 w-8 text-blue-500" />
             </div>
           </div>
-          
+
           <div className="bg-[#282828] border border-[#4B4C46] rounded-lg p-6">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-gray-400 text-sm">Regular Users</p>
                 <p className="text-2xl font-bold text-white">
-                  {users.filter(u => u.roleType === 'User').length}
-                </p>
+                  {users?.filter(u => u.role_type === 'User')?.length}</p>
               </div>
               <User className="h-8 w-8 text-green-500" />
             </div>
@@ -181,7 +189,7 @@ const UserManagement = () => {
                 onChange={(e) => setSelectedRole(e.target.value)}
                 className="px-4 py-2 bg-[#1a1a1a] border border-[#4B4C46] rounded-lg text-white focus:outline-none focus:border-[#D4BC6D]"
               >
-                {filterOptions.map(role => (
+                {filterOptions?.map(role => (
                   <option key={role} value={role} className="bg-[#1a1a1a]">
                     {role}
                   </option>
@@ -221,7 +229,7 @@ const UserManagement = () => {
                 </tr>
               </thead>
               <tbody className="divide-y divide-[#4B4C46]">
-                {filteredUsers.map((user) => (
+                {filteredUsers?.map((user) => (
                   <tr key={user.id} className="hover:bg-[#1a1a1a] transition-colors">
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center">
@@ -230,7 +238,7 @@ const UserManagement = () => {
                         </div>
                         <div className="ml-4">
                           <div className="text-sm font-medium text-white">
-                            {user.firstName} {user.lastName}
+                            {user?.name}
                           </div>
                         </div>
                       </div>
@@ -238,12 +246,12 @@ const UserManagement = () => {
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center">
                         <Mail className="h-4 w-4 text-gray-400 mr-2" />
-                        <span className="text-sm text-gray-300">{user.email}</span>
+                        <span className="text-sm text-gray-300">{user?.email}</span>
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getRoleColor(user.roleType)}`}>
-                        {user.roleType}
+                      <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getRoleColor(user?.role_type)}`}>
+                        {user?.role_type}
                       </span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
@@ -277,7 +285,7 @@ const UserManagement = () => {
             </table>
           </div>
 
-          {filteredUsers.length === 0 && (
+          {filteredUsers?.length === 0 && (
             <div className="text-center py-12">
               <User className="h-12 w-12 text-gray-400 mx-auto mb-4" />
               <p className="text-gray-400">No users found matching your criteria</p>
@@ -334,9 +342,22 @@ const AddUserModal = ({ isOpen, onClose, users, setUsers }) => {
     lastName: '',
     email: '',
     password: '',
-    roleType: 'User'
+    role_type: 'User'
   });
   const [showPassword, setShowPassword] = useState(false);
+
+  const mutation = useMutation({
+    mutationFn: (data) => postRequest('/admin/users', data),
+    onSuccess: () => {
+      queryClient.invalidateQueries(['admin-users']);
+      onClose();
+      // You could add a toast notification here
+    },
+    onError: (error) => {
+      console.error('Error adding product:', error);
+      // You could add error handling/toast here
+    }
+  });
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -353,6 +374,13 @@ const AddUserModal = ({ isOpen, onClose, users, setUsers }) => {
       password: '',
       roleType: 'User'
     });
+    // const newUser = {
+    //   id: Math.max(...users.map(u => u.id)) + 1,
+    //   ...formData
+    // };
+    // setUsers([...users, newUser]);
+    mutation.mutate(formData)
+
     setShowPassword(false);
   };
 
@@ -362,30 +390,18 @@ const AddUserModal = ({ isOpen, onClose, users, setUsers }) => {
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-[#282828] border border-[#4B4C46] rounded-lg p-6 w-full max-w-md mx-4">
         <h2 className="text-xl font-bold text-[#D4BC6D] mb-4">Add New User</h2>
-        
+
         <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-400 mb-1">
-              First Name
-            </label>
-            <input
-              type="text"
-              required
-              value={formData.firstName}
-              onChange={(e) => setFormData({...formData, firstName: e.target.value})}
-              className="w-full px-3 py-2 bg-[#1a1a1a] border border-[#4B4C46] rounded-lg text-white focus:outline-none focus:border-[#D4BC6D]"
-            />
-          </div>
 
           <div>
             <label className="block text-sm font-medium text-gray-400 mb-1">
-              Last Name
+              Name
             </label>
             <input
               type="text"
               required
-              value={formData.lastName}
-              onChange={(e) => setFormData({...formData, lastName: e.target.value})}
+              value={formData?.name}
+              onChange={(e) => setFormData({ ...formData, name: e?.target?.value })}
               className="w-full px-3 py-2 bg-[#1a1a1a] border border-[#4B4C46] rounded-lg text-white focus:outline-none focus:border-[#D4BC6D]"
             />
           </div>
@@ -398,7 +414,7 @@ const AddUserModal = ({ isOpen, onClose, users, setUsers }) => {
               type="email"
               required
               value={formData.email}
-              onChange={(e) => setFormData({...formData, email: e.target.value})}
+              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
               className="w-full px-3 py-2 bg-[#1a1a1a] border border-[#4B4C46] rounded-lg text-white focus:outline-none focus:border-[#D4BC6D]"
             />
           </div>
@@ -412,7 +428,7 @@ const AddUserModal = ({ isOpen, onClose, users, setUsers }) => {
                 type={showPassword ? "text" : "password"}
                 required
                 value={formData.password}
-                onChange={(e) => setFormData({...formData, password: e.target.value})}
+                onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                 className="w-full px-3 py-2 pr-10 bg-[#1a1a1a] border border-[#4B4C46] rounded-lg text-white focus:outline-none focus:border-[#D4BC6D]"
               />
               <button
@@ -430,8 +446,8 @@ const AddUserModal = ({ isOpen, onClose, users, setUsers }) => {
               Role Type
             </label>
             <select
-              value={formData.roleType}
-              onChange={(e) => setFormData({...formData, roleType: e.target.value})}
+              value={formData?.role_type}
+              onChange={(e) => setFormData({ ...formData, role_type: e.target.value })}
               className="w-full px-3 py-2 bg-[#1a1a1a] border border-[#4B4C46] rounded-lg text-white focus:outline-none focus:border-[#D4BC6D]"
             >
               <option value="SuperAdmin">SuperAdmin</option>
@@ -464,21 +480,38 @@ const AddUserModal = ({ isOpen, onClose, users, setUsers }) => {
 // Edit User Modal
 const EditUserModal = ({ isOpen, onClose, user, users, setUsers }) => {
   const [formData, setFormData] = useState({
-    firstName: user?.firstName || '',
-    lastName: user?.lastName || '',
+    name: user?.name || '',
     email: user?.email || '',
     password: user?.password || '',
-    roleType: user?.roleType || 'User'
+    role_type: user?.role_type || 'User'
   });
   const [showPassword, setShowPassword] = useState(false);
 
+  const mutation = useMutation({
+    mutationFn: (data) => putRequest(`/admin/users/${user?.id}`, data),
+    onSuccess: (res) => {
+      queryClient.invalidateQueries(['admin-users']);
+      onClose();
+      // You could add a toast notification here
+    },
+    onError: (error) => {
+      console.error('Error adding product:', error);
+      // You could add error handling/toast here
+    }
+  });
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    const updatedUsers = users.map(u => 
+    const updatedUsers = users.map(u =>
       u.id === user.id ? { ...u, ...formData } : u
     );
     setUsers(updatedUsers);
     onClose();
+    // const updatedUsers = users.map(u =>
+    //   u.id === user.id ? { ...u, ...formData } : u
+    // );
+    // setUsers(updatedUsers);
+    mutation.mutate(formData)
   };
 
   if (!isOpen) return null;
@@ -487,30 +520,19 @@ const EditUserModal = ({ isOpen, onClose, user, users, setUsers }) => {
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-[#282828] border border-[#4B4C46] rounded-lg p-6 w-full max-w-md mx-4">
         <h2 className="text-xl font-bold text-[#D4BC6D] mb-4">Edit User</h2>
-        
+
         <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-400 mb-1">
-              First Name
-            </label>
-            <input
-              type="text"
-              required
-              value={formData.firstName}
-              onChange={(e) => setFormData({...formData, firstName: e.target.value})}
-              className="w-full px-3 py-2 bg-[#1a1a1a] border border-[#4B4C46] rounded-lg text-white focus:outline-none focus:border-[#D4BC6D]"
-            />
-          </div>
+
 
           <div>
             <label className="block text-sm font-medium text-gray-400 mb-1">
-              Last Name
+              Name
             </label>
             <input
               type="text"
               required
-              value={formData.lastName}
-              onChange={(e) => setFormData({...formData, lastName: e.target.value})}
+              value={formData.name}
+              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
               className="w-full px-3 py-2 bg-[#1a1a1a] border border-[#4B4C46] rounded-lg text-white focus:outline-none focus:border-[#D4BC6D]"
             />
           </div>
@@ -521,7 +543,7 @@ const EditUserModal = ({ isOpen, onClose, user, users, setUsers }) => {
             </label>
             <input
               type="email"
-              value={formData.email}
+              value={formData?.email}
               readOnly
               className="w-full px-3 py-2 bg-[#1a1a1a] border border-[#4B4C46] rounded-lg text-gray-400 cursor-not-allowed"
             />
@@ -536,7 +558,7 @@ const EditUserModal = ({ isOpen, onClose, user, users, setUsers }) => {
                 type={showPassword ? "text" : "password"}
                 required
                 value={formData.password}
-                onChange={(e) => setFormData({...formData, password: e.target.value})}
+                onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                 className="w-full px-3 py-2 pr-10 bg-[#1a1a1a] border border-[#4B4C46] rounded-lg text-white focus:outline-none focus:border-[#D4BC6D]"
               />
               <button
@@ -554,8 +576,8 @@ const EditUserModal = ({ isOpen, onClose, user, users, setUsers }) => {
               Role Type
             </label>
             <select
-              value={formData.roleType}
-              onChange={(e) => setFormData({...formData, roleType: e.target.value})}
+              value={formData?.role_type}
+              onChange={(e) => setFormData({ ...formData, role_type: e.target.value })}
               className="w-full px-3 py-2 bg-[#1a1a1a] border border-[#4B4C46] rounded-lg text-white focus:outline-none focus:border-[#D4BC6D]"
             >
               <option value="SuperAdmin">SuperAdmin</option>
@@ -593,7 +615,7 @@ const ViewUserModal = ({ isOpen, onClose, user }) => {
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-[#282828] border border-[#4B4C46] rounded-lg p-6 w-full max-w-md mx-4">
         <h2 className="text-xl font-bold text-[#D4BC6D] mb-4">User Details</h2>
-        
+
         <div className="space-y-4">
           <div className="flex items-center justify-center mb-6">
             <div className="h-20 w-20 rounded-full bg-[#D4BC6D] flex items-center justify-center">
@@ -606,16 +628,7 @@ const ViewUserModal = ({ isOpen, onClose, user }) => {
               First Name
             </label>
             <div className="w-full px-3 py-2 bg-[#1a1a1a] border border-[#4B4C46] rounded-lg text-white">
-              {user.firstName}
-            </div>
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-400 mb-1">
-              Last Name
-            </label>
-            <div className="w-full px-3 py-2 bg-[#1a1a1a] border border-[#4B4C46] rounded-lg text-white">
-              {user.lastName}
+              {user.name}
             </div>
           </div>
 
@@ -624,7 +637,7 @@ const ViewUserModal = ({ isOpen, onClose, user }) => {
               Email
             </label>
             <div className="w-full px-3 py-2 bg-[#1a1a1a] border border-[#4B4C46] rounded-lg text-white">
-              {user.email}
+              {user?.email}
             </div>
           </div>
 
@@ -633,7 +646,7 @@ const ViewUserModal = ({ isOpen, onClose, user }) => {
               Role Type
             </label>
             <div className="w-full px-3 py-2 bg-[#1a1a1a] border border-[#4B4C46] rounded-lg text-white">
-              {user.roleType}
+              {user?.role_type}
             </div>
           </div>
 
@@ -653,10 +666,19 @@ const ViewUserModal = ({ isOpen, onClose, user }) => {
 
 // Delete User Modal
 const DeleteUserModal = ({ isOpen, onClose, user, users, setUsers }) => {
+  const mutation = useMutation({
+    mutationFn: (id) => deleteRequest(`/admin/users/${id}`),
+    onSuccess: () => {
+      queryClient.invalidateQueries(['admin-users']);
+      onClose();
+    },
+  });
+
   const handleDelete = () => {
-    const updatedUsers = users.filter(u => u.id !== user.id);
-    setUsers(updatedUsers);
-    onClose();
+    // const updatedUsers = users.filter(u => u.id !== user.id);
+    // setUsers(updatedUsers);
+
+    mutation.mutate(user?.id)
   };
 
   if (!isOpen) return null;
@@ -665,17 +687,17 @@ const DeleteUserModal = ({ isOpen, onClose, user, users, setUsers }) => {
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-[#282828] border border-[#4B4C46] rounded-lg p-6 w-full max-w-md mx-4">
         <h2 className="text-xl font-bold text-red-400 mb-4">Delete User</h2>
-        
+
         <div className="mb-6">
           <p className="text-gray-300 mb-2">
             Are you sure you want to delete this user?
           </p>
           <div className="bg-[#1a1a1a] border border-[#4B4C46] rounded-lg p-4">
             <p className="text-white font-medium">
-              {user.firstName} {user.lastName}
+              {user?.name}
             </p>
-            <p className="text-gray-400 text-sm">{user.email}</p>
-            <p className="text-gray-400 text-sm">Role: {user.roleType}</p>
+            <p className="text-gray-400 text-sm">{user?.email}</p>
+            <p className="text-gray-400 text-sm">Role: {user?.role_type}</p>
           </div>
           <p className="text-red-400 text-sm mt-2">
             This action cannot be undone.

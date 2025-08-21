@@ -92,7 +92,6 @@ const SuperAdminLayout = () => {
                     
                     <div className="mb-4 flex justify-center">
                         <NavLink
-                            to="/athlete/profile"
                             className="w-[3.5rem] h-[3.5rem] rounded-full overflow-hidden border-[2px] border-[#CAB265]"
                             onClick={() => setIsMobileMenuOpen(false)}
                         >
@@ -185,7 +184,6 @@ const SuperAdminLayout = () => {
 
                     <div className="mt-6 mb-4 flex justify-center">
                         <NavLink
-                            to="/athlete/profile"
                             className="w-[3.5rem] h-[3.5rem] rounded-full overflow-hidden border-[2px] border-[#CAB265]">
                             <img
                                 src={profileImage}

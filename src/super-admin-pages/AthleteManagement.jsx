@@ -1,8 +1,12 @@
 import React, { useState } from 'react';
 import { Search, Eye, User, Users, Trophy, Star, Phone, Mail } from 'lucide-react';
+import { useMutation, useQuery } from '@tanstack/react-query';
+import { getRequest, postRequest } from '../api';
+import { queryClient } from '../main';
+import toast from 'react-hot-toast';
 
 const AthleteManagement = () => {
-  const [athletes, setAthletes] = useState([
+  const [athletess, setAthletes] = useState([
     {
       id: 1,
       athleteName: 'Michael Jordan',
@@ -107,6 +111,26 @@ const AthleteManagement = () => {
     }
   ]);
 
+  const { data: athletes, isLoading, error } = useQuery({
+    queryKey: ['admin-athletes'],
+    queryFn: () => getRequest('/admin/get-athletes'),
+    onError: (error) => {
+      console.log('Backend not available, using fallback data');
+    }
+  });
+
+  const mutation = useMutation({
+    mutationFn: ({ id, data }) => postRequest(`/admin/update-status-athlete/${id}`, data),
+    onSuccess: (res) => {
+      queryClient.invalidateQueries(['admin-athletes']);
+      toast.success(res?.message)
+    },
+    onError: (error) => {
+      console.error('Error adding product:', error);
+      // You could add error handling/toast here
+    }
+  });
+
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedStatus, setSelectedStatus] = useState('All');
   const [isViewModalOpen, setIsViewModalOpen] = useState(false);
@@ -116,15 +140,15 @@ const AthleteManagement = () => {
   const filterOptions = ['All', ...statusTypes];
 
   // Filter athletes based on search term and status
-  const filteredAthletes = athletes.filter(athlete => {
-    const matchesSearch = 
-      athlete.athleteName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      athlete.phone.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      athlete.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      athlete.sport.toLowerCase().includes(searchTerm.toLowerCase());
-    
-    const matchesStatus = selectedStatus === 'All' || athlete.status === selectedStatus;
-    
+  const filteredAthletes = athletes?.filter(athlete => {
+    const matchesSearch =
+      athlete?.athlete_name?.toLowerCase().includes(searchTerm?.toLowerCase()) ||
+      athlete?.phone?.toLowerCase().includes(searchTerm?.toLowerCase()) ||
+      athlete?.email?.toLowerCase().includes(searchTerm?.toLowerCase()) ||
+      athlete?.sport_name?.toLowerCase().includes(searchTerm?.toLowerCase());
+
+    const matchesStatus = selectedStatus == 'All' || athlete?.status == selectedStatus;
+
     return matchesSearch && matchesStatus;
   });
 
@@ -134,20 +158,24 @@ const AthleteManagement = () => {
   };
 
   const handleStatusChange = (athleteId, newStatus) => {
-    setAthletes(athletes.map(athlete => 
+    mutation.mutate({
+      id: athleteId,
+      data: { status: newStatus?.toLowerCase() }
+    })
+    setAthletes(athletes.map(athlete =>
       athlete.id === athleteId ? { ...athlete, status: newStatus } : athlete
     ));
   };
 
   const getStatusColor = (status) => {
     switch (status) {
-      case 'Active':
+      case 'active':
         return 'bg-green-600 text-white';
-      case 'Inactive':
+      case 'inactive':
         return 'bg-gray-600 text-white';
-      case 'Pending':
+      case 'pending':
         return 'bg-yellow-600 text-white';
-      case 'Suspended':
+      case 'suspended':
         return 'bg-red-600 text-white';
       default:
         return 'bg-gray-600 text-white';
@@ -188,30 +216,30 @@ const AthleteManagement = () => {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-gray-400 text-xs sm:text-sm">Total Athletes</p>
-                <p className="text-lg sm:text-2xl font-bold text-white">{athletes.length}</p>
+                <p className="text-lg sm:text-2xl font-bold text-white">{athletes?.length}</p>
               </div>
               <Users className="h-6 w-6 sm:h-8 sm:w-8 text-[#D4BC6D]" />
             </div>
           </div>
-          
+
           <div className="bg-[#282828] border border-[#4B4C46] rounded-lg p-3 sm:p-6">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-gray-400 text-xs sm:text-sm">Active</p>
                 <p className="text-lg sm:text-2xl font-bold text-white">
-                  {athletes.filter(a => a.status === 'Active').length}
+                  {athletes?.filter(a => a.status == 'active')?.length}
                 </p>
               </div>
               <User className="h-6 w-6 sm:h-8 sm:w-8 text-green-500" />
             </div>
           </div>
-          
+
           <div className="bg-[#282828] border border-[#4B4C46] rounded-lg p-3 sm:p-6">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-gray-400 text-xs sm:text-sm">Pending</p>
                 <p className="text-lg sm:text-2xl font-bold text-white">
-                  {athletes.filter(a => a.status === 'Pending').length}
+                  {athletes?.filter(a => a.status == 'pending')?.length}
                 </p>
               </div>
               <User className="h-6 w-6 sm:h-8 sm:w-8 text-yellow-500" />
@@ -279,14 +307,14 @@ const AthleteManagement = () => {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-[#4B4C46]">
-                  {filteredAthletes.map((athlete) => (
+                  {filteredAthletes?.map((athlete) => (
                     <tr key={athlete.id} className="hover:bg-[#1a1a1a] transition-colors">
                       <td className="px-3 sm:px-6 py-4 whitespace-nowrap">
                         <div className="flex items-center">
                           <div className="h-10 w-10 rounded-full overflow-hidden border-2 border-[#D4BC6D]">
                             <img
-                              src={athlete.profilePicture}
-                              alt={athlete.athleteName}
+                              src={athlete?.profile_picture}
+                              alt={athlete?.athlete_name}
                               className="h-full w-full object-cover"
                               onError={(e) => {
                                 e.target.src = '/default.jpg';
@@ -295,10 +323,10 @@ const AthleteManagement = () => {
                           </div>
                           <div className="ml-4">
                             <div className="text-xs sm:text-sm font-medium text-white">
-                              {athlete.athleteName}
+                              {athlete?.athlete_name}
                             </div>
                             <div className="text-xs text-gray-400">
-                              {athlete.levelOfAthlete}
+                              {athlete?.level_of_athlete}
                             </div>
                           </div>
                         </div>
@@ -306,28 +334,28 @@ const AthleteManagement = () => {
                       <td className="px-3 sm:px-6 py-4 whitespace-nowrap">
                         <div className="flex items-center">
                           <Phone className="h-4 w-4 text-gray-400 mr-2" />
-                          <span className="text-xs sm:text-sm text-gray-300">{athlete.phone}</span>
+                          <span className="text-xs sm:text-sm text-gray-300">{athlete?.phone}</span>
                         </div>
                       </td>
                       <td className="px-3 sm:px-6 py-4 whitespace-nowrap">
                         <div className="flex items-center">
                           <Mail className="h-4 w-4 text-gray-400 mr-2" />
-                          <span className="text-xs sm:text-sm text-gray-300">{athlete.email}</span>
+                          <span className="text-xs sm:text-sm text-gray-300">{athlete?.email}</span>
                         </div>
                       </td>
                       <td className="px-3 sm:px-6 py-4 whitespace-nowrap">
                         <div className="text-xs sm:text-sm font-medium text-[#D4BC6D]">
-                          {athlete.sport}
+                          {athlete?.sport}
                         </div>
                       </td>
                       <td className="px-3 sm:px-6 py-4 whitespace-nowrap">
                         <select
-                          value={athlete.status}
-                          onChange={(e) => handleStatusChange(athlete.id, e.target.value)}
+                          value={athlete?.status}
+                          onChange={(e) => handleStatusChange(athlete?.id, e.target.value)}
                           className={`text-xs font-semibold rounded-full px-2 py-1 focus:outline-none focus:ring-2 focus:ring-[#D4BC6D] ${getStatusColor(athlete.status)}`}
                         >
                           {statusTypes.map(status => (
-                            <option key={status} value={status} className="bg-[#1a1a1a] text-white">
+                            <option key={status} value={status?.toLowerCase()} className="bg-[#1a1a1a] text-white">
                               {status}
                             </option>
                           ))}
@@ -349,7 +377,7 @@ const AthleteManagement = () => {
             </div>
           </div>
 
-          {filteredAthletes.length === 0 && (
+          {filteredAthletes?.length === 0 && (
             <div className="text-center py-12">
               <Users className="h-12 w-12 text-gray-400 mx-auto mb-4" />
               <p className="text-gray-400">No athletes found matching your criteria</p>
@@ -426,7 +454,7 @@ const ViewAthleteModal = ({ isOpen, onClose, athlete }) => {
         {/* Cover Picture */}
         <div className="relative h-32 sm:h-48 rounded-lg overflow-hidden mb-6">
           <img
-            src={athlete.coverPicture}
+            src={athlete?.cover_photo}
             alt="Cover"
             className="w-full h-full object-cover"
             onError={(e) => {
@@ -437,8 +465,8 @@ const ViewAthleteModal = ({ isOpen, onClose, athlete }) => {
           <div className="absolute bottom-4 left-4 flex items-center">
             <div className="h-16 w-16 sm:h-20 sm:w-20 rounded-full overflow-hidden border-4 border-[#D4BC6D]">
               <img
-                src={athlete.profilePicture}
-                alt={athlete.athleteName}
+                src={athlete?.profile_picture}
+                alt={athlete?.athlete_name}
                 className="h-full w-full object-cover"
                 onError={(e) => {
                   e.target.src = '/default.jpg';
@@ -446,8 +474,8 @@ const ViewAthleteModal = ({ isOpen, onClose, athlete }) => {
               />
             </div>
             <div className="ml-4 text-white">
-              <h3 className="text-lg sm:text-xl font-bold">{athlete.athleteName}</h3>
-              <p className="text-sm opacity-90">{athlete.sport}</p>
+              <h3 className="text-lg sm:text-xl font-bold">{athlete?.athlete_name}</h3>
+              <p className="text-sm opacity-90">{athlete?.sport}</p>
             </div>
           </div>
         </div>
@@ -456,43 +484,43 @@ const ViewAthleteModal = ({ isOpen, onClose, athlete }) => {
           {/* Personal Information */}
           <div className="space-y-4">
             <h3 className="text-lg font-semibold text-white mb-4">Personal Information</h3>
-            
+
             <div className="space-y-3">
               <div>
                 <label className="block text-sm font-medium text-gray-400 mb-1">Full Name</label>
-                <p className="text-white font-medium">{athlete.athleteName}</p>
+                <p className="text-white font-medium">{athlete?.athlete_name}</p>
               </div>
-              
+
               <div>
                 <label className="block text-sm font-medium text-gray-400 mb-1">Phone</label>
                 <div className="flex items-center">
                   <Phone className="h-4 w-4 text-gray-400 mr-2" />
-                  <p className="text-white">{athlete.phone}</p>
+                  <p className="text-white">{athlete?.phone}</p>
                 </div>
               </div>
-              
+
               <div>
                 <label className="block text-sm font-medium text-gray-400 mb-1">Email</label>
                 <div className="flex items-center">
                   <Mail className="h-4 w-4 text-gray-400 mr-2" />
-                  <p className="text-white">{athlete.email}</p>
+                  <p className="text-white">{athlete?.email}</p>
                 </div>
               </div>
-              
+
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-400 mb-1">Age</label>
-                  <p className="text-white">{athlete.age} years</p>
+                  <p className="text-white">{athlete?.age} years</p>
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-400 mb-1">Gender</label>
-                  <p className="text-white">{athlete.gender}</p>
+                  <p className="text-white">{athlete?.gender}</p>
                 </div>
               </div>
-              
+
               <div>
                 <label className="block text-sm font-medium text-gray-400 mb-1">Location</label>
-                <p className="text-white">{athlete.city}, {athlete.country}</p>
+                <p className="text-white">{athlete?.city}, {athlete?.country}</p>
               </div>
             </div>
           </div>
@@ -500,34 +528,34 @@ const ViewAthleteModal = ({ isOpen, onClose, athlete }) => {
           {/* Athletic Information */}
           <div className="space-y-4">
             <h3 className="text-lg font-semibold text-white mb-4">Athletic Information</h3>
-            
+
             <div className="space-y-3">
               <div>
                 <label className="block text-sm font-medium text-gray-400 mb-1">Sport</label>
-                <p className="text-[#D4BC6D] font-medium">{athlete.sport}</p>
+                <p className="text-[#D4BC6D] font-medium">{athlete?.sport}</p>
               </div>
-              
+
               <div>
                 <label className="block text-sm font-medium text-gray-400 mb-1">Level of Athlete</label>
-                <p className="text-white">{athlete.levelOfAthlete}</p>
+                <p className="text-white">{athlete?.level_of_athlete}</p>
               </div>
-              
+
               <div>
                 <label className="block text-sm font-medium text-gray-400 mb-1">Grand Level</label>
-                <p className={`font-bold ${getLevelColor(athlete.grandLevel)}`}>
+                <p className={`font-bold ${getLevelColor(athlete?.grand_level)}`}>
                   {athlete.grandLevel}
                 </p>
               </div>
-              
+
               <div>
                 <label className="block text-sm font-medium text-gray-400 mb-1">Store Name</label>
-                <p className="text-white">{athlete.storeName}</p>
+                <p className="text-white">{athlete?.store_name}</p>
               </div>
-              
+
               <div>
                 <label className="block text-sm font-medium text-gray-400 mb-1">Status</label>
-                <span className={`inline-flex px-3 py-1 text-sm font-semibold rounded-full ${getStatusColor(athlete.status)}`}>
-                  {athlete.status}
+                <span className={`inline-flex px-3 py-1 text-sm font-semibold rounded-full ${getStatusColor(athlete?.status)}`}>
+                  {athlete?.status}
                 </span>
               </div>
             </div>
@@ -537,11 +565,11 @@ const ViewAthleteModal = ({ isOpen, onClose, athlete }) => {
         {/* Achievement Badge */}
         <div className="bg-[#1a1a1a] border border-[#4B4C46] rounded-lg p-4 mb-6">
           <div className="flex items-center justify-center">
-            <Trophy className={`h-8 w-8 mr-3 ${getLevelColor(athlete.grandLevel)}`} />
+            <Trophy className={`h-8 w-8 mr-3 ${getLevelColor(athlete?.grand_level)}`} />
             <div className="text-center">
               <p className="text-gray-400 text-sm">Achievement Level</p>
-              <p className={`text-lg font-bold ${getLevelColor(athlete.grandLevel)}`}>
-                {athlete.grandLevel}
+              <p className={`text-lg font-bold ${getLevelColor(athlete?.grand_level)}`}>
+                {athlete?.grand_level}
               </p>
             </div>
           </div>
