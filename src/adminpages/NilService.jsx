@@ -123,11 +123,14 @@ const NilCategory = () => {
     <>
       {/* Category view */}
       {!isShow && !showLaunchService && (
-        <Category 
-        handleActive={handleCategoryClick} 
-        selectedCard={selectedCardId} 
-        setSelectedCardId={setSelectedCardId} 
-        />
+        <>
+          <Category 
+            handleActive={handleCategoryClick} 
+            selectedCard={selectedCardId} 
+            setSelectedCardId={setSelectedCardId} 
+          />
+          <ServiceList />
+        </>
       )}
 
       {/* Launch Service / Graphic Designing form */}
@@ -961,6 +964,46 @@ const ItemModal2 = ({ item = null, onClose, onSuccesActive }) => {
             </div>
 
     );
+};
+
+/* ---------- ServiceList Component ---------- */
+const ServiceList = () => {
+  const navigate = useNavigate();
+
+  const handleServiceClick = () => {
+    navigate('/athlete/bundles');
+  };
+
+  return (
+    <div className="card-gradient !border-[1.5px] p-6 rounded-3xl mt-8">
+      <div className="mb-8">
+        <h2 className='text-white font-bold text-3xl'>Service List</h2>
+      </div>
+
+      <div className="mb-14">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div
+            className="relative rounded-xl w-full cursor-pointer overflow-hidden shadow-lg transform transition-all duration-300 hover:scale-105 hover:shadow-2xl"
+            onClick={handleServiceClick}
+            style={{
+              border: '3px solid transparent',
+              background: `url('/graphic.jpg')`,
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+              height: '220px',
+            }}
+          >
+            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/40 to-transparent"></div>
+            <div className="absolute inset-0 flex items-center justify-center">
+              <h4 className="text-white font-extrabold text-2xl tracking-wide text-center px-4 drop-shadow-lg">
+                Graphic Design and AI Videos
+              </h4>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 };
 
 

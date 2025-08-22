@@ -18,7 +18,7 @@ const Bundles = () => {
 
     const mutation = useMutation({
         mutationKey: ['add-subscription'],
-        mutationFn: (form) => postRequest('/subscriptions', form),
+        mutationFn: (form) => postRequest('/buy-bundles', form),
         onSuccess: (data) => {
             if (data?.statusCode === 200) {
                 toast.success(data?.message);

@@ -87,19 +87,30 @@ const AthleteProductsManagement = () => {
   const [isCreateAthleteModalOpen, setIsCreateAthleteModalOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [uploadedImages, setUploadedImages] = useState([]);
+  const [uploadedImageFiles, setUploadedImageFiles] = useState([]); // Store actual File objects
 
   const statusTypes = ['Pending', 'Active', 'Inactive'];
   const filterOptions = ['All', ...statusTypes];
   const categories = ['All', 'Sports Equipment', 'Footwear', 'Apparel', 'Swimming Gear'];
 
   // API Query for fetching athlete launches
-  const { data: athleteProducts, isLoading, error } = useQuery({
+  const { data: athleteProductsResponse, isLoading, error } = useQuery({
     queryKey: ['admin-athlete-products'],
-    queryFn: () => getRequest('/admin/athlete-products'),
+    queryFn: () => getRequest('/admin/get-athletes-products'),
+    onSuccess: (data) => {
+      console.log('Athlete products API response:', data);
+    },
     onError: (error) => {
-      console.log('Backend not available, using fallback data');
+      console.error('Error fetching athlete products:', error);
+      console.error('Error response:', error.response);
+      console.error('Error status:', error.response?.status);
+      console.error('Error data:', error.response?.data);
+      console.log('Backend error occurred, using fallback data');
     }
   });
+
+  // Extract the actual products array from the API response
+  const athleteProducts = athleteProductsResponse || [];
 
   // Mutation for updating product status
   const updateStatusMutation = useMutation({
@@ -137,6 +148,33 @@ const AthleteProductsManagement = () => {
     }
   });
 
+  // Mutation for storing product images
+  const storeImagesMutation = useMutation({
+    mutationFn: ({ productId, images }) => {
+      const formData = new FormData();
+      images.forEach((image, index) => {
+        formData.append(`images[${index}]`, image);
+      });
+      return postRequest(`/admin/store-images/${productId}`, formData, true);
+    },
+    onSuccess: (res) => {
+      console.log('Images uploaded successfully:', res);
+      toast.success(res?.message || 'Images uploaded successfully');
+      // Optionally refresh product data
+      queryClient.invalidateQueries(['admin-athlete-products']);
+      // Clear uploaded images after successful save
+      setUploadedImages([]);
+      setUploadedImageFiles([]);
+      // Close the modal and navigate back to athlete products management
+      setIsViewModalOpen(false);
+      setSelectedProduct(null);
+    },
+    onError: (error) => {
+      console.error('Error uploading images:', error);
+      toast.error('Failed to upload images');
+    }
+  });
+
   // Use API data if available, otherwise fallback to static data
   const displayProducts = athleteProducts || products;
 
@@ -145,11 +183,13 @@ const AthleteProductsManagement = () => {
     const matchesSearch = 
       product.athleteName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       product.productName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      product.category?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      product.athlete_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      product.product_name?.toLowerCase().includes(searchTerm.toLowerCase());
+      (product.category && typeof product.category === 'string' && product.category.toLowerCase().includes(searchTerm.toLowerCase())) ||
+      product.athlete?.athlete_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      product.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      product.category?.name?.toLowerCase().includes(searchTerm.toLowerCase());
     
-    const matchesStatus = selectedStatus === 'All' || product.status === selectedStatus;
+    const productStatus = product.status?.charAt(0).toUpperCase() + product.status?.slice(1).toLowerCase();
+    const matchesStatus = selectedStatus === 'All' || productStatus === selectedStatus;
     
     return matchesSearch && matchesStatus;
   });
@@ -165,7 +205,8 @@ const AthleteProductsManagement = () => {
   };
 
   const getStatusBadgeClass = (status) => {
-    switch (status) {
+    const normalizedStatus = status?.charAt(0).toUpperCase() + status?.slice(1).toLowerCase();
+    switch (normalizedStatus) {
       case 'Active':
         return 'bg-green-600 text-white';
       case 'Inactive':
@@ -180,6 +221,7 @@ const AthleteProductsManagement = () => {
   const handleViewProduct = (product) => {
     setSelectedProduct(product);
     setUploadedImages([]); // Start with empty array for demo purposes
+    setUploadedImageFiles([]); // Clear file objects as well
     setIsViewModalOpen(true);
     
     // Fetch detailed product information
@@ -190,10 +232,29 @@ const AthleteProductsManagement = () => {
     const files = Array.from(event.target.files);
     const newImages = files.map(file => URL.createObjectURL(file));
     setUploadedImages([...uploadedImages, ...newImages]);
+    setUploadedImageFiles([...uploadedImageFiles, ...files]); // Store actual File objects
   };
 
   const removeImage = (index) => {
     setUploadedImages(uploadedImages.filter((_, i) => i !== index));
+    setUploadedImageFiles(uploadedImageFiles.filter((_, i) => i !== index)); // Remove corresponding file
+  };
+
+  const handleSaveImages = () => {
+    if (!selectedProduct?.id) {
+      toast.error('No product selected');
+      return;
+    }
+
+    if (uploadedImageFiles.length === 0) {
+      toast.error('No images to save');
+      return;
+    }
+
+    storeImagesMutation.mutate({
+      productId: selectedProduct.id,
+      images: uploadedImageFiles
+    });
   };
 
   return (
@@ -232,7 +293,7 @@ const AthleteProductsManagement = () => {
               <div>
                 <p className="text-gray-400 text-xs sm:text-sm">Pending Upload</p>
                 <p className="text-lg sm:text-2xl font-bold text-white">
-                  {displayProducts.filter(p => p.status === 'Pending').length}
+                  {displayProducts.filter(p => p.status?.toLowerCase() === 'pending').length}
                 </p>
               </div>
               <ShoppingBag className="h-6 w-6 sm:h-8 sm:w-8 text-yellow-500" />
@@ -244,7 +305,7 @@ const AthleteProductsManagement = () => {
               <div>
                 <p className="text-gray-400 text-xs sm:text-sm">Active Products</p>
                 <p className="text-lg sm:text-2xl font-bold text-white">
-                  {displayProducts.filter(p => p.status === 'Active').length}
+                  {displayProducts.filter(p => p.status?.toLowerCase() === 'active').length}
                 </p>
               </div>
               <Tag className="h-6 w-6 sm:h-8 sm:w-8 text-green-500" />
@@ -312,23 +373,23 @@ const AthleteProductsManagement = () => {
                   <tr key={product.id} className="border-b border-[#4B4C46] hover:bg-[#2a2a2a] transition-colors">
                     <td className="py-3 sm:py-4 px-3 sm:px-6">
                       <div className="text-white font-medium text-xs sm:text-sm">
-                        {product.athleteName || product.athlete_name || 'N/A'}
+                        {product.athleteName || product.athlete?.athlete_name || 'N/A'}
                       </div>
                     </td>
                     <td className="py-3 sm:py-4 px-3 sm:px-6">
                       <div className="text-[#D4BC6D] font-medium text-xs sm:text-sm">
-                        {product.productName || product.product_name || 'N/A'}
+                        {product.productName || product.name || 'N/A'}
                       </div>
                     </td>
                     <td className="py-3 sm:py-4 px-3 sm:px-6">
                       <div className="text-gray-300 text-xs sm:text-sm">
-                        {product.category || 'N/A'}
+                        {product.category?.name || product.category || 'N/A'}
                       </div>
                     </td>
                     <td className="py-3 sm:py-4 px-3 sm:px-6">
                       <select
-                        value={product.status}
-                        onChange={(e) => handleStatusChange(product.id, e.target.value)}
+                        value={product.status?.charAt(0).toUpperCase() + product.status?.slice(1).toLowerCase() || 'Pending'}
+                        onChange={(e) => handleStatusChange(product.id, e.target.value.toLowerCase())}
                         className={`px-2 sm:px-3 py-1 rounded-full text-xs font-medium cursor-pointer border-0 ${getStatusBadgeClass(product.status)}`}
                         disabled={updateStatusMutation.isLoading}
                       >
@@ -373,11 +434,14 @@ const AthleteProductsManagement = () => {
           uploadedImages={uploadedImages}
           onImageUpload={handleImageUpload}
           onRemoveImage={removeImage}
+          onSaveImages={handleSaveImages}
           isLoadingDetails={viewProductMutation.isLoading}
+          isSavingImages={storeImagesMutation.isLoading}
           onClose={() => {
             setIsViewModalOpen(false);
             setSelectedProduct(null);
             setUploadedImages([]);
+            setUploadedImageFiles([]);
           }}
         />
       )}
@@ -386,7 +450,7 @@ const AthleteProductsManagement = () => {
 };
 
 // Product View Modal Component
-const ProductViewModal = ({ product, uploadedImages, onImageUpload, onRemoveImage, onClose, isLoadingDetails }) => {
+const ProductViewModal = ({ product, uploadedImages, onImageUpload, onRemoveImage, onSaveImages, onClose, isLoadingDetails, isSavingImages }) => {
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[9999] p-4">
       <div className="bg-[#282828] border border-[#4B4C46] rounded-lg p-4 sm:p-6 w-full max-w-6xl mx-4 max-h-[90vh] overflow-y-auto">
@@ -418,28 +482,28 @@ const ProductViewModal = ({ product, uploadedImages, onImageUpload, onRemoveImag
               <div className="space-y-4">
                 <div>
                   <label className="block text-gray-400 text-sm mb-1">Athlete Name</label>
-                  <p className="text-white font-medium">{product.athleteName || product.athlete_name || 'N/A'}</p>
+                  <p className="text-white font-medium">{product.athleteName || product.athlete?.athlete_name || 'N/A'}</p>
                 </div>
                 
                 <div>
                   <label className="block text-gray-400 text-sm mb-1">Product Name</label>
-                  <p className="text-[#D4BC6D] font-medium">{product.productName || product.product_name || 'N/A'}</p>
+                  <p className="text-[#D4BC6D] font-medium">{product.productName || product.name || 'N/A'}</p>
                 </div>
                 
                 <div>
                   <label className="block text-gray-400 text-sm mb-1">Category</label>
-                  <p className="text-white">{product.category || 'N/A'}</p>
+                  <p className="text-white">{product.category?.name || product.category || 'N/A'}</p>
                 </div>
                 
                 <div>
                   <label className="block text-gray-400 text-sm mb-1">Status</label>
                   <span className={`px-3 py-1 rounded-full text-xs font-medium ${
-                    product.status === 'Active' ? 'bg-green-600 text-white' :
-                    product.status === 'Inactive' ? 'bg-gray-600 text-white' :
-                    product.status === 'Pending' ? 'bg-yellow-600 text-white' :
+                    product.status?.toLowerCase() === 'active' ? 'bg-green-600 text-white' :
+                    product.status?.toLowerCase() === 'inactive' ? 'bg-gray-600 text-white' :
+                    product.status?.toLowerCase() === 'pending' ? 'bg-yellow-600 text-white' :
                     'bg-gray-600 text-white'
                   }`}>
-                    {product.status || 'N/A'}
+                    {product.status?.charAt(0).toUpperCase() + product.status?.slice(1).toLowerCase() || 'N/A'}
                   </span>
                 </div>
                 
@@ -463,23 +527,43 @@ const ProductViewModal = ({ product, uploadedImages, onImageUpload, onRemoveImag
                 <div>
                   <label className="block text-gray-400 text-sm mb-2">Available Colors</label>
                   <div className="flex flex-wrap gap-2">
-                    {(product.colors || []).map((color, index) => (
-                      <span
-                        key={index}
-                        className="px-3 py-1 bg-[#4B4C46] text-white text-sm rounded-full border border-[#6B6C66]"
-                      >
-                        {color}
-                      </span>
-                    ))}
-                    {(!product.colors || product.colors.length === 0) && (
-                      <span className="text-gray-400 text-sm">No colors available</span>
-                    )}
+                    {(() => {
+                      let colors = [];
+                      
+                      // Handle API colors format (JSON string)
+                      if (product.colors && typeof product.colors === 'string') {
+                        try {
+                          // The API returns colors as a double-encoded JSON string
+                          const parsedColors = JSON.parse(JSON.parse(product.colors));
+                          colors = Array.isArray(parsedColors) ? parsedColors : [];
+                        } catch (e) {
+                          console.warn('Failed to parse colors:', product.colors);
+                          colors = [];
+                        }
+                      }
+                      // Handle fallback colors format (array)
+                      else if (Array.isArray(product.colors)) {
+                        colors = product.colors;
+                      }
+
+                      return colors.length > 0 ? (
+                        colors.map((color, index) => (
+                          <span
+                            key={index}
+                            className="px-3 py-1 bg-[#4B4C46] text-white text-sm rounded-full border border-[#6B6C66]"
+                          >
+                            {color}
+                          </span>
+                        ))
+                      ) : (
+                        <span className="text-gray-400 text-sm">No colors available</span>
+                      );
+                    })()}
                   </div>
                 </div>
               </div>
             </div>
           </div>
-
           {/* Image Management */}
           <div className="space-y-6">
             <div className="bg-[#1a1a1a] border border-[#4B4C46] rounded-lg p-4 sm:p-6">
@@ -556,8 +640,19 @@ const ProductViewModal = ({ product, uploadedImages, onImageUpload, onRemoveImag
 
         {/* Action Buttons */}
         <div className="flex flex-col sm:flex-row gap-3 mt-6 pt-6 border-t border-[#4B4C46]">
-          <button className="flex-1 px-6 py-3 bg-[#D4BC6D] text-black font-medium rounded-lg hover:bg-[#C4AC5D] transition-colors">
-            Save Changes
+          <button 
+            onClick={onSaveImages}
+            disabled={isSavingImages || uploadedImages.length === 0}
+            className="flex-1 px-6 py-3 bg-[#D4BC6D] text-black font-medium rounded-lg hover:bg-[#C4AC5D] transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+          >
+            {isSavingImages ? (
+              <>
+                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-black mr-2"></div>
+                Saving Images...
+              </>
+            ) : (
+              `Save Images ${uploadedImages.length > 0 ? `(${uploadedImages.length})` : ''}`
+            )}
           </button>
           <button
             onClick={onClose}
