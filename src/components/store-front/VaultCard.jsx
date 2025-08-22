@@ -27,8 +27,8 @@ const VaultCard = ({ id, name, description, price, image, rating, subTitle, isTr
                     </p>
                 </div>
                 <div className="flex flex-col justify-end h-full px-6 pt-6">
-                    <div type="button" onClick={() => navigate(`/store-front/${id}`)} className="h-[15.25rem] w-full bg-[url('/shirt.svg')] bg-center bg-cover bg-no-repeat"></div>
-                    <div type="button" onClick={() => navigate(`/store-front/${id}`)} className="flex justify-between items-center mb-4">
+                    <div type="button" onClick={() => navigate(`/product/${id}`)} className="h-[15.25rem] w-full bg-[url('/shirt.svg')] bg-center bg-cover bg-no-repeat"></div>
+                    <div type="button" onClick={() => navigate(`/product/${id}`)} className="flex justify-between items-center mb-4">
                         <div className="flex gap-2.5 items-center">
                             <div className="">
                                 <svg

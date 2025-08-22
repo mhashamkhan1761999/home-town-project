@@ -124,21 +124,32 @@ const Card = ({
   homeTown = [],
   backheading = '',
   about = '',
+  onCardClick,
 }) => {
   const [flipped, setFlipped] = useState(false);
 
   // Detect mobile using window width
   const isMobile = typeof window !== "undefined" && window.innerWidth < 640;
 
-  const handleFlip = () => {
-    if (isMobile) setFlipped((prev) => !prev);
+  const handleFlip = (e) => {
+    if (isMobile) {
+      e.stopPropagation();
+      setFlipped((prev) => !prev);
+    }
+  };
+
+  const handleCardClick = (e) => {
+    if (!flipped && onCardClick) {
+      e.stopPropagation();
+      onCardClick();
+    }
   };
 
   return (
     <div
-      className="relative w-full sm:w-full h-[400px] sm:h-full group perspective mx-auto"
-      onClick={handleFlip}
-      style={{ cursor: isMobile ? 'pointer' : 'default', touchAction: 'manipulation' }}
+      className="relative w-full sm:w-full h-[400px] sm:h-full group perspective mx-auto cursor-pointer"
+      onClick={isMobile ? handleFlip : handleCardClick}
+      style={{ touchAction: 'manipulation' }}
     >
       <div
         className={
@@ -146,6 +157,7 @@ const Card = ({
           ((flipped || (!isMobile && false)) ? "rotate-y-180" : "") +
           (!isMobile ? " group-hover:rotate-y-180" : "")
         }
+        onClick={!isMobile ? handleCardClick : undefined}
       >
         {/* Front Side */}
         <div

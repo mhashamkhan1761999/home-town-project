@@ -3,59 +3,120 @@ import MerchendiseSlider from '../components/MerchendiseSlider'
 import AthletesVaultSlider from '../components/store-front/AthletesVaultSlider'
 import { useQuery } from '@tanstack/react-query';
 import { getRequest } from '../api';
+import { useParams } from 'react-router-dom';
 
 const StoreFront = () => {
-    const { data, isLoading, error } = useQuery({
-        queryKey: ['all-products'], // Unique key for caching
-        queryFn: () => getRequest('/all-products'), // Fetch function
+    const { athleteId } = useParams();
+
+    // Fetch athlete details if ID is provided
+    const { data: athleteData, isLoading: isAthleteLoading, error: athleteError } = useQuery({
+        queryKey: ['view-athlete', athleteId],
+        queryFn: () => getRequest(`/view-athlete/${athleteId}`),
+        enabled: !!athleteId, // Only run if athleteId exists
+        onSuccess: (data) => {
+            console.log('Athlete data API response:', data);
+        },
+        onError: (error) => {
+            console.error('Error fetching athlete data:', error);
+        }
     });
+
+    // Fetch athlete's products if ID is provided
+    const { data: athleteProducts, isLoading: isProductsLoading, error: productsError } = useQuery({
+        queryKey: ['all-athlete-products', athleteId],
+        queryFn: () => getRequest(`/all-athlete-products/${athleteId}`),
+        enabled: !!athleteId, // Only run if athleteId exists
+        onSuccess: (data) => {
+            console.log('Athlete products API response:', data);
+        },
+        onError: (error) => {
+            console.error('Error fetching athlete products:', error);
+        }
+    });
+    console.log('Athlete products:', athleteProducts);
+
+    // Determine which data to use
+    const athlete = athleteData || {};
+    const products = athleteId ? athleteProducts : [];
+    const isLoading = athleteId ? (isAthleteLoading || isProductsLoading) : false;
     return (
         <>
             <section className="h-[90dvh] w-full bg-[url('/basket.svg')] bg-bottom bg-no-repeat bg-cover py-8 px-5">
                 <h1 className='text-[7.5rem] text-center uppercase font-bold bg-[linear-gradient(to_right,#d4bc6d,#57430d)] bg-clip-text text-transparent '>
-                    ATHLETE VAULT
+                    {athleteId ? 'ATHLETE STORE' : 'ATHLETE VAULT'}
                 </h1>
                 <div className="flex gap-2.5">
                     <div className="flex flex-col">
                         <div className="mb-2.5">
                             <img src="/advance-star.svg" alt="star" height="8.625rem" />
                             <p className='text-[1.75rem] font-semibold text-white'>
-                                Joseph Zamot
+                                {isLoading ? 'Loading...' : (athlete?.store || athlete?.store_name || athlete?.email || 'Joseph Zamot')}
                             </p>
                         </div>
                         <div className="mb-6">
                             <p className='text-lg font-normal text-white'>
-                                Social Media Reach
+                                {athleteId ? 'Athlete Details' : 'Social Media Reach'}
                             </p>
-                            <div className="flex items-center p-2 border border-[#2D2D2D] rounded-full bg-[rgba(255, 255, 255,0.1)] mb-7">
-                                <img
-                                    alt="avatar"
-                                    className="w-16 h-16 rounded-full border-2 border-black object-cover"
-                                    src="https://i.pravatar.cc/150?img=1"
-                                    type="button"
-                                />
-                                <img
-                                    alt="avatar"
-                                    className="w-16 h-16 rounded-full border-2 border-black object-cover -ml-4"
-                                    src="https://i.pravatar.cc/150?img=2"
-                                    type="button"
-                                />
-                                <img
-                                    alt="avatar"
-                                    className="w-16 h-16 rounded-full border-2 border-black object-cover -ml-4"
-                                    src="https://i.pravatar.cc/150?img=3"
-                                    type="button"
-                                />
-                                <img
-                                    alt="avatar"
-                                    className="w-16 h-16 rounded-full border-2 border-black object-cover -ml-4"
-                                    src="https://i.pravatar.cc/150?img=4"
-                                    type="button"
-                                />
-                                <div className="w-16 h-16 rounded-full bg-[#D4BC6D] flex items-center justify-center text-white font-bold text-sm -ml-4 border-2 border-black">
-                                    +500
+                            
+                            {athleteId && athlete ? (
+                                // Show athlete details
+                                <div className="bg-[rgba(255, 255, 255,0.1)] backdrop-blur-sm rounded-2xl border border-[#D4BC6D] p-4 mb-7">
+                                    <div className="flex items-center mb-4">
+                                        <img
+                                            alt="athlete"
+                                            className="w-16 h-16 rounded-full border-2 border-[#D4BC6D] object-cover mr-4"
+                                            src={athlete?.profile_picture_url || athlete?.profile_picture || '/default.jpg'}
+                                        />
+                                        <div>
+                                            <h3 className="text-white font-bold">{athlete?.store || athlete?.store_name}</h3>
+                                            <p className="text-[#D4BC6D] text-sm">{athlete?.sport || athlete?.level_of_athlete}</p>
+                                        </div>
+                                    </div>
+                                    {athlete?.team_name && (
+                                        <p className="text-white text-sm mb-2">Team: {athlete.team_name}</p>
+                                    )}
+                                    {athlete?.school_name && (
+                                        <p className="text-white text-sm mb-2">School: {athlete.school_name}</p>
+                                    )}
+                                    {(athlete?.city || athlete?.country) && (
+                                        <p className="text-white text-sm">
+                                            City: {athlete?.city ? athlete.city + ', ' : ''}{athlete?.country}
+                                        </p>
+                                    )}
                                 </div>
-                            </div>
+                            ) : (
+                                // Show default social media reach
+                                <div className="flex items-center p-2 border border-[#2D2D2D] rounded-full bg-[rgba(255, 255, 255,0.1)] mb-7">
+                                    <img
+                                        alt="avatar"
+                                        className="w-16 h-16 rounded-full border-2 border-black object-cover"
+                                        src="https://i.pravatar.cc/150?img=1"
+                                        type="button"
+                                    />
+                                    <img
+                                        alt="avatar"
+                                        className="w-16 h-16 rounded-full border-2 border-black object-cover -ml-4"
+                                        src="https://i.pravatar.cc/150?img=2"
+                                        type="button"
+                                    />
+                                    <img
+                                        alt="avatar"
+                                        className="w-16 h-16 rounded-full border-2 border-black object-cover -ml-4"
+                                        src="https://i.pravatar.cc/150?img=3"
+                                        type="button"
+                                    />
+                                    <img
+                                        alt="avatar"
+                                        className="w-16 h-16 rounded-full border-2 border-black object-cover -ml-4"
+                                        src="https://i.pravatar.cc/150?img=4"
+                                        type="button"
+                                    />
+                                    <div className="w-16 h-16 rounded-full bg-[#D4BC6D] flex items-center justify-center text-white font-bold text-sm -ml-4 border-2 border-black">
+                                        +500
+                                    </div>
+                                </div>
+                            )}
+                            
                             <div className="inline-flex items-center gap-3 bg-white/10 backdrop-blur-sm rounded-full border border-[#D4BC6D] p-1.5 pr-6">
                                 <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center">
                                     <svg
@@ -98,84 +159,89 @@ const StoreFront = () => {
                                         </defs>
                                     </svg>
                                 </div>
-                                <span className="text-white font-normal text-xl">Arizona University</span>
+                                <span className="text-white font-normal text-xl">{athlete.school_name || "Arizona Univeristy"}</span>
                             </div>
 
                         </div>
                         <div className="px-2">
-                            <p className='font-bold text-lg text-white mb-4'>
-                                “QUOTE”
-                            </p>
                             <p className='font-bold text-lg text-white '>
-                                “Description”
+                                “Description”: {athlete?.description || "No description available"}
                             </p>
                         </div>
                     </div>
                 </div>
             </section>
-            <section className='py-24'>
-                <h1 className='text-[6.875rem] mb-[7.188rem] text-center uppercase font-bold bg-[linear-gradient(to_right,#d4bc6d,#57430d)] bg-clip-text text-transparent '>
-                    MERCHANDISE
-                </h1>
-                <div className="mb-[7.188rem]">
-                    <div className="flex justify-center space-x-5 mb-[81px]">
-                        <button className="bg-[#D4BC6D] text-black text-sm font-medium py-3 px-8 rounded-full shadow-lg transition-colors" type='button'>
-                            All
-                        </button>
-                        <button className="bg-gray-800 text-[#D4BC6D] text-sm font-medium py-3 px-8 rounded-full shadow-lg transition-colors" type='button'>
-                            New Release
-                        </button>
-                        <button className="bg-gray-800 text-[#D4BC6D] text-sm font-medium py-3 px-8 rounded-full shadow-lg transition-colors" type='button'>
-                            Best Seller
-                        </button>
-                    </div>
-
+            
+            {isLoading ? (
+                <div className="py-24 text-center">
+                    <div className="text-white text-xl">Loading...</div>
                 </div>
+            ) : (
+                <>
+                    <section className='py-24'>
+                        <h1 className='text-[6.875rem] mb-[7.188rem] text-center uppercase font-bold bg-[linear-gradient(to_right,#d4bc6d,#57430d)] bg-clip-text text-transparent '>
+                            {athleteId ? `${athlete?.store || athlete?.store_name || 'ATHLETE'}'S MERCHANDISE` : 'MERCHANDISE'}
+                        </h1>
+                        <div className="mb-[7.188rem]">
+                            <div className="flex justify-center space-x-5 mb-[81px]">
+                                <button className="bg-[#D4BC6D] text-black text-sm font-medium py-3 px-8 rounded-full shadow-lg transition-colors" type='button'>
+                                    All
+                                </button>
+                                <button className="bg-gray-800 text-[#D4BC6D] text-sm font-medium py-3 px-8 rounded-full shadow-lg transition-colors" type='button'>
+                                    New Release
+                                </button>
+                                <button className="bg-gray-800 text-[#D4BC6D] text-sm font-medium py-3 px-8 rounded-full shadow-lg transition-colors" type='button'>
+                                    Best Seller
+                                </button>
+                            </div>
+                        </div>
 
-                <MerchendiseSlider
-                    data={[
-                        { id: 1 },
-                        { id: 2 },
-                        { id: 3 },
-                        { id: 4 },
-                        { id: 5 },
-                        { id: 6 },
-                        { id: 7 },
-                        { id: 8 },
-                        { id: 9 },
-                        { id: 10 },
-                    ]}
-                />
-            </section>
-            <section className='py-24 bg-black'>
-                <h1 className='text-[6.875rem] mb-[7.188rem] text-center uppercase font-bold bg-[linear-gradient(to_right,#d4bc6d,#57430d)] bg-clip-text text-transparent '>
-                    ATHLETE VAULT
-                </h1>
-                <div className="mb-[7.188rem]">
-                    <div className="flex justify-center space-x-5 mb-[81px]">
-                        <button className="bg-[#D4BC6D] text-black text-sm font-medium py-3 px-8 rounded-full shadow-lg transition-colors" type='button'>
-                            All
-                        </button>
-                        <button className="bg-gray-800 text-[#D4BC6D] text-sm font-medium py-3 px-8 rounded-full shadow-lg transition-colors" type='button'>
-                            New Arrival
-                        </button>
-                        <button className="bg-gray-800 text-[#D4BC6D] text-sm font-medium py-3 px-8 rounded-full shadow-lg transition-colors" type='button'>
-                            Card Deals
-                        </button>
-                        <button className="bg-gray-800 text-[#D4BC6D] text-sm font-medium py-3 px-8 rounded-full shadow-lg transition-colors" type='button'>
-                            Supplement Company
-                        </button>
-                        <button className="bg-gray-800 text-[#D4BC6D] text-sm font-medium py-3 px-8 rounded-full shadow-lg transition-colors" type='button'>
-                            E Book
-                        </button>
-                    </div>
+                        <MerchendiseSlider
+                            data={products || [
+                                { id: 1 },
+                                { id: 2 },
+                                { id: 3 },
+                                { id: 4 },
+                                { id: 5 },
+                                { id: 6 },
+                                { id: 7 },
+                                { id: 8 },
+                                { id: 9 },
+                                { id: 10 },
+                            ]}
+                        />
+                    </section>
+                    
+                    <section className='py-24 bg-black'>
+                        <h1 className='text-[6.875rem] mb-[7.188rem] text-center uppercase font-bold bg-[linear-gradient(to_right,#d4bc6d,#57430d)] bg-clip-text text-transparent '>
+                            {athleteId ? `${athlete?.store || athlete?.store_name || 'ATHLETE'}'S VAULT` : 'ATHLETE VAULT'}
+                        </h1>
+                        <div className="mb-[7.188rem]">
+                            <div className="flex justify-center space-x-5 mb-[81px]">
+                                <button className="bg-[#D4BC6D] text-black text-sm font-medium py-3 px-8 rounded-full shadow-lg transition-colors" type='button'>
+                                    All
+                                </button>
+                                <button className="bg-gray-800 text-[#D4BC6D] text-sm font-medium py-3 px-8 rounded-full shadow-lg transition-colors" type='button'>
+                                    New Arrival
+                                </button>
+                                <button className="bg-gray-800 text-[#D4BC6D] text-sm font-medium py-3 px-8 rounded-full shadow-lg transition-colors" type='button'>
+                                    Card Deals
+                                </button>
+                                <button className="bg-gray-800 text-[#D4BC6D] text-sm font-medium py-3 px-8 rounded-full shadow-lg transition-colors" type='button'>
+                                    Supplement Company
+                                </button>
+                                <button className="bg-gray-800 text-[#D4BC6D] text-sm font-medium py-3 px-8 rounded-full shadow-lg transition-colors" type='button'>
+                                    E Book
+                                </button>
+                            </div>
+                        </div>
 
-                </div>
-
-                <AthletesVaultSlider
-                    data={data}
-                />
-            </section>
+                        <AthletesVaultSlider
+                            data={products || allProductsData}
+                        />
+                    </section>
+                </>
+            )}
         </>
     )
 }

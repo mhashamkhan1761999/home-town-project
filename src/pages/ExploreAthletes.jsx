@@ -1,11 +1,170 @@
-import React from 'react'
+import React, { useState, useMemo } from 'react'
 import CarouselSlider2 from '../components/CarouselSlider2'
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Pagination } from 'swiper/modules';
 import 'swiper/css';
 import 'swiper/css/pagination';
+import { useQuery } from '@tanstack/react-query';
+import { getRequest } from '../api';
+import { useNavigate } from 'react-router-dom';
 
 const ExploreAthletes = () => {
+    const navigate = useNavigate();
+    const [searchTerm, setSearchTerm] = useState('');
+    const [selectedFilter, setSelectedFilter] = useState('All');
+
+    // Fetch athletes data
+    const { data: athletesData, isLoading: isAthletesLoading, error: athletesError } = useQuery({
+        queryKey: ['all-athletes'],
+        queryFn: () => getRequest('/all-athletes'),
+        onSuccess: (data) => {
+            console.log('All athletes API response:', data);
+        },
+        onError: (error) => {
+            console.error('Error fetching athletes:', error);
+        }
+    });
+
+    // Handle athlete card click
+    const handleAthleteClick = (athleteId) => {
+        if (athleteId) {
+            navigate(`/store-front/${athleteId}`);
+        }
+    };
+
+    // Search functionality
+    const handleSearch = (e) => {
+        e.preventDefault();
+        // Search logic is already handled by useMemo filteredAthletes
+    };
+
+    // Filter athletes based on search term and selected filter
+    const filteredAthletes = useMemo(() => {
+        if (!Array.isArray(athletesData)) return [];
+        
+        let filtered = athletesData;
+
+        // Apply search filter
+        if (searchTerm) {
+            const search = searchTerm.toLowerCase();
+            filtered = filtered.filter(athlete => 
+                (athlete?.store || athlete?.store_name || '').toLowerCase().includes(search) ||
+                (athlete?.email || '').toLowerCase().includes(search) ||
+                (athlete?.sport || '').toLowerCase().includes(search) ||
+                (athlete?.team_name || '').toLowerCase().includes(search) ||
+                (athlete?.school_name || '').toLowerCase().includes(search) ||
+                (athlete?.country || '').toLowerCase().includes(search) ||
+                (athlete?.city || '').toLowerCase().includes(search)
+            );
+        }
+
+        // Apply category filter
+        if (selectedFilter !== 'All') {
+            if (selectedFilter === 'Furious 5') {
+                // Show top 5 athletes
+                filtered = filtered.slice(0, 5);
+            } else if (selectedFilter === 'Trending') {
+                // Show trending athletes
+                filtered = filtered.filter(athlete => athlete?.isTrending);
+                if (filtered.length === 0) {
+                    // If no trending athletes, show from index 10-15
+                    filtered = athletesData.slice(10, 15);
+                }
+            } else {
+                // Filter by athlete level/tier
+                filtered = filtered.filter(athlete => 
+                    (athlete?.level_of_athlete || '').toLowerCase() === selectedFilter.toLowerCase() ||
+                    (athlete?.tier || '').toLowerCase() === selectedFilter.toLowerCase()
+                );
+            }
+        }
+
+        return filtered;
+    }, [athletesData, searchTerm, selectedFilter]);
+
+    // Map filtered data to carousel format
+    const mapAthleteData = (athletes) => {
+        return athletes.map((athlete) => {
+            const name = athlete?.store || athlete?.store_name || athlete?.email || '';
+            const image = athlete?.profile_picture_url || athlete?.profile_picture || '/question-mark.jpeg';
+            const subTitle = athlete?.sport || athlete?.level_of_athlete || athlete?.role || '';
+            const team = athlete?.team_name || '';
+            const school = athlete?.school_name || '';
+            const country = athlete?.country || '';
+            const city = athlete?.city || '';
+            const bio = athlete?.bio || athlete?.description || '';
+            const email = athlete?.email || '';
+            const social = {
+                instagram: athlete?.instagram,
+                tiktok: athlete?.tiktok,
+                twitter: athlete?.twitter,
+                youtube: athlete?.youtube,
+                twitch: athlete?.twitch,
+                other: athlete?.other,
+            };
+            
+            // Responsive, well-written description for the back of the card
+            const backheading = name;
+            const about = bio
+                ? bio
+                : `Meet ${name}, a dedicated athlete from ${city ? city + ', ' : ''}${country ? country : ''}${team ? ', team: ' + team : ''}${school ? ', school: ' + school : ''}. ${subTitle ? 'Level: ' + subTitle + '. ' : ''}Contact: ${email}.`;
+            
+            return {
+                id: athlete?.id,
+                name,
+                image,
+                rating: athlete?.rating || 0,
+                subTitle,
+                team,
+                school,
+                country,
+                city,
+                bio,
+                email,
+                social,
+                backheading,
+                about,
+                isTrending: athlete?.isTrending || false,
+                onCardClick: () => handleAthleteClick(athlete?.id),
+            };
+        });
+    };
+
+    // Map API data to carousel format (Furious 5)
+    const furious5 = Array.isArray(athletesData)
+        ? mapAthleteData(athletesData.slice(0, 5))
+        : [
+            { name: '', image: '/question-mark.jpeg', about: 'Athlete details coming soon.', onCardClick: () => {} },
+            { name: '', image: '/question-mark.jpeg', about: 'Athlete details coming soon.', onCardClick: () => {} },
+            { name: '', image: '/question-mark.jpeg', about: 'Athlete details coming soon.', onCardClick: () => {} },
+            { name: '', image: '/question-mark.jpeg', about: 'Athlete details coming soon.', onCardClick: () => {} },
+            { name: '', image: '/question-mark.jpeg', about: 'Athlete details coming soon.', onCardClick: () => {} },
+        ];
+
+    // Map API data to carousel format (Trending Athletes)
+    const trendingAthletes = Array.isArray(athletesData)
+        ? mapAthleteData(athletesData.slice(10, 15))
+        : [
+            { name: '', image: '/question-mark.jpeg', about: 'Athlete details coming soon.', isTrending: true, onCardClick: () => {} },
+            { name: '', image: '/question-mark.jpeg', about: 'Athlete details coming soon.', isTrending: true, onCardClick: () => {} },
+            { name: '', image: '/question-mark.jpeg', about: 'Athlete details coming soon.', isTrending: true, onCardClick: () => {} },
+            { name: '', image: '/question-mark.jpeg', about: 'Athlete details coming soon.', isTrending: true, onCardClick: () => {} },
+            { name: '', image: '/question-mark.jpeg', about: 'Athlete details coming soon.', isTrending: true, onCardClick: () => {} },
+        ];
+
+    // Trending Athletes fallback if API returns none
+    const trendingFallback = [
+        { name: '', image: '/question-mark.jpeg', about: 'Athlete details coming soon.', isTrending: true, onCardClick: () => {} },
+        { name: '', image: '/question-mark.jpeg', about: 'Athlete details coming soon.', isTrending: true, onCardClick: () => {} },
+        { name: '', image: '/question-mark.jpeg', about: 'Athlete details coming soon.', isTrending: true, onCardClick: () => {} },
+        { name: '', image: '/question-mark.jpeg', about: 'Athlete details coming soon.', isTrending: true, onCardClick: () => {} },
+        { name: '', image: '/question-mark.jpeg', about: 'Athlete details coming soon.', isTrending: true, onCardClick: () => {} },
+    ];
+    const trendingAthletesToShow = trendingAthletes && trendingAthletes.length > 0 ? trendingAthletes : trendingFallback;
+
+    // Filtered results for display
+    const filteredResults = mapAthleteData(filteredAthletes);
+
     return (
         <>
             <section className="bg-black flex flex-col items-center px-4 sm:px-6 py-8">
@@ -21,9 +180,10 @@ const ExploreAthletes = () => {
                         ].map((label, idx) => (
                             <button
                                 key={idx}
-                                className={`${idx === 0 ? 'bg-[#D4BC6D] text-black' : 'bg-gray-800 text-[#D4BC6D]'
-                                    } text-sm font-medium py-2.5 px-6 whitespace-nowrap rounded-full shadow-lg transition-colors`}
+                                className={`${selectedFilter === label ? 'bg-[#D4BC6D] text-black' : 'bg-gray-800 text-[#D4BC6D]'
+                                    } text-sm font-medium py-2.5 px-6 whitespace-nowrap rounded-full shadow-lg transition-colors hover:bg-[#D4BC6D] hover:text-black`}
                                 type="button"
+                                onClick={() => setSelectedFilter(label)}
                             >
                                 {label}
                             </button>
@@ -54,11 +214,13 @@ const ExploreAthletes = () => {
 
                         {/* Search Input */}
                         <div className="relative w-full">
-                            <div className="flex items-center w-full p-1 rounded-full bg-[#2d2d2d] focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-offset-black focus-within:ring-[#D4BC6D] transition-all">
+                            <form onSubmit={handleSearch} className="flex items-center w-full p-1 rounded-full bg-[#2d2d2d] focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-offset-black focus-within:ring-[#D4BC6D] transition-all">
                                 <input
                                     className="w-full pl-5 pr-3 py-2 bg-transparent border-none text-white placeholder-neutral-500 focus:outline-none text-base sm:text-sm"
-                                    placeholder="Search by name"
+                                    placeholder="Search by name, email, sport, team..."
                                     type="search"
+                                    value={searchTerm}
+                                    onChange={(e) => setSearchTerm(e.target.value)}
                                 />
                                 <button
                                     className="flex-shrink-0 px-5 py-2.5 sm:px-8 rounded-full bg-[#D4BC6D] text-black font-semibold text-sm hover:bg-[#e0d1a6] transition"
@@ -66,11 +228,44 @@ const ExploreAthletes = () => {
                                 >
                                     Search
                                 </button>
-                            </div>
+                            </form>
                         </div>
                     </div>
                 </div>
             </section>
+
+            {/* Filtered Results Section - Show when search is active or filter is not "All" */}
+            {(searchTerm || selectedFilter !== 'All') && (
+                <section className="py-8 bg-black px-4 sm:px-6">
+                    <h1 className="text-3xl sm:text-4xl lg:text-[4rem] text-center capitalize font-medium bg-[linear-gradient(to_right,#d4bc6d,#57430d)] bg-clip-text text-transparent mb-8 leading-normal">
+                        {searchTerm 
+                            ? `Search Results for "${searchTerm}"` 
+                            : selectedFilter === 'All' 
+                                ? 'All Athletes' 
+                                : `${selectedFilter} Athletes`
+                        }
+                    </h1>
+                    
+                    {isAthletesLoading ? (
+                        <div className="text-center text-white py-8">Loading athletes...</div>
+                    ) : filteredResults.length > 0 ? (
+                        <CarouselSlider2 data={filteredResults} />
+                    ) : (
+                        <div className="text-center text-white py-8">
+                            <p className="text-lg">No athletes found matching your criteria.</p>
+                            <button 
+                                onClick={() => {
+                                    setSearchTerm('');
+                                    setSelectedFilter('All');
+                                }}
+                                className="mt-4 bg-[#D4BC6D] text-black px-6 py-2 rounded-full font-semibold hover:bg-[#e0d1a6] transition"
+                            >
+                                Clear Filters
+                            </button>
+                        </div>
+                    )}
+                </section>
+            )}
 
 
             <section className='py-8 bg-black px-4 sm:px-6'>
@@ -80,28 +275,7 @@ const ExploreAthletes = () => {
 
                 {/* Carousel Slider */}
                 <CarouselSlider2
-                    data={[
-                        {
-                            name: "",
-                            image: "/question-mark.jpeg",
-                        },
-                        {
-                            name: "",
-                            image: "/question-mark.jpeg",
-                        },
-                        {
-                            name: "",
-                            image: "/question-mark.jpeg",
-                        },
-                        {
-                            name: "",
-                            image: "/question-mark.jpeg",
-                        },
-                        {
-                            name: "",
-                            image: "/question-mark.jpeg",
-                        },
-                    ]}
+                    data={furious5}
                 />
             </section>
 
@@ -113,43 +287,7 @@ const ExploreAthletes = () => {
                 </h1>
 
                 <CarouselSlider2
-                    data={[
-                        {
-                            name: "",
-                            image: "/question-mark.jpeg",
-                            rating: 5,
-                            subTitle: "Seller",
-                            isTrending: true,
-                        },
-                        {
-                            name: "",
-                            image: "/question-mark.jpeg",
-                            rating: 5,
-                            subTitle: "Seller",
-                            isTrending: true,
-                        },
-                        {
-                            name: "",
-                            image: "/question-mark.jpeg",
-                            rating: 5,
-                            subTitle: "Seller",
-                            isTrending: true,
-                        },
-                        {
-                            name: "",
-                            image: "/question-mark.jpeg",
-                            rating: 5,
-                            subTitle: "Seller",
-                            isTrending: true,
-                        },
-                        {
-                            name: "",
-                            image: "/question-mark.jpeg",
-                            rating: 5,
-                            subTitle: "Seller",
-                            isTrending: true,
-                        },
-                    ]}
+                    data={trendingAthletesToShow}
                 />
 
                 {/* <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6 max-w-[96rem] mx-auto mt-12 mb-16">
