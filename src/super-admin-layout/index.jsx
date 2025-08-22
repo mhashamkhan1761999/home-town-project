@@ -163,6 +163,14 @@ const SuperAdminLayout = () => {
                             <DollarSign size={18} />
                             Manage Cashout
                         </NavLink>
+
+                        <NavLink to="/admin/graphic-queries"
+                            className={({ isActive }) => isActive ? 'text-[#CAB265] font-bold text-base flex items-center gap-3' : 'text-[#6A6A69] font-bold text-base flex items-center gap-3'}
+                            onClick={() => setIsMobileMenuOpen(false)}
+                        >
+                            <Package size={18} />
+                            Graphic Form Queries
+                        </NavLink>
                     </div>
                     
                     <div className="mt-8 mb-6">
@@ -185,9 +193,9 @@ const SuperAdminLayout = () => {
             </div>
 
             {/* Main Layout */}
-            <div className="flex bg-black h-[100dvh] overflow-hidden">
+            <div className="flex bg-black min-h-[100dvh]">
                 {/* Desktop Sidebar */}
-                <div className="hidden lg:flex w-[10rem] min-w-[10rem] max-w-[10rem] h-full flex-col bg-black card-gradient !border-[1.5px] rounded-3xl m-4">
+                <div className="hidden lg:flex w-[10rem] min-w-[10rem] max-w-[10rem] h-fit sticky top-4 flex-col bg-black card-gradient !border-[1.5px] rounded-3xl m-4">
                     <img src="/admin-logo.svg" alt="Logo" className="w-[4.438rem] h-auto mt-6 mx-auto" />
 
                     <div className="mt-2 mb-1 flex justify-center">
@@ -203,6 +211,7 @@ const SuperAdminLayout = () => {
                     <div className="mb-[2rem] mt-[3.125rem]">
                         <img src="/line.svg" alt="line" className="h-[1px] w-full" />
                     </div>
+                    
                     <div className="flex flex-col items-center justify-center gap-6 pb-4">
                         <NavLink to="/admin/dashboard"
                             className={({ isActive }) => isActive ? 'text-[#CAB265] font-bold text-base flex flex-col items-center gap-2' : 'text-[#6A6A69] font-bold text-base flex items-center gap-2 flex-col'}>
@@ -245,11 +254,18 @@ const SuperAdminLayout = () => {
                             <DollarSign size={18} />
                             Manage Cashout
                         </NavLink>
+
+                        <NavLink to="/admin/graphic-queries"
+                            className={({ isActive }) => isActive ? 'text-[#CAB265] font-bold text-base flex flex-col items-center gap-2 text-center' : 'text-[#6A6A69] font-bold text-base flex items-center gap-2 text-center flex-col'}>
+                            <Package size={18} />
+                            Graphic Queries
+                        </NavLink>
                     </div>
+                    
                     <div className="mb-[2.75rem] mt-[3.125rem]">
                         <img src="/line.svg" alt="line" className="h-[1px] w-full" />
                     </div>
-                    <div className="flex flex-col mt-auto items-center gap-6 mb-11">
+                    <div className="flex flex-col items-center gap-6 pb-4">
                         <p
                             className="text-[#6A6A69] font-bold text-base cursor-pointer hover:text-red-600 transition flex items-center gap-2"
                             onClick={handleLogout}
@@ -261,7 +277,7 @@ const SuperAdminLayout = () => {
                 </div>
 
                 {/* Main Content Area */}
-                <div className="flex-1 flex flex-col overflow-hidden">
+                <div className="flex-1 flex flex-col min-h-screen">
                     {/* Desktop Header */}
                     <div className="hidden lg:flex w-full p-4 items-center">
                         <img src="/hometown-logo.svg" alt="Header" className="w-[23.188rem] h-auto" />
@@ -338,7 +354,7 @@ const SuperAdminLayout = () => {
                     </div>
 
                     {/* Content Area */}
-                    <div className="flex-1 overflow-y-auto p-2 lg:p-4">
+                    <div className="flex-1 p-2 lg:p-4">
                         <Outlet />
                     </div>
                 </div>
