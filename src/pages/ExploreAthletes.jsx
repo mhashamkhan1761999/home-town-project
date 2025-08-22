@@ -12,6 +12,9 @@ const ExploreAthletes = () => {
     const navigate = useNavigate();
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedFilter, setSelectedFilter] = useState('All');
+    const [showSeeMore, setShowSeeMore] = useState(false);
+    const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 10;
 
     // Fetch athletes data
     const { data: athletesData, isLoading: isAthletesLoading, error: athletesError } = useQuery({
@@ -165,6 +168,39 @@ const ExploreAthletes = () => {
     // Filtered results for display
     const filteredResults = mapAthleteData(filteredAthletes);
 
+    // Get all athletes for "See More" section (excluding those in Furious 5 and Trending)
+    const allAthletesForSeeMore = useMemo(() => {
+        if (!Array.isArray(athletesData)) return [];
+        
+        // Skip first 5 (Furious 5) and next 5 (Trending) = start from index 15
+        const remainingAthletes = athletesData.slice(15);
+        return mapAthleteData(remainingAthletes);
+    }, [athletesData]);
+
+    // Pagination logic for "See More" section
+    const totalPages = Math.ceil(allAthletesForSeeMore.length / itemsPerPage);
+    const paginatedAthletes = useMemo(() => {
+        const startIndex = (currentPage - 1) * itemsPerPage;
+        const endIndex = startIndex + itemsPerPage;
+        return allAthletesForSeeMore.slice(startIndex, endIndex);
+    }, [allAthletesForSeeMore, currentPage, itemsPerPage]);
+
+    // Handle page change
+    const handlePageChange = (page) => {
+        setCurrentPage(page);
+        // Scroll to see more section
+        document.getElementById('see-more-section')?.scrollIntoView({ behavior: 'smooth' });
+    };
+
+    // Handle "See More" button click
+    const handleSeeMoreClick = () => {
+        setShowSeeMore(true);
+        setCurrentPage(1);
+        setTimeout(() => {
+            document.getElementById('see-more-section')?.scrollIntoView({ behavior: 'smooth' });
+        }, 100);
+    };
+
     return (
         <>
             <section className="bg-black flex flex-col items-center px-4 sm:px-6 py-8">
@@ -290,34 +326,225 @@ const ExploreAthletes = () => {
                     data={trendingAthletesToShow}
                 />
 
-                {/* <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6 max-w-[96rem] mx-auto mt-12 mb-16">
-                    {[
-                        { title: "Bronze", img: "/bronze.png" },
-                        { title: "Silver", img: "/Silver.png" },
-                        { title: "Gold", img: "/Gold.png" },
-                        { title: "Diamond", img: "/Diamond.png" },
-                        { title: "Emerald", img: "/Emerlad.png" },
-                        { title: "Royal", img: "/Royal.png" },
-                    ].map((item) => (
-                        <div key={item.title} className="text-center">
-                            <img
-                                src={item.img}
-                                alt={item.title}
-                                className="w-32 sm:w-36 md:w-40 h-auto object-contain mx-auto"
-                            />
-                            <h4 className="text-2xl sm:text-3xl lg:text-[3rem] text-center capitalize font-medium bg-[linear-gradient(to_right,#d4bc6d,#57430d)] bg-clip-text text-transparent mb-4">
-                                {item.title}
-                            </h4>
+                {/* See More Button */}
+                {!showSeeMore && allAthletesForSeeMore.length > 0 && (
+                    <div className="text-center mt-12 mb-8">
+                        <button
+                            onClick={handleSeeMoreClick}
+                            className="bg-[#D4BC6D] text-black text-lg font-semibold py-4 px-12 rounded-full shadow-lg transition-all duration-300 ease-in-out hover:bg-[#e0d1a6] hover:scale-105 transform"
+                            type="button"
+                        >
+                            See More Athletes
+                        </button>
+                        <p className="text-gray-400 text-sm mt-3">
+                            Discover {allAthletesForSeeMore.length} more talented athletes
+                        </p>
+                    </div>
+                )}
+            </section>
+
+            {/* See More Athletes Section */}
+            {showSeeMore && (
+                <section id="see-more-section" className="py-12 bg-black px-4 sm:px-6">
+                    <div className="max-w-7xl mx-auto">
+                        <div className="flex flex-col sm:flex-row justify-between items-center mb-12">
+                            <h1 className="text-3xl sm:text-4xl lg:text-[4rem] text-center sm:text-left capitalize font-medium bg-[linear-gradient(to_right,#d4bc6d,#57430d)] bg-clip-text text-transparent mb-4 sm:mb-0 leading-normal">
+                                All Athletes
+                            </h1>
                             <button
-                                className="bg-[#D4BC6D] text-black text-sm font-medium py-3 px-8 sm:px-10 rounded-full shadow-lg transition-colors duration-300 ease-in-out hover:text-black hover:bg-[#D4BC6D]"
-                                type="button"
+                                onClick={() => setShowSeeMore(false)}
+                                className="text-gray-400 hover:text-white transition-colors text-sm flex items-center gap-2"
                             >
-                                View
+                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                                </svg>
+                                Hide
                             </button>
                         </div>
-                    ))}
-                </div> */}
 
+                        {/* Athletes Cards Grid */}
+                        {isAthletesLoading ? (
+                            <div className="text-center text-white py-8">
+                                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#D4BC6D] mx-auto mb-4"></div>
+                                <p>Loading athletes...</p>
+                            </div>
+                        ) : paginatedAthletes.length > 0 ? (
+                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-6 mb-12">
+                                {paginatedAthletes.map((athlete, index) => (
+                                    <div
+                                        key={athlete.id || index}
+                                        onClick={athlete.onCardClick}
+                                        className="bg-gradient-to-br from-gray-900 to-black border border-gray-700 rounded-2xl p-6 hover:border-[#D4BC6D] transition-all duration-300 cursor-pointer group hover:scale-105 transform"
+                                    >
+                                        {/* Athlete Image */}
+                                        <div className="relative mb-4 overflow-hidden rounded-xl">
+                                            <img
+                                                src={athlete.image}
+                                                alt={athlete.name}
+                                                className="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-300"
+                                                onError={(e) => {
+                                                    e.target.src = '/question-mark.jpeg';
+                                                }}
+                                            />
+                                            {athlete.isTrending && (
+                                                <div className="absolute top-3 right-3 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full">
+                                                    Trending
+                                                </div>
+                                            )}
+                                        </div>
+
+                                        {/* Athlete Info */}
+                                        <div className="space-y-2">
+                                            <h3 className="text-white font-bold text-lg group-hover:text-[#D4BC6D] transition-colors line-clamp-1">
+                                                {athlete.name || 'Athlete Name'}
+                                            </h3>
+                                            
+                                            {athlete.subTitle && (
+                                                <p className="text-gray-400 text-sm">
+                                                    {athlete.subTitle}
+                                                </p>
+                                            )}
+
+                                            {(athlete.team || athlete.school) && (
+                                                <p className="text-gray-500 text-xs">
+                                                    {athlete.team && athlete.school 
+                                                        ? `${athlete.team} • ${athlete.school}`
+                                                        : athlete.team || athlete.school
+                                                    }
+                                                </p>
+                                            )}
+
+                                            {(athlete.city || athlete.country) && (
+                                                <p className="text-gray-500 text-xs flex items-center gap-1">
+                                                    <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                                                        <path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" />
+                                                    </svg>
+                                                    {athlete.city && athlete.country 
+                                                        ? `${athlete.city}, ${athlete.country}`
+                                                        : athlete.city || athlete.country
+                                                    }
+                                                </p>
+                                            )}
+
+                                            {athlete.rating > 0 && (
+                                                <div className="flex items-center gap-1 mt-2">
+                                                    <div className="flex">
+                                                        {[...Array(5)].map((_, i) => (
+                                                            <svg
+                                                                key={i}
+                                                                className={`w-4 h-4 ${i < athlete.rating ? 'text-[#D4BC6D]' : 'text-gray-600'}`}
+                                                                fill="currentColor"
+                                                                viewBox="0 0 20 20"
+                                                            >
+                                                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                                                            </svg>
+                                                        ))}
+                                                    </div>
+                                                    <span className="text-gray-400 text-xs ml-1">
+                                                        ({athlete.rating})
+                                                    </span>
+                                                </div>
+                                            )}
+                                        </div>
+
+                                        {/* Click to view indicator */}
+                                        <div className="mt-4 pt-4 border-t border-gray-700">
+                                            <p className="text-[#D4BC6D] text-xs font-medium group-hover:text-white transition-colors">
+                                                Click to view store →
+                                            </p>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        ) : (
+                            <div className="text-center text-white py-8">
+                                <p className="text-lg">No more athletes available.</p>
+                            </div>
+                        )}
+
+                        {/* Pagination */}
+                        {totalPages > 1 && (
+                            <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+                                {/* Page Info */}
+                                <div className="text-gray-400 text-sm">
+                                    Showing {((currentPage - 1) * itemsPerPage) + 1} to {Math.min(currentPage * itemsPerPage, allAthletesForSeeMore.length)} of {allAthletesForSeeMore.length} athletes
+                                </div>
+
+                                {/* Pagination Controls */}
+                                <div className="flex items-center space-x-2">
+                                    {/* Previous Button */}
+                                    <button
+                                        onClick={() => handlePageChange(currentPage - 1)}
+                                        disabled={currentPage === 1}
+                                        className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                                            currentPage === 1
+                                                ? 'bg-gray-800 text-gray-500 cursor-not-allowed'
+                                                : 'bg-gray-700 text-white hover:bg-[#D4BC6D] hover:text-black'
+                                        }`}
+                                    >
+                                        Previous
+                                    </button>
+
+                                    {/* Page Numbers */}
+                                    <div className="flex space-x-1">
+                                        {[...Array(totalPages)].map((_, index) => {
+                                            const page = index + 1;
+                                            const isCurrentPage = page === currentPage;
+                                            
+                                            // Show first page, last page, current page, and pages around current
+                                            if (
+                                                page === 1 ||
+                                                page === totalPages ||
+                                                (page >= currentPage - 1 && page <= currentPage + 1)
+                                            ) {
+                                                return (
+                                                    <button
+                                                        key={page}
+                                                        onClick={() => handlePageChange(page)}
+                                                        className={`px-3 py-2 rounded-lg text-sm font-medium transition-all ${
+                                                            isCurrentPage
+                                                                ? 'bg-[#D4BC6D] text-black'
+                                                                : 'bg-gray-700 text-white hover:bg-gray-600'
+                                                        }`}
+                                                    >
+                                                        {page}
+                                                    </button>
+                                                );
+                                            } else if (
+                                                page === currentPage - 2 ||
+                                                page === currentPage + 2
+                                            ) {
+                                                return (
+                                                    <span key={page} className="px-2 py-2 text-gray-500">
+                                                        ...
+                                                    </span>
+                                                );
+                                            }
+                                            return null;
+                                        })}
+                                    </div>
+
+                                    {/* Next Button */}
+                                    <button
+                                        onClick={() => handlePageChange(currentPage + 1)}
+                                        disabled={currentPage === totalPages}
+                                        className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                                            currentPage === totalPages
+                                                ? 'bg-gray-800 text-gray-500 cursor-not-allowed'
+                                                : 'bg-gray-700 text-white hover:bg-[#D4BC6D] hover:text-black'
+                                        }`}
+                                    >
+                                        Next
+                                    </button>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                </section>
+            )}
+
+            {/* Tier System Section */}
+            <section className="py-8 bg-black px-4 sm:px-6">
                 {/* Mobile Carousel */}
                 <div className="sm:hidden mt-12 mb-20">
                     <Swiper
@@ -388,8 +615,6 @@ const ExploreAthletes = () => {
                         </div>
                     ))}
                 </div>
-
-
             </section>
 
         </>
