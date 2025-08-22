@@ -2,13 +2,25 @@ import { EllipsisVertical, EyeIcon, Trash } from 'lucide-react';
 import React, { useState } from 'react'
 import LeafLetMap from './LeafLetMap';
 import { useSelector } from 'react-redux';
-import { useMutation } from '@tanstack/react-query';
-import { postRequest } from '../../api';
+import { useMutation, useQuery } from '@tanstack/react-query';
+import { postRequest, getRequest } from '../../api';
 import toast from 'react-hot-toast';
 
 const Dashboard = () => {
     const user = useSelector((state) => state.authenticate.user);
     const [isCashOutModalOpen, setIsCashOutModalOpen] = useState(false);
+
+    // Fetch dashboard stats
+    const { data: dashboardStats, isLoading: isDashboardLoading, error: dashboardError } = useQuery({
+        queryKey: ['dashboard-stats'],
+        queryFn: () => getRequest('/get-dashboard'),
+        onSuccess: (data) => {
+            console.log('Dashboard stats API response:', data);
+        },
+        onError: (error) => {
+            console.error('Error fetching dashboard stats:', error);
+        }
+    });
 
     const data = [
         {
@@ -32,8 +44,6 @@ const Dashboard = () => {
             completion: '60%',
         },
     ];
-
-    
 
     const getTierLevel = (amount) => {
         if (amount <= 250) return 16.6666666667; // Bronze
@@ -113,7 +123,8 @@ const Dashboard = () => {
                                 Total Storefront Revenue
                             </p>
                             <h1 className='text-lg sm:text-xl lg:text-[4.563rem] font-extrabold bg-[linear-gradient(to_right,#d4bc6d,#57430d)] bg-clip-text text-transparent leading-[1]'>
-                                $3.6m
+                                {console.log(dashboardStats)}
+                                {isDashboardLoading ? 'Loading...' : `$${dashboardStats?.total_revunue ?? '0'}`}
                             </h1>
                         </div>
                         <div className="">
@@ -121,7 +132,7 @@ const Dashboard = () => {
                                 Total Cashouts
                             </p>
                             <h1 className='text-lg sm:text-xl lg:text-[4.563rem] font-extrabold bg-[linear-gradient(to_right,#d4bc6d,#57430d)] bg-clip-text text-transparent leading-[1]'>
-                                $25k
+                                {isDashboardLoading ? 'Loading...' : `$${dashboardStats?.total_cashout ?? '0'}`}
                             </h1>
                         </div>
                         <div className="">
@@ -129,7 +140,7 @@ const Dashboard = () => {
                                 Storefront Views
                             </p>
                             <h1 className='text-lg sm:text-xl lg:text-[4.563rem] font-extrabold bg-[linear-gradient(to_right,#d4bc6d,#57430d)] bg-clip-text text-transparent leading-[1]'>
-                                100 k
+                                {isDashboardLoading ? 'Loading...' : `${dashboardStats?.total_views ?? '0'}`}
                             </h1>
                         </div>
                         <div className="text-center">

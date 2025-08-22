@@ -171,15 +171,15 @@ const MasterLayout = () => {
                             </NavLink>
 
                             <div className="w-[4.563rem] h-[4.563rem] rounded-full overflow-hidden">
-                                <img src="/diamond.jpeg" alt="Admin Avatar"
+                                <img src="/bronze2.jpg" alt="Admin Avatar"
                                     className="w-full h-full object-cover object-center" />
                             </div>
                             <div className="flex flex-col w-auto justify-center">
                                 <div className='text-[#D4BC6D] font-bold mb-0.5'>
-                                    Diamond
+                                    Bronze
                                 </div>
                                 <div className='h-[10px] w-[150px] bg-[#282828] rounded-full'>
-                                    <div className="h-full bg-[#D4BC6D] rounded-full" style={{ width: '60%' }} />
+                                    <div className="h-full bg-[#D4BC6D] rounded-full" style={{ width: '10%' }} />
                                 </div>
                             </div>
 
