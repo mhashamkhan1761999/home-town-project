@@ -16,6 +16,7 @@ const NilServiceViewModal = ({ onClose, product }) => {
                     <h2 className="text-xl font-bold mb-4">Product Details</h2>
 
                     <div className="space-y-3">
+                        <div><strong>ID:</strong> {product.id}</div>
                         <div><strong>Name:</strong> {product.name}</div>
                         <div><strong>Description:</strong> {product.description}</div>
                         <div><strong>Price:</strong> ${product.price}</div>

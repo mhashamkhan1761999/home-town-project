@@ -194,7 +194,14 @@ const NilCategory = () => {
                   })()}
 
                   {/* Footer with Submit Button */}
-                  <div className="mt-8 flex justify-end">
+                  <div className="mt-8 flex justify-between">
+                          <button
+                          onClick={() => setShowLaunchService(false)}
+                          className="px-6 py-2 bg-[#D4BC6D] text-black rounded-full hover:bg-[#b89f4e] transition"
+                      >
+                          Back
+                      </button>
+
                       <button
                           type='button'
                           onClick={() => { // Hide product type modal
@@ -753,6 +760,16 @@ const ItemModal = ({ item, onClose, onSuccesActive }) => {
                 {errors?.graphicPlacement && (
                 <p className="text-red-500 text-sm mt-1">{errors.graphicPlacement.message}</p>
                 )}
+            </div>
+              <div className="mb-8">
+                <label className="text-base font-semibold text-[#D4BC6D] mb-3 inline-block">
+                Additional Information (Optional)
+                </label>
+                <textarea
+                placeholder="Any additional information..."
+                className="w-full p-3 border border-[#4B4C46] rounded-lg bg-transparent text-sm text-gray-300 focus:border-[#D4BC6D] outline-none"
+                rows="3"
+                />
             </div>
 
             {/* Buttons */}

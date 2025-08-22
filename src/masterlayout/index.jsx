@@ -118,7 +118,7 @@ const MasterLayout = () => {
                         <NavLink to="/athlete/my-subscription"
                             className={({ isActive }) => isActive ? 'text-[#CAB265] font-bold text-base flex flex-col items-center gap-2 text-center' : 'text-[#6A6A69] font-bold text-base flex items-center gap-2 text-center flex-col'}>
                             <BadgeDollarSign size={18} />
-                            My Subscription
+                            My Packages
                         </NavLink>
 
                         <NavLink to="/athlete/my-products"
