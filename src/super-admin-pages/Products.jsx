@@ -1,12 +1,19 @@
 import { useQuery, useMutation } from '@tanstack/react-query';
 import React, { useState } from 'react';
-import { getRequest, postRequest, deleteRequest } from '../api';
+import { getRequest, postRequest, deleteRequest, putRequest } from '../api';
 import { Plus, Search, Edit, Trash, Eye, Filter, Package } from 'lucide-react';
 import { queryClient } from '../main';
 import { useForm } from 'react-hook-form';
 import Select from 'react-select';
 
+
+    function stripHtml(html) {
+        if (!html) return '';
+        return html.replace(/<[^>]+>/g, '').replace(/&nbsp;/g, ' ').replace(/&amp;/g, '&');
+    }
+
 const SuperAdminProducts = () => {
+    // Utility to strip HTML tags from a string
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedCategory, setSelectedCategory] = useState('');
     const [showAddModal, setShowAddModal] = useState(false);
@@ -244,7 +251,7 @@ const SuperAdminProducts = () => {
                                         <div>
                                             <p className="text-white font-medium">{product.name}</p>
                                             <p className="text-[#838383] text-sm truncate max-w-[200px]">
-                                                {product.description}
+                                                {stripHtml(product.description)}
                                             </p>
                                         </div>
                                     </td>
@@ -445,6 +452,7 @@ const AddProductModal = ({ onClose, categories }) => {
                             rows="4"
                             className="w-full p-3 bg-[#282828] border border-[#4B4C46] rounded-lg text-white focus:border-[#D4BC6D] outline-none"
                             placeholder="Enter product description"
+                            defaultValue={stripHtml(product.description)}
                         />
                         {errors.description && <p className="text-red-500 text-sm mt-1">{errors.description.message}</p>}
                     </div>
@@ -594,13 +602,28 @@ const EditProductModal = ({ product, onClose, categories }) => {
         }
     });
 
+    // Robust color parsing: handle JSON array or comma-separated string
+    // Robust color parsing: handle array, JSON string, or comma-separated string
+    function parseColors(colors) {
+        if (!colors) return [];
+        if (Array.isArray(colors)) return colors;
+        if (typeof colors === 'string') {
+            try {
+                const parsed = JSON.parse(colors);
+                if (Array.isArray(parsed)) return parsed;
+            } catch {
+                return colors.split(',').map(c => c.trim()).filter(Boolean);
+            }
+        }
+        return [];
+    }
     const [selectedColors, setSelectedColors] = useState(
-        product.colors ? JSON.parse(product.colors).map(color => ({ label: color, value: color })) : []
+        product.colors ? parseColors(product.colors).map(color => ({ label: color, value: color })) : []
     );
     const [image, setImage] = useState(null);
 
     const mutation = useMutation({
-        mutationFn: (data) => postRequest(`/admin/products/${product.id}`, data, true),
+        mutationFn: (data) => putRequest(`/admin/products/${product.id}`, data, true),
         onSuccess: () => {
             queryClient.invalidateQueries(['admin-products']);
             onClose();
@@ -778,12 +801,13 @@ const EditProductModal = ({ product, onClose, categories }) => {
                                 <p className="text-white text-sm mb-2">Selected Colors:</p>
                                 <div className="flex flex-wrap gap-2">
                                     {selectedColors.map((color, index) => {
-                                        const colorInfo = colorOptions.find(opt => opt.value === color.value);
+                                        // Find color hex from colorOptions, fallback to color name
+                                        const colorInfo = colorOptions.find(opt => opt.label.toLowerCase() === color.value.toLowerCase() || opt.value.toLowerCase() === color.value.toLowerCase());
                                         return (
                                             <div key={index} className="flex items-center gap-2 bg-[#4B4C46] px-3 py-1 rounded-full">
                                                 <span
                                                     className="w-4 h-4 rounded-full border border-gray-300"
-                                                    style={{ backgroundColor: colorInfo?.color || '#000' }}
+                                                    style={{ backgroundColor: colorInfo?.color || color.value || '#000' }}
                                                 ></span>
                                                 <span className="text-[#D4BC6D] text-sm">{color.label}</span>
                                             </div>
@@ -926,7 +950,7 @@ const ViewProductModal = ({ product, onClose }) => {
 
                     <div>
                         <label className="text-[#838383] text-sm">Description</label>
-                        <p className="text-white">{product.description}</p>
+                        <p className="text-white">{stripHtml(product.description)}</p>
                     </div>
 
                     <div className="grid grid-cols-2 gap-4">
@@ -944,18 +968,36 @@ const ViewProductModal = ({ product, onClose }) => {
                         <div>
                             <label className="text-[#838383] text-sm">Available Colors</label>
                             <div className="flex flex-wrap gap-2 mt-2">
-                                {JSON.parse(product.colors).map((color, index) => (
-                                    <div
-                                        key={index}
-                                        className="flex items-center gap-2 bg-[#282828] px-3 py-2 rounded-full"
-                                    >
-                                        <span
-                                            className="w-4 h-4 rounded-full border border-gray-300"
-                                            style={{ backgroundColor: colorMapping[color.toLowerCase()] || '#000' }}
-                                        ></span>
-                                        <span className="text-white text-sm capitalize">{color}</span>
-                                    </div>
-                                ))}
+                                {(function() {
+                                    let colors = [];
+                                    if (Array.isArray(product.colors)) {
+                                        colors = product.colors;
+                                    } else if (typeof product.colors === 'string') {
+                                        try {
+                                            const parsed = JSON.parse(product.colors);
+                                            if (Array.isArray(parsed)) colors = parsed;
+                                            else colors = [];
+                                        } catch {
+                                            colors = product.colors.split(',').map(c => c.trim()).filter(Boolean);
+                                        }
+                                    }
+                                    return colors.map((color, index) => {
+                                        // Show real color if available, fallback to color name
+                                        const hex = colorMapping[color.trim().toLowerCase()] || color.trim();
+                                        return (
+                                            <div
+                                                key={index}
+                                                className="flex items-center gap-2 bg-[#282828] px-3 py-2 rounded-full"
+                                            >
+                                                <span
+                                                    className="w-4 h-4 rounded-full border border-gray-300"
+                                                    style={{ backgroundColor: hex }}
+                                                ></span>
+                                                <span className="text-white text-sm capitalize">{color}</span>
+                                            </div>
+                                        );
+                                    });
+                                })()}
                             </div>
                         </div>
                     )}
