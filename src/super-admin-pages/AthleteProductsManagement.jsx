@@ -532,8 +532,8 @@ const ProductViewModal = ({ product, uploadedImages, onImageUpload, onRemoveImag
                       // Handle API colors format (JSON string)
                       if (product.colors && typeof product.colors === 'string') {
                         try {
-                          // The API returns colors as a double-encoded JSON string
-                          const parsedColors = JSON.parse(JSON.parse(product.colors));
+                          // The API returns colors as a JSON string
+                          const parsedColors = JSON.parse(product.colors);
                           colors = Array.isArray(parsedColors) ? parsedColors : [];
                         } catch (e) {
                           console.warn('Failed to parse colors:', product.colors);
@@ -545,19 +545,52 @@ const ProductViewModal = ({ product, uploadedImages, onImageUpload, onRemoveImag
                         colors = product.colors;
                       }
 
+                      // Color mapping for proper hex values
+                      const colorMapping = {
+                        black: "#000000",
+                        white: "#FFFFFF",
+                        red: "#FF0000",
+                        blue: "#0000FF",
+                        green: "#008000",
+                        yellow: "#FFFF00",
+                        purple: "#800080",
+                        orange: "#FFA500",
+                        pink: "#FFC0CB",
+                        gray: "#808080",
+                        grey: "#808080",
+                        brown: "#A52A2A",
+                        navy: "#000080",
+                        gold: "#FFD700",
+                        silver: "#C0C0C0",
+                      };
+
                       return colors.length > 0 ? (
-                        colors.map((color, index) => (
-                          <span
-                            key={index}
-                            className="px-3 py-1 bg-[#4B4C46] text-white text-sm rounded-full border border-[#6B6C66]"
-                          >
-                            {color}
-                          </span>
-                        ))
+                        colors.map((color, index) => {
+                          const normalizedColor = color.toLowerCase().trim();
+                          const hexColor = colorMapping[normalizedColor] || color;
+                          
+                          return (
+                            <div
+                              key={index}
+                              className="flex items-center gap-2 px-3 py-1 bg-[#4B4C46] text-white text-sm rounded-full border border-[#6B6C66]"
+                            >
+                              <span
+                                className="w-4 h-4 rounded-full border border-gray-300"
+                                style={{ backgroundColor: hexColor }}
+                                title={color}
+                              ></span>
+                              <span className="capitalize">{color}</span>
+                            </div>
+                          );
+                        })
                       ) : (
                         <span className="text-gray-400 text-sm">No colors available</span>
                       );
                     })()}
+                  </div>
+                  <label className="block text-gray-400 text-sm mb-2 mt-4">Warnings</label>
+                  <div className="bg-[#4B4C46] border border-[#6B6C66] rounded-lg p-4">
+                    <p className="text-gray-400 text-sm">{product?.warnings || "No warnings available"}</p>
                   </div>
                 </div>
               </div>

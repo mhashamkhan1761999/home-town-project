@@ -182,6 +182,7 @@ const NilCategory = () => {
           onClose={() => {
             launchServiceModal.closeModal();
             setShowLaunchService(false);
+            window.location.reload(); 
           }}
           onSuccesActive={handleLaunchServiceComplete}
         />
@@ -662,6 +663,8 @@ const ItemModal = ({ item, onClose, onSuccesActive }) => {
     formData.append("description", values?.description || '');
     formData.append("price", values?.price || 10);
     formData.append("colors", JSON.stringify(colorList?.map((i) => i?.value)));
+    formData.append("warnings", values?.warnings || '');
+    formData.append("placement", values?.placement || '');
     if (image) formData.append("image", image);
     formData.append("design_service", values?.design_service || false);
 
@@ -685,8 +688,14 @@ const ItemModal = ({ item, onClose, onSuccesActive }) => {
   ];
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-50">
-      <div className="bg-black border border-[#4B4C46] rounded-2xl p-6 w-full max-w-xl">
+    <div className="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-50 p-4">
+      <div
+        className="bg-black border border-[#4B4C46] rounded-2xl p-6 w-full max-w-xl max-h-[90vh] overflow-y-auto custom-scrollbar"
+        style={{
+          scrollbarWidth: 'thin',
+          scrollbarColor: '#D4BC6D #222',
+        }}
+      >
         <h2 className="text-2xl font-bold text-[#D4BC6D] mb-6">Edit Item</h2>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-5" id="product-form">
 
@@ -810,10 +819,32 @@ const ItemModal = ({ item, onClose, onSuccesActive }) => {
               className="w-full p-3 border border-[#4B4C46] rounded-lg bg-transparent text-sm text-gray-300 focus:border-[#D4BC6D] outline-none"
               rows="3"
             />
-            {errors?.graphicPlacement && (
-              <p className="text-red-500 text-sm mt-1">{errors.graphicPlacement.message}</p>
+            {errors?.placement && (
+              <p className="text-red-500 text-sm mt-1">{errors.placement.message}</p>
             )}
           </div>
+
+          {/* Warnings - Optional for all, Mandatory for Supplements */}
+          <div className="mb-8">
+            <label className="text-base font-semibold text-[#D4BC6D] mb-3 inline-block">
+              Warnings {item?.category?.name === "Strength Supplements" ? "(Required)" : "(Optional)"}
+            </label>
+            <textarea
+              {...register('warnings', { 
+                required: item?.category?.name === "Strength Supplements" ? 'Warnings are required for supplements' : false 
+              })}
+              placeholder={item?.category?.name === "Strength Supplements" 
+                ? "E.g. Keep out of reach of children. Consult physician before use. Do not exceed recommended dosage..." 
+                : "Any safety warnings or precautions..."
+              }
+              className="w-full p-3 border border-[#4B4C46] rounded-lg bg-transparent text-sm text-gray-300 focus:border-[#D4BC6D] outline-none"
+              rows="4"
+            />
+            {errors?.warnings && (
+              <p className="text-red-500 text-sm mt-1">{errors.warnings.message}</p>
+            )}
+          </div>
+
           <div className="mb-8">
             <label className="text-base font-semibold text-[#D4BC6D] mb-3 inline-block">
               Additional Information (Optional)
