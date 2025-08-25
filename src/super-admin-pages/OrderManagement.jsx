@@ -107,7 +107,7 @@ const OrderManagement = () => {
   const [isViewModalOpen, setIsViewModalOpen] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState(null);
 
-  const statusTypes = ['Pending', 'Processing', 'Completed', 'Cancelled'];
+  const statusTypes = ['Pending', 'Sent', 'Return Request'];
   const filterOptions = ['All', ...statusTypes];
 
   // Filter orders based on search term and status
@@ -141,18 +141,10 @@ const OrderManagement = () => {
     switch (status) {
       case 'pending':
         return 'bg-yellow-600 text-white';
-      case 'processing':
-        return 'bg-blue-600 text-white';
-      case 'shipped':
-        return 'bg-purple-600 text-white';
-      case 'delivered':
+      case 'sent':
         return 'bg-green-600 text-white';
-      case 'cancelled':
-        return 'bg-red-600 text-white';
       case 'return request':
-        return 'bg-orange-600 text-white';
-      case 'returned':
-        return 'bg-gray-600 text-white';
+        return 'bg-red-600 text-white';
       default:
         return 'bg-gray-600 text-white';
     }
@@ -194,24 +186,24 @@ const OrderManagement = () => {
           <div className="bg-[#282828] border border-[#4B4C46] rounded-lg p-3 sm:p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-gray-400 text-xs sm:text-sm">Processing</p>
+                <p className="text-gray-400 text-xs sm:text-sm">Sent</p>
                 <p className="text-lg sm:text-2xl font-bold text-white">
-                  {orders?.filter(o => o.status == 'processing')?.length}
+                  {orders?.filter(o => o.status === 'sent')?.length}
                 </p>
               </div>
-              <Package className="h-6 w-6 sm:h-8 sm:w-8 text-blue-500" />
+              <Package className="h-6 w-6 sm:h-8 sm:w-8 text-green-500" />
             </div>
           </div>
 
           <div className="bg-[#282828] border border-[#4B4C46] rounded-lg p-3 sm:p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-gray-400 text-xs sm:text-sm">Delivered</p>
+                <p className="text-gray-400 text-xs sm:text-sm">Return Request</p>
                 <p className="text-lg sm:text-2xl font-bold text-white">
-                  {orders?.filter(o => o.status === 'delivered')?.length}
+                  {orders?.filter(o => o.status === 'return request')?.length}
                 </p>
               </div>
-              <Package className="h-6 w-6 sm:h-8 sm:w-8 text-green-500" />
+              <Package className="h-6 w-6 sm:h-8 sm:w-8 text-red-500" />
             </div>
           </div>
         </div>
@@ -363,19 +355,14 @@ const ViewOrderModal = ({ isOpen, onClose, order }) => {
   const getStatusColor = (status) => {
     switch (status) {
       case 'Pending':
+      case 'pending':
         return 'bg-yellow-600 text-white';
-      case 'Processing':
-        return 'bg-blue-600 text-white';
-      case 'Shipped':
-        return 'bg-purple-600 text-white';
-      case 'Delivered':
+      case 'Sent':
+      case 'sent':
         return 'bg-green-600 text-white';
-      case 'Cancelled':
-        return 'bg-red-600 text-white';
       case 'Return Request':
-        return 'bg-orange-600 text-white';
-      case 'Returned':
-        return 'bg-gray-600 text-white';
+      case 'return request':
+        return 'bg-red-600 text-white';
       default:
         return 'bg-gray-600 text-white';
     }

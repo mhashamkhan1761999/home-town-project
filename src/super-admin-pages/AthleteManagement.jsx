@@ -135,7 +135,7 @@ const AthleteManagement = () => {
   const [isViewModalOpen, setIsViewModalOpen] = useState(false);
   const [selectedAthlete, setSelectedAthlete] = useState(null);
 
-  const statusTypes = ['Active', 'Deactive'];
+  const statusTypes = ['Pending', 'Standard', 'Pro'];
 
   // Filter athletes based on status only (since search is now dropdown-based)
   const filteredAthletes = athletes?.filter(athlete => {
@@ -160,14 +160,12 @@ const AthleteManagement = () => {
 
   const getStatusColor = (status) => {
     switch (status) {
-      case 'active':
-        return 'bg-green-600 text-white';
-      case 'inactive':
-        return 'bg-gray-600 text-white';
       case 'pending':
         return 'bg-yellow-600 text-white';
-      case 'suspended':
-        return 'bg-red-600 text-white';
+      case 'standard':
+        return 'bg-blue-600 text-white';
+      case 'pro':
+        return 'bg-green-600 text-white';
       default:
         return 'bg-gray-600 text-white';
     }
@@ -216,24 +214,24 @@ const AthleteManagement = () => {
           <div className="bg-[#282828] border border-[#4B4C46] rounded-lg p-3 sm:p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-gray-400 text-xs sm:text-sm">Active</p>
+                <p className="text-gray-400 text-xs sm:text-sm">Standard</p>
                 <p className="text-lg sm:text-2xl font-bold text-white">
-                  {athletes?.filter(a => a.status == 'active')?.length}
+                  {athletes?.filter(a => a.status == 'standard')?.length}
                 </p>
               </div>
-              <User className="h-6 w-6 sm:h-8 sm:w-8 text-green-500" />
+              <User className="h-6 w-6 sm:h-8 sm:w-8 text-blue-500" />
             </div>
           </div>
 
           <div className="bg-[#282828] border border-[#4B4C46] rounded-lg p-3 sm:p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-gray-400 text-xs sm:text-sm">Pending</p>
+                <p className="text-gray-400 text-xs sm:text-sm">Pro</p>
                 <p className="text-lg sm:text-2xl font-bold text-white">
-                  {athletes?.filter(a => a.status == 'pending')?.length}
+                  {athletes?.filter(a => a.status == 'pro')?.length}
                 </p>
               </div>
-              <User className="h-6 w-6 sm:h-8 sm:w-8 text-yellow-500" />
+              <User className="h-6 w-6 sm:h-8 sm:w-8 text-green-500" />
             </div>
           </div>
         </div>
@@ -334,7 +332,7 @@ const AthleteManagement = () => {
                           className={`text-xs font-semibold rounded-full px-2 py-1 focus:outline-none focus:ring-2 focus:ring-[#D4BC6D] ${getStatusColor(athlete.status)}`}
                         >
                           {statusTypes.map(status => (
-                            <option key={status} value={status?.toLowerCase() == 'active' ? '1' : '0'} className="bg-[#1a1a1a] text-white">
+                            <option key={status} value={status?.toLowerCase()} className="bg-[#1a1a1a] text-white">
                               {status}
                             </option>
                           ))}
@@ -383,14 +381,12 @@ const ViewAthleteModal = ({ isOpen, onClose, athlete }) => {
 
   const getStatusColor = (status) => {
     switch (status) {
-      case '1':
-        return 'bg-green-600 text-white';
-      case '0':
-        return 'bg-gray-600 text-white';
-      case 'Pending':
+      case 'pending':
         return 'bg-yellow-600 text-white';
-      case 'Suspended':
-        return 'bg-red-600 text-white';
+      case 'standard':
+        return 'bg-blue-600 text-white';
+      case 'pro':
+        return 'bg-green-600 text-white';
       default:
         return 'bg-gray-600 text-white';
     }
