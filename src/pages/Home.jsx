@@ -110,81 +110,137 @@ const Home = () => {
                 </div>
             </section>
 
-            <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-10 xl:gap-16 items-center">
-                    {/* Left Features – Only on Desktop */}
-                    <div className="space-y-8 hidden lg:block relative">
-                        <div className="feature-card relative">
-                            <div className="info-line hidden lg:block absolute right-[-40px] top-1/2 transform -translate-y-1/2" />
-                            <div className="info-dot hidden lg:block absolute right-[-44px] top-1/2 transform -translate-y-1/2" />
-                            <h3 className="text-lg font-bold text-gray-200 mb-2">
-                                AI-Powered Analytics & Instant Cashouts
-                            </h3>
-                            <p className="text-gray-400 text-sm leading-relaxed">
-                                Our platform is backed by AI technology that delivers real-time sales analytics, audience insights...
-                            </p>
-                        </div>
-
-                        <div className="feature-card relative">
-                            <div className="info-line hidden lg:block absolute right-[-40px] top-1/2 transform -translate-y-1/2" />
-                            <div className="info-dot hidden lg:block absolute right-[-44px] top-1/2 transform -translate-y-1/2" />
-                            <h3 className="text-lg font-bold text-gray-200 mb-2">
-                                Social Media Promotion
-                            </h3>
-                            <p className="text-gray-400 text-sm leading-relaxed">
-                                We help amplify your presence through smart, strategic social media support...
-                            </p>
-                        </div>
+            <section className="py-16 sm:py-20 lg:py-24 bg-black">
+                <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    {/* Section Header */}
+                    <div className="text-center mb-12 sm:mb-16 lg:mb-20">
+                        <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold bg-gradient-to-r from-[#d4bc6d] to-[#57430d] bg-clip-text text-transparent mb-4">
+                            Why Athletes Choose Hometown Hero
+                        </h2>
+                        <p className="text-gray-400 text-lg sm:text-xl max-w-3xl mx-auto">
+                            Everything you need to build, grow, and monetize your brand in one powerful platform
+                        </p>
                     </div>
 
-                    {/* Center Phone Mockup */}
-                    <div className="flex justify-center px-4 sm:px-6">
-                        <div className="w-full max-w-[200px] sm:max-w-[300px] md:max-w-[433px]">
-                            <img src="/mobile.png" alt="mobile" className="w-full h-auto" />
+                    {/* Features Grid */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 lg:gap-10">
+                        
+                        {/* Industry-Leading Profit Sharing */}
+                        <div className="bg-gradient-to-br from-[#1a1a1a] to-[#2a2a2a] border border-[#d4bc6d]/20 rounded-xl p-6 sm:p-8 hover:border-[#d4bc6d]/40 transition-all duration-300 group">
+                            <div className="flex items-start gap-4 mb-4">
+                                <div className="w-12 h-12 bg-gradient-to-r from-[#d4bc6d] to-[#57430d] rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                                    <svg className="w-6 h-6 text-black" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fillRule="evenodd" d="M4 4a2 2 0 00-2 2v4a2 2 0 002 2V6h10a2 2 0 00-2-2H4zm2 6a2 2 0 012-2h8a2 2 0 012 2v4a2 2 0 01-2 2H8a2 2 0 01-2-2v-4zm6 4a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" />
+                                    </svg>
+                                </div>
+                                <div className="flex-1">
+                                    <h3 className="text-xl sm:text-2xl font-bold text-[#d4bc6d] mb-2">
+                                        Industry-Leading Profit Sharing
+                                    </h3>
+                                </div>
+                            </div>
+                            <p className="text-gray-300 leading-relaxed text-sm sm:text-base">
+                                Unlike other platforms that offer athletes just 5-20% of profits, our platform provides athletes with up to <span className="text-[#d4bc6d] font-semibold">80% profit sharing</span>, reflecting our values that athletes should receive the benefits, not our platform.
+                            </p>
                         </div>
+
+                        {/* AI-Powered Analytics */}
+                        <div className="bg-gradient-to-br from-[#1a1a1a] to-[#2a2a2a] border border-[#d4bc6d]/20 rounded-xl p-6 sm:p-8 hover:border-[#d4bc6d]/40 transition-all duration-300 group">
+                            <div className="flex items-start gap-4 mb-4">
+                                <div className="w-12 h-12 bg-gradient-to-r from-[#d4bc6d] to-[#57430d] rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                                    <svg className="w-6 h-6 text-black" fill="currentColor" viewBox="0 0 20 20">
+                                        <path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zM14 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z" />
+                                    </svg>
+                                </div>
+                                <div className="flex-1">
+                                    <h3 className="text-xl sm:text-2xl font-bold text-[#d4bc6d] mb-2">
+                                        AI-Powered Analytics
+                                    </h3>
+                                </div>
+                            </div>
+                            <p className="text-gray-300 leading-relaxed text-sm sm:text-base">
+                                Our platform is powered by <span className="text-[#d4bc6d] font-semibold">advanced AI technology</span>, delivering data-driven audience insights, smart recommendations to help influencers and athletes level of success.
+                            </p>
+                        </div>
+
+                        {/* Social Media Promotion */}
+                        <div className="bg-gradient-to-br from-[#1a1a1a] to-[#2a2a2a] border border-[#d4bc6d]/20 rounded-xl p-6 sm:p-8 hover:border-[#d4bc6d]/40 transition-all duration-300 group">
+                            <div className="flex items-start gap-4 mb-4">
+                                <div className="w-12 h-12 bg-gradient-to-r from-[#d4bc6d] to-[#57430d] rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                                    <svg className="w-6 h-6 text-black" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fillRule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clipRule="evenodd" />
+                                    </svg>
+                                </div>
+                                <div className="flex-1">
+                                    <h3 className="text-xl sm:text-2xl font-bold text-[#d4bc6d] mb-2">
+                                        Social Media Promotion
+                                    </h3>
+                                </div>
+                            </div>
+                            <p className="text-gray-300 leading-relaxed text-sm sm:text-base">
+                                We'll amplify your social media presence through our <span className="text-[#d4bc6d] font-semibold">strategic marketing</span>, optimizing your profiles, creating promotional content, and personal insights, to position you to grow your following and turn your viewer into value.
+                            </p>
+                        </div>
+
+                        {/* NIL Services */}
+                        <div className="bg-gradient-to-br from-[#1a1a1a] to-[#2a2a2a] border border-[#d4bc6d]/20 rounded-xl p-6 sm:p-8 hover:border-[#d4bc6d]/40 transition-all duration-300 group">
+                            <div className="flex items-start gap-4 mb-4">
+                                <div className="w-12 h-12 bg-gradient-to-r from-[#d4bc6d] to-[#57430d] rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                                    <svg className="w-6 h-6 text-black" fill="currentColor" viewBox="0 0 20 20">
+                                        <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                </div>
+                                <div className="flex-1">
+                                    <h3 className="text-xl sm:text-2xl font-bold text-[#d4bc6d] mb-2">
+                                        NIL Services
+                                    </h3>
+                                </div>
+                            </div>
+                            <p className="text-gray-300 leading-relaxed text-sm sm:text-base">
+                                Launch a wide range of NIL services from <span className="text-[#d4bc6d] font-semibold">merch and supplements</span> and a licences. We bring the technical expertise that makes it Live. It's fast, simple, and designed for you to reach success on what matters most.
+                            </p>
+                        </div>
+
                     </div>
 
-                    {/* Right Feature – Desktop Only */}
-                    <div className="hidden lg:block relative">
-                        <div className="feature-card relative">
-                            <div className="info-line hidden lg:block absolute left-[-40px] top-1/2 transform -translate-y-1/2" />
-                            <div className="info-dot hidden lg:block absolute left-[-44px] top-1/2 transform -translate-y-1/2" />
-                            <h3 className="text-lg font-bold text-gray-200 mb-2">
-                                Industry-Leading Profit Sharing
-                            </h3>
-                            <p className="text-gray-400 text-sm leading-relaxed">
-                                Unlike most platforms that offer athletes just 5-20% of profits...
-                            </p>
-                        </div>
-                    </div>
+                    {/* Bottom Section */}
+                    <div className="mt-12 sm:mt-16 lg:mt-20">
+                        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-12 items-center">
+                            
+                            {/* Hands On Management */}
+                            <div className="text-center lg:text-left">
+                                <h3 className="text-2xl sm:text-3xl font-bold text-[#d4bc6d] mb-4">
+                                    Hands On Management
+                                </h3>
+                                <p className="text-gray-300 leading-relaxed text-sm sm:text-base">
+                                    Every athlete on our platform gets paired with a dedicated team of graphic NIL agents, we handle the brand building so our athletes can stay focused on their game.
+                                </p>
+                            </div>
 
-                    {/* All Features – Mobile Only */}
-                    <div className="lg:hidden mt-10 space-y-6">
-                        <div className="feature-card">
-                            <h3 className="text-lg font-bold text-gray-200 mb-2">
-                                AI-Powered Analytics & Instant Cashouts
-                            </h3>
-                            <p className="text-gray-400 text-sm leading-relaxed">
-                                Our platform is backed by AI technology that delivers real-time sales analytics...
-                            </p>
-                        </div>
+                            {/* Everything Free */}
+                            <div className="text-center">
+                                <h3 className="text-2xl sm:text-3xl font-bold text-[#d4bc6d] mb-4">
+                                    Everything Free
+                                </h3>
+                                <p className="text-gray-300 leading-relaxed text-sm sm:text-base">
+                                    No upfront costs. Your journey to NIL success begins without any financial barriers. Every service builds into your product every launch. Free. Every launch helps with building the brand.
+                                </p>
+                            </div>
 
-                        <div className="feature-card">
-                            <h3 className="text-lg font-bold text-gray-200 mb-2">Social Media Promotion</h3>
-                            <p className="text-gray-400 text-sm leading-relaxed">
-                                We help amplify your presence through smart, strategic social media support...
-                            </p>
-                        </div>
+                            {/* Instant Cashouts */}
+                            <div className="text-center lg:text-right">
+                                <h3 className="text-2xl sm:text-3xl font-bold text-[#d4bc6d] mb-4">
+                                    Instant Cashouts
+                                </h3>
+                                <p className="text-gray-300 leading-relaxed text-sm sm:text-base">
+                                    When it comes time to get paid, our cashout is as transparent, reliable access to their earnings offering immediate and reliable access within reach.
+                                </p>
+                            </div>
 
-                        <div className="feature-card">
-                            <h3 className="text-lg font-bold text-gray-200 mb-2">Industry-Leading Profit Sharing</h3>
-                            <p className="text-gray-400 text-sm leading-relaxed">
-                                Unlike most platforms that offer athletes just 5-20% of profits...
-                            </p>
                         </div>
                     </div>
                 </div>
-            </div>
+            </section>
 
 
             <section className="py-18 bg-black px-4 sm:px-8">

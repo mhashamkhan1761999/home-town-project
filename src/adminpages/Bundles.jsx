@@ -84,7 +84,7 @@ const Bundles = () => {
                                             {item?.title}
                                         </h4>
                                         <p className='text-white font-normal text-sm mb-4'>
-                                            {item?.description}
+                                            {item?.description.split('(')[0]}
                                         </p>
                                         <img src="/line2.svg" alt="line" className='w-full mb-11' />
                                     </div>
