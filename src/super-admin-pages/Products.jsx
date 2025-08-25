@@ -100,7 +100,7 @@ const SuperAdminProducts = () => {
     // Fetch products with fallback
     const { data: products, isLoading, error } = useQuery({
         queryKey: ['admin-products'],
-        queryFn: () => getRequest('/products'),
+        queryFn: () => getRequest('/admin/products'),
         onError: (error) => {
             console.log('Backend not available, using fallback data');
         }
@@ -122,7 +122,7 @@ const SuperAdminProducts = () => {
     // Filter products based on search and category
     const filteredProducts = displayProducts?.filter(product => {
         const matchesSearch = product?.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                             product?.description?.toLowerCase().includes(searchTerm.toLowerCase());
+            product?.description?.toLowerCase().includes(searchTerm.toLowerCase());
         const matchesCategory = !selectedCategory || product?.category?.id === selectedCategory;
         return matchesSearch && matchesCategory;
     }) || [];
@@ -252,11 +252,10 @@ const SuperAdminProducts = () => {
                                     <td className="py-4 text-white font-bold">${product.price}</td>
                                     <td className="py-4 text-white">{product.stock || 'Unlimited'}</td>
                                     <td className="py-4">
-                                        <span className={`px-3 py-1 rounded-full text-xs font-medium ${
-                                            product.status === 'active' 
-                                                ? 'bg-green-100 text-green-800' 
-                                                : 'bg-red-100 text-red-800'
-                                        }`}>
+                                        <span className={`px-3 py-1 rounded-full text-xs font-medium ${product.status === 'active'
+                                            ? 'bg-green-100 text-green-800'
+                                            : 'bg-red-100 text-red-800'
+                                            }`}>
                                             {product.status || 'Active'}
                                         </span>
                                     </td>
@@ -302,21 +301,20 @@ const SuperAdminProducts = () => {
                     >
                         Previous
                     </button>
-                    
+
                     {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
                         <button
                             key={page}
                             onClick={() => setCurrentPage(page)}
-                            className={`px-3 py-2 rounded-lg transition ${
-                                currentPage === page 
-                                    ? 'bg-[#D4BC6D] text-black' 
-                                    : 'bg-[#282828] text-white hover:bg-[#3a3a3a]'
-                            }`}
+                            className={`px-3 py-2 rounded-lg transition ${currentPage === page
+                                ? 'bg-[#D4BC6D] text-black'
+                                : 'bg-[#282828] text-white hover:bg-[#3a3a3a]'
+                                }`}
                         >
                             {page}
                         </button>
                     ))}
-                    
+
                     <button
                         onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
                         disabled={currentPage === totalPages}
@@ -329,14 +327,14 @@ const SuperAdminProducts = () => {
 
             {/* Modals */}
             {showAddModal && (
-                <AddProductModal 
-                    onClose={() => setShowAddModal(false)} 
+                <AddProductModal
+                    onClose={() => setShowAddModal(false)}
                     categories={displayCategories}
                 />
             )}
-            
+
             {showEditModal && selectedProduct && (
-                <EditProductModal 
+                <EditProductModal
                     product={selectedProduct}
                     onClose={() => {
                         setShowEditModal(false);
@@ -345,9 +343,9 @@ const SuperAdminProducts = () => {
                     categories={displayCategories}
                 />
             )}
-            
+
             {showDeleteModal && selectedProduct && (
-                <DeleteProductModal 
+                <DeleteProductModal
                     product={selectedProduct}
                     onClose={() => {
                         setShowDeleteModal(false);
@@ -355,9 +353,9 @@ const SuperAdminProducts = () => {
                     }}
                 />
             )}
-            
+
             {showViewModal && selectedProduct && (
-                <ViewProductModal 
+                <ViewProductModal
                     product={selectedProduct}
                     onClose={() => {
                         setShowViewModal(false);
@@ -376,7 +374,7 @@ const AddProductModal = ({ onClose, categories }) => {
     const [image, setImage] = useState(null);
 
     const mutation = useMutation({
-        mutationFn: (data) => postRequest('/products', data, true),
+        mutationFn: (data) => postRequest('/admin/products', data, true),
         onSuccess: () => {
             queryClient.invalidateQueries(['admin-products']);
             onClose();
@@ -395,11 +393,11 @@ const AddProductModal = ({ onClose, categories }) => {
                 formData.append(key, data[key]);
             }
         });
-        
+
         if (selectedColors.length > 0) {
             formData.append('colors', JSON.stringify(selectedColors.map(c => c.value)));
         }
-        
+
         if (image) {
             formData.append('image', image);
         }
@@ -426,7 +424,7 @@ const AddProductModal = ({ onClose, categories }) => {
         <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
             <div className="bg-black border border-[#4B4C46] rounded-2xl p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
                 <h3 className="text-2xl font-bold text-[#D4BC6D] mb-6">Add New Product</h3>
-                
+
                 <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
                     {/* Product Name */}
                     <div>
@@ -475,6 +473,15 @@ const AddProductModal = ({ onClose, categories }) => {
                         </div>
                     </div>
 
+                    <div>
+                        <label className="block text-white font-medium mb-2">Weight</label>
+                        <input
+                            type="number"
+                            {...register('weight')}
+                            className="w-full p-3 bg-[#282828] border border-[#4B4C46] rounded-lg text-white focus:border-[#D4BC6D] outline-none"
+                        />
+                    </div>
+
                     {/* Category */}
                     <div>
                         <label className="block text-white font-medium mb-2">Category</label>
@@ -501,8 +508,8 @@ const AddProductModal = ({ onClose, categories }) => {
                                 ...opt,
                                 label: (
                                     <div className="flex items-center gap-2">
-                                        <span 
-                                            className="w-4 h-4 rounded-full border border-gray-300" 
+                                        <span
+                                            className="w-4 h-4 rounded-full border border-gray-300"
                                             style={{ backgroundColor: opt.color }}
                                         ></span>
                                         {opt.label}
@@ -538,7 +545,7 @@ const AddProductModal = ({ onClose, categories }) => {
                                 }),
                             }}
                         />
-                        
+
                     </div>
 
                     {/* Image Upload */}
@@ -586,14 +593,14 @@ const EditProductModal = ({ product, onClose, categories }) => {
             category_id: product.category?.id
         }
     });
-    
+
     const [selectedColors, setSelectedColors] = useState(
         product.colors ? JSON.parse(product.colors).map(color => ({ label: color, value: color })) : []
     );
     const [image, setImage] = useState(null);
 
     const mutation = useMutation({
-        mutationFn: (data) => postRequest(`/products/${product.id}`, data, true),
+        mutationFn: (data) => postRequest(`/admin/products/${product.id}`, data, true),
         onSuccess: () => {
             queryClient.invalidateQueries(['admin-products']);
             onClose();
@@ -610,11 +617,11 @@ const EditProductModal = ({ product, onClose, categories }) => {
                 formData.append(key, data[key]);
             }
         });
-        
+
         if (selectedColors.length > 0) {
             formData.append('colors', JSON.stringify(selectedColors.map(c => c.value)));
         }
-        
+
         if (image) {
             formData.append('image', image);
         }
@@ -641,7 +648,7 @@ const EditProductModal = ({ product, onClose, categories }) => {
         <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
             <div className="bg-black border border-[#4B4C46] rounded-2xl p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
                 <h3 className="text-2xl font-bold text-[#D4BC6D] mb-6">Edit Product</h3>
-                
+
                 <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
                     {/* Product Name */}
                     <div>
@@ -690,6 +697,17 @@ const EditProductModal = ({ product, onClose, categories }) => {
                         </div>
                     </div>
 
+
+                    <div>
+                        <label className="block text-white font-medium mb-2">Weight</label>
+                        <input
+                            type="number"
+                            {...register('weight')}
+                            className="w-full p-3 bg-[#282828] border border-[#4B4C46] rounded-lg text-white focus:border-[#D4BC6D] outline-none"
+
+                        />
+                    </div>
+
                     {/* Category */}
                     <div>
                         <label className="block text-white font-medium mb-2">Category</label>
@@ -716,8 +734,8 @@ const EditProductModal = ({ product, onClose, categories }) => {
                                 ...opt,
                                 label: (
                                     <div className="flex items-center gap-2">
-                                        <span 
-                                            className="w-4 h-4 rounded-full border border-gray-300" 
+                                        <span
+                                            className="w-4 h-4 rounded-full border border-gray-300"
                                             style={{ backgroundColor: opt.color }}
                                         ></span>
                                         {opt.label}
@@ -753,7 +771,7 @@ const EditProductModal = ({ product, onClose, categories }) => {
                                 }),
                             }}
                         />
-                        
+
                         {/* Selected Colors Display */}
                         {selectedColors.length > 0 && (
                             <div className="mt-3">
@@ -763,8 +781,8 @@ const EditProductModal = ({ product, onClose, categories }) => {
                                         const colorInfo = colorOptions.find(opt => opt.value === color.value);
                                         return (
                                             <div key={index} className="flex items-center gap-2 bg-[#4B4C46] px-3 py-1 rounded-full">
-                                                <span 
-                                                    className="w-4 h-4 rounded-full border border-gray-300" 
+                                                <span
+                                                    className="w-4 h-4 rounded-full border border-gray-300"
                                                     style={{ backgroundColor: colorInfo?.color || '#000' }}
                                                 ></span>
                                                 <span className="text-[#D4BC6D] text-sm">{color.label}</span>
@@ -829,7 +847,7 @@ const EditProductModal = ({ product, onClose, categories }) => {
 // Delete Product Modal
 const DeleteProductModal = ({ product, onClose }) => {
     const mutation = useMutation({
-        mutationFn: (id) => deleteRequest(`/products/${id}`),
+        mutationFn: (id) => deleteRequest(`/admin/products/${id}`),
         onSuccess: () => {
             queryClient.invalidateQueries(['admin-products']);
             onClose();
@@ -889,7 +907,7 @@ const ViewProductModal = ({ product, onClose }) => {
         <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
             <div className="bg-black border border-[#4B4C46] rounded-2xl p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
                 <h3 className="text-2xl font-bold text-[#D4BC6D] mb-6">Product Details</h3>
-                
+
                 <div className="space-y-4">
                     {product.image && (
                         <div className="w-32 h-32 bg-[#282828] rounded-lg overflow-hidden">
@@ -900,17 +918,17 @@ const ViewProductModal = ({ product, onClose }) => {
                             />
                         </div>
                     )}
-                    
+
                     <div>
                         <label className="text-[#838383] text-sm">Product Name</label>
                         <p className="text-white font-medium">{product.name}</p>
                     </div>
-                    
+
                     <div>
                         <label className="text-[#838383] text-sm">Description</label>
                         <p className="text-white">{product.description}</p>
                     </div>
-                    
+
                     <div className="grid grid-cols-2 gap-4">
                         <div>
                             <label className="text-[#838383] text-sm">Price</label>
@@ -921,7 +939,7 @@ const ViewProductModal = ({ product, onClose }) => {
                             <p className="text-white">{product.category?.name || 'N/A'}</p>
                         </div>
                     </div>
-                    
+
                     {product.colors && (
                         <div>
                             <label className="text-[#838383] text-sm">Available Colors</label>
@@ -931,8 +949,8 @@ const ViewProductModal = ({ product, onClose }) => {
                                         key={index}
                                         className="flex items-center gap-2 bg-[#282828] px-3 py-2 rounded-full"
                                     >
-                                        <span 
-                                            className="w-4 h-4 rounded-full border border-gray-300" 
+                                        <span
+                                            className="w-4 h-4 rounded-full border border-gray-300"
                                             style={{ backgroundColor: colorMapping[color.toLowerCase()] || '#000' }}
                                         ></span>
                                         <span className="text-white text-sm capitalize">{color}</span>
@@ -942,7 +960,7 @@ const ViewProductModal = ({ product, onClose }) => {
                         </div>
                     )}
                 </div>
-                
+
                 <button
                     onClick={onClose}
                     className="mt-6 px-6 py-3 bg-[#4B4C46] text-white rounded-lg hover:bg-[#5a5b54] transition"

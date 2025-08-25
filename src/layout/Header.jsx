@@ -5,6 +5,7 @@ import { useSelector } from 'react-redux';
 
 const Header = () => {
   const isAuthenticated = useSelector(state => state?.authenticate?.isAuthenticated);
+  const user = useSelector(state => state?.authenticate?.user);
   const cartItems = useSelector(state => state?.cart?.items);
   const [openDropdown, setOpenDropdown] = useState(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -111,13 +112,25 @@ const Header = () => {
               </span>
             )}
           </Link>
-          {isAuthenticated ? (
-            <Link
-              to="/athlete/dashboard"
-              className="bg-[#d4bc6d] rounded-full uppercase px-6 py-3 text-black text-sm font-semibold"
-            >
-              Dashboard
-            </Link>
+
+          {(isAuthenticated) ? (
+            <>
+              {user?.role == 'athlete' ? (
+                <Link
+                  to="/athlete/dashboard"
+                  className="bg-[#d4bc6d] rounded-full uppercase px-6 py-3 text-black text-sm font-semibold"
+                >
+                  Dashboard
+                </Link>
+              ) : (
+                <Link
+                  to="/admin/dashboard"
+                  className="bg-[#d4bc6d] rounded-full uppercase px-6 py-3 text-black text-sm font-semibold"
+                >
+                  Dashboard
+                </Link>
+              )}
+            </>
           ) : (
             <>
               <Link

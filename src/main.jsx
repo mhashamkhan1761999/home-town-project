@@ -49,6 +49,8 @@ import AthleteProductsManagement from './super-admin-pages/AthleteProductsManage
 import AdminLoginPage from './super-admin-pages/AdminLoginPage.jsx'
 import ManageCashout from './super-admin-pages/ManageCashout.jsx'
 import GraphicFormQueries from './super-admin-pages/GraphicFormQueries.jsx'
+import PrivateRoute from './routes/PrivateRoute.jsx'
+import AdminPrivateRoute from './routes/AdminPrivateRoute.jsx'
 
 
 export const queryClient = new QueryClient();
@@ -77,9 +79,9 @@ const AllRoutes = () => {
         </Route>
         {/* <Route path='/athlete/dashboard' element={<TwelveDayCounter />} /> */}
 
-        <Route path='athlete' element={<MasterLayout />} >
+        <Route path='athlete' element={<PrivateRoute><MasterLayout /></PrivateRoute>} >
           <Route path='home' element={<AdminHome />} />
-          <Route path='dashboard' element={<Dashboard />} />
+          <Route path='dashboard' element={<PrivateRoute><Dashboard /></PrivateRoute>} />
           <Route path='nil-service' element={<NilService />} />
           <Route path='my-products' element={<MyProducts />} />
           <Route path='profile' element={<Profile />} />
@@ -93,7 +95,7 @@ const AllRoutes = () => {
 
         <Route path='admin/login' element={<AdminLoginPage />} />
 
-        <Route path='admin' element={<SuperAdminLayout />}>
+        <Route path='admin' element={<AdminPrivateRoute><SuperAdminLayout /></AdminPrivateRoute>}>
           <Route path='home' element={<SuperAdminHome />} />
           <Route path='dashboard' element={<SuperAdminDashboard />} />
           <Route path='products' element={<SuperAdminProducts />} />

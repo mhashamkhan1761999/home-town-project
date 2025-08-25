@@ -100,6 +100,11 @@ const MasterLayout = () => {
                             <Layers size={18} />
                             Nil Service
                         </NavLink>
+                        <NavLink to="/athlete/my-products"
+                            className={({ isActive }) => isActive ? 'text-[#CAB265] font-bold text-base flex flex-col items-center gap-2 text-center' : 'text-[#6A6A69] font-bold text-base flex items-center gap-2 text-center flex-col'}>
+                            <Layers size={18} />
+                            My Products
+                        </NavLink>
                         {/* <NavLink to="/athlete/graphic"
                             className={({ isActive }) => isActive ? 'text-[#CAB265] font-bold text-base flex flex-col items-center gap-2' : 'text-[#6A6A69] font-bold text-base flex items-center gap-2 flex-col'}>
                             <Image size={18} />
@@ -110,22 +115,19 @@ const MasterLayout = () => {
                             <BadgeDollarSign size={18} />
                             Subscription
                         </NavLink>
-                        <NavLink to="/athlete/settings"
-                            className={({ isActive }) => isActive ? 'text-[#CAB265] font-bold text-base flex flex-col items-center gap-2' : 'text-[#6A6A69] font-bold text-base flex items-center gap-2 flex-col'}>
-                            <Settings size={18} />
-                            Settings
-                        </NavLink>
                         <NavLink to="/athlete/my-subscription"
                             className={({ isActive }) => isActive ? 'text-[#CAB265] font-bold text-base flex flex-col items-center gap-2 text-center' : 'text-[#6A6A69] font-bold text-base flex items-center gap-2 text-center flex-col'}>
                             <BadgeDollarSign size={18} />
                             My Packages
                         </NavLink>
-
-                        <NavLink to="/athlete/my-products"
-                            className={({ isActive }) => isActive ? 'text-[#CAB265] font-bold text-base flex flex-col items-center gap-2 text-center' : 'text-[#6A6A69] font-bold text-base flex items-center gap-2 text-center flex-col'}>
-                            <Layers size={18} />
-                            My Products
+                        <NavLink to="/athlete/settings"
+                            className={({ isActive }) => isActive ? 'text-[#CAB265] font-bold text-base flex flex-col items-center gap-2' : 'text-[#6A6A69] font-bold text-base flex items-center gap-2 flex-col'}>
+                            <Settings size={18} />
+                            Settings
                         </NavLink>
+
+
+
                     </div>
                     <div className="mb-[2.75rem] mt-[3.125rem]">
                         <img src="/line.svg" alt="line" className="h-[1px] w-full" />
@@ -146,7 +148,7 @@ const MasterLayout = () => {
                         {/* Mobile: Small logo + hamburger */}
                         <div className="flex md:hidden items-center justify-between w-full">
                             <img src="/hometown-logo.svg" alt="Header" className="w-24 h-auto" />
-                            <button 
+                            <button
                                 className="p-2 text-white hover:text-[#D4BC6D]"
                                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
                             >
@@ -162,97 +164,97 @@ const MasterLayout = () => {
 
                             <div className="flex items-center justify-end grow gap-5">
 
-                            <NavLink
-                                to="/"
-                                type='button'
-                                className="bg-[#d4bc6d] h-[40px] inline-flex items-center justify-center rounded-full uppercase px-6 py-3 text-black text-sm font-semibold"
-                            >
-                                Visit Your Storefront
-                            </NavLink>
+                                <NavLink
+                                    to="/"
+                                    type='button'
+                                    className="bg-[#d4bc6d] h-[40px] inline-flex items-center justify-center rounded-full uppercase px-6 py-3 text-black text-sm font-semibold"
+                                >
+                                    Visit Your Storefront
+                                </NavLink>
 
-                            <div className="w-[4.563rem] h-[4.563rem] rounded-full overflow-hidden">
-                                <img src="/bronze2.jpg" alt="Admin Avatar"
-                                    className="w-full h-full object-cover object-center" />
-                            </div>
-                            <div className="flex flex-col w-auto justify-center">
-                                <div className='text-[#D4BC6D] font-bold mb-0.5'>
-                                    Bronze
+                                <div className="w-[4.563rem] h-[4.563rem] rounded-full overflow-hidden">
+                                    <img src="/bronze2.jpg" alt="Admin Avatar"
+                                        className="w-full h-full object-cover object-center" />
                                 </div>
-                                <div className='h-[10px] w-[150px] bg-[#282828] rounded-full'>
-                                    <div className="h-full bg-[#D4BC6D] rounded-full" style={{ width: '10%' }} />
+                                <div className="flex flex-col w-auto justify-center">
+                                    <div className='text-[#D4BC6D] font-bold mb-0.5'>
+                                        Bronze
+                                    </div>
+                                    <div className='h-[10px] w-[150px] bg-[#282828] rounded-full'>
+                                        <div className="h-full bg-[#D4BC6D] rounded-full" style={{ width: '10%' }} />
+                                    </div>
                                 </div>
-                            </div>
 
-                            <>
-                                {/* Header Container */}
-                                <div className="relative flex items-center justify-end p-4 bg-white shadow-md rounded-full">
-                                    {/* Notification Bell Icon */}
-                                    <div className="relative group">
-                                        <button className="p-2 rounded-full hover:bg-gray-100 focus:outline-none">
-                                            {/* Bell Icon (Lucide or Heroicons or Font Awesome) */}
-                                            <svg
-                                                className="w-6 h-6 text-gray-600"
-                                                fill="none"
-                                                stroke="currentColor"
-                                                strokeWidth={2}
-                                                viewBox="0 0 24 24"
-                                            >
-                                                <path
-                                                    strokeLinecap="round"
-                                                    strokeLinejoin="round"
-                                                    d="M15 17h5l-1.405-1.405C18.79 14.79 18 13.42 18 12V9a6 6 0 10-12 0v3c0 1.42-.79 2.79-1.595 3.595L3 17h5m7 0a3 3 0 01-6 0m6 0H9"
-                                                />
-                                            </svg>
-                                            {/* Notification Dot */}
-                                            <span className="absolute top-1 right-1 block w-2 h-2 bg-red-500 rounded-full animate-ping" />
-                                            <span className="absolute top-1 right-1 block w-2 h-2 bg-red-500 rounded-full" />
-                                        </button>
-                                        {/* Dropdown */}
-                                        <div className="hidden group-hover:block absolute right-0 mt-2 w-64 bg-white border border-gray-200 rounded-lg shadow-lg z-10">
-                                            <div className="p-4 font-semibold border-b">Notifications</div>
-                                            <ul className="max-h-60 overflow-y-auto">
-                                                <li className="px-4 py-2 hover:bg-gray-50 cursor-pointer text-sm">
-                                                    🛍️ New order placed by John Doe
-                                                </li>
-                                                <li className="px-4 py-2 hover:bg-gray-50 cursor-pointer text-sm">
+                                <>
+                                    {/* Header Container */}
+                                    <div className="relative flex items-center justify-end p-4 bg-white shadow-md rounded-full">
+                                        {/* Notification Bell Icon */}
+                                        <div className="relative group">
+                                            <button className="p-2 rounded-full hover:bg-gray-100 focus:outline-none">
+                                                {/* Bell Icon (Lucide or Heroicons or Font Awesome) */}
+                                                <svg
+                                                    className="w-6 h-6 text-gray-600"
+                                                    fill="none"
+                                                    stroke="currentColor"
+                                                    strokeWidth={2}
+                                                    viewBox="0 0 24 24"
+                                                >
+                                                    <path
+                                                        strokeLinecap="round"
+                                                        strokeLinejoin="round"
+                                                        d="M15 17h5l-1.405-1.405C18.79 14.79 18 13.42 18 12V9a6 6 0 10-12 0v3c0 1.42-.79 2.79-1.595 3.595L3 17h5m7 0a3 3 0 01-6 0m6 0H9"
+                                                    />
+                                                </svg>
+                                                {/* Notification Dot */}
+                                                <span className="absolute top-1 right-1 block w-2 h-2 bg-red-500 rounded-full animate-ping" />
+                                                <span className="absolute top-1 right-1 block w-2 h-2 bg-red-500 rounded-full" />
+                                            </button>
+                                            {/* Dropdown */}
+                                            <div className="hidden group-hover:block absolute right-0 mt-2 w-64 bg-white border border-gray-200 rounded-lg shadow-lg z-10">
+                                                <div className="p-4 font-semibold border-b">Notifications</div>
+                                                <ul className="max-h-60 overflow-y-auto">
+                                                    <li className="px-4 py-2 hover:bg-gray-50 cursor-pointer text-sm">
+                                                        No Notification Founds
+                                                    </li>
+                                                    {/* <li className="px-4 py-2 hover:bg-gray-50 cursor-pointer text-sm">
                                                     📩 You received a new message
                                                 </li>
                                                 <li className="px-4 py-2 hover:bg-gray-50 cursor-pointer text-sm">
                                                     🚀 Your campaign is now live!
-                                                </li>
-                                            </ul>
-                                            <div className="p-2 text-center border-t text-sm text-blue-600 hover:underline cursor-pointer">
+                                                </li> */}
+                                                </ul>
+                                                {/* <div className="p-2 text-center border-t text-sm text-blue-600 hover:underline cursor-pointer">
                                                 View All
+                                            </div> */}
                                             </div>
                                         </div>
                                     </div>
-                                </div>
-                            </>
+                                </>
 
 
-                            <div className="relative w-[4.563rem] h-[4.563rem] cursor-pointer group">
-                                {/* Outer animated gradient ring */}
-                                <div className="absolute inset-0 rounded-full p-[3px] bg-gradient-to-r from-pink-500 via-purple-500 to-pink-500 animate-spin-slow">
-                                    <div className="w-full h-full rounded-full bg-black"></div>
-                                </div>
+                                <div className="relative w-[4.563rem] h-[4.563rem] cursor-pointer group">
+                                    {/* Outer animated gradient ring */}
+                                    <div className="absolute inset-0 rounded-full p-[3px] bg-gradient-to-r from-pink-500 via-purple-500 to-pink-500 animate-spin-slow">
+                                        <div className="w-full h-full rounded-full bg-black"></div>
+                                    </div>
 
-                                {/* Avatar Image */}
-                                <img
-                                    src="/alek.jpeg"
-                                    onError={(e) => (e.target.src = '/default-avatar.png')}
-                                    alt="Agent Avatar"
-                                    className="absolute inset-[3px] w-[calc(100%-6px)] h-[calc(100%-6px)] object-cover object-center rounded-full border border-gray-700 shadow-lg"
-                                />
+                                    {/* Avatar Image */}
+                                    <img
+                                        src="/alek.jpeg"
+                                        onError={(e) => (e.target.src = '/default-avatar.png')}
+                                        alt="Agent Avatar"
+                                        className="absolute inset-[3px] w-[calc(100%-6px)] h-[calc(100%-6px)] object-cover object-center rounded-full border border-gray-700 shadow-lg"
+                                    />
 
-                                {/* Notification Badge */}
-                                <div className="absolute -top-1 -right-1 flex items-center justify-center w-5 h-5 bg-red-500 text-white text-[10px] font-bold rounded-full shadow-md">
-                                    1
-                                </div>
+                                    {/* Notification Badge */}
+                                    <div className="absolute -top-1 -right-1 flex items-center justify-center w-5 h-5 bg-red-500 text-white text-[10px] font-bold rounded-full shadow-md">
+                                        1
+                                    </div>
 
-                                {/* Hover Label */}
-                                <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 bg-gradient-to-r from-pink-500 to-purple-500 text-white text-xs font-semibold px-5 py-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 shadow-md">
-                                    Chat Now
-                                </div>
+                                    {/* Hover Label */}
+                                    <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 bg-gradient-to-r from-pink-500 to-purple-500 text-white text-xs font-semibold px-5 py-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 shadow-md">
+                                        Chat Now
+                                    </div>
                                 </div>
 
                                 <style jsx>{`
@@ -282,7 +284,7 @@ const MasterLayout = () => {
                         {/* Mobile Menu Header */}
                         <div className="flex items-center justify-between mb-6">
                             <img src="/admin-logo.svg" alt="Logo" className="w-16 h-auto" />
-                            <button 
+                            <button
                                 className="p-2 text-white hover:text-[#D4BC6D]"
                                 onClick={() => setIsMobileMenuOpen(false)}
                             >
@@ -311,7 +313,7 @@ const MasterLayout = () => {
 
                         {/* Navigation Links */}
                         <div className="flex flex-col space-y-4 mb-6">
-                            <NavLink 
+                            <NavLink
                                 to="/athlete/dashboard"
                                 className={({ isActive }) => `${isActive ? 'text-[#CAB265] bg-[#CAB265]/10' : 'text-[#6A6A69]'} font-bold text-base flex items-center gap-3 p-3 rounded-lg`}
                                 onClick={() => setIsMobileMenuOpen(false)}
@@ -319,7 +321,7 @@ const MasterLayout = () => {
                                 <Home size={20} />
                                 Home
                             </NavLink>
-                            <NavLink 
+                            <NavLink
                                 to="/athlete/nil-service"
                                 className={({ isActive }) => `${isActive ? 'text-[#CAB265] bg-[#CAB265]/10' : 'text-[#6A6A69]'} font-bold text-base flex items-center gap-3 p-3 rounded-lg`}
                                 onClick={() => setIsMobileMenuOpen(false)}
@@ -327,7 +329,7 @@ const MasterLayout = () => {
                                 <Layers size={20} />
                                 Nil Service
                             </NavLink>
-                            <NavLink 
+                            <NavLink
                                 to="/athlete/subscription"
                                 className={({ isActive }) => `${isActive ? 'text-[#CAB265] bg-[#CAB265]/10' : 'text-[#6A6A69]'} font-bold text-base flex items-center gap-3 p-3 rounded-lg`}
                                 onClick={() => setIsMobileMenuOpen(false)}
@@ -335,7 +337,7 @@ const MasterLayout = () => {
                                 <BadgeDollarSign size={20} />
                                 Subscription
                             </NavLink>
-                            <NavLink 
+                            <NavLink
                                 to="/athlete/settings"
                                 className={({ isActive }) => `${isActive ? 'text-[#CAB265] bg-[#CAB265]/10' : 'text-[#6A6A69]'} font-bold text-base flex items-center gap-3 p-3 rounded-lg`}
                                 onClick={() => setIsMobileMenuOpen(false)}
@@ -343,7 +345,7 @@ const MasterLayout = () => {
                                 <Settings size={20} />
                                 Settings
                             </NavLink>
-                            <NavLink 
+                            <NavLink
                                 to="/athlete/my-subscription"
                                 className={({ isActive }) => `${isActive ? 'text-[#CAB265] bg-[#CAB265]/10' : 'text-[#6A6A69]'} font-bold text-base flex items-center gap-3 p-3 rounded-lg`}
                                 onClick={() => setIsMobileMenuOpen(false)}
@@ -351,7 +353,7 @@ const MasterLayout = () => {
                                 <BadgeDollarSign size={20} />
                                 My Subscription
                             </NavLink>
-                            <NavLink 
+                            <NavLink
                                 to="/athlete/my-products"
                                 className={({ isActive }) => `${isActive ? 'text-[#CAB265] bg-[#CAB265]/10' : 'text-[#6A6A69]'} font-bold text-base flex items-center gap-3 p-3 rounded-lg`}
                                 onClick={() => setIsMobileMenuOpen(false)}
@@ -370,7 +372,7 @@ const MasterLayout = () => {
                             >
                                 Visit Your Storefront
                             </NavLink>
-                            
+
                             {/* Notifications */}
                             <div className="bg-white/10 rounded-lg p-3 mb-4">
                                 <div className="flex items-center gap-3 text-white">

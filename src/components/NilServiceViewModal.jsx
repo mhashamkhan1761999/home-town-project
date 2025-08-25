@@ -2,6 +2,10 @@ import { X } from 'lucide-react'
 import React from 'react'
 
 const NilServiceViewModal = ({ onClose, product }) => {
+     const colors = typeof product?.colors === "string" 
+    ? JSON.parse(product.colors) 
+    : product?.colors;
+
     return (
         <>
             <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
@@ -25,16 +29,21 @@ const NilServiceViewModal = ({ onClose, product }) => {
                         <div>
                             <strong>Colors:</strong>
                             <div className="flex gap-2 mt-1">
-                                {console.log(product)}
-                                {/* {product?.colors?.length > 0 && product?.colors?.map((color, idx) => (
-                                    <div
-                                        key={idx}
-                                        className="w-6 h-6 rounded-full border"
-                                        style={{ backgroundColor: color }}
-                                        title={color}
-                                    />
-                                ))} */}
-                            </div>
+                                    {Array.isArray(colors) && colors.length > 0 ? (
+                                    colors.map((color, idx) => (
+                                        <div key={idx} className="flex items-center gap-2">
+                                        <div
+                                            className="w-6 h-6 rounded-full border"
+                                            style={{ backgroundColor: color }}
+                                            title={color}
+                                        />
+                                        {/* <span>{color}</span> */}
+                                        </div>
+                                    ))
+                                    ) : (
+                                    <span>No colors</span>
+                                    )}
+                                </div>
                         </div>
                     </div>
 

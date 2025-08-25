@@ -89,7 +89,7 @@ const AthleteProductsManagement = () => {
   const [uploadedImages, setUploadedImages] = useState([]);
   const [uploadedImageFiles, setUploadedImageFiles] = useState([]); // Store actual File objects
 
-  const statusTypes = ['Pending', 'Active', 'Inactive'];
+  const statusTypes = ['Pending', 'Accepted',];
   const filterOptions = ['All', ...statusTypes];
   const categories = ['All', 'Sports Equipment', 'Footwear', 'Apparel', 'Swimming Gear'];
 
@@ -180,26 +180,26 @@ const AthleteProductsManagement = () => {
 
   // Filter products based on search term and status
   const filteredProducts = displayProducts.filter(product => {
-    const matchesSearch = 
+    const matchesSearch =
       product.athleteName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       product.productName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       (product.category && typeof product.category === 'string' && product.category.toLowerCase().includes(searchTerm.toLowerCase())) ||
       product.athlete?.athlete_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       product.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       product.category?.name?.toLowerCase().includes(searchTerm.toLowerCase());
-    
+
     const productStatus = product.status?.charAt(0).toUpperCase() + product.status?.slice(1).toLowerCase();
     const matchesStatus = selectedStatus === 'All' || productStatus === selectedStatus;
-    
+
     return matchesSearch && matchesStatus;
   });
 
   const handleStatusChange = (productId, newStatus) => {
     // Update local state immediately for better UX
-    setProducts(products.map(product => 
-      product.id === productId ? { ...product, status: newStatus } : product
+    setProducts(products.map(product =>
+      product.id === productId ? { ...product, status: newStatus?.toLowerCase() } : product
     ));
-    
+
     // Call API to update status
     updateStatusMutation.mutate({ id: productId, status: newStatus });
   };
@@ -223,7 +223,7 @@ const AthleteProductsManagement = () => {
     setUploadedImages([]); // Start with empty array for demo purposes
     setUploadedImageFiles([]); // Clear file objects as well
     setIsViewModalOpen(true);
-    
+
     // Fetch detailed product information
     viewProductMutation.mutate(product.id);
   };
@@ -287,7 +287,7 @@ const AthleteProductsManagement = () => {
               <Package className="h-6 w-6 sm:h-8 sm:w-8 text-[#D4BC6D]" />
             </div>
           </div>
-          
+
           <div className="bg-[#282828] border border-[#4B4C46] rounded-lg p-3 sm:p-6">
             <div className="flex items-center justify-between">
               <div>
@@ -299,7 +299,7 @@ const AthleteProductsManagement = () => {
               <ShoppingBag className="h-6 w-6 sm:h-8 sm:w-8 text-yellow-500" />
             </div>
           </div>
-          
+
           <div className="bg-[#282828] border border-[#4B4C46] rounded-lg p-3 sm:p-6">
             <div className="flex items-center justify-between">
               <div>
@@ -478,58 +478,57 @@ const ProductViewModal = ({ product, uploadedImages, onImageUpload, onRemoveImag
           <div className="space-y-6">
             <div className="bg-[#1a1a1a] border border-[#4B4C46] rounded-lg p-4 sm:p-6">
               <h3 className="text-lg font-bold text-white mb-4">Product Information</h3>
-              
+
               <div className="space-y-4">
                 <div>
                   <label className="block text-gray-400 text-sm mb-1">Athlete Name</label>
                   <p className="text-white font-medium">{product.athleteName || product.athlete?.athlete_name || 'N/A'}</p>
                 </div>
-                
+
                 <div>
                   <label className="block text-gray-400 text-sm mb-1">Product Name</label>
                   <p className="text-[#D4BC6D] font-medium">{product.productName || product.name || 'N/A'}</p>
                 </div>
-                
+
                 <div>
                   <label className="block text-gray-400 text-sm mb-1">Category</label>
                   <p className="text-white">{product.category?.name || product.category || 'N/A'}</p>
                 </div>
-                
+
                 <div>
                   <label className="block text-gray-400 text-sm mb-1">Status</label>
-                  <span className={`px-3 py-1 rounded-full text-xs font-medium ${
-                    product.status?.toLowerCase() === 'active' ? 'bg-green-600 text-white' :
+                  <span className={`px-3 py-1 rounded-full text-xs font-medium ${product.status?.toLowerCase() === 'active' ? 'bg-green-600 text-white' :
                     product.status?.toLowerCase() === 'inactive' ? 'bg-gray-600 text-white' :
-                    product.status?.toLowerCase() === 'pending' ? 'bg-yellow-600 text-white' :
-                    'bg-gray-600 text-white'
-                  }`}>
+                      product.status?.toLowerCase() === 'pending' ? 'bg-yellow-600 text-white' :
+                        'bg-gray-600 text-white'
+                    }`}>
                     {product.status?.charAt(0).toUpperCase() + product.status?.slice(1).toLowerCase() || 'N/A'}
                   </span>
                 </div>
-                
+
                 <div>
                   <label className="block text-gray-400 text-sm mb-1">Description</label>
                   <p className="text-gray-300 text-sm leading-relaxed">{product.description || 'No description available'}</p>
                 </div>
-                
+
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className="block text-gray-400 text-sm mb-1">Price</label>
                     <p className="text-green-400 font-bold text-lg">{product.price || 'N/A'}</p>
                   </div>
-                  
+
                   <div>
                     <label className="block text-gray-400 text-sm mb-1">Placement</label>
                     <p className="text-yellow-400 font-medium">{product.placement || 'N/A'}</p>
                   </div>
                 </div>
-                
+
                 <div>
                   <label className="block text-gray-400 text-sm mb-2">Available Colors</label>
                   <div className="flex flex-wrap gap-2">
                     {(() => {
                       let colors = [];
-                      
+
                       // Handle API colors format (JSON string)
                       if (product.colors && typeof product.colors === 'string') {
                         try {
@@ -583,7 +582,7 @@ const ProductViewModal = ({ product, uploadedImages, onImageUpload, onRemoveImag
                   </div>
                 </label>
               </div>
-              
+
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
                 {uploadedImages.map((image, index) => (
                   <div key={index} className="relative group">
@@ -610,7 +609,7 @@ const ProductViewModal = ({ product, uploadedImages, onImageUpload, onRemoveImag
                     </button>
                   </div>
                 ))}
-                
+
                 {/* Add More Images Placeholder */}
                 <label className="cursor-pointer">
                   <input
@@ -628,7 +627,7 @@ const ProductViewModal = ({ product, uploadedImages, onImageUpload, onRemoveImag
                   </div>
                 </label>
               </div>
-              
+
               <div className="mt-4 p-3 bg-[#2a2a2a] border border-[#4B4C46] rounded-lg">
                 <p className="text-gray-400 text-xs">
                   <strong>Note:</strong> You can upload multiple images. Recommended size: 800x800px. Supported formats: JPG, PNG, WEBP.
@@ -640,7 +639,7 @@ const ProductViewModal = ({ product, uploadedImages, onImageUpload, onRemoveImag
 
         {/* Action Buttons */}
         <div className="flex flex-col sm:flex-row gap-3 mt-6 pt-6 border-t border-[#4B4C46]">
-          <button 
+          <button
             onClick={onSaveImages}
             disabled={isSavingImages || uploadedImages.length === 0}
             className="flex-1 px-6 py-3 bg-[#D4BC6D] text-black font-medium rounded-lg hover:bg-[#C4AC5D] transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
@@ -725,7 +724,7 @@ const CreateAthleteModal = ({ onClose, onSubmit, isLoading }) => {
             {/* Personal Information */}
             <div className="space-y-4">
               <h3 className="text-lg font-semibold text-[#D4BC6D] mb-4">Personal Information</h3>
-              
+
               <div>
                 <label className="block text-gray-400 text-sm mb-2">Phone *</label>
                 <input

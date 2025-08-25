@@ -4,7 +4,7 @@ import { addToCart } from '../../redux/slices/cartSlice';
 import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
 
-const VaultCard = ({ id, name, description, price, image, rating, subTitle, isTrending = false }) => {
+const VaultCard = ({ id, name, description, price, image, images, rating, subTitle, isTrending = false }) => {
     const dispatch = useDispatch();
     const navigate = useNavigate()
     const cartItems = useSelector(state => state.cart.items);
@@ -27,7 +27,11 @@ const VaultCard = ({ id, name, description, price, image, rating, subTitle, isTr
                     </p>
                 </div>
                 <div className="flex flex-col justify-end h-full px-6 pt-6">
-                    <div type="button" onClick={() => navigate(`/product/${id}`)} className="h-[15.25rem] w-full bg-[url('/shirt.svg')] bg-center bg-cover bg-no-repeat"></div>
+                    <div type="button" onClick={() => navigate(`/product/${id}`)} className="h-[15.25rem] w-full bg-center bg-cover bg-no-repeat"
+                        style={{
+                            backgroundImage: `url(${images?.length > 0 ? `https://hometown.eagleeblaze.com/storage/app/public/${images?.[0]?.image}` : '/404.avif'})`
+                        }}
+                    ></div>
                     <div type="button" onClick={() => navigate(`/product/${id}`)} className="flex justify-between items-center mb-4">
                         <div className="flex gap-2.5 items-center">
                             <div className="">

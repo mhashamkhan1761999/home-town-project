@@ -36,7 +36,7 @@ const GraphicFormQueries = () => {
         if (!conceptQueries || !Array.isArray(conceptQueries)) {
             return [];
         }
-        
+
         return conceptQueries.filter(query => {
             // Search logic based on actual data structure
             const athleteName = query.athlete?.athlete_name || query.athlete?.store_name || query.athlete?.email || '';
@@ -47,19 +47,19 @@ const GraphicFormQueries = () => {
                 query.athlete?.bio,
                 query.athlete?.description
             ].filter(Boolean).join(' ').toLowerCase();
-            
+
             const matchesSearch = searchFields.includes(searchTerm.toLowerCase());
-            
+
             // For now, we'll use 'All' since there's no status field in the data
             const matchesStatus = selectedStatus === 'All';
-            
+
             return matchesSearch && matchesStatus;
         });
     }, [conceptQueries, searchTerm, selectedStatus]);
 
     const getStatusColor = (status) => {
         if (!status) return 'bg-gray-600 text-white';
-        
+
         const normalizedStatus = status.toLowerCase();
         switch (normalizedStatus) {
             case 'pending':
@@ -127,7 +127,7 @@ const GraphicFormQueries = () => {
                                 </div>
                             </div>
 
-                            <div className="bg-[#282828] border border-[#4B4C46] rounded-lg p-3 sm:p-6">
+                            {/* <div className="bg-[#282828] border border-[#4B4C46] rounded-lg p-3 sm:p-6">
                                 <div className="flex items-center justify-between">
                                     <div>
                                         <p className="text-gray-400 text-xs sm:text-sm">With Pictures</p>
@@ -137,9 +137,9 @@ const GraphicFormQueries = () => {
                                     </div>
                                     <Package className="h-6 w-6 sm:h-8 sm:w-8 text-blue-500" />
                                 </div>
-                            </div>
+                            </div> */}
 
-                            <div className="bg-[#282828] border border-[#4B4C46] rounded-lg p-3 sm:p-6">
+                            {/* <div className="bg-[#282828] border border-[#4B4C46] rounded-lg p-3 sm:p-6">
                                 <div className="flex items-center justify-between">
                                     <div>
                                         <p className="text-gray-400 text-xs sm:text-sm">With Logo</p>
@@ -149,7 +149,7 @@ const GraphicFormQueries = () => {
                                     </div>
                                     <Package className="h-6 w-6 sm:h-8 sm:w-8 text-green-500" />
                                 </div>
-                            </div>
+                            </div> */}
 
                             <div className="bg-[#282828] border border-[#4B4C46] rounded-lg p-3 sm:p-6">
                                 <div className="flex items-center justify-between">
@@ -254,8 +254,8 @@ const GraphicFormQueries = () => {
                                                         <div className="mb-2">
                                                             <p className="text-xs text-gray-400 uppercase mb-1">Description:</p>
                                                             <p className="text-sm text-white">
-                                                                {query.description.length > 80 
-                                                                    ? `${query.description.substring(0, 80)}...` 
+                                                                {query.description.length > 80
+                                                                    ? `${query.description.substring(0, 80)}...`
                                                                     : query.description}
                                                             </p>
                                                         </div>
@@ -314,7 +314,7 @@ const GraphicFormQueries = () => {
 
                                                 {/* Action */}
                                                 <div className="flex justify-end">
-                                                    <button 
+                                                    <button
                                                         onClick={() => handleViewDetails(query)}
                                                         className="bg-[#D4BC6D] hover:bg-[#ab965d] text-black px-3 py-1.5 rounded text-sm flex items-center transition-colors"
                                                     >
@@ -403,8 +403,8 @@ const GraphicFormQueries = () => {
                                                                         <div className="mb-2">
                                                                             <p className="text-xs text-gray-400 uppercase">Description:</p>
                                                                             <p className="text-sm text-white">
-                                                                                {query.description.length > 50 
-                                                                                    ? `${query.description.substring(0, 50)}...` 
+                                                                                {query.description.length > 50
+                                                                                    ? `${query.description.substring(0, 50)}...`
                                                                                     : query.description}
                                                                             </p>
                                                                         </div>
@@ -421,8 +421,8 @@ const GraphicFormQueries = () => {
                                                                         <div>
                                                                             <p className="text-xs text-gray-400 uppercase">Athlete Bio:</p>
                                                                             <p className="text-xs text-gray-300">
-                                                                                {query.athlete.bio.length > 30 
-                                                                                    ? `${query.athlete.bio.substring(0, 30)}...` 
+                                                                                {query.athlete.bio.length > 30
+                                                                                    ? `${query.athlete.bio.substring(0, 30)}...`
                                                                                     : query.athlete.bio}
                                                                             </p>
                                                                         </div>
@@ -479,7 +479,7 @@ const GraphicFormQueries = () => {
                                                                 )}
                                                             </td>
                                                             <td className="px-6 py-4">
-                                                                <button 
+                                                                <button
                                                                     onClick={() => handleViewDetails(query)}
                                                                     className="text-[#D4BC6D] hover:text-[#ab965d] text-sm flex items-center transition-colors"
                                                                 >
@@ -576,7 +576,7 @@ const ViewDetailsModal = ({ isOpen, onClose, query }) => {
                                     )}
                                 </div>
                             </div>
-                            
+
                             <div className="grid grid-cols-2 gap-4 text-sm">
                                 <div>
                                     <p className="text-gray-400">Level:</p>
@@ -607,27 +607,27 @@ const ViewDetailsModal = ({ isOpen, onClose, query }) => {
                         {/* Query Details */}
                         <div className="bg-[#1a1a1a] rounded-lg p-4">
                             <h3 className="text-lg font-semibold text-[#D4BC6D] mb-4">Query Details</h3>
-                            
+
                             <div className="space-y-3">
                                 <div>
                                     <p className="text-gray-400 text-sm">Query ID:</p>
                                     <p className="text-white">#{query.id}</p>
                                 </div>
-                                
+
                                 {query.content && (
                                     <div>
                                         <p className="text-gray-400 text-sm">Content Type:</p>
                                         <p className="text-[#D4BC6D] font-medium">{query.content}</p>
                                     </div>
                                 )}
-                                
+
                                 {query.description && (
                                     <div>
                                         <p className="text-gray-400 text-sm">Description:</p>
                                         <p className="text-white">{query.description}</p>
                                     </div>
                                 )}
-                                
+
                                 <div>
                                     <p className="text-gray-400 text-sm">Submitted:</p>
                                     <p className="text-white">
@@ -642,7 +642,7 @@ const ViewDetailsModal = ({ isOpen, onClose, query }) => {
                     <div className="space-y-6">
                         <div className="bg-[#1a1a1a] rounded-lg p-4">
                             <h3 className="text-lg font-semibold text-[#D4BC6D] mb-4">Submitted Images</h3>
-                            
+
                             {images.length > 0 ? (
                                 <div className="space-y-4">
                                     {images.map((img, index) => (
@@ -680,7 +680,7 @@ const ViewDetailsModal = ({ isOpen, onClose, query }) => {
 
                 {/* Full Size Image Modal */}
                 {selectedImage && (
-                    <div 
+                    <div
                         className="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-[10000] p-4"
                         onClick={() => setSelectedImage(null)}
                     >

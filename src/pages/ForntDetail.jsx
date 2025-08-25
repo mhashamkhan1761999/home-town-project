@@ -43,7 +43,7 @@ const ForntDetail = () => {
                 {/* Left: Product Image */}
                 <div className="w-full">
                     <img
-                        src="/shirt.svg"
+                        src={detail?.images?.length > 0 ? `https://hometown.eagleeblaze.com/storage/app/public/${detail?.images?.[0]?.image}` : `/404.avif`}
                         alt="Product Image"
                         className="rounded-xl shadow-lg w-full object-cover border border-white/10"
                     />

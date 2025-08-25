@@ -107,7 +107,7 @@ const OrderManagement = () => {
   const [isViewModalOpen, setIsViewModalOpen] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState(null);
 
-  const statusTypes = ['Pending', 'Processing', 'Shipped', 'Delivered', 'Cancelled', 'Return Request', 'Returned'];
+  const statusTypes = ['Pending', 'Processing', 'Completed', 'Cancelled'];
   const filterOptions = ['All', ...statusTypes];
 
   // Filter orders based on search term and status

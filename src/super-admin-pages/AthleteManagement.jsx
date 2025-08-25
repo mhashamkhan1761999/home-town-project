@@ -135,7 +135,7 @@ const AthleteManagement = () => {
   const [isViewModalOpen, setIsViewModalOpen] = useState(false);
   const [selectedAthlete, setSelectedAthlete] = useState(null);
 
-  const statusTypes = ['Pending', 'Standard', 'Pro Dashboard'];
+  const statusTypes = ['Active', 'Deactive'];
 
   // Filter athletes based on status only (since search is now dropdown-based)
   const filteredAthletes = athletes?.filter(athlete => {
@@ -334,7 +334,7 @@ const AthleteManagement = () => {
                           className={`text-xs font-semibold rounded-full px-2 py-1 focus:outline-none focus:ring-2 focus:ring-[#D4BC6D] ${getStatusColor(athlete.status)}`}
                         >
                           {statusTypes.map(status => (
-                            <option key={status} value={status?.toLowerCase()} className="bg-[#1a1a1a] text-white">
+                            <option key={status} value={status?.toLowerCase() == 'active' ? '1' : '0'} className="bg-[#1a1a1a] text-white">
                               {status}
                             </option>
                           ))}
@@ -383,9 +383,9 @@ const ViewAthleteModal = ({ isOpen, onClose, athlete }) => {
 
   const getStatusColor = (status) => {
     switch (status) {
-      case 'Active':
+      case '1':
         return 'bg-green-600 text-white';
-      case 'Inactive':
+      case '0':
         return 'bg-gray-600 text-white';
       case 'Pending':
         return 'bg-yellow-600 text-white';

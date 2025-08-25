@@ -92,7 +92,7 @@ const MyProducts = () => {
                     })`,
                 }}
                 >
-                <img
+                {/* <img
                     src={
                     item?.icon
                         ? `https://hometown.eagleeblaze.com/storage/app/public/${item.icon}`
@@ -100,7 +100,7 @@ const MyProducts = () => {
                     }
                     alt={item?.name}
                     className="h-[15rem] object-contain drop-shadow-xl"
-                />
+                /> */}
                 </div>
                 <div className="p-4">
                 <p className="text-sm font-semibold text-white mb-1">

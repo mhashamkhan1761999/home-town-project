@@ -214,7 +214,7 @@ const Dashboard = () => {
                                 </tr>
                             </thead>
                             <tbody className="text-xs sm:text-sm text-gray-600">
-                                {data?.map((row) => (
+                                {/* {data?.map((row) => (
                                     <tr key={row.id} className="hover:bg-[255,255,255,0.2]">
                                         <td className="px-2 sm:px-6 py-4 border-b border-[#323232]">
                                             <div className="flex items-center gap-2 sm:gap-6">
@@ -253,7 +253,7 @@ const Dashboard = () => {
                                             </div>
                                         </td>
                                     </tr>
-                                ))}
+                                ))} */}
                             </tbody>
                             </table>
                         </div>

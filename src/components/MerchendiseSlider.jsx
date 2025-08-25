@@ -60,7 +60,11 @@ const Card = ({ id, name, image, rating, subTitle, isTrending = false }) => (
             </p>
         </div>
         <div className="flex flex-col justify-end h-full px-6 pt-6">
-            <div className="h-[15.25rem] w-full bg-[url('/shirt.svg')] bg-center bg-cover bg-no-repeat"></div>
+            <div className="h-[15.25rem] w-full bg-center bg-cover bg-no-repeat"
+                style={{
+                    backgroundImage: `url(${image ? `https://hometown.eagleeblaze.com/storage/app/public/${image}` : '/shirt.svg'})`
+                }}
+            ></div>
             <div className="flex gap-2.5 items-center mb-4">
                 <div className="">
                     <svg

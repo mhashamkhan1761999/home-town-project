@@ -62,16 +62,16 @@ const ManageCashout = () => {
         if (!cashoutRequests || !Array.isArray(cashoutRequests)) {
             return [];
         }
-        
+
         return cashoutRequests.filter(request => {
             // Get athlete name from the nested athlete object
             const athleteName = request.athlete?.name || request.athlete?.email || 'Unknown Athlete';
             const matchesSearch = athleteName.toLowerCase().includes(searchTerm.toLowerCase());
-            
+
             // Capitalize status for comparison (API returns lowercase)
             const requestStatus = request.status?.charAt(0).toUpperCase() + request.status?.slice(1);
             const matchesStatus = selectedStatus === 'All' || requestStatus === selectedStatus;
-            
+
             return matchesSearch && matchesStatus;
         });
     }, [cashoutRequests, searchTerm, selectedStatus]);
@@ -83,13 +83,13 @@ const ManageCashout = () => {
 
     const handlePaymentComplete = (paymentData) => {
         console.log('Payment completed:', paymentData);
-        
+
         // Call API to update cashout status
         updateCashoutMutation.mutate({
             id: selectedCashout.id,
             attachment: paymentData.attachment
         });
-        
+
         setIsPayModalOpen(false);
         setSelectedCashout(null);
     };
@@ -111,17 +111,17 @@ const ManageCashout = () => {
         if (!cashoutRequests || !Array.isArray(cashoutRequests)) return 0;
         return cashoutRequests.filter(req => req.status?.toLowerCase() === 'pending').length;
     }, [cashoutRequests]);
-    
+
     const totalCompleted = React.useMemo(() => {
         if (!cashoutRequests || !Array.isArray(cashoutRequests)) return 0;
         return cashoutRequests.filter(req => req.status?.toLowerCase() === 'completed').length;
     }, [cashoutRequests]);
-    
+
     const totalAmount = React.useMemo(() => {
         if (!cashoutRequests || !Array.isArray(cashoutRequests)) return 0;
         return cashoutRequests.reduce((sum, req) => sum + (parseFloat(req.amount) || 0), 0);
     }, [cashoutRequests]);
-    
+
     const pendingAmount = React.useMemo(() => {
         if (!cashoutRequests || !Array.isArray(cashoutRequests)) return 0;
         return cashoutRequests.filter(req => req.status?.toLowerCase() === 'pending').reduce((sum, req) => sum + (parseFloat(req.amount) || 0), 0);
@@ -244,9 +244,9 @@ const ManageCashout = () => {
                                                 <th className="px-3 sm:px-6 py-4 text-left text-xs sm:text-sm font-medium text-gray-400 uppercase tracking-wider">
                                                     Amount Requested
                                                 </th>
-                                                <th className="px-3 sm:px-6 py-4 text-left text-xs sm:text-sm font-medium text-gray-400 uppercase tracking-wider">
+                                                {/* <th className="px-3 sm:px-6 py-4 text-left text-xs sm:text-sm font-medium text-gray-400 uppercase tracking-wider">
                                                     Status
-                                                </th>
+                                                </th> */}
                                                 <th className="px-3 sm:px-6 py-4 text-left text-xs sm:text-sm font-medium text-gray-400 uppercase tracking-wider">
                                                     Request Date
                                                 </th>
@@ -295,11 +295,11 @@ const ManageCashout = () => {
                                                                 ${parseFloat(request.amount || 0).toLocaleString()}
                                                             </div>
                                                         </td>
-                                                        <td className="px-3 sm:px-6 py-4">
+                                                        {/* <td className="px-3 sm:px-6 py-4">
                                                             <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(request.status)}`}>
                                                                 {request.status?.charAt(0).toUpperCase() + request.status?.slice(1)}
                                                             </span>
-                                                        </td>
+                                                        </td> */}
                                                         <td className="px-3 sm:px-6 py-4">
                                                             <div className="text-sm text-gray-400">
                                                                 {new Date(request.created_at).toLocaleDateString()}
@@ -379,7 +379,7 @@ const PayNowModal = ({ isOpen, onClose, cashout, onPaymentComplete, isUpdating =
         onPaymentComplete({
             attachment: attachment // Pass the actual file, not the URL
         });
-        
+
         setAttachment(null);
     };
 
