@@ -175,7 +175,7 @@ const AthleteProductsManagement = () => {
         formData.append('warnings', warnings);
       }
       
-      return postRequest(`/admin/store-product-data/${productId}`, formData, true);
+      return postRequest(`/admin/store-images/${productId}`, formData, true);
     },
     onSuccess: (res) => {
       console.log('Product data uploaded successfully:', res);
