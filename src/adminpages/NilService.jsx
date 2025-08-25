@@ -716,56 +716,58 @@ const ItemModal = ({ item, onClose, onSuccesActive }) => {
             )}
           </div>
 
-          {/* Color Options */}
-          <div className="mb-8">
-            <label className="text-base font-semibold text-[#D4BC6D] mb-3 inline-block">
-              Color options
-            </label>
-            <Select
-              isMulti
-              options={options.map(opt => ({
-                ...opt,
-                label: (
-                  <div className="flex items-center gap-2">
-                    <span className="w-4 h-4 rounded-full border" style={{ backgroundColor: opt.value }}></span>
-                    {opt.label}
-                  </div>
-                )
-              }))}
-              value={colorList}
-              onChange={(selected) => setColorList(selected)}
-              closeMenuOnSelect={false}
-              className="text-[#6B6B6B] text-sm"
-              styles={{
-                control: (base) => ({
-                  ...base,
-                  background: 'rgba(217,217,217,0.03)',
-                  border: '1px solid #4B4C46',
-                  borderRadius: '0.5rem',
-                  color: '#6B6B6B',
-                }),
-                menu: (base) => ({
-                  ...base,
-                  background: '#1a1a1a',
-                  color: '#6B6B6B',
-                }),
-                option: (base, { isFocused }) => ({
-                  ...base,
-                  background: isFocused ? '#4B4C46' : '#1a1a1a',
-                  color: '#6B6B6B',
-                }),
-                multiValue: (base) => ({
-                  ...base,
-                  background: '#4B4C46',
-                  color: '#D4BC6D',
-                }),
-                multiValueLabel: (base) => ({
-                  ...base,
-                  color: '#D4BC6D',
-                }),
-              }}
-            />
-          </div>
+          {/* Color Options - Hide for Strength Supplements */}
+          {item?.category?.name !== "Strength Supplements" && (
+            <div className="mb-8">
+              <label className="text-base font-semibold text-[#D4BC6D] mb-3 inline-block">
+                Color options
+              </label>
+              <Select
+                isMulti
+                options={options.map(opt => ({
+                  ...opt,
+                  label: (
+                    <div className="flex items-center gap-2">
+                      <span className="w-4 h-4 rounded-full border" style={{ backgroundColor: opt.value }}></span>
+                      {opt.label}
+                    </div>
+                  )
+                }))}
+                value={colorList}
+                onChange={(selected) => setColorList(selected)}
+                closeMenuOnSelect={false}
+                className="text-[#6B6B6B] text-sm"
+                styles={{
+                  control: (base) => ({
+                    ...base,
+                    background: 'rgba(217,217,217,0.03)',
+                    border: '1px solid #4B4C46',
+                    borderRadius: '0.5rem',
+                    color: '#6B6B6B',
+                  }),
+                  menu: (base) => ({
+                    ...base,
+                    background: '#1a1a1a',
+                    color: '#6B6B6B',
+                  }),
+                  option: (base, { isFocused }) => ({
+                    ...base,
+                    background: isFocused ? '#4B4C46' : '#1a1a1a',
+                    color: '#6B6B6B',
+                  }),
+                  multiValue: (base) => ({
+                    ...base,
+                    background: '#4B4C46',
+                    color: '#D4BC6D',
+                  }),
+                  multiValueLabel: (base) => ({
+                    ...base,
+                    color: '#D4BC6D',
+                  }),
+                }}
+              />
+            </div>
+          )}
 
           {/* Price */}
           <div className="mb-8">
