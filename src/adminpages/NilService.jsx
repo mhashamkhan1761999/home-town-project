@@ -663,7 +663,6 @@ const ItemModal = ({ item, onClose, onSuccesActive }) => {
     formData.append("description", values?.description || '');
     formData.append("price", values?.price || 10);
     formData.append("colors", JSON.stringify(colorList?.map((i) => i?.value)));
-    formData.append("warnings", values?.warnings || '');
     formData.append("placement", values?.placement || '');
     if (image) formData.append("image", image);
     formData.append("design_service", values?.design_service || false);
@@ -823,28 +822,7 @@ const ItemModal = ({ item, onClose, onSuccesActive }) => {
               <p className="text-red-500 text-sm mt-1">{errors.placement.message}</p>
             )}
           </div>
-
-          {/* Warnings - Optional for all, Mandatory for Supplements */}
-          <div className="mb-8">
-            <label className="text-base font-semibold text-[#D4BC6D] mb-3 inline-block">
-              Warnings {item?.category?.name === "Strength Supplements" ? "(Required)" : "(Optional)"}
-            </label>
-            <textarea
-              {...register('warnings', { 
-                required: item?.category?.name === "Strength Supplements" ? 'Warnings are required for supplements' : false 
-              })}
-              placeholder={item?.category?.name === "Strength Supplements" 
-                ? "E.g. Keep out of reach of children. Consult physician before use. Do not exceed recommended dosage..." 
-                : "Any safety warnings or precautions..."
-              }
-              className="w-full p-3 border border-[#4B4C46] rounded-lg bg-transparent text-sm text-gray-300 focus:border-[#D4BC6D] outline-none"
-              rows="4"
-            />
-            {errors?.warnings && (
-              <p className="text-red-500 text-sm mt-1">{errors.warnings.message}</p>
-            )}
-          </div>
-
+          
           <div className="mb-8">
             <label className="text-base font-semibold text-[#D4BC6D] mb-3 inline-block">
               Additional Information (Optional)

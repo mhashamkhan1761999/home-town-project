@@ -88,6 +88,9 @@ const AthleteProductsManagement = () => {
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [uploadedImages, setUploadedImages] = useState([]);
   const [uploadedImageFiles, setUploadedImageFiles] = useState([]); // Store actual File objects
+  const [sizeChartImages, setSizeChartImages] = useState([]);
+  const [sizeChartImageFiles, setSizeChartImageFiles] = useState([]);
+  const [warnings, setWarnings] = useState('');
 
   const statusTypes = ['Pending', 'Accepted',];
   const filterOptions = ['All', ...statusTypes];
@@ -148,30 +151,50 @@ const AthleteProductsManagement = () => {
     }
   });
 
-  // Mutation for storing product images
-  const storeImagesMutation = useMutation({
-    mutationFn: ({ productId, images }) => {
+  // Mutation for storing product data (images, size charts, and warnings)
+  const storeProductDataMutation = useMutation({
+    mutationFn: ({ productId, images, size_chart_images, warnings }) => {
       const formData = new FormData();
-      images.forEach((image, index) => {
-        formData.append(`images[${index}]`, image);
-      });
-      return postRequest(`/admin/store-images/${productId}`, formData, true);
+      
+      // Add product images
+      if (images && images.length > 0) {
+        images.forEach((image, index) => {
+          formData.append(`images[${index}]`, image);
+        });
+      }
+      
+      // Add size chart images
+      if (size_chart_images && size_chart_images.length > 0) {
+        size_chart_images.forEach((image, index) => {
+          formData.append(`size_chart_images[${index}]`, image);
+        });
+      }
+      
+      // Add warnings
+      if (warnings !== undefined) {
+        formData.append('warnings', warnings);
+      }
+      
+      return postRequest(`/admin/store-product-data/${productId}`, formData, true);
     },
     onSuccess: (res) => {
-      console.log('Images uploaded successfully:', res);
-      toast.success(res?.message || 'Images uploaded successfully');
+      console.log('Product data uploaded successfully:', res);
+      toast.success(res?.message || 'Product data saved successfully');
       // Optionally refresh product data
       queryClient.invalidateQueries(['admin-athlete-products']);
-      // Clear uploaded images after successful save
+      // Clear uploaded data after successful save
       setUploadedImages([]);
       setUploadedImageFiles([]);
+      setSizeChartImages([]);
+      setSizeChartImageFiles([]);
+      setWarnings('');
       // Close the modal and navigate back to athlete products management
       setIsViewModalOpen(false);
       setSelectedProduct(null);
     },
     onError: (error) => {
-      console.error('Error uploading images:', error);
-      toast.error('Failed to upload images');
+      console.error('Error uploading product data:', error);
+      toast.error('Failed to save product data');
     }
   });
 
@@ -222,6 +245,9 @@ const AthleteProductsManagement = () => {
     setSelectedProduct(product);
     setUploadedImages([]); // Start with empty array for demo purposes
     setUploadedImageFiles([]); // Clear file objects as well
+    setSizeChartImages([]); // Clear size chart images
+    setSizeChartImageFiles([]); // Clear size chart file objects
+    setWarnings(''); // Clear warnings
     setIsViewModalOpen(true);
 
     // Fetch detailed product information
@@ -240,20 +266,46 @@ const AthleteProductsManagement = () => {
     setUploadedImageFiles(uploadedImageFiles.filter((_, i) => i !== index)); // Remove corresponding file
   };
 
-  const handleSaveImages = () => {
+  const handleSizeChartUpload = (event) => {
+    const files = Array.from(event.target.files);
+    const newImages = files.map(file => URL.createObjectURL(file));
+    setSizeChartImages([...sizeChartImages, ...newImages]);
+    setSizeChartImageFiles([...sizeChartImageFiles, ...files]);
+  };
+
+  const removeSizeChartImage = (index) => {
+    setSizeChartImages(sizeChartImages.filter((_, i) => i !== index));
+    setSizeChartImageFiles(sizeChartImageFiles.filter((_, i) => i !== index));
+  };
+
+  const handleSaveProductData = () => {
     if (!selectedProduct?.id) {
       toast.error('No product selected');
       return;
     }
 
-    if (uploadedImageFiles.length === 0) {
-      toast.error('No images to save');
+    // Check if there's any data to save
+    const hasImages = uploadedImageFiles.length > 0;
+    const hasSizeCharts = sizeChartImageFiles.length > 0;
+    const hasWarnings = warnings.trim() !== '';
+    
+    if (!hasImages && !hasSizeCharts && !hasWarnings) {
+      toast.error('No data to save. Please add images, size charts, or warnings.');
       return;
     }
 
-    storeImagesMutation.mutate({
+    // For supplements, warnings are required if any data is being saved
+    const isStrengthSupplement = selectedProduct?.category?.name === "Strength Supplements";
+    if (isStrengthSupplement && !hasWarnings) {
+      toast.error('Warnings are required for supplement products');
+      return;
+    }
+
+    storeProductDataMutation.mutate({
       productId: selectedProduct.id,
-      images: uploadedImageFiles
+      images: hasImages ? uploadedImageFiles : undefined,
+      size_chart_images: hasSizeCharts ? sizeChartImageFiles : undefined,
+      warnings: hasWarnings ? warnings : undefined
     });
   };
 
@@ -434,14 +486,22 @@ const AthleteProductsManagement = () => {
           uploadedImages={uploadedImages}
           onImageUpload={handleImageUpload}
           onRemoveImage={removeImage}
-          onSaveImages={handleSaveImages}
+          sizeChartImages={sizeChartImages}
+          onSizeChartUpload={handleSizeChartUpload}
+          onRemoveSizeChart={removeSizeChartImage}
+          warnings={warnings}
+          onWarningsChange={setWarnings}
+          onSaveProductData={handleSaveProductData}
           isLoadingDetails={viewProductMutation.isLoading}
-          isSavingImages={storeImagesMutation.isLoading}
+          isSaving={storeProductDataMutation.isLoading}
           onClose={() => {
             setIsViewModalOpen(false);
             setSelectedProduct(null);
             setUploadedImages([]);
             setUploadedImageFiles([]);
+            setSizeChartImages([]);
+            setSizeChartImageFiles([]);
+            setWarnings('');
           }}
         />
       )}
@@ -450,7 +510,21 @@ const AthleteProductsManagement = () => {
 };
 
 // Product View Modal Component
-const ProductViewModal = ({ product, uploadedImages, onImageUpload, onRemoveImage, onSaveImages, onClose, isLoadingDetails, isSavingImages }) => {
+const ProductViewModal = ({ 
+  product, 
+  uploadedImages, 
+  onImageUpload, 
+  onRemoveImage, 
+  sizeChartImages,
+  onSizeChartUpload,
+  onRemoveSizeChart,
+  warnings,
+  onWarningsChange,
+  onSaveProductData,
+  onClose, 
+  isLoadingDetails, 
+  isSaving 
+}) => {
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[9999] p-4">
       <div className="bg-[#282828] border border-[#4B4C46] rounded-lg p-4 sm:p-6 w-full max-w-6xl mx-4 max-h-[90vh] overflow-y-auto">
@@ -667,23 +741,144 @@ const ProductViewModal = ({ product, uploadedImages, onImageUpload, onRemoveImag
                 </p>
               </div>
             </div>
+
+            {/* Size Chart Section */}
+            <div className="bg-[#1a1a1a] border border-[#4B4C46] rounded-lg p-4 sm:p-6">
+              <div className="flex justify-between items-center mb-4">
+                <h3 className="text-lg font-bold text-white">Size Chart</h3>
+                <label className="cursor-pointer">
+                  <input
+                    type="file"
+                    multiple
+                    accept="image/*"
+                    onChange={onSizeChartUpload}
+                    className="hidden"
+                  />
+                  <div className="flex items-center gap-2 px-4 py-2 bg-[#D4BC6D] text-black rounded-lg hover:bg-[#C4AC5D] transition-colors text-sm font-medium">
+                    <Upload className="h-4 w-4" />
+                    Upload Size Chart
+                  </div>
+                </label>
+              </div>
+
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+                {sizeChartImages.map((image, index) => (
+                  <div key={index} className="relative group">
+                    <div className="aspect-square bg-[#4B4C46] rounded-lg overflow-hidden border border-[#6B6C66]">
+                      <img
+                        src={image}
+                        alt={`Size chart ${index + 1}`}
+                        className="w-full h-full object-cover"
+                        onError={(e) => {
+                          e.target.style.display = 'none';
+                          e.target.nextSibling.style.display = 'flex';
+                        }}
+                      />
+                      <div className="w-full h-full bg-gradient-to-br from-[#D4BC6D] to-[#57430D] flex items-center justify-center" style={{ display: 'none' }}>
+                        <Package className="h-8 w-8 text-white opacity-50" />
+                      </div>
+                    </div>
+                    <button
+                      onClick={() => onRemoveSizeChart(index)}
+                      className="absolute -top-2 -right-2 bg-red-600 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                    >
+                      <X className="h-3 w-3" />
+                    </button>
+                  </div>
+                ))}
+
+                {/* Add Size Chart Placeholder */}
+                <label className="cursor-pointer">
+                  <input
+                    type="file"
+                    multiple
+                    accept="image/*"
+                    onChange={onSizeChartUpload}
+                    className="hidden"
+                  />
+                  <div className="aspect-square border-2 border-dashed border-[#4B4C46] rounded-lg flex flex-col items-center justify-center hover:border-[#D4BC6D] transition-colors group">
+                    <Plus className="h-8 w-8 text-[#4B4C46] group-hover:text-[#D4BC6D] mb-2" />
+                    <span className="text-xs text-[#4B4C46] group-hover:text-[#D4BC6D] text-center">
+                      Add Size<br />Chart
+                    </span>
+                  </div>
+                </label>
+              </div>
+
+              <div className="mt-4 p-3 bg-[#2a2a2a] border border-[#4B4C46] rounded-lg">
+                <p className="text-gray-400 text-xs">
+                  <strong>Note:</strong> Upload size chart images to help customers choose the right size. Recommended format: Clear, high-resolution charts.
+                </p>
+              </div>
+            </div>
+
+            {/* Warnings Section */}
+            <div className="bg-[#1a1a1a] border border-[#4B4C46] rounded-lg p-4 sm:p-6">
+              <div className="mb-4">
+                <h3 className="text-lg font-bold text-white">
+                  Product Warnings 
+                  {product?.category?.name === "Strength Supplements" && (
+                    <span className="text-red-400 text-sm ml-2">(Required for Supplements)</span>
+                  )}
+                </h3>
+              </div>
+
+              <div className="space-y-4">
+                <textarea
+                  value={warnings}
+                  onChange={(e) => onWarningsChange(e.target.value)}
+                  placeholder={
+                    product?.category?.name === "Strength Supplements" 
+                      ? "E.g. Keep out of reach of children. Consult physician before use. Do not exceed recommended dosage..."
+                      : "Add any safety warnings or precautions for this product..."
+                  }
+                  className="w-full h-32 p-3 bg-[#2a2a2a] border border-[#4B4C46] rounded-lg text-white placeholder-gray-500 focus:border-[#D4BC6D] outline-none resize-none"
+                  rows={4}
+                />
+                
+                <div className="p-3 bg-[#2a2a2a] border border-[#4B4C46] rounded-lg">
+                  <p className="text-gray-400 text-xs">
+                    <strong>Note:</strong> {product?.category?.name === "Strength Supplements" 
+                      ? "Warnings are mandatory for supplement products. Include safety information, usage instructions, and health disclaimers."
+                      : "Warnings are optional but recommended for safety information, usage instructions, or care guidelines."
+                    }
+                  </p>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 
         {/* Action Buttons */}
         <div className="flex flex-col sm:flex-row gap-3 mt-6 pt-6 border-t border-[#4B4C46]">
           <button
-            onClick={onSaveImages}
-            disabled={isSavingImages || uploadedImages.length === 0}
+            onClick={onSaveProductData}
+            disabled={isSaving}
             className="flex-1 px-6 py-3 bg-[#D4BC6D] text-black font-medium rounded-lg hover:bg-[#C4AC5D] transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
           >
-            {isSavingImages ? (
+            {isSaving ? (
               <>
                 <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-black mr-2"></div>
-                Saving Images...
+                Saving Product Data...
               </>
             ) : (
-              `Save Images ${uploadedImages.length > 0 ? `(${uploadedImages.length})` : ''}`
+              (() => {
+                const hasImages = uploadedImages.length > 0;
+                const hasSizeCharts = sizeChartImages.length > 0;
+                const hasWarnings = warnings.trim() !== '';
+                const totalItems = (hasImages ? 1 : 0) + (hasSizeCharts ? 1 : 0) + (hasWarnings ? 1 : 0);
+                
+                if (totalItems === 0) {
+                  return 'Save Product Data';
+                }
+                
+                const itemsText = [];
+                if (hasImages) itemsText.push(`${uploadedImages.length} Image${uploadedImages.length !== 1 ? 's' : ''}`);
+                if (hasSizeCharts) itemsText.push(`${sizeChartImages.length} Size Chart${sizeChartImages.length !== 1 ? 's' : ''}`);
+                if (hasWarnings) itemsText.push('Warnings');
+                
+                return `Save ${itemsText.join(', ')}`;
+              })()
             )}
           </button>
           <button
