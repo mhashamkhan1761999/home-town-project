@@ -1,10 +1,11 @@
 import { useQuery, useMutation } from "@tanstack/react-query";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { getRequest, postRequest, deleteRequest, putRequest } from "../api";
 import { Plus, Search, Edit, Trash, Eye, Filter, Package } from "lucide-react";
 import { queryClient } from "../main";
 import { useForm } from "react-hook-form";
 import Select from "react-select";
+import { useModalHistory } from "../hooks/useModalHistory";
 
 function stripHtml(html) {
   if (!html) return "";
@@ -25,6 +26,21 @@ const SuperAdminProducts = () => {
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
+
+  // Modal history management
+  const addModal = useModalHistory('addProduct', showAddModal, () => setShowAddModal(false));
+  const editModal = useModalHistory('editProduct', showEditModal, () => {
+    setShowEditModal(false);
+    setSelectedProduct(null);
+  });
+  const deleteModal = useModalHistory('deleteProduct', showDeleteModal, () => {
+    setShowDeleteModal(false);
+    setSelectedProduct(null);
+  });
+  const viewModal = useModalHistory('viewProduct', showViewModal, () => {
+    setShowViewModal(false);
+    setSelectedProduct(null);
+  });
 
   // Hardcoded fallback data
   const fallbackProducts = [
@@ -135,6 +151,39 @@ const SuperAdminProducts = () => {
     ? fallbackCategories
     : categories || [];
 
+  // Handle modal state restoration from URL
+  useEffect(() => {
+    if (addModal.shouldOpenModal) {
+      setShowAddModal(true);
+    }
+    if (editModal.shouldOpenModal) {
+      const modalData = editModal.getModalData();
+      if (modalData?.product) {
+        setSelectedProduct(modalData.product);
+        setShowEditModal(true);
+      }
+    }
+    if (deleteModal.shouldOpenModal) {
+      const modalData = deleteModal.getModalData();
+      if (modalData?.product) {
+        setSelectedProduct(modalData.product);
+        setShowDeleteModal(true);
+      }
+    }
+    if (viewModal.shouldOpenModal) {
+      const modalData = viewModal.getModalData();
+      if (modalData?.product) {
+        setSelectedProduct(modalData.product);
+        setShowViewModal(true);
+      }
+    }
+  }, [
+    addModal.shouldOpenModal,
+    editModal.shouldOpenModal,
+    deleteModal.shouldOpenModal,
+    viewModal.shouldOpenModal
+  ]);
+
   // Filter products based on search and category
   const filteredProducts =
     displayProducts?.filter((product) => {
@@ -155,16 +204,19 @@ const SuperAdminProducts = () => {
 
   const handleEdit = (product) => {
     setSelectedProduct(product);
+    editModal.openModal({ product });
     setShowEditModal(true);
   };
 
   const handleDelete = (product) => {
     setSelectedProduct(product);
+    deleteModal.openModal({ product });
     setShowDeleteModal(true);
   };
 
   const handleView = (product) => {
     setSelectedProduct(product);
+    viewModal.openModal({ product });
     setShowViewModal(true);
   };
 
@@ -174,7 +226,10 @@ const SuperAdminProducts = () => {
       <div className="flex justify-between items-center mb-8">
         <h2 className="text-white font-bold text-3xl">Manage Products</h2>
         <button
-          onClick={() => setShowAddModal(true)}
+          onClick={() => {
+            addModal.openModal();
+            setShowAddModal(true);
+          }}
           className="bg-[#D4BC6D] text-black px-6 py-3 rounded-full font-semibold hover:bg-[#b89f4e] transition flex items-center gap-2"
         >
           <Plus size={20} />
@@ -372,7 +427,10 @@ const SuperAdminProducts = () => {
       {/* Modals */}
       {showAddModal && (
         <AddProductModal
-          onClose={() => setShowAddModal(false)}
+          onClose={() => {
+            addModal.closeModal();
+            setShowAddModal(false);
+          }}
           categories={displayCategories}
         />
       )}
@@ -381,6 +439,7 @@ const SuperAdminProducts = () => {
         <EditProductModal
           product={selectedProduct}
           onClose={() => {
+            editModal.closeModal();
             setShowEditModal(false);
             setSelectedProduct(null);
           }}
@@ -392,6 +451,7 @@ const SuperAdminProducts = () => {
         <DeleteProductModal
           product={selectedProduct}
           onClose={() => {
+            deleteModal.closeModal();
             setShowDeleteModal(false);
             setSelectedProduct(null);
           }}
@@ -402,6 +462,7 @@ const SuperAdminProducts = () => {
         <ViewProductModal
           product={selectedProduct}
           onClose={() => {
+            viewModal.closeModal();
             setShowViewModal(false);
             setSelectedProduct(null);
           }}

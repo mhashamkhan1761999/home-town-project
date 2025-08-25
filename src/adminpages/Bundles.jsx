@@ -1,16 +1,31 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { getRequest, postRequest } from '../api';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import AddSubscriptionModal from '../components/subscriptions/AddSubscriptionModal';
 import { queryClient } from '../main';
 import { loadStripe } from '@stripe/stripe-js';
 import { Elements } from '@stripe/react-stripe-js';
+import { useModalHistory } from '../hooks/useModalHistory';
 
 
 const stripePromise = loadStripe('pk_test_51LO709EoIN0qcO1SAQ6hl12BkCOI93FAQ8u9n2cnVA4kuz4YIpx0c50TeUJHHGUFiZnniCvwal7FS1ZM5EHyCy8400wxefrAoU');
 
 const Bundles = () => {
     const [isShow, setIsShow] = React.useState(false);
+    
+    // Modal history management
+    const bundleModal = useModalHistory('bundleModal', isShow !== false, () => setIsShow(false));
+
+    // Handle modal state restoration from URL
+    useEffect(() => {
+        if (bundleModal.shouldOpenModal) {
+            const modalData = bundleModal.getModalData();
+            if (modalData?.bundle) {
+                setIsShow(modalData.bundle);
+            }
+        }
+    }, [bundleModal.shouldOpenModal]);
+
     const { data, isLoading, error } = useQuery({
         queryKey: ['get-bundles'], // Unique key for caching
         queryFn: () => getRequest('/bundles'), // Fetch function
@@ -43,6 +58,7 @@ const Bundles = () => {
             mutation.mutate({ package_id: item?.id });
         } else {
             setIsShow(item);
+            bundleModal.openModal({ bundle: item });
         }
     }
 
@@ -100,7 +116,10 @@ const Bundles = () => {
             {isShow && (
                 <Elements stripe={stripePromise}>
                     <AddSubscriptionModal
-                        onClose={() => setIsShow(false)}
+                        onClose={() => {
+                            bundleModal.closeModal();
+                            setIsShow(false);
+                        }}
                         isEdit={isShow}
                         mutate={mutation.mutate}
                     />

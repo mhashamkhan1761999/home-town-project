@@ -1,16 +1,31 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { getRequest, postRequest } from '../api';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import AddSubscriptionModal from '../components/subscriptions/AddSubscriptionModal';
 import { queryClient } from '../main';
 import { loadStripe } from '@stripe/stripe-js';
 import { Elements } from '@stripe/react-stripe-js';
+import { useModalHistory } from '../hooks/useModalHistory';
 
 
 const stripePromise = loadStripe('pk_test_51LO709EoIN0qcO1SAQ6hl12BkCOI93FAQ8u9n2cnVA4kuz4YIpx0c50TeUJHHGUFiZnniCvwal7FS1ZM5EHyCy8400wxefrAoU');
 
 const Subscription = () => {
     const [isShow, setIsShow] = React.useState(false);
+    
+    // Modal history management
+    const subscriptionModal = useModalHistory('subscriptionModal', isShow !== false, () => setIsShow(false));
+
+    // Handle modal state restoration from URL
+    useEffect(() => {
+        if (subscriptionModal.shouldOpenModal) {
+            const modalData = subscriptionModal.getModalData();
+            if (modalData?.package) {
+                setIsShow(modalData.package);
+            }
+        }
+    }, [subscriptionModal.shouldOpenModal]);
+
     const { data, isLoading, error } = useQuery({
         queryKey: ['get-packages'], // Unique key for caching
         queryFn: () => getRequest('/packages'), // Fetch function
@@ -42,6 +57,7 @@ const Subscription = () => {
         if (item?.type == 'free') {
             mutation.mutate({ package_id: item?.id });
         } else {
+            subscriptionModal.openModal({ package: item });
             setIsShow(item);
         }
     }
@@ -125,7 +141,10 @@ const Subscription = () => {
             {isShow && (
                 <Elements stripe={stripePromise}>
                     <AddSubscriptionModal
-                        onClose={() => setIsShow(false)}
+                        onClose={() => {
+                            subscriptionModal.closeModal();
+                            setIsShow(false);
+                        }}
                         isEdit={isShow}
                         mutate={mutation.mutate}
                     />

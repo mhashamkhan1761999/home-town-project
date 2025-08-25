@@ -2,6 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import React, { useState, useEffect } from 'react';
 import { getRequest } from '../api';
 import NilServiceViewModal from '../components/NilServiceViewModal';
+import { useModalHistory } from '../hooks/useModalHistory';
 
 const MyProducts = () => {
   const { data, isLoading, error } = useQuery({
@@ -11,6 +12,19 @@ const MyProducts = () => {
 
   const [isView, setIsView] = useState(false);
   const [activeCategory, setActiveCategory] = useState('');
+
+  // Modal history management
+  const viewModal = useModalHistory('viewProduct', isView !== false, () => setIsView(false));
+
+  // Handle modal state restoration from URL
+  useEffect(() => {
+    if (viewModal.shouldOpenModal) {
+      const modalData = viewModal.getModalData();
+      if (modalData?.product) {
+        setIsView(modalData.product);
+      }
+    }
+  }, [viewModal.shouldOpenModal]);
 
   // Sort in descending order by created_at (latest first)
   const sortedData = [...(data || [])].sort(
@@ -119,7 +133,10 @@ const MyProducts = () => {
                     Status: {item?.status}
                 </p>
                 <button
-                    onClick={() => setIsView(item)}
+                    onClick={() => {
+                      setIsView(item);
+                      viewModal.openModal({ product: item });
+                    }}
                     className="bg-[#57430D] py-2.5 w-full text-white rounded-full font-bold text-sm hover:bg-[#6b5615] transition-colors duration-300"
                 >
                     View
@@ -138,7 +155,10 @@ const MyProducts = () => {
       {isView && (
         <NilServiceViewModal
           product={isView}
-          onClose={() => setIsView(false)}
+          onClose={() => {
+            viewModal.closeModal();
+            setIsView(false);
+          }}
         />
       )}
     </>

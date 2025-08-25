@@ -1,5 +1,5 @@
 // NilService.jsx
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import serviceCategoryContent from '../data/serviceCategoryContent'
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { getRequest, postRequest } from '../api';
@@ -9,6 +9,7 @@ import Select from 'react-select';
 import { Link, useNavigate } from 'react-router-dom';
 import { convertToFormData } from './helpers';
 import { X as CloseIcon } from "lucide-react";
+import { useModalHistory, useNestedModalHistory } from '../hooks/useModalHistory';
 
 // --- keep images object with unique keys only
 const categoryImages = {
@@ -71,20 +72,57 @@ const NilCategory = () => {
 
   const [isShowForm, setIsShowForm] = useState(false);
 
+  // 🔹 Modal history management
+  const launchServiceModal = useModalHistory(
+    'launchService', 
+    showLaunchService, 
+    () => setShowLaunchService(false)
+  );
+
+  const itemModal = useNestedModalHistory(
+    'itemModal',
+    isShow === 2,
+    () => setIsShow(1),
+    'launchService'
+  );
+
   // Get categories data to find category name by ID
   const { data: categoriesData } = useQuery({
     queryKey: ['category'],
     queryFn: () => getRequest('/categories'),
   });
 
+  // Handle modal state restoration from URL
+  useEffect(() => {
+    if (launchServiceModal.shouldOpenModal) {
+      const modalData = launchServiceModal.getModalData();
+      if (modalData?.categoryId) {
+        setSelectedCardId(modalData.categoryId);
+        setShowLaunchService(true);
+      }
+    }
+
+    if (itemModal.shouldOpenModal) {
+      const modalData = itemModal.getModalData();
+      if (modalData?.product) {
+        setSelectedItem(modalData.product);
+        setSelectedProductTypeId(modalData.productTypeId);
+        setSelectedCardId(modalData.categoryId);
+        setIsShow(2);
+      }
+    }
+  }, [launchServiceModal.shouldOpenModal, itemModal.shouldOpenModal]);
+
   // 1️⃣ Click category → open Launch Service modal
   const handleCategoryClick = (id) => {
     setSelectedCardId(id);
+    launchServiceModal.openModal({ categoryId: id });
     setShowLaunchService(true);
   };
 
   // 2️⃣ After Launch Service form → go to product list
   const handleLaunchServiceComplete = () => {
+    launchServiceModal.closeModal();
     setShowLaunchService(false);
     setIsShow(1); // product list
   };
@@ -95,6 +133,11 @@ const NilCategory = () => {
     setSelectedItem(product);
     setSelectedProductTypeId(product?.id);
     setSelectedCardId(product?.category_id);
+    itemModal.openModal({ 
+      product: product,
+      categoryId: product?.category_id,
+      productTypeId: product?.id 
+    });
     setIsShow(2); // product description form
   };
 
@@ -136,13 +179,12 @@ const NilCategory = () => {
       {/* Launch Service / Graphic Designing form */}
       {showLaunchService && isShowForm && (
         <ItemModal2
-          onClose={() => setShowLaunchService(false)}
+          onClose={() => {
+            launchServiceModal.closeModal();
+            setShowLaunchService(false);
+          }}
           onSuccesActive={handleLaunchServiceComplete}
         />
-        // <ItemModal2
-        //     onClose={() => setIsShowForm(false)}
-        //     onSuccesActive={handleLaunchServiceComplete}
-        // />
       )}
 
       {showLaunchService && (
@@ -196,7 +238,10 @@ const NilCategory = () => {
             {/* Footer with Submit Button */}
             <div className="mt-8 flex justify-between">
               <button
-                onClick={() => setShowLaunchService(false)}
+                onClick={() => {
+                  launchServiceModal.closeModal();
+                  setShowLaunchService(false);
+                }}
                 className="px-6 py-2 bg-[#D4BC6D] text-black rounded-full hover:bg-[#b89f4e] transition"
               >
                 Back
@@ -239,8 +284,12 @@ const NilCategory = () => {
             selectedCardId,
             selectedProductTypeId,
           }}
-          onClose={() => setIsShow(1)}
+          onClose={() => {
+            itemModal.closeModal();
+            setIsShow(1);
+          }}
           onSuccesActive={(productId) => {
+            itemModal.closeModal();
             setIsShow(1);
             handleProductCreated(productId);
           }}
@@ -838,7 +887,7 @@ const ItemModal2 = ({ item = null, onClose, onSuccesActive }) => {
 
     const newData = convertToFormData(values);
 
-    // mutation.mutate(newData);
+    mutation.mutate(newData);
 
 
     console.log('item', newData);

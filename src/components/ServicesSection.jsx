@@ -1,6 +1,7 @@
 // src/components/ServicesSection.jsx
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import ServiceModal from "./ServiceModal";
+import { useModalHistory } from "../hooks/useModalHistory";
 
 // sample categoryImages mapping (if you want background images)
 const categoryImages = {
@@ -12,6 +13,23 @@ export default function ServicesSection({ filteredCategories = [] }) {
   const [openService, setOpenService] = useState(null);
   const [showForm, setShowForm] = useState(false);
   const [selectedCard, setSelectedCard] = useState(null);
+
+  // Modal history management
+  const serviceModal = useModalHistory('serviceModal', openService !== null, () => {
+    setOpenService(null);
+    setSelectedCard(null);
+  });
+
+  // Handle modal state restoration from URL
+  useEffect(() => {
+    if (serviceModal.shouldOpenModal) {
+      const modalData = serviceModal.getModalData();
+      if (modalData?.serviceName && modalData?.cardId) {
+        setOpenService(modalData.serviceName);
+        setSelectedCard(modalData.cardId);
+      }
+    }
+  }, [serviceModal.shouldOpenModal]);
 
   const handleLaunch = (serviceKey) => {
     // called when user clicks "Launch Service" inside modal
@@ -29,8 +47,18 @@ export default function ServicesSection({ filteredCategories = [] }) {
               key={idx}
               role="button"
               tabIndex={0}
-              onClick={() => { setOpenService(item?.name); setSelectedCard(item?.id); }}
-              onKeyDown={(e) => { if (e.key === "Enter") { setOpenService(item?.name); setSelectedCard(item?.id); } }}
+              onClick={() => {
+                setOpenService(item?.name);
+                setSelectedCard(item?.id);
+                serviceModal.openModal({ serviceName: item?.name, cardId: item?.id });
+              }}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  setOpenService(item?.name);
+                  setSelectedCard(item?.id);
+                  serviceModal.openModal({ serviceName: item?.name, cardId: item?.id });
+                }
+              }}
               className={`relative rounded-xl cursor-pointer overflow-hidden shadow-lg transform transition-all duration-300 hover:scale-105`}
               style={{
                 height: "220px",
@@ -54,7 +82,11 @@ export default function ServicesSection({ filteredCategories = [] }) {
       {/* Modal */}
       <ServiceModal
         serviceKey={openService}
-        onClose={() => setOpenService(null)}
+        onClose={() => {
+          serviceModal.closeModal();
+          setOpenService(null);
+          setSelectedCard(null);
+        }}
         onLaunch={handleLaunch}
       />
 
