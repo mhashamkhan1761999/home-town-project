@@ -725,8 +725,8 @@ const ItemModal = ({ item, onClose, onSuccesActive }) => {
             )}
           </div>
 
-          {/* Color Options - Hide for Strength Supplements */}
-          {item?.category?.name !== "Strength Supplements" && (
+          {/* Color Options - Hide for specific categories */}
+          {!["Strength Supplements", "Workout Supplements", "Self Care", "Health", "Coffee"].includes(item?.category?.name) && (
             <div className="mb-8">
               <label className="text-base font-semibold text-[#D4BC6D] mb-3 inline-block">
                 Color options
@@ -808,21 +808,23 @@ const ItemModal = ({ item, onClose, onSuccesActive }) => {
             )}
           </div>
 
-          {/* Graphic Placement */}
-          <div className="mb-8">
-            <label className="text-base font-semibold text-[#D4BC6D] mb-3 inline-block">
-              Graphic placement instructions
-            </label>
-            <textarea
-              {...register('graphicPlacement', { required: 'Please specify placement' })}
-              placeholder="E.g. Front center, back side, left shoulder..."
-              className="w-full p-3 border border-[#4B4C46] rounded-lg bg-transparent text-sm text-gray-300 focus:border-[#D4BC6D] outline-none"
-              rows="3"
-            />
-            {errors?.placement && (
-              <p className="text-red-500 text-sm mt-1">{errors.placement.message}</p>
-            )}
-          </div>
+          {/* Graphic Placement - Hide for specific categories */}
+          {!["Strength Supplements", "Workout Supplements", "Self Care", "Health", "Coffee"].includes(item?.category?.name) && (
+            <div className="mb-8">
+              <label className="text-base font-semibold text-[#D4BC6D] mb-3 inline-block">
+                Graphic placement instructions
+              </label>
+              <textarea
+                {...register('graphicPlacement', { required: 'Please specify placement' })}
+                placeholder="E.g. Front center, back side, left shoulder..."
+                className="w-full p-3 border border-[#4B4C46] rounded-lg bg-transparent text-sm text-gray-300 focus:border-[#D4BC6D] outline-none"
+                rows="3"
+              />
+              {errors?.placement && (
+                <p className="text-red-500 text-sm mt-1">{errors.placement.message}</p>
+              )}
+            </div>
+          )}
           
           <div className="mb-8">
             <label className="text-base font-semibold text-[#D4BC6D] mb-3 inline-block">
