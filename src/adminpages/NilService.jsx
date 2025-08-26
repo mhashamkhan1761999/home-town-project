@@ -886,6 +886,20 @@ const ItemModal2 = ({ item = null, onClose, onSuccesActive, categoryId }) => {
     queryFn: () => getRequest('/categories'),
   });
 
+  // Define categories that should only show logo option
+  const logoOnlyCategories = ['Player Card', 'Coffee', 'Health', 'Self Care', 'Strength Supplements'];
+  
+  // Get current category name
+  const currentCategoryName = categories?.find(cat => cat.id === categoryId)?.name;
+  const isLogoOnlyCategory = logoOnlyCategories.includes(currentCategoryName);
+
+  // Pre-select logo option for logo-only categories
+  useEffect(() => {
+    if (isLogoOnlyCategory) {
+      setValue('selectedCategory', 'logo');
+    }
+  }, [isLogoOnlyCategory, setValue]);
+
   const mutation = useMutation({
     mutationKey: ['store-concept'],
     mutationFn: (form) => {
@@ -925,7 +939,7 @@ const ItemModal2 = ({ item = null, onClose, onSuccesActive, categoryId }) => {
 
             {/* Multiple Image Upload */}
             <label className="text-base font-semibold text-[#D4BC6D] mb-3 block">
-              Upload Your Exact Photos (Multiple Allowed)
+              {isLogoOnlyCategory ? "Example Photos Of Your Logo (Optional)" : "Upload Your Exact Photos (Multiple Allowed)"}
             </label>
             <div style={{ display: 'flex', alignItems: 'center' }}>
               <input
@@ -998,30 +1012,48 @@ const ItemModal2 = ({ item = null, onClose, onSuccesActive, categoryId }) => {
                 Select One Category
               </label>
               <div className="grid grid-cols-2 gap-4">
-                {[
-                  { id: "merch", label: "Merch Collage", example: "/2.jpeg" },
-                  { id: "favorite", label: "Favorite Picture", example: "/1.jpeg" },
-                  { id: "logo", label: "Logo", example: "/3.jpeg" },
-                  { id: "other?", label: "Other?", example: "/question-mark.jpeg" },
-                ].map(({ id, label, example }) => {
-                  const isSelected = watch("selectedCategory") === id;
-                  return (
-                    <label
-                      key={id}
-                      className={`relative p-3 rounded-lg border cursor-pointer transition 
-                                ${isSelected ? "border-[#D4BC6D] bg-[rgba(212,188,109,0.1)] shadow-lg" : "border-[#4B4C46] hover:border-[#D4BC6D]"}`}
-                    >
-                      <input
-                        type="radio"
-                        value={id}
-                        {...register("selectedCategory", { required: true })}
-                        className="absolute top-2 left-2"
-                      />
-                      <span className="block font-semibold text-[#D4BC6D] mb-2 px-5">{label}</span>
-                      <img src={example} alt={label} className="w-full h-full object-cover rounded-md" />
-                    </label>
-                  )
-                })}
+                {isLogoOnlyCategory ? (
+                  // Only show logo option for specific categories
+                  <label
+                    className="relative p-3 rounded-lg border border-[#D4BC6D] bg-[rgba(212,188,109,0.1)] shadow-lg cursor-pointer transition col-span-2"
+                  >
+                    <input
+                      type="radio"
+                      value="logo"
+                      {...register("selectedCategory", { required: true })}
+                      className="absolute top-2 left-2"
+                      defaultChecked
+                    />
+                    <span className="block font-semibold text-[#D4BC6D] mb-2 px-5">Logo</span>
+                    <img src="/3.jpeg" alt="Logo" className="w-full h-full object-cover rounded-md" />
+                  </label>
+                ) : (
+                  // Show all options for other categories
+                  [
+                    { id: "merch", label: "Merch Collage", example: "/2.jpeg" },
+                    { id: "favorite", label: "Favorite Picture", example: "/1.jpeg" },
+                    { id: "logo", label: "Logo", example: "/3.jpeg" },
+                    { id: "other?", label: "Other?", example: "/question-mark.jpeg" },
+                  ].map(({ id, label, example }) => {
+                    const isSelected = watch("selectedCategory") === id;
+                    return (
+                      <label
+                        key={id}
+                        className={`relative p-3 rounded-lg border cursor-pointer transition 
+                                  ${isSelected ? "border-[#D4BC6D] bg-[rgba(212,188,109,0.1)] shadow-lg" : "border-[#4B4C46] hover:border-[#D4BC6D]"}`}
+                      >
+                        <input
+                          type="radio"
+                          value={id}
+                          {...register("selectedCategory", { required: true })}
+                          className="absolute top-2 left-2"
+                        />
+                        <span className="block font-semibold text-[#D4BC6D] mb-2 px-5">{label}</span>
+                        <img src={example} alt={label} className="w-full h-full object-cover rounded-md" />
+                      </label>
+                    )
+                  })
+                )}
               </div>
               {errors?.selectedCategory && (
                 <p className="text-red-500 text-sm mt-1">Please select one category</p>
