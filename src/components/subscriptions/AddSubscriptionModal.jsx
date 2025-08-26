@@ -1,5 +1,5 @@
 import { useMutation } from '@tanstack/react-query';
-import React from 'react';
+import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { postRequest } from '../../api';
 import { queryClient } from '../../main';
@@ -13,6 +13,25 @@ import { CardElement, useElements, useStripe } from '@stripe/react-stripe-js';
 const AddSubscriptionModal = ({ onClose, isEdit, mutate }) => {
     const stripe = useStripe()
     const elements = useElements()
+    const [showSuccessModal, setShowSuccessModal] = useState(false)
+
+    const purchaseMutation = useMutation({
+        mutationKey: ['buy-bundle'],
+        mutationFn: (form) => postRequest('/buy-bundles', form),
+        onSuccess: (data) => {
+            if (data?.statusCode === 200) {
+                toast.success(data?.message);
+                setShowSuccessModal(true);
+                // Call the parent mutate function if needed
+                if (mutate) {
+                    // Don't call mutate directly since we're handling success here
+                }
+            }
+        },
+        onError: (error) => {
+            toast.error(error?.message || 'Payment failed');
+        }
+    })
 
 
 
@@ -30,7 +49,7 @@ const AddSubscriptionModal = ({ onClose, isEdit, mutate }) => {
         } else {
             data['package_id'] = isEdit?.id
             data['stripe_token'] = token?.id
-            mutate(data)
+            purchaseMutation.mutate(data)
         }
     }
 
@@ -82,12 +101,32 @@ const AddSubscriptionModal = ({ onClose, isEdit, mutate }) => {
                             className="bg-[#D4BC6D] text-white py-2 px-4 rounded-full"
                             type='submit'
                             form='timing-form'
+                            disabled={purchaseMutation.isPending}
                         >
-                            Submit
+                            {purchaseMutation.isPending ? 'Processing...' : 'Submit'}
                         </button>
                     </div>
                 </div>
             </div>
+
+            {/* Success Modal */}
+            {showSuccessModal && (
+                <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-[9999]">
+                    <div className="bg-[#282828] border border-[#4B4C46] rounded-3xl p-8 max-w-sm w-full text-center">
+                        <h2 className="text-2xl font-bold text-[#D4BC6D] mb-4">Thanks for purchasing</h2>
+                        <p className="text-white mb-6">Your bundle has been bought successfully.</p>
+                        <button
+                            className="py-2 px-6 bg-[#57430D] text-white rounded-lg font-medium hover:bg-[#ab965d] transition-colors"
+                            onClick={() => {
+                                setShowSuccessModal(false);
+                                onClose();
+                            }}
+                        >
+                            Close
+                        </button>
+                    </div>
+                </div>
+            )}
         </>
     )
 }

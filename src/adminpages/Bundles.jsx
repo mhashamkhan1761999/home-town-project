@@ -108,7 +108,6 @@ const Bundles = () => {
                         </div>
                     </div>
 
-
                 </div>
             </div>
 
