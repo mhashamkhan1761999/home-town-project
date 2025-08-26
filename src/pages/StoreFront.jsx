@@ -43,7 +43,7 @@ const StoreFront = () => {
         <>
             <section className="h-[90dvh] w-full bg-[url('/basket.svg')] bg-bottom bg-no-repeat bg-cover py-8 px-5">
                 <h1 className='text-[7.5rem] text-center uppercase font-bold bg-[linear-gradient(to_right,#d4bc6d,#57430d)] bg-clip-text text-transparent '>
-                    {athleteId ? athlete?.athlete_name + "'s STORE" : 'ATHLETE STORE'}
+                    {athleteId ? athlete?.athlete_name : 'ATHLETE STORE'}
                 </h1>
                 <div className="flex gap-2.5">
                     <div className="flex flex-col">

@@ -423,7 +423,7 @@ const ProductType = ({ handleActive, selectedCard, category, reload, selectedPro
       <div className="card-gradient !border-[1.5px] p-6 rounded-3xl">
         <div className="flex mb-11 gap-5">
           <button
-            onClick={() => reload()}
+            onClick={() => window.location.reload()}
             className="bg-[#d4bc6d] rounded-full h-[40px] uppercase px-6 py-3 text-black text-sm font-semibold"
           >
             Cancel Service
