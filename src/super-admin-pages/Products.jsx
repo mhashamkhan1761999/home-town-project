@@ -637,7 +637,7 @@ const AddProductModal = ({ onClose, categories }) => {
               Sub Category
             </label>
             <select
-              {...register("sub_category_id")}
+              {...register("sub_category")}
               className="w-full p-3 bg-[#282828] border border-[#4B4C46] rounded-lg text-white focus:border-[#D4BC6D] outline-none"
             >
               <option value="">Select Sub Category</option>
