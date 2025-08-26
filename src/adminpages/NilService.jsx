@@ -185,6 +185,7 @@ const NilCategory = () => {
             window.location.reload(); 
           }}
           onSuccesActive={handleLaunchServiceComplete}
+          categoryId={selectedCardId}
         />
       )}
 
@@ -860,7 +861,7 @@ const ItemModal = ({ item, onClose, onSuccesActive }) => {
 
 
 
-const ItemModal2 = ({ item = null, onClose, onSuccesActive }) => {
+const ItemModal2 = ({ item = null, onClose, onSuccesActive, categoryId }) => {
   const navigate = useNavigate();
   const {
     register,
@@ -877,9 +878,19 @@ const ItemModal2 = ({ item = null, onClose, onSuccesActive }) => {
   const [colorList, setColorList] = useState([]);
   const [image, setImage] = useState(null);
 
+  // Fetch categories for mapping
+  const { data: categories } = useQuery({
+    queryKey: ['categories'],
+    queryFn: () => getRequest('/categories'),
+  });
+
   const mutation = useMutation({
     mutationKey: ['store-concept'],
-    mutationFn: (form) => postRequest('/store-concept', form, true),
+    mutationFn: (form) => {
+      // Send category_id as query parameter
+      const queryParam = categoryId ? `?category_id=${categoryId}` : '';
+      return postRequest(`/store-concept${queryParam}`, form, true);
+    },
     onSuccess: () => {
       // onClose();
       onSuccesActive();
@@ -889,19 +900,15 @@ const ItemModal2 = ({ item = null, onClose, onSuccesActive }) => {
   });
 
   const onSubmit = (values) => {
-    // if (price < 10) {
-    //     alert("Minimum price should be 10");
-    //     return;
-    // }
-
-    console.log('====', values)
-
-    const newData = convertToFormData(values);
+    // No need to find category_id here since we're passing it as query param
+    const newData = convertToFormData({
+      ...values,
+      // Remove category_id from body since it's now a query parameter
+    });
 
     mutation.mutate(newData);
-
-
     console.log('item', newData);
+    console.log('categoryId sent as query param:', categoryId);
   };
 
 
