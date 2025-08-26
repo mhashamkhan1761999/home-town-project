@@ -52,18 +52,22 @@ const MyProducts = () => {
   if (isLoading) return <p className="text-white">Loading...</p>;
   if (error) return <p className="text-red-500">Error loading products</p>;
 
+  // Check if any product is pending
+  const hasPending = sortedData.some(item => item.status === 'pending');
+
   return (
-    
     <>
       <div className="card-gradient !border-[1.5px] p-6 rounded-3xl">
         {/* PROMINENT ALERT MESSAGE */}
-        <div className="mb-8 p-5 rounded-xl border-l-8 border-yellow-500 bg-yellow-100 shadow-lg">
-          <p className="text-base font-semibold text-yellow-900">
-            Production team is working on your request. It will take around{' '}
-            <strong>12 hours</strong> to make your storefront live and upload
-            your products.
-          </p>
-        </div>
+        {hasPending && (
+          <div className="mb-8 p-5 rounded-xl border-l-8 border-yellow-500 bg-yellow-100 shadow-lg">
+            <p className="text-base font-semibold text-yellow-900">
+              Production team is working on your request. It will take around{' '}
+              <strong>12 hours</strong> to make your storefront live and upload
+              your products.
+            </p>
+          </div>
+        )}
 
         <div className="flex gap-4 w-full justify-between mb-8">
           <h2 className="text-white font-bold text-3xl">Storefront Products</h2>
