@@ -517,7 +517,7 @@ const AddProductModal = ({ onClose, categories }) => {
   const onSubmit = (data) => {
     const formData = new FormData();
     Object.keys(data).forEach((key) => {
-      if (key !== "colors") {
+      if (key !== "colors" && key !== "product_icon" && key !== "size_chart") {
         formData.append(key, data[key]);
       }
     });
@@ -531,6 +531,16 @@ const AddProductModal = ({ onClose, categories }) => {
 
     if (image) {
       formData.append("image", image);
+    }
+
+    // Handle product icon file upload
+    if (data.product_icon && data.product_icon[0]) {
+      formData.append("product_icon", data.product_icon[0]);
+    }
+
+    // Handle size chart file upload
+    if (data.size_chart && data.size_chart[0]) {
+      formData.append("size_chart", data.size_chart[0]);
     }
 
     mutation.mutate(formData);
@@ -583,18 +593,84 @@ const AddProductModal = ({ onClose, categories }) => {
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           {/* Product Name */}
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-white font-medium mb-2">
+                Product Name *
+              </label>
+              <input
+                {...register("name", { required: "Product name is required" })}
+                className="w-full p-3 bg-[#282828] border border-[#4B4C46] rounded-lg text-white focus:border-[#D4BC6D] outline-none"
+                placeholder="Enter product name"
+              />
+              {errors.name && (
+                <p className="text-red-500 text-sm mt-1">{errors.name.message}</p>
+              )}
+            </div>
+            
+            <div>
+              <label className="block text-white font-medium mb-2">
+                Category *
+              </label>
+              <select
+                {...register("category_id", { required: "Category is required" })}
+                className="w-full p-3 bg-[#282828] border border-[#4B4C46] rounded-lg text-white focus:border-[#D4BC6D] outline-none"
+              >
+                <option value="">Select Category</option>
+                {categories?.map((category) => (
+                  <option key={category.id} value={category.id}>
+                    {category.name}
+                  </option>
+                ))}
+              </select>
+              {errors.category_id && (
+                <p className="text-red-500 text-sm mt-1">
+                  {errors.category_id.message}
+                </p>
+              )}
+            </div>
+          </div>
+
+          {/* Sub Category */}
           <div>
             <label className="block text-white font-medium mb-2">
-              Product Name
+              Sub Category
             </label>
-            <input
-              {...register("name", { required: "Product name is required" })}
+            <select
+              {...register("sub_category_id")}
               className="w-full p-3 bg-[#282828] border border-[#4B4C46] rounded-lg text-white focus:border-[#D4BC6D] outline-none"
-              placeholder="Enter product name"
-            />
-            {errors.name && (
-              <p className="text-red-500 text-sm mt-1">{errors.name.message}</p>
-            )}
+            >
+              <option value="">Select Sub Category</option>
+              <option value="t-shirt">T-shirt</option>
+              <option value="shirts">Shirts</option>
+              <option value="pants">Pants</option>
+              <option value="shoes">Shoes</option>
+              <option value="accessories">Accessories</option>
+            </select>
+          </div>
+
+          {/* Min Price and Price */}
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-white font-medium mb-2">
+                Min Price *
+              </label>
+              <input
+                type="number"
+                step="0.01"
+                {...register("min_price", {
+                  required: "Min price is required",
+                  min: 0,
+                })}
+                className="w-full p-3 bg-[#282828] border border-[#4B4C46] rounded-lg text-white focus:border-[#D4BC6D] outline-none"
+                placeholder="0.00"
+              />
+              {errors.min_price && (
+                <p className="text-red-500 text-sm mt-1">
+                  {errors.min_price.message}
+                </p>
+              )}
+            </div>
           </div>
 
           {/* Description */}
@@ -609,7 +685,6 @@ const AddProductModal = ({ onClose, categories }) => {
               rows="4"
               className="w-full p-3 bg-[#282828] border border-[#4B4C46] rounded-lg text-white focus:border-[#D4BC6D] outline-none"
               placeholder="Enter product description"
-              defaultValue={stripHtml(product.description)}
             />
             {errors.description && (
               <p className="text-red-500 text-sm mt-1">
@@ -664,9 +739,6 @@ const AddProductModal = ({ onClose, categories }) => {
 
           {/* Category */}
           <div>
-            <label className="block text-white font-medium mb-2">
-              Category
-            </label>
             <select
               {...register("category_id", { required: "Category is required" })}
               className="w-full p-3 bg-[#282828] border border-[#4B4C46] rounded-lg text-white focus:border-[#D4BC6D] outline-none"
@@ -732,6 +804,102 @@ const AddProductModal = ({ onClose, categories }) => {
                   color: "#D4BC6D",
                 }),
               }}
+            />
+          </div>
+
+          {/* Additional fields for new requirements */}
+          {/* Product Icon and Product Size Chart */}
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-white font-medium mb-2">
+                Product Icon
+              </label>
+              <input
+                type="file"
+                accept="image/*"
+                {...register("product_icon")}
+                className="w-full p-3 bg-[#282828] border border-[#4B4C46] rounded-lg text-white focus:border-[#D4BC6D] outline-none"
+              />
+            </div>
+            
+            <div>
+              <label className="block text-white font-medium mb-2">
+                Product Size Chart
+              </label>
+              <input
+                type="file"
+                accept="image/*"
+                {...register("size_chart")}
+                className="w-full p-3 bg-[#282828] border border-[#4B4C46] rounded-lg text-white focus:border-[#D4BC6D] outline-none"
+              />
+            </div>
+          </div>
+
+          {/* Size and Material */}
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-white font-medium mb-2">
+                Size
+              </label>
+              <textarea
+                {...register("size")}
+                rows="3"
+                className="w-full p-3 bg-[#282828] border border-[#4B4C46] rounded-lg text-white focus:border-[#D4BC6D] outline-none"
+                placeholder="Enter available sizes"
+              />
+            </div>
+            
+            <div>
+              <label className="block text-white font-medium mb-2">
+                Material
+              </label>
+              <textarea
+                {...register("material")}
+                rows="3"
+                className="w-full p-3 bg-[#282828] border border-[#4B4C46] rounded-lg text-white focus:border-[#D4BC6D] outline-none"
+                placeholder="Enter material details"
+              />
+            </div>
+          </div>
+
+          {/* Profit Share USA and International */}
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-white font-medium mb-2">
+                Profit Share USA
+              </label>
+              <input
+                type="number"
+                step="0.01"
+                {...register("profit_share_usa")}
+                className="w-full p-3 bg-[#282828] border border-[#4B4C46] rounded-lg text-white focus:border-[#D4BC6D] outline-none"
+                placeholder="0.00"
+              />
+            </div>
+            
+            <div>
+              <label className="block text-white font-medium mb-2">
+                Profit Share International
+              </label>
+              <input
+                type="number"
+                step="0.01"
+                {...register("profit_share_international")}
+                className="w-full p-3 bg-[#282828] border border-[#4B4C46] rounded-lg text-white focus:border-[#D4BC6D] outline-none"
+                placeholder="0.00"
+              />
+            </div>
+          </div>
+
+          {/* Platform */}
+          <div>
+            <label className="block text-white font-medium mb-2">
+              Platform
+            </label>
+            <input
+              {...register("platform")}
+              className="w-full p-3 bg-[#282828] border border-[#4B4C46] rounded-lg text-white focus:border-[#D4BC6D] outline-none"
+              placeholder="Enter platform details"
             />
           </div>
 
