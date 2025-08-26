@@ -86,7 +86,7 @@ const ProfileForm = () => {
             className="w-full h-full object-cover"
           />
           <label className="absolute top-3 right-3 bg-black/70 text-white px-3 py-1 text-xs rounded cursor-pointer hover:bg-black/90">
-            Change Cover
+            Store Cover Photo
             <input
               type="file"
               {...register('cover_photo')}

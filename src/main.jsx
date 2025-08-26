@@ -67,7 +67,7 @@ const AllRoutes = () => {
           <Route path="explore-athletes" element={<ExploreAthletes />} />
           <Route path="our-team" element={<OurTeam />} />
           <Route path="store-front" element={<StoreFront />} />
-          <Route path="store-front/:athleteId" element={<StoreFront />} />
+          <Route path="store-front/:slug" element={<StoreFront />} />
           <Route path="product/:id" element={<ForntDetail />} />
           <Route path="athlete-signup" element={<AthletesSignUp />} />
           <Route path="policy" element={<Policy />} />

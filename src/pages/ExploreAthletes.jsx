@@ -29,9 +29,9 @@ const ExploreAthletes = () => {
     });
 
     // Handle athlete card click
-    const handleAthleteClick = (athleteId) => {
-        if (athleteId) {
-            navigate(`/store-front/${athleteId}`);
+    const handleAthleteClick = (athleteSlug) => {
+        if (athleteSlug) {
+            navigate(`/store-front/${athleteSlug}`);
         }
     };
 
@@ -128,7 +128,7 @@ const ExploreAthletes = () => {
                 backheading,
                 about,
                 isTrending: athlete?.isTrending || false,
-                onCardClick: () => handleAthleteClick(athlete?.id),
+                onCardClick: () => handleAthleteClick(athlete?.slug),
             };
         });
     };

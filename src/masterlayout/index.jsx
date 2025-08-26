@@ -18,7 +18,7 @@ const MasterLayout = () => {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false);
 
     const profileImage = user?.profile_picture_url ? user.profile_picture_url : '/default.jpg';
-    const profileId = user?.id ? user.id : '';
+    const profileSlug = user?.slug ? user.slug : '';
 
     const handleLogout = async () => {
         try {
@@ -163,7 +163,7 @@ const MasterLayout = () => {
                             <div className="flex items-center justify-end grow gap-5">
 
                                 <NavLink
-                                    to={`/store-front/${profileId}`}
+                                    to={`/store-front/${profileSlug}`}
                                     type='button'
                                     className="bg-[#d4bc6d] h-[40px] inline-flex items-center justify-center rounded-full uppercase px-6 py-3 text-black text-sm font-semibold"
                                 >
