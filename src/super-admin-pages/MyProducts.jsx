@@ -9,7 +9,6 @@ const SuperAdminMyProducts = () => {
         queryFn: () => getRequest('/my-products'), // Fetch function
     });
 
-
     const [isView, setIsView] = useState(false);
     return (
         <>

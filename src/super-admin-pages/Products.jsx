@@ -1,5 +1,5 @@
 import { useQuery, useMutation } from "@tanstack/react-query";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { getRequest, postRequest, deleteRequest, putRequest } from "../api";
 import { Plus, Search, Edit, Trash, Eye, Filter, Package } from "lucide-react";
 import { queryClient } from "../main";
@@ -145,8 +145,24 @@ const SuperAdminProducts = () => {
     },
   });
 
-  // Use fallback data if backend is not available
-  const displayProducts = error ? fallbackProducts : products || [];
+  // Create category mapping for proper category name resolution
+  const categoryMap = useMemo(() => {
+    if (!categories) return {};
+    return categories.reduce((acc, category) => {
+      acc[category.id] = category;
+      return acc;
+    }, {});
+  }, [categories]);
+
+  // Use fallback data if backend is not available and map products with proper category names
+  const rawProducts = error ? fallbackProducts : products || [];
+  const displayProducts = useMemo(() => {
+    return rawProducts.map(product => ({
+      ...product,
+      category: categoryMap[product.category_id] || product.category || { id: product.category_id, name: 'Unknown Category' }
+    }));
+  }, [rawProducts, categoryMap]);
+
   const displayCategories = categoriesError
     ? fallbackCategories
     : categories || [];
@@ -1211,96 +1227,220 @@ const ViewProductModal = ({ product, onClose }) => {
     gray: "#808080",
   };
 
+  const getColorDisplay = (colorName) => {
+    const normalizedColor = colorName?.toLowerCase();
+    return colorMapping[normalizedColor] || normalizedColor || "#cccccc";
+  };
+
   return (
     <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
-      <div className="bg-black border border-[#4B4C46] rounded-2xl p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-        <h3 className="text-2xl font-bold text-[#D4BC6D] mb-6">
+      <div className="bg-black border border-[#4B4C46] rounded-2xl p-6 w-full max-w-4xl max-h-[90vh] overflow-y-auto">
+        <h3 className="text-3xl font-bold text-[#D4BC6D] mb-8 border-b border-[#4B4C46] pb-4">
           Product Details
         </h3>
 
-        <div className="space-y-4">
-          {product.image && (
-            <div className="w-32 h-32 bg-[#282828] rounded-lg overflow-hidden">
-              <img
-                src={`https://hometown.eagleeblaze.com/storage/app/public/${product.image}`}
-                alt={product.name}
-                className="w-full h-full object-cover"
-              />
-            </div>
-          )}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          {/* Left Column - Basic Info & Image */}
+          <div className="space-y-6">
+            {/* Product Image */}
+            {product.image && (
+              <div className="bg-[#282828] rounded-lg p-4">
+                <h4 className="text-[#D4BC6D] font-semibold mb-3">Product Image</h4>
+                <div className="w-full h-64 bg-[#1a1a1a] rounded-lg overflow-hidden">
+                  <img
+                    src={`https://hometown.eagleeblaze.com/storage/app/public/${product.image}`}
+                    alt={product.name}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+              </div>
+            )}
 
-          <div>
-            <label className="text-[#838383] text-sm">Product Name</label>
-            <p className="text-white font-medium">{product.name}</p>
-          </div>
-
-          <div>
-            <label className="text-[#838383] text-sm">Description</label>
-            <p className="text-white">{stripHtml(product.description)}</p>
-          </div>
-
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="text-[#838383] text-sm">Price</label>
-              <p className="text-[#D4BC6D] font-bold">${product.price}</p>
-            </div>
-            <div>
-              <label className="text-[#838383] text-sm">Category</label>
-              <p className="text-white">{product.category?.name || "N/A"}</p>
-            </div>
-          </div>
-
-          {product.colors && (
-            <div>
-              <label className="text-[#838383] text-sm">Available Colors</label>
-              <div className="flex flex-wrap gap-2 mt-2">
-                {(function () {
-                  let colors = [];
-                  if (Array.isArray(product.colors)) {
-                    colors = product.colors;
-                  } else if (typeof product.colors === "string") {
-                    try {
-                      const parsed = JSON.parse(product.colors);
-                      if (Array.isArray(parsed)) colors = parsed;
-                      else colors = [];
-                    } catch {
-                      colors = product.colors
-                        .split(",")
-                        .map((c) => c.trim())
-                        .filter(Boolean);
-                    }
-                  }
-                  return colors.map((color, index) => {
-                    // Show real color if available, fallback to color name
-                    const hex =
-                      colorMapping[color.trim().toLowerCase()] || color.trim();
-                    return (
-                      <div
-                        key={index}
-                        className="flex items-center gap-2 bg-[#282828] px-3 py-2 rounded-full"
-                      >
-                        <span
-                          className="w-4 h-4 rounded-full border border-gray-300"
-                          style={{ backgroundColor: hex }}
-                        ></span>
-                        <span className="text-white text-sm capitalize">
-                          {color}
-                        </span>
-                      </div>
-                    );
-                  });
-                })()}
+            {/* Basic Information */}
+            <div className="bg-[#282828] rounded-lg p-4">
+              <h4 className="text-[#D4BC6D] font-semibold mb-4">Basic Information</h4>
+              <div className="space-y-3">
+                <div>
+                  <label className="text-[#838383] text-sm">Product ID</label>
+                  <p className="text-white font-medium">{product?.id || 'N/A'}</p>
+                </div>
+                <div>
+                  <label className="text-[#838383] text-sm">Product Name</label>
+                  <p className="text-white font-medium">{product?.name || 'N/A'}</p>
+                </div>
+                <div>
+                  <label className="text-[#838383] text-sm">Description</label>
+                  <p className="text-white">{stripHtml(product?.description) || 'No description available'}</p>
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="text-[#838383] text-sm">Price</label>
+                    <p className="text-[#D4BC6D] font-bold text-lg">${product?.price || '0.00'}</p>
+                  </div>
+                  <div>
+                    <label className="text-[#838383] text-sm">Status</label>
+                    <p className={`font-medium px-3 py-1 rounded-full text-sm inline-block ${
+                      product?.status === 'active' ? 'bg-green-600 text-white' :
+                      product?.status === 'inactive' ? 'bg-red-600 text-white' :
+                      'bg-gray-600 text-white'
+                    }`}>
+                      {product?.status || 'Unknown'}
+                    </p>
+                  </div>
+                </div>
               </div>
             </div>
-          )}
+
+            {/* Category Information */}
+            <div className="bg-[#282828] rounded-lg p-4">
+              <h4 className="text-[#D4BC6D] font-semibold mb-4">Category Information</h4>
+              <div className="space-y-3">
+                <div>
+                  <label className="text-[#838383] text-sm">Category</label>
+                  <p className="text-white font-medium">{product?.category?.name || 'N/A'}</p>
+                </div>
+                <div>
+                  <label className="text-[#838383] text-sm">Category ID</label>
+                  <p className="text-white">{product?.category?.id || product?.category_id || 'N/A'}</p>
+                </div>
+                <div>
+                  <label className="text-[#838383] text-sm">Sub Category</label>
+                  <p className="text-white">{product?.sub_category?.name || 'N/A'}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Right Column - Additional Details */}
+          <div className="space-y-6">
+            {/* Product Specifications */}
+            <div className="bg-[#282828] rounded-lg p-4">
+              <h4 className="text-[#D4BC6D] font-semibold mb-4">Product Specifications</h4>
+              <div className="space-y-3">
+                <div>
+                  <label className="text-[#838383] text-sm">Material</label>
+                  <p className="text-white">{product?.material || 'N/A'}</p>
+                </div>
+                <div>
+                  <label className="text-[#838383] text-sm">Weight</label>
+                  <p className="text-white">{product?.weight || 'N/A'}</p>
+                </div>
+                <div>
+                  <label className="text-[#838383] text-sm">Platform</label>
+                  <p className="text-white">{product?.platform || 'N/A'}</p>
+                </div>
+                <div>
+                  <label className="text-[#838383] text-sm">SKU</label>
+                  <p className="text-white">{product?.sku || 'N/A'}</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Business Information */}
+            <div className="bg-[#282828] rounded-lg p-4">
+              <h4 className="text-[#D4BC6D] font-semibold mb-4">Business Details</h4>
+              <div className="space-y-3">
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="text-[#838383] text-sm">Cost Price</label>
+                    <p className="text-white font-medium">${product?.cost_price || '0.00'}</p>
+                  </div>
+                  <div>
+                    <label className="text-[#838383] text-sm">Selling Price</label>
+                    <p className="text-white font-medium">${product?.selling_price || product?.price || '0.00'}</p>
+                  </div>
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="text-[#838383] text-sm">Profit Margin</label>
+                    <p className="text-white">{product?.profit_margin ? `${product.profit_margin}%` : 'N/A'}</p>
+                  </div>
+                  <div>
+                    <label className="text-[#838383] text-sm">Stock Quantity</label>
+                    <p className="text-white">{product?.stock_quantity || product?.stock || 'N/A'}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Additional Information */}
+            <div className="bg-[#282828] rounded-lg p-4">
+              <h4 className="text-[#D4BC6D] font-semibold mb-4">Additional Information</h4>
+              <div className="space-y-3">
+                <div>
+                  <label className="text-[#838383] text-sm">Size Chart</label>
+                  <p className="text-white">{product?.size_chart ? 'Available' : 'Not available'}</p>
+                </div>
+                <div>
+                  <label className="text-[#838383] text-sm">Warnings</label>
+                  <p className="text-white">{product?.warnings || 'None specified'}</p>
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="text-[#838383] text-sm">Created</label>
+                    <p className="text-white">{product?.created_at ? new Date(product.created_at).toLocaleDateString() : 'N/A'}</p>
+                  </div>
+                  <div>
+                    <label className="text-[#838383] text-sm">Updated</label>
+                    <p className="text-white">{product?.updated_at ? new Date(product.updated_at).toLocaleDateString() : 'N/A'}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Available Colors */}
+            {product.colors && (
+              <div className="bg-[#282828] rounded-lg p-4">
+                <h4 className="text-[#D4BC6D] font-semibold mb-4">Available Colors</h4>
+                <div className="flex flex-wrap gap-3">
+                  {(function () {
+                    let colors = [];
+                    if (Array.isArray(product.colors)) {
+                      colors = product.colors;
+                    } else if (typeof product.colors === "string") {
+                      try {
+                        const parsed = JSON.parse(product.colors);
+                        if (Array.isArray(parsed)) colors = parsed;
+                        else colors = [];
+                      } catch {
+                        colors = product.colors
+                          .split(",")
+                          .map((c) => c.trim())
+                          .filter(Boolean);
+                      }
+                    }
+                    return colors.map((color, index) => {
+                      const hex = getColorDisplay(color.trim());
+                      return (
+                        <div
+                          key={index}
+                          className="flex items-center gap-3 bg-[#1a1a1a] px-4 py-3 rounded-lg border border-[#4B4C46]"
+                        >
+                          <span
+                            className="w-6 h-6 rounded-full border-2 border-gray-400"
+                            style={{ backgroundColor: hex }}
+                          ></span>
+                          <span className="text-white text-sm font-medium capitalize">
+                            {color}
+                          </span>
+                        </div>
+                      );
+                    });
+                  })()}
+                </div>
+              </div>
+            )}
+          </div>
         </div>
 
-        <button
-          onClick={onClose}
-          className="mt-6 px-6 py-3 bg-[#4B4C46] text-white rounded-lg hover:bg-[#5a5b54] transition"
-        >
-          Close
-        </button>
+        <div className="mt-8 flex justify-end gap-4 border-t border-[#4B4C46] pt-6">
+          <button
+            onClick={onClose}
+            className="px-8 py-3 bg-[#4B4C46] text-white rounded-lg hover:bg-[#5a5b54] transition font-medium"
+          >
+            Close
+          </button>
+        </div>
       </div>
     </div>
   );
