@@ -111,7 +111,6 @@ const ExploreAthletes = () => {
             const about = bio
                 ? bio
                 : `Meet ${name}, a dedicated athlete from ${city ? city + ', ' : ''}${country ? country : ''}${team ? ', team: ' + team : ''}${school ? ', school: ' + school : ''}. ${subTitle ? 'Level: ' + subTitle + '. ' : ''}Contact: ${email}.`;
-            
             return {
                 id: athlete?.id,
                 name,
