@@ -318,13 +318,13 @@ const SuperAdminProducts = () => {
                   className="border-b border-[#323232] hover:bg-[rgba(255,255,255,0.02)]"
                 >
                   <td className="py-4">
-                    <div className="w-12 h-12 bg-[#282828] rounded-lg overflow-hidden">
-                      {product.image ? (
+                    <div className="w-12 h-12 bg-[#adacac] rounded-lg overflow-hidden">
+                      {(product.icon || product.image) ? (
                         <img
                           src={
                             error
-                              ? `/${product.image}`
-                              : `https://hometown.eagleeblaze.com/storage/app/public/${product.image}`
+                              ? `/${(product.icon || product.image)}`
+                              : `https://hometown.eagleeblaze.com/storage/app/public/${(product.icon || product.image)}`.replace(/\\/g, '/')
                           }
                           alt={product.name}
                           className="w-full h-full object-cover"
@@ -336,7 +336,7 @@ const SuperAdminProducts = () => {
                       ) : null}
                       <div
                         className={`w-full h-full flex items-center justify-center text-[#838383] ${
-                          product.image ? "hidden" : ""
+                          (product.icon || product.image) ? "hidden" : ""
                         }`}
                       >
                         <Package size={20} />
@@ -1243,14 +1243,14 @@ const ViewProductModal = ({ product, onClose }) => {
           {/* Left Column - Basic Info & Image */}
           <div className="space-y-6">
             {/* Product Image */}
-            {product.image && (
+            {(product.icon || product.image) && (
               <div className="bg-[#282828] rounded-lg p-4">
                 <h4 className="text-[#D4BC6D] font-semibold mb-3">Product Image</h4>
                 <div className="w-full h-64 bg-[#1a1a1a] rounded-lg overflow-hidden">
                   <img
-                    src={`https://hometown.eagleeblaze.com/storage/app/public/${product.image}`}
+                    src={`https://hometown.eagleeblaze.com/storage/app/public/${(product.icon || product.image)}`.replace(/\\/g, '/')}
                     alt={product.name}
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-cover bg-[#adacac]"
                   />
                 </div>
               </div>
