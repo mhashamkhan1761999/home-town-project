@@ -207,7 +207,9 @@ const SuperAdminProducts = () => {
         product?.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
         product?.description?.toLowerCase().includes(searchTerm.toLowerCase());
       const matchesCategory =
-        !selectedCategory || product?.category?.id === selectedCategory;
+        !selectedCategory || 
+        String(product?.category?.id) === String(selectedCategory) ||
+        String(product?.category_id) === String(selectedCategory);
       return matchesSearch && matchesCategory;
     }) || [];
 
