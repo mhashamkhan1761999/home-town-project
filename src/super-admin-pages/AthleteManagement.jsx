@@ -135,6 +135,11 @@ const AthleteManagement = () => {
   const [isViewModalOpen, setIsViewModalOpen] = useState(false);
   const [selectedAthlete, setSelectedAthlete] = useState(null);
 
+  const numberToStatus = {
+    0: 'pending',
+    1: 'standard',
+    2: 'pro',
+  };
   const statusTypes = ['Pending', 'Standard', 'Pro'];
 
   // Filter athletes based on status only (since search is now dropdown-based)
@@ -148,11 +153,19 @@ const AthleteManagement = () => {
     setIsViewModalOpen(true);
   };
 
+  const statusToNumber = {
+    pending: 0,
+    standard: 1,
+    pro: 2,
+  };
+
   const handleStatusChange = (athleteId, newStatus) => {
+    // Map status to number for backend
+    const statusValue = statusToNumber[newStatus?.toLowerCase()] ?? newStatus?.toLowerCase();
     mutation.mutate({
       id: athleteId,
-      data: { status: newStatus?.toLowerCase() }
-    })
+      data: { status: statusValue }
+    });
     setAthletes(athletes.map(athlete =>
       athlete.id === athleteId ? { ...athlete, status: newStatus } : athlete
     ));
@@ -327,12 +340,12 @@ const AthleteManagement = () => {
                       </td>
                       <td className="px-3 sm:px-6 py-4 whitespace-nowrap">
                         <select
-                          value={athlete?.status}
+                          value={numberToStatus[athlete?.status] || athlete?.status}
                           onChange={(e) => handleStatusChange(athlete?.id, e.target.value)}
-                          className={`text-xs font-semibold rounded-full px-2 py-1 focus:outline-none focus:ring-2 focus:ring-[#D4BC6D] ${getStatusColor(athlete.status)}`}
+                          className={`text-xs font-semibold rounded-full px-2 py-1 focus:outline-none focus:ring-2 focus:ring-[#D4BC6D] ${getStatusColor(numberToStatus[athlete.status] || athlete.status)}`}
                         >
                           {statusTypes.map(status => (
-                            <option key={status} value={status?.toLowerCase()} className="bg-[#1a1a1a] text-white">
+                            <option key={status} value={status.toLowerCase()} className="bg-[#1a1a1a] text-white">
                               {status}
                             </option>
                           ))}
@@ -585,3 +598,16 @@ const ViewAthleteModal = ({ isOpen, onClose, athlete }) => {
 };
 
 export default AthleteManagement;
+
+const numberToStatus = {
+  0: 'pending',
+  1: 'standard',
+  2: 'pro',
+};
+
+// When fetching athletes, map numeric status to string
+const mapAthleteStatus = athlete => ({
+  ...athlete,
+  status: typeof athlete.status === 'number' ? numberToStatus[athlete.status] || athlete.status : athlete.status
+});
+
