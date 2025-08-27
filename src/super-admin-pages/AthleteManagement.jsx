@@ -351,7 +351,13 @@ const AthleteManagement = () => {
                         <div className="flex items-center">
                           <div className="h-10 w-10 rounded-full overflow-hidden border-2 border-[#D4BC6D]">
                             <img
-                              src={athlete?.profile_picture}
+                              src={
+                                athlete?.profile_picture_url
+                                  ? athlete.profile_picture_url.startsWith('http')
+                                    ? athlete.profile_picture_url.replace(/\\/g, '/')
+                                    : `https://hometown.eagleeblaze.com/storage/app/public/${athlete.profile_picture_url}`.replace(/\\/g, '/')
+                                  : '/default.jpg'
+                              }
                               alt={athlete?.athlete_name}
                               className="h-full w-full object-cover"
                               onError={(e) => {
@@ -537,7 +543,13 @@ const ViewAthleteModal = ({ isOpen, onClose, athlete }) => {
           <div className="absolute bottom-4 left-4 flex items-center">
             <div className="h-16 w-16 sm:h-20 sm:w-20 rounded-full overflow-hidden border-4 border-[#D4BC6D]">
               <img
-                src={athlete?.profile_picture}
+                src={
+                  athlete?.profile_picture
+                    ? athlete.profile_picture.startsWith('http')
+                      ? athlete.profile_picture.replace(/\\/g, '/')
+                      : `https://hometown.eagleeblaze.com/storage/app/public/${athlete.profile_picture}`.replace(/\\/g, '/')
+                    : '/default.jpg'
+                }
                 alt={athlete?.athlete_name}
                 className="h-full w-full object-cover"
                 onError={(e) => {
