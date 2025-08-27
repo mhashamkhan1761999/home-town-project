@@ -38,9 +38,9 @@ const StoreFront = () => {
     queryKey: ["all-athlete-products-by-slug", slug],
     queryFn: () => {
       // Try slug-based endpoint first, fallback to ID-based if needed
-      return getRequest(`/all-athlete-products/${slug}`).catch(() => {
+      return getRequest(`/all-athlete-products/${athleteData.id}`).catch(() => {
         // If slug endpoint fails, try ID endpoint as fallback
-        return getRequest(`/all-athlete-products/${slug}`);
+        return getRequest(`/all-athlete-products/${athleteData.id}`);
       });
     },
     enabled: !!slug, // Only run if slug exists
