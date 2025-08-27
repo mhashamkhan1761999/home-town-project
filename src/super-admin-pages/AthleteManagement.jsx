@@ -131,6 +131,18 @@ const AthleteManagement = () => {
     }
   });
 
+  const furiousMutation = useMutation({
+    mutationFn: ({ id, data }) => postRequest(`/admin/update-furious-athlete/${id}`, data),
+    onSuccess: (res) => {
+      queryClient.invalidateQueries(['admin-athletes']);
+      toast.success(res?.message || 'Furious status updated successfully')
+    },
+    onError: (error) => {
+      console.error('Error updating furious status:', error);
+      toast.error('Failed to update furious status');
+    }
+  });
+
   const [selectedStatus, setSelectedStatus] = useState('All');
   const [isViewModalOpen, setIsViewModalOpen] = useState(false);
   const [selectedAthlete, setSelectedAthlete] = useState(null);
@@ -169,6 +181,25 @@ const AthleteManagement = () => {
     setAthletes(athletes.map(athlete =>
       athlete.id === athleteId ? { ...athlete, status: newStatus } : athlete
     ));
+  };
+
+  const handleFuriousToggle = (athleteId, currentFuriousStatus) => {
+    // Count current furious athletes
+    const currentFuriousCount = athletes?.filter(athlete => athlete.furious === "1").length || 0;
+    
+    // If trying to turn on and already have 5 furious athletes
+    if (currentFuriousStatus === "0" && currentFuriousCount >= 5) {
+      toast.error('Maximum 5 athletes can be in Furious 5. Please remove another athlete first.');
+      return;
+    }
+    
+    // Toggle the furious status
+    const newFuriousStatus = currentFuriousStatus === "1" ? 0 : 1;
+    
+    furiousMutation.mutate({
+      id: athleteId,
+      data: { furious: newFuriousStatus }
+    });
   };
 
   const getStatusColor = (status) => {
@@ -213,7 +244,7 @@ const AthleteManagement = () => {
         </div>
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6 mb-6 sm:mb-8">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6 mb-6 sm:mb-8">
           <div className="bg-[#282828] border border-[#4B4C46] rounded-lg p-3 sm:p-6">
             <div className="flex items-center justify-between">
               <div>
@@ -287,6 +318,9 @@ const AthleteManagement = () => {
                       Status
                     </th>
                     <th className="px-3 sm:px-6 py-4 text-left text-xs sm:text-sm font-medium text-gray-400 uppercase tracking-wider">
+                      Furious 5
+                    </th>
+                    <th className="px-3 sm:px-6 py-4 text-left text-xs sm:text-sm font-medium text-gray-400 uppercase tracking-wider">
                       Full Profile Info
                     </th>
                   </tr>
@@ -350,6 +384,29 @@ const AthleteManagement = () => {
                             </option>
                           ))}
                         </select>
+                      </td>
+                      <td className="px-3 sm:px-6 py-4 whitespace-nowrap">
+                        <div className="flex items-center">
+                          <button
+                            onClick={() => handleFuriousToggle(athlete?.id, athlete?.furious)}
+                            disabled={furiousMutation.isLoading}
+                            className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-[#D4BC6D] focus:ring-offset-2 focus:ring-offset-gray-800 ${
+                              athlete?.furious === "1" 
+                                ? 'bg-[#D4BC6D]' 
+                                : 'bg-gray-600'
+                            } ${furiousMutation.isLoading ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
+                            title={athlete?.furious === "1" ? "Remove from Furious 5" : "Add to Furious 5"}
+                          >
+                            <span
+                              className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                                athlete?.furious === "1" ? 'translate-x-6' : 'translate-x-1'
+                              }`}
+                            />
+                          </button>
+                          {athlete?.furious === "1" && (
+                            <Star className="h-4 w-4 text-[#D4BC6D] ml-2" fill="currentColor" />
+                          )}
+                        </div>
                       </td>
                       <td className="px-3 sm:px-6 py-4 whitespace-nowrap text-sm font-medium">
                         <button

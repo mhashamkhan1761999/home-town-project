@@ -102,7 +102,7 @@ const SuperAdminDashboard = () => {
                     <div>
                         <p className="text-[#838383] text-xs sm:text-sm font-medium mb-1">Total Orders</p>
                         <h3 className="text-xl sm:text-2xl font-bold text-white">
-                            {data?.total_orders || '542'}
+                            {data?.total_orders.toLocaleString()}
                         </h3>
                     </div>
                 </div>
