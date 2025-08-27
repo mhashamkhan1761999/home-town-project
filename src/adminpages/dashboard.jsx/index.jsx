@@ -8,7 +8,8 @@ import toast from 'react-hot-toast';
 
 const Dashboard = () => {
     const user = useSelector((state) => state.authenticate.user);
-    console.log('Authenticated user from Redux:', user.slug);
+    console.log('Authenticated user from Redux:', user);
+    console.log(user.total_sale) // "0"
 
     const { slug } = user || {};
     const { data: athleteData, isLoading: isAthleteLoading, error: athleteError } = useQuery({
@@ -148,7 +149,15 @@ const Dashboard = () => {
                             </p>
                             <h1 className='text-lg sm:text-xl lg:text-[4.563rem] font-extrabold bg-[linear-gradient(to_right,#d4bc6d,#57430d)] bg-clip-text text-transparent leading-[1]'>
                                 {console.log(dashboardStats)}
-                                {isDashboardLoading ? 'Loading...' : `$${dashboardStats?.total_revunue ?? '0'}`}
+                                {isDashboardLoading ? 'Loading...' : `$${dashboardStats?.total_revenue ?? '0'}`}
+                            </h1>
+                        </div>
+                        <div className="">
+                            <p className='font-bold text-xs sm:text-sm lg:text-xl text-[#838383]'>
+                                Total Sales
+                            </p>
+                            <h1 className='text-lg sm:text-xl lg:text-[4.563rem] font-extrabold bg-[linear-gradient(to_right,#d4bc6d,#57430d)] bg-clip-text text-transparent leading-[1]'>
+                                ${parseFloat(user?.total_sale || '0').toFixed(2)}
                             </h1>
                         </div>
                         <div className="">
@@ -291,6 +300,7 @@ const Dashboard = () => {
                 <CashOutModal
                     isOpen={isCashOutModalOpen}
                     onClose={() => setIsCashOutModalOpen(false)}
+                    user={user}
                 />
             )}
         </div>
@@ -298,15 +308,15 @@ const Dashboard = () => {
 }
 
 // Cash Out Modal Component
-const CashOutModal = ({ isOpen, onClose }) => {
-    const [amount, setAmount] = React.useState('');
+const CashOutModal = ({ isOpen, onClose, user }) => {
+    // Convert user.total_sale to number for the cashout amount
+    const totalSaleAmount = parseFloat(user?.total_sale);
 
     const cashOutMutation = useMutation({
         mutationFn: (data) => postRequest('/store-cashout', data),
         onSuccess: (response) => {
             console.log('Cash out request successful:', response);
-            toast.success(response?.message || `Cash out request for $${amount} has been submitted successfully!`);
-            setAmount('');
+            toast.success(response?.message || `Cash out request for $${totalSaleAmount.toFixed(2)} has been submitted successfully!`);
             onClose();
         },
         onError: (error) => {
@@ -319,19 +329,19 @@ const CashOutModal = ({ isOpen, onClose }) => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        if (!amount || parseFloat(amount) <= 0) {
-            toast.error('Please enter a valid amount');
+        
+        if (totalSaleAmount <= 0) {
+            toast.error('No funds available for withdrawal');
             return;
         }
 
-        if (parseFloat(amount) < 10) {
-            toast.error('Minimum withdrawal amount is $10.00');
+        if (totalSaleAmount < 5) {
+            toast.error('Minimum withdrawal amount is $5.00');
             return;
         }
 
-        // Convert amount to number and send to API
-        const amountNumber = parseFloat(amount);
-        cashOutMutation.mutate({ amount: amountNumber });
+        // Send the total_sale amount to API
+        cashOutMutation.mutate({ amount: totalSaleAmount });
     };
 
     return (
@@ -352,28 +362,24 @@ const CashOutModal = ({ isOpen, onClose }) => {
 
                 <form onSubmit={handleSubmit}>
                     <div className="mb-6">
-                        <label htmlFor="amount" className="block text-sm font-medium text-white mb-2">
-                            Amount to Withdraw
+                        <label className="block text-sm font-medium text-white mb-2">
+                            Available Amount for Withdrawal
                         </label>
                         <div className="relative">
-                            <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[#D4BC6D] font-semibold">
-                                $
-                            </span>
-                            <input
-                                type="number"
-                                id="amount"
-                                value={amount}
-                                onChange={(e) => setAmount(e.target.value)}
-                                placeholder="0.00"
-                                min="0"
-                                step="0.01"
-                                className="w-full pl-8 pr-4 py-3 bg-[#1a1a1a] border border-[#4B4C46] rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-[#D4BC6D] text-lg"
-                                required
-                                disabled={cashOutMutation.isPending}
-                            />
+                            <div className="w-full pl-8 pr-4 py-3 bg-[#1a1a1a] border border-[#4B4C46] rounded-lg text-white text-lg flex items-center">
+                                <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[#D4BC6D] font-semibold">
+                                    $
+                                </span>
+                                <span className="font-bold text-[#D4BC6D]">
+                                    {totalSaleAmount.toFixed(2)}
+                                </span>
+                            </div>
                         </div>
                         <p className="text-xs text-gray-400 mt-2">
-                            Minimum withdrawal amount: $10.00
+                            {totalSaleAmount < 10 
+                                ? `Minimum withdrawal amount: $10.00 (Current: $${totalSaleAmount.toFixed(2)})`
+                                : 'This amount will be withdrawn automatically'
+                            }
                         </p>
                     </div>
 
@@ -389,9 +395,9 @@ const CashOutModal = ({ isOpen, onClose }) => {
                         <button
                             type="submit"
                             className="flex-1 py-3 px-4 bg-[#57430D] text-white rounded-lg hover:bg-[#ab965d] transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
-                            disabled={cashOutMutation.isPending || !amount || parseFloat(amount) < 10}
+                            disabled={cashOutMutation.isPending || totalSaleAmount < 10}
                         >
-                            {cashOutMutation.isPending ? 'Processing...' : 'Request Cash Out'}
+                            {cashOutMutation.isPending ? 'Processing...' : `Request Cash Out $${totalSaleAmount.toFixed(2)}`}
                         </button>
                     </div>
                 </form>
