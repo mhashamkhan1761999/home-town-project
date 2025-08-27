@@ -28,6 +28,18 @@ const ExploreAthletes = () => {
         }
     });
 
+    // Fetch furious athletes data
+    const { data: furiousAthletesData, isLoading: isFuriousLoading, error: furiousError } = useQuery({
+        queryKey: ['furious-athletes'],
+        queryFn: () => getRequest('/furious-athletes'),
+        onSuccess: (data) => {
+            console.log('Furious athletes API response:', data);
+        },
+        onError: (error) => {
+            console.error('Error fetching furious athletes:', error);
+        }
+    });
+
     // Handle athlete card click
     const handleAthleteClick = (athleteSlug) => {
         if (athleteSlug) {
@@ -133,8 +145,8 @@ const ExploreAthletes = () => {
     };
 
     // Map API data to carousel format (Furious 5)
-    const furious5 = Array.isArray(athletesData)
-        ? mapAthleteData(athletesData.slice(0, 5))
+    const furious5 = Array.isArray(furiousAthletesData)
+        ? mapAthleteData(furiousAthletesData.slice(0, 5))
         : [
             { name: '', image: '/question-mark.jpeg', about: 'Athlete details coming soon.', onCardClick: () => {} },
             { name: '', image: '/question-mark.jpeg', about: 'Athlete details coming soon.', onCardClick: () => {} },
@@ -309,9 +321,15 @@ const ExploreAthletes = () => {
                 </h1>
 
                 {/* Carousel Slider */}
-                <CarouselSlider2
-                    data={furious5}
-                />
+                {isFuriousLoading ? (
+                    <div className="flex justify-center items-center py-16">
+                        <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-[#d4bc6d]"></div>
+                    </div>
+                ) : (
+                    <CarouselSlider2
+                        data={furious5}
+                    />
+                )}
             </section>
 
 
