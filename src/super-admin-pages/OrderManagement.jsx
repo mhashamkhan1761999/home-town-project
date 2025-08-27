@@ -104,13 +104,17 @@ const OrderManagement = () => {
 
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedStatus, setSelectedStatus] = useState('All');
+  const [selectedAthlete, setSelectedAthlete] = useState('All');
   const [isViewModalOpen, setIsViewModalOpen] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState(null);
 
   const statusTypes = ['Pending', 'Sent', 'Return Request'];
   const filterOptions = ['All', ...statusTypes];
 
-  // Filter orders based on search term and status
+  // Get all athlete names for filter dropdown
+  const athleteNames = Array.from(new Set(orders?.flatMap(order => order?.items?.map(item => item?.product?.athlete?.store_name).filter(Boolean)))).filter(Boolean);
+
+  // Filter orders based on search term, status, and athlete name
   const filteredOrders = orders?.filter(order => {
     const matchesSearch =
       order?.id?.toString()?.includes(searchTerm?.toLowerCase()) ||
@@ -118,8 +122,9 @@ const OrderManagement = () => {
       order.email?.toLowerCase()?.includes(searchTerm?.toLowerCase());
 
     const matchesStatus = selectedStatus == 'All' || order?.status == selectedStatus;
+    const matchesAthlete = selectedAthlete === 'All' || order?.items?.some(item => item?.product?.athlete?.store_name === selectedAthlete);
 
-    return matchesSearch && matchesStatus;
+    return matchesSearch && matchesStatus && matchesAthlete;
   });
 
   const handleViewOrder = (order) => {
@@ -236,6 +241,18 @@ const OrderManagement = () => {
                   </option>
                 ))}
               </select>
+
+              {/* Athlete Name Filter */}
+              <select
+                value={selectedAthlete}
+                onChange={e => setSelectedAthlete(e.target.value)}
+                className="px-4 py-2 bg-[#1a1a1a] border border-[#4B4C46] rounded-lg text-white focus:outline-none focus:border-[#D4BC6D] text-sm"
+              >
+                <option value="All">All Athletes</option>
+                {athleteNames.map(name => (
+                  <option key={name} value={name}>{name}</option>
+                ))}
+              </select>
             </div>
           </div>
         </div>
@@ -243,7 +260,7 @@ const OrderManagement = () => {
         {/* Orders Table */}
         <div className="bg-[#282828] border border-[#4B4C46] rounded-lg overflow-hidden">
           <div className="overflow-x-auto">
-            <div className="min-w-[700px]">
+            <div className="min-w-[1000px]">
               <table className="w-full">
                 <thead className="bg-[#1a1a1a] border-b border-[#4B4C46]">
                   <tr>
@@ -258,6 +275,12 @@ const OrderManagement = () => {
                     </th>
                     <th className="px-3 sm:px-6 py-4 text-left text-xs sm:text-sm font-medium text-gray-400 uppercase tracking-wider">
                       Email
+                    </th>
+                    <th className="px-3 sm:px-6 py-4 text-left text-xs sm:text-sm font-medium text-gray-400 uppercase tracking-wider">
+                      Category
+                    </th>
+                    <th className="px-3 sm:px-6 py-4 text-left text-xs sm:text-sm font-medium text-gray-400 uppercase tracking-wider">
+                      Athlete Name
                     </th>
                     <th className="px-3 sm:px-6 py-4 text-left text-xs sm:text-sm font-medium text-gray-400 uppercase tracking-wider">
                       Total Price
@@ -280,7 +303,7 @@ const OrderManagement = () => {
                       </td>
                       <td className="px-3 sm:px-6 py-4 whitespace-nowrap">
                         <div className="text-xs sm:text-sm font-medium text-white">
-                          {order?.shop_name || 'N/A'}
+                          {order?.items[0].product.athlete?.store_name || 'N/A'}
                         </div>
                       </td>
                       <td className="px-3 sm:px-6 py-4 whitespace-nowrap">
@@ -291,6 +314,16 @@ const OrderManagement = () => {
                       <td className="px-3 sm:px-6 py-4 whitespace-nowrap">
                         <div className="text-xs sm:text-sm text-gray-300">
                           {order.email}
+                        </div>
+                      </td>
+                      <td className="px-3 sm:px-6 py-4 whitespace-nowrap">
+                        <div className="text-xs sm:text-sm font-medium text-white">
+                          {order?.items?.[0]?.product?.category?.name || 'N/A'}
+                        </div>
+                      </td>
+                      <td className="px-3 sm:px-6 py-4 whitespace-nowrap">
+                        <div className="text-xs sm:text-sm font-medium text-white">
+                          {order?.items?.[0]?.product?.athlete?.store_name || 'N/A'}
                         </div>
                       </td>
                       <td className="px-3 sm:px-6 py-4 whitespace-nowrap">
