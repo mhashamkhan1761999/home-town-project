@@ -113,9 +113,25 @@ const NilCategory = () => {
     }
   }, [launchServiceModal.shouldOpenModal, itemModal.shouldOpenModal]);
 
-  // 1️⃣ Click category → open Launch Service modal
-  const handleCategoryClick = (id) => {
+  // 1️⃣ Click category → check concept API → either skip to products or show Launch Service modal
+  const handleCategoryClick = async (id) => {
     setSelectedCardId(id);
+    
+    try {
+      // Check if concept exists for this category
+      const response = await getRequest(`/check-concept?category_id=${id}`);
+      
+      // If successful (concept exists), skip splash and launch service form, go directly to products
+      if (response && response.status !== 404) {
+        setIsShow(1); // Go directly to product list
+        return;
+      }
+    } catch (error) {
+      // If API fails or returns 404, continue with normal flow (splash + launch service form)
+      console.log('Concept not found or API error, showing normal flow:', error);
+    }
+    
+    // Normal flow: show launch service modal (splash + form)
     launchServiceModal.openModal({ categoryId: id });
     setShowLaunchService(true);
   };
