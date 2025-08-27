@@ -1359,6 +1359,24 @@ const DeleteProductModal = ({ product, onClose }) => {
 
 // View Product Modal
 const ViewProductModal = ({ product, onClose }) => {
+  // Fetch sub-categories data
+  const { data: subCategories } = useQuery({
+    queryKey: ["sub-categories"],
+    queryFn: () => getRequest("/sub-categories"),
+    onError: (error) => {
+      console.log("Sub-categories not available");
+    },
+  });
+
+  // Create sub-category mapping
+  const subCategoryMap = useMemo(() => {
+    if (!subCategories) return {};
+    return subCategories.reduce((acc, subCategory) => {
+      acc[subCategory.id] = subCategory;
+      return acc;
+    }, {});
+  }, [subCategories]);
+
   // Color mapping for display
   const colorMapping = {
     black: "#000000",
@@ -1475,7 +1493,11 @@ const ViewProductModal = ({ product, onClose }) => {
                 </div>
                 <div>
                   <label className="text-[#838383] text-sm">Sub Category</label>
-                  <p className="text-white">{product?.sub_category?.name || 'N/A'}</p>
+                  <p className="text-white">
+                    {subCategoryMap[product?.sub_category_id]?.name || 
+                     product?.sub_category?.name || 
+                     'N/A'}
+                  </p>
                 </div>
               </div>
             </div>
@@ -1488,20 +1510,35 @@ const ViewProductModal = ({ product, onClose }) => {
               <h4 className="text-[#D4BC6D] font-semibold mb-4">Product Specifications</h4>
               <div className="space-y-3">
                 <div>
-                  <label className="text-[#838383] text-sm">Material</label>
-                  <p className="text-white">{product?.material || 'N/A'}</p>
-                </div>
-                <div>
-                  <label className="text-[#838383] text-sm">Weight</label>
-                  <p className="text-white">{product?.weight || 'N/A'}</p>
-                </div>
-                <div>
                   <label className="text-[#838383] text-sm">Platform</label>
                   <p className="text-white">{product?.platform || 'N/A'}</p>
                 </div>
                 <div>
-                  <label className="text-[#838383] text-sm">SKU</label>
-                  <p className="text-white">{product?.sku || 'N/A'}</p>
+                  <label className="text-[#838383] text-sm">Category ID</label>
+                  <p className="text-white">{product?.category_id || 'N/A'}</p>
+                </div>
+                <div>
+                  <label className="text-[#838383] text-sm">Sub Category ID</label>
+                  <p className="text-white">{product?.sub_category_id || 'N/A'}</p>
+                </div>
+                <div>
+                  <label className="text-[#838383] text-sm">Product Icon</label>
+                  {product?.icon ? (
+                    <div className="mt-2">
+                      <img
+                        src={`https://hometown.eagleeblaze.com/storage/app/public/${product.icon}`.replace(/\\/g, '/')}
+                        alt="Product Icon"
+                        className="w-16 h-16 object-cover rounded-lg border border-[#4B4C46]"
+                        onError={(e) => {
+                          e.target.style.display = 'none';
+                          e.target.nextSibling.style.display = 'block';
+                        }}
+                      />
+                      <p className="text-white text-sm hidden">Icon not available</p>
+                    </div>
+                  ) : (
+                    <p className="text-white">Not available</p>
+                  )}
                 </div>
               </div>
             </div>
@@ -1512,22 +1549,32 @@ const ViewProductModal = ({ product, onClose }) => {
               <div className="space-y-3">
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="text-[#838383] text-sm">Cost Price</label>
-                    <p className="text-white font-medium">${product?.cost_price || '0.00'}</p>
+                    <label className="text-[#838383] text-sm">Min Price</label>
+                    <p className="text-white font-medium">${product?.min_price || '0.00'}</p>
                   </div>
                   <div>
                     <label className="text-[#838383] text-sm">Selling Price</label>
-                    <p className="text-white font-medium">${product?.selling_price || product?.price || '0.00'}</p>
+                    <p className="text-white font-medium">${product?.price || '0.00'}</p>
                   </div>
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="text-[#838383] text-sm">Profit Margin</label>
-                    <p className="text-white">{product?.profit_margin ? `${product.profit_margin}%` : 'N/A'}</p>
+                    <label className="text-[#838383] text-sm">Profit USA</label>
+                    <p className="text-white">${product?.profit_usa || 'N/A'}</p>
                   </div>
                   <div>
-                    <label className="text-[#838383] text-sm">Stock Quantity</label>
-                    <p className="text-white">{product?.stock_quantity || product?.stock || 'N/A'}</p>
+                    <label className="text-[#838383] text-sm">Profit International</label>
+                    <p className="text-white">${product?.profit_international || 'N/A'}</p>
+                  </div>
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="text-[#838383] text-sm">Available Sizes</label>
+                    <p className="text-white">{product?.size || 'N/A'}</p>
+                  </div>
+                  <div>
+                    <label className="text-[#838383] text-sm">Weight</label>
+                    <p className="text-white">{product?.weight || 'N/A'}</p>
                   </div>
                 </div>
               </div>
@@ -1539,11 +1586,26 @@ const ViewProductModal = ({ product, onClose }) => {
               <div className="space-y-3">
                 <div>
                   <label className="text-[#838383] text-sm">Size Chart</label>
-                  <p className="text-white">{product?.size_chart ? 'Available' : 'Not available'}</p>
+                  {product?.size_chart ? (
+                    <div className="mt-2">
+                      <img
+                        src={`https://hometown.eagleeblaze.com/storage/app/public/${product.size_chart}`.replace(/\\/g, '/')}
+                        alt="Size Chart"
+                        className="max-w-full h-auto rounded-lg border border-[#4B4C46]"
+                        onError={(e) => {
+                          e.target.style.display = 'none';
+                          e.target.nextSibling.style.display = 'block';
+                        }}
+                      />
+                      <p className="text-white hidden">Size chart image not available</p>
+                    </div>
+                  ) : (
+                    <p className="text-white">Not available</p>
+                  )}
                 </div>
                 <div>
-                  <label className="text-[#838383] text-sm">Warnings</label>
-                  <p className="text-white">{product?.warnings || 'None specified'}</p>
+                  <label className="text-[#838383] text-sm">Material</label>
+                  <p className="text-white whitespace-pre-line">{product?.material || 'N/A'}</p>
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
