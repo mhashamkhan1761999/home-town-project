@@ -78,7 +78,7 @@ const SuperAdminDashboard = () => {
                             <DollarSign className="w-5 h-5 sm:w-6 sm:h-6 text-[#D4BC6D]" />
                         </div>
                         <span className="text-green-400 text-xs sm:text-sm font-semibold bg-green-400/10 px-2 py-1 rounded-full">
-                            +{data?.total_sale_percentage || 12.5}%
+                            +{data?.total_sale_percentage.toLocaleString()}%
                         </span>
                     </div>
                     <div>
@@ -95,9 +95,6 @@ const SuperAdminDashboard = () => {
                         <div className="p-3 bg-[#57430D] rounded-xl">
                             <ShoppingCart className="w-5 h-5 sm:w-6 sm:h-6 text-[#D4BC6D]" />
                         </div>
-                        <span className="text-green-400 text-xs sm:text-sm font-semibold bg-green-400/10 px-2 py-1 rounded-full">
-                            +{data?.total_orders_percentage || 8.3}%
-                        </span>
                     </div>
                     <div>
                         <p className="text-[#838383] text-xs sm:text-sm font-medium mb-1">Total Orders</p>
@@ -113,14 +110,11 @@ const SuperAdminDashboard = () => {
                         <div className="p-3 bg-[#57430D] rounded-xl">
                             <Users className="w-5 h-5 sm:w-6 sm:h-6 text-[#D4BC6D]" />
                         </div>
-                        <span className="text-green-400 text-xs sm:text-sm font-semibold bg-green-400/10 px-2 py-1 rounded-full">
-                            +{data?.total_customers_percentage || 15.7}%
-                        </span>
                     </div>
                     <div>
                         <p className="text-[#838383] text-xs sm:text-sm font-medium mb-1">Total Customers</p>
                         <h3 className="text-xl sm:text-2xl font-bold text-white">
-                            {data?.total_customers || '1,248'}
+                            {data?.total_customers.toLocaleString()}
                         </h3>
                     </div>
                 </div>
@@ -131,14 +125,11 @@ const SuperAdminDashboard = () => {
                         <div className="p-3 bg-[#57430D] rounded-xl">
                             <Package className="w-5 h-5 sm:w-6 sm:h-6 text-[#D4BC6D]" />
                         </div>
-                        <span className="text-green-400 text-xs sm:text-sm font-semibold bg-green-400/10 px-2 py-1 rounded-full">
-                            +{data?.total_products_percentage || 3.2}%
-                        </span>
                     </div>
                     <div>
                         <p className="text-[#838383] text-xs sm:text-sm font-medium mb-1">Total Products</p>
                         <h3 className="text-xl sm:text-2xl font-bold text-white">
-                            {data?.total_products || '89'}
+                            {data?.total_products.toLocaleString() || '89'}
                         </h3>
                     </div>
                 </div>
