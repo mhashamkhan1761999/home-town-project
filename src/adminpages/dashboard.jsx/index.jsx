@@ -322,7 +322,6 @@ const Dashboard = () => {
               {/* Service Launch */}
               <td className="px-2 sm:px-6 py-4 border-b border-[#323232]">
                 <div className="flex items-center gap-2 sm:gap-6">
-                  <div className="bg-[#D9D9D9] w-8 h-8 sm:w-[3.563rem] sm:h-[3.25rem] rounded-lg"></div>
                   <div className="text-[#D4BC6D] font-bold">
                     <div className="text-xs sm:text-sm">
                       {service.category?.name || "Unknown"}
