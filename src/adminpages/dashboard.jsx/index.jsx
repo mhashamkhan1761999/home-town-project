@@ -2,12 +2,30 @@ import { EllipsisVertical, EyeIcon, Trash } from 'lucide-react';
 import React, { useState } from 'react'
 import LeafLetMap from './LeafLetMap';
 import { useSelector } from 'react-redux';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { Mutation, mutationOptions, useMutation, useQuery } from '@tanstack/react-query';
 import { postRequest, getRequest } from '../../api';
 import toast from 'react-hot-toast';
 
 const Dashboard = () => {
     const user = useSelector((state) => state.authenticate.user);
+    console.log('Authenticated user from Redux:', user.slug);
+
+    const { slug } = user || {};
+    const { data: athleteData, isLoading: isAthleteLoading, error: athleteError } = useQuery({
+        queryKey: ["view-athlete-by-slug", slug],
+        queryFn: () => getRequest(`/view-athlete/${slug}`),
+        enabled: !!slug,
+        onSuccess: (data) => {
+            console.log("Single athlete data API response:", data);
+        },
+        onError: (error) => {
+            console.error("Error fetching athlete data:", error);
+        }
+    });
+    console.log('Athlete data:', athleteData);
+
+
+
     const [isCashOutModalOpen, setIsCashOutModalOpen] = useState(false);
 
     // Fetch dashboard stats
@@ -62,26 +80,32 @@ const Dashboard = () => {
                 <div className="grow w-full sm:w-auto">
 
                     <div className='h-[35px] sm:h-[50px] w-full bg-[#282828] rounded-full relative z-[1]'>
-                        <div className="h-full bg-[#D4BC6D] rounded-full absolute left-0 z-[2]" style={{ width: `${getTierLevel(user?.total_sale)}%` }} />
+                        <div className="h-full rounded-full absolute left-0 z-[2] w-full flex">
+                            {['Bronze', 'Silver', 'Gold', 'Emerald', 'Diamond', 'Royal'].map((level, idx) => {
+                                const isCurrent = athleteData?.badge_level?.name === level;
+                                const percent = isCurrent ? athleteData?.badge_level?.percentage || 0 : 0;
+                                return (
+                                    <div
+                                        key={level}
+                                        style={{
+                                            width: '16.6667%', // 100/6
+                                            background: isCurrent ? `linear-gradient(to right, #D4BC6D ${percent}%, transparent ${percent}%)` : 'transparent',
+                                            transition: 'background 0.3s',
+                                        }}
+                                        className="h-full"
+                                    />
+                                );
+                            })}
+                        </div>
                         <div className="h-full w-full grid grid-cols-6 items-center overflow-hidden relative z-[2] text-center">
-                            <div className='text-white font-bold mb-0.5 h-full border-r flex items-center justify-center grow text-[6px] sm:text-sm px-0.5'>
-                                Bronze
-                            </div>
-                            <div className='text-white font-bold mb-0.5 h-full border-r flex items-center justify-center grow text-[6px] sm:text-sm px-0.5'>
-                                Silver
-                            </div>
-                            <div className='text-white font-bold mb-0.5 h-full border-r flex items-center justify-center grow text-[6px] sm:text-sm px-0.5'>
-                                Gold
-                            </div>
-                            <div className='text-white font-bold mb-0.5 h-full border-r flex items-center justify-center grow text-[6px] sm:text-sm px-0.5'>
-                                Emerald
-                            </div>
-                            <div className='text-white font-bold mb-0.5 h-full border-r flex items-center justify-center grow text-[6px] sm:text-sm px-0.5'>
-                                Diamond
-                            </div>
-                            <div className='text-white font-bold mb-0.5 h-full flex items-center justify-center grow text-[6px] sm:text-sm px-0.5'>
-                                Royal
-                            </div>
+                            {['Bronze', 'Silver', 'Gold', 'Emerald', 'Diamond', 'Royal'].map((level) => (
+                                <div
+                                    key={level}
+                                    className='text-white font-bold mb-0.5 h-full border-r flex items-center justify-center grow text-[6px] sm:text-sm px-0.5'
+                                >
+                                    {level}
+                                </div>
+                            ))}
                         </div>
                     </div>
                 </div>
