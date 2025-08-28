@@ -214,3 +214,28 @@ body {
   scrollbar-width: thin;
   scrollbar-color: #d4bc6d #1a1a1a;
 }
+
+/* Custom Dropdown Scrollbar */
+.dropdown-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: #d4bc6d #1a1a1a;
+}
+
+.dropdown-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.dropdown-scrollbar::-webkit-scrollbar-track {
+  background: #1a1a1a;
+  border-radius: 3px;
+}
+
+.dropdown-scrollbar::-webkit-scrollbar-thumb {
+  background: #d4bc6d;
+  border-radius: 3px;
+  border: 1px solid #4b4c46;
+}
+
+.dropdown-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #e6c977;
+}

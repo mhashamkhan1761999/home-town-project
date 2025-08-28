@@ -83,6 +83,8 @@ const AthleteProductsManagement = () => {
 
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedStatus, setSelectedStatus] = useState('All');
+  const [selectedAthlete, setSelectedAthlete] = useState('All');
+  const [selectedServiceType, setSelectedServiceType] = useState('All');
   const [isViewModalOpen, setIsViewModalOpen] = useState(false);
   const [isCreateAthleteModalOpen, setIsCreateAthleteModalOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
@@ -95,6 +97,22 @@ const AthleteProductsManagement = () => {
   const statusTypes = ['Pending', 'Accepted',];
   const filterOptions = ['All', ...statusTypes];
   const categories = ['All', 'Sports Equipment', 'Footwear', 'Apparel', 'Swimming Gear'];
+
+  // Service types for filtering
+  const serviceTypes = [
+    'All', 
+    'Clothing', 
+    'Footwear', 
+    'Accessories', 
+    'Jerseys', 
+    'Strength Supplements', 
+    'Home & Lifestyle', 
+    'Self Care', 
+    'Coffee', 
+    'Health', 
+    'Player Card', 
+    'Acid Wash'
+  ];
 
   // API Query for fetching athlete launches
   const { data: athleteProductsResponse, isLoading, error } = useQuery({
@@ -201,7 +219,14 @@ const AthleteProductsManagement = () => {
   // Use API data if available, otherwise fallback to static data
   const displayProducts = athleteProducts || products;
 
-  // Filter products based on search term and status
+  // Extract unique athlete names from products
+  const athleteNames = ['All', ...new Set(
+    displayProducts.map(product => 
+      product.athlete?.athlete_name || product.athleteName || 'Unknown'
+    ).filter(Boolean)
+  )];
+
+  // Filter products based on search term, status, athlete, and service type
   const filteredProducts = displayProducts.filter(product => {
     const matchesSearch =
       product.athleteName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -214,7 +239,13 @@ const AthleteProductsManagement = () => {
     const productStatus = product.status?.charAt(0).toUpperCase() + product.status?.slice(1).toLowerCase();
     const matchesStatus = selectedStatus === 'All' || productStatus === selectedStatus;
 
-    return matchesSearch && matchesStatus;
+    const athleteName = product.athlete?.athlete_name || product.athleteName || 'Unknown';
+    const matchesAthlete = selectedAthlete === 'All' || athleteName === selectedAthlete;
+
+    const serviceType = product.category?.name || product.category || 'Unknown';
+    const matchesServiceType = selectedServiceType === 'All' || serviceType === selectedServiceType;
+
+    return matchesSearch && matchesStatus && matchesAthlete && matchesServiceType;
   });
 
   const handleStatusChange = (productId, newStatus) => {
@@ -367,8 +398,8 @@ const AthleteProductsManagement = () => {
 
         {/* Controls */}
         <div className="bg-[#282828] border border-[#4B4C46] rounded-lg p-3 sm:p-6 mb-6">
-          <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
-            <div className="flex flex-col sm:flex-row gap-4 flex-1 w-full">
+          <div className="flex flex-col md:flex-row gap-4 items-center justify-center">
+            <div className="flex flex-col sm:flex-row gap-4 flex-1 w-full justify-center items-center">
               {/* Search */}
               <div className="relative flex-1 max-w-md">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
@@ -382,17 +413,53 @@ const AthleteProductsManagement = () => {
               </div>
 
               {/* Status Filter */}
-              <select
-                value={selectedStatus}
-                onChange={(e) => setSelectedStatus(e.target.value)}
-                className="px-4 py-2 bg-[#1a1a1a] border border-[#4B4C46] rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-[#D4BC6D] focus:border-transparent text-sm min-w-[120px]"
-              >
-                {filterOptions.map(option => (
-                  <option key={option} value={option} className="bg-[#1a1a1a]">
-                    {option}
-                  </option>
-                ))}
-              </select>
+              <div className="flex flex-col gap-1">
+                <label className="text-xs text-gray-400 px-1">Status</label>
+                <select
+                  value={selectedStatus}
+                  onChange={(e) => setSelectedStatus(e.target.value)}
+                  className="px-4 py-2 bg-[#1a1a1a] border border-[#4B4C46] rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-[#D4BC6D] focus:border-transparent text-sm min-w-[120px]"
+                >
+                  {filterOptions.map(option => (
+                    <option key={option} value={option} className="bg-[#1a1a1a]">
+                      {option}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Athlete Filter */}
+              <div className="flex flex-col gap-1">
+                <label className="text-xs text-gray-400 px-1">Athlete Name</label>
+                <select
+                  value={selectedAthlete}
+                  onChange={(e) => setSelectedAthlete(e.target.value)}
+                  className="px-4 py-2 bg-[#1a1a1a] border border-[#4B4C46] rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-[#D4BC6D] focus:border-transparent text-sm min-w-[140px]"
+                >
+                  {athleteNames.map(option => (
+                    <option key={option} value={option} className="bg-[#1a1a1a]">
+                      {option}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Service Type Filter */}
+              <div className="flex flex-col gap-1">
+                <label className="text-xs text-gray-400 px-1">Service Category</label>
+                <select
+                  value={selectedServiceType}
+                  onChange={(e) => setSelectedServiceType(e.target.value)}
+                  className="px-4 py-2 bg-[#1a1a1a] border border-[#4B4C46] rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-[#D4BC6D] focus:border-transparent text-sm min-w-[160px] dropdown-scrollbar"
+                  size="1"
+                >
+                  {serviceTypes.map(option => (
+                    <option key={option} value={option} className="bg-[#1a1a1a] py-2 hover:bg-[#D4BC6D] hover:text-black">
+                      {option}
+                    </option>
+                  ))}
+                </select>
+              </div>
             </div>
           </div>
         </div>
