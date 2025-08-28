@@ -95,7 +95,7 @@ const LoginPage = () => {
             }
         },
         onError: (error) => {
-            console.error('Verify Code Error:', error);
+            console.error('Verify Error:', error);
             toast.error(error?.response?.data?.message || 'Invalid verification code');
         }
     });
