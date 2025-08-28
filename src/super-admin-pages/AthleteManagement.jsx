@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Search, Eye, User, Users, Trophy, Star, Instagram, Twitter, Facebook, ExternalLink } from 'lucide-react';
+import { Search, Eye, User, Users, Trophy, Star, Instagram, Twitter, Facebook, ExternalLink, CreditCard } from 'lucide-react';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { getRequest, postRequest } from '../api';
 import { queryClient } from '../main';
@@ -157,7 +157,16 @@ const AthleteManagement = () => {
 
   // Filter athletes based on status and search term
   const filteredAthletes = athletes?.filter(athlete => {
-    const matchesStatus = selectedStatus === 'All' || athlete?.status === selectedStatus.toLowerCase();
+    let matchesStatus = false;
+    
+    if (selectedStatus === 'All') {
+      matchesStatus = true;
+    } else if (selectedStatus === 'No Card') {
+      matchesStatus = !athlete?.card;
+    } else {
+      matchesStatus = athlete?.status === selectedStatus.toLowerCase();
+    }
+    
     const matchesSearch = searchTerm.trim() === "" || [
       athlete?.athlete_name,
       athlete?.email,
@@ -288,6 +297,18 @@ const AthleteManagement = () => {
               <User className="h-6 w-6 sm:h-8 sm:w-8 text-green-500" />
             </div>
           </div>
+
+          <div className="bg-[#282828] border border-[#4B4C46] rounded-lg p-3 sm:p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-gray-400 text-xs sm:text-sm">No Card</p>
+                <p className="text-lg sm:text-2xl font-bold text-white">
+                  {athletes?.filter(a => !a.card)?.length}
+                </p>
+              </div>
+              <CreditCard className="h-6 w-6 sm:h-8 sm:w-8 text-red-500" />
+            </div>
+          </div>
         </div>
 
         {/* Controls */}
@@ -332,6 +353,9 @@ const AthleteManagement = () => {
                     </th>
                     <th className="px-3 sm:px-6 py-4 text-left text-xs sm:text-sm font-medium text-gray-400 uppercase tracking-wider">
                       Social Media
+                    </th>
+                    <th className="px-3 sm:px-6 py-4 text-left text-xs sm:text-sm font-medium text-gray-400 uppercase tracking-wider">
+                      Card Status
                     </th>
                     <th className="px-3 sm:px-6 py-4 text-left text-xs sm:text-sm font-medium text-gray-400 uppercase tracking-wider">
                       Status
@@ -402,6 +426,21 @@ const AthleteManagement = () => {
                           )}
                           {(!athlete?.social_media?.instagram && !athlete?.social_media?.twitter && !athlete?.social_media?.facebook) && (
                             <span className="text-xs text-gray-500">No social media</span>
+                          )}
+                        </div>
+                      </td>
+                      <td className="px-3 sm:px-6 py-4 whitespace-nowrap">
+                        <div className="flex items-center">
+                          {athlete?.card ? (
+                            <div className="flex items-center text-green-500">
+                              <CreditCard className="h-4 w-4 mr-2" />
+                              <span className="text-xs font-medium">Card Added</span>
+                            </div>
+                          ) : (
+                            <div className="flex items-center text-red-500">
+                              <CreditCard className="h-4 w-4 mr-2" />
+                              <span className="text-xs font-medium">No Card</span>
+                            </div>
                           )}
                         </div>
                       </td>
@@ -863,6 +902,22 @@ const ViewAthleteModal = ({ isOpen, onClose, athlete }) => {
               <span className={`inline-flex px-3 py-1 text-sm font-semibold rounded-full ${athlete?.furious === '1' ? 'bg-red-600 text-white' : 'bg-gray-600 text-white'}`}>
                 {athlete?.furious === '1' ? 'Furious' : 'Normal'}
               </span>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-400 mb-1">Card Status</label>
+              <div className="flex items-center">
+                {athlete?.card ? (
+                  <div className="flex items-center text-green-500">
+                    <CreditCard className="h-4 w-4 mr-2" />
+                    <span className="text-sm font-medium">Card Added</span>
+                  </div>
+                ) : (
+                  <div className="flex items-center text-red-500">
+                    <CreditCard className="h-4 w-4 mr-2" />
+                    <span className="text-sm font-medium">No Card Added</span>
+                  </div>
+                )}
+              </div>
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-400 mb-1">Last Updated</label>
