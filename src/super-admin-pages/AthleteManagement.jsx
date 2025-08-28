@@ -576,33 +576,6 @@ const ViewAthleteModal = ({ isOpen, onClose, athlete }) => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-400 mb-1">Social Media</label>
-                <div className="flex items-center space-x-4">
-                  {athlete?.social_media?.instagram && (
-                    <a href={athlete.social_media.instagram} target="_blank" rel="noopener noreferrer" className="flex items-center text-gray-300 hover:text-pink-500 transition-colors">
-                      <Instagram className="h-4 w-4 mr-1" />
-                      <span className="text-sm">Instagram</span>
-                    </a>
-                  )}
-                  {athlete?.social_media?.twitter && (
-                    <a href={athlete.social_media.twitter} target="_blank" rel="noopener noreferrer" className="flex items-center text-gray-300 hover:text-blue-400 transition-colors">
-                      <Twitter className="h-4 w-4 mr-1" />
-                      <span className="text-sm">Twitter</span>
-                    </a>
-                  )}
-                  {athlete?.social_media?.facebook && (
-                    <a href={athlete.social_media.facebook} target="_blank" rel="noopener noreferrer" className="flex items-center text-gray-300 hover:text-blue-600 transition-colors">
-                      <Facebook className="h-4 w-4 mr-1" />
-                      <span className="text-sm">Facebook</span>
-                    </a>
-                  )}
-                  {(!athlete?.social_media?.instagram && !athlete?.social_media?.twitter && !athlete?.social_media?.facebook) && (
-                    <span className="text-sm text-gray-500">No social media accounts</span>
-                  )}
-                </div>
-              </div>
-
-              <div>
                 <label className="block text-sm font-medium text-gray-400 mb-1">Contact Phone</label>
                 <p className="text-white">{athlete?.phone || 'Not provided'}</p>
               </div>
@@ -627,6 +600,16 @@ const ViewAthleteModal = ({ isOpen, onClose, athlete }) => {
                 <label className="block text-sm font-medium text-gray-400 mb-1">Location</label>
                 <p className="text-white">{athlete?.city}, {athlete?.country}</p>
               </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-400 mb-1">Referral Code</label>
+                <p className="text-white">{athlete?.referral_code || 'Not assigned'}</p>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-400 mb-1">Account Creation</label>
+                <p className="text-white">{athlete?.created_at ? new Date(athlete.created_at).toLocaleDateString() : 'Not available'}</p>
+              </div>
             </div>
           </div>
 
@@ -648,7 +631,7 @@ const ViewAthleteModal = ({ isOpen, onClose, athlete }) => {
               <div>
                 <label className="block text-sm font-medium text-gray-400 mb-1">Grand Level</label>
                 <p className={`font-bold ${getLevelColor(athlete?.grand_level)}`}>
-                  {athlete.grandLevel}
+                  {athlete?.grand_level}
                 </p>
               </div>
 
@@ -658,24 +641,232 @@ const ViewAthleteModal = ({ isOpen, onClose, athlete }) => {
               </div>
 
               <div>
+                <label className="block text-sm font-medium text-gray-400 mb-1">Total Sales</label>
+                <p className="text-white">${athlete?.total_sale || '0'}</p>
+              </div>
+
+              <div>
                 <label className="block text-sm font-medium text-gray-400 mb-1">Status</label>
                 <span className={`inline-flex px-3 py-1 text-sm font-semibold rounded-full ${getStatusColor(athlete?.status)}`}>
-                  {athlete?.status}
+                  {athlete?.status === '1' ? 'Active' : athlete?.status === '0' ? 'Inactive' : athlete?.status}
+                </span>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-400 mb-1">Subscription Status</label>
+                <span className={`inline-flex px-3 py-1 text-sm font-semibold rounded-full ${athlete?.has_active_subscription ? 'bg-green-600 text-white' : 'bg-red-600 text-white'}`}>
+                  {athlete?.has_active_subscription ? 'Active Subscription' : 'No Active Subscription'}
                 </span>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Achievement Badge */}
-        <div className="bg-[#1a1a1a] border border-[#4B4C46] rounded-lg p-4 mb-6">
-          <div className="flex items-center justify-center">
-            <Trophy className={`h-8 w-8 mr-3 ${getLevelColor(athlete?.grand_level)}`} />
-            <div className="text-center">
-              <p className="text-gray-400 text-sm">Achievement Level</p>
-              <p className={`text-lg font-bold ${getLevelColor(athlete?.grand_level)}`}>
-                {athlete?.grand_level}
-              </p>
+        {/* Badge Level Section */}
+        {athlete?.badge_level && (
+          <div className="bg-[#1a1a1a] border border-[#4B4C46] rounded-lg p-6 mb-6">
+            <h3 className="text-lg font-semibold text-white mb-4">Badge Level</h3>
+            <div className="flex items-center justify-center">
+              <div className="flex items-center space-x-4">
+                <img
+                  src={athlete.badge_level.image}
+                  alt={athlete.badge_level.name}
+                  className="h-16 w-16 object-contain"
+                  onError={(e) => {
+                    e.target.src = '/default.jpg';
+                  }}
+                />
+                <div>
+                  <p className={`text-xl font-bold ${getLevelColor(athlete.badge_level.name)}`}>
+                    {athlete.badge_level.name}
+                  </p>
+                  <p className="text-gray-400 text-sm">Badge Progress: {athlete.badge_level.percentage}%</p>
+                  <div className="w-32 bg-gray-700 rounded-full h-2 mt-2">
+                    <div 
+                      className="bg-[#D4BC6D] h-2 rounded-full transition-all duration-300"
+                      style={{ width: `${athlete.badge_level.percentage}%` }}
+                    ></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Team Information */}
+        {(athlete?.team_name || athlete?.team_email || athlete?.team_email_2) && (
+          <div className="bg-[#1a1a1a] border border-[#4B4C46] rounded-lg p-6 mb-6">
+            <h3 className="text-lg font-semibold text-white mb-4">Team Information</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {athlete?.team_name && (
+                <div>
+                  <label className="block text-sm font-medium text-gray-400 mb-1">Team Name</label>
+                  <p className="text-white">{athlete.team_name}</p>
+                </div>
+              )}
+              {athlete?.team_email && (
+                <div>
+                  <label className="block text-sm font-medium text-gray-400 mb-1">Team Email</label>
+                  <p className="text-white">{athlete.team_email}</p>
+                </div>
+              )}
+              {athlete?.team_email_2 && (
+                <div>
+                  <label className="block text-sm font-medium text-gray-400 mb-1">Team Email 2</label>
+                  <p className="text-white">{athlete.team_email_2}</p>
+                </div>
+              )}
+              {athlete?.director_info && (
+                <div>
+                  <label className="block text-sm font-medium text-gray-400 mb-1">Director Info</label>
+                  <p className="text-white">{athlete.director_info}</p>
+                </div>
+              )}
+              {athlete?.coach_info && (
+                <div>
+                  <label className="block text-sm font-medium text-gray-400 mb-1">Coach Info</label>
+                  <p className="text-white">{athlete.coach_info}</p>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* School Information */}
+        {(athlete?.school_name || athlete?.school_email || athlete?.school_phone) && (
+          <div className="bg-[#1a1a1a] border border-[#4B4C46] rounded-lg p-6 mb-6">
+            <h3 className="text-lg font-semibold text-white mb-4">School Information</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {athlete?.school_name && (
+                <div>
+                  <label className="block text-sm font-medium text-gray-400 mb-1">School Name</label>
+                  <p className="text-white">{athlete.school_name}</p>
+                </div>
+              )}
+              {athlete?.school_email && (
+                <div>
+                  <label className="block text-sm font-medium text-gray-400 mb-1">School Email</label>
+                  <p className="text-white">{athlete.school_email}</p>
+                </div>
+              )}
+              {athlete?.school_phone && (
+                <div>
+                  <label className="block text-sm font-medium text-gray-400 mb-1">School Phone</label>
+                  <p className="text-white">{athlete.school_phone}</p>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* Social Media Information */}
+        <div className="bg-[#1a1a1a] border border-[#4B4C46] rounded-lg p-6 mb-6">
+          <h3 className="text-lg font-semibold text-white mb-4">Social Media</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {athlete?.instagram && (
+              <div>
+                <label className="block text-sm font-medium text-gray-400 mb-1">Instagram</label>
+                <a href={athlete.instagram} target="_blank" rel="noopener noreferrer" className="flex items-center text-pink-500 hover:text-pink-400 transition-colors">
+                  <Instagram className="h-4 w-4 mr-2" />
+                  <span className="text-sm truncate">Instagram Profile</span>
+                  <ExternalLink className="h-3 w-3 ml-1" />
+                </a>
+              </div>
+            )}
+            {athlete?.twitter && (
+              <div>
+                <label className="block text-sm font-medium text-gray-400 mb-1">Twitter</label>
+                <a href={athlete.twitter} target="_blank" rel="noopener noreferrer" className="flex items-center text-blue-400 hover:text-blue-300 transition-colors">
+                  <Twitter className="h-4 w-4 mr-2" />
+                  <span className="text-sm truncate">Twitter Profile</span>
+                  <ExternalLink className="h-3 w-3 ml-1" />
+                </a>
+              </div>
+            )}
+            {athlete?.youtube && (
+              <div>
+                <label className="block text-sm font-medium text-gray-400 mb-1">YouTube</label>
+                <a href={athlete.youtube} target="_blank" rel="noopener noreferrer" className="flex items-center text-red-500 hover:text-red-400 transition-colors">
+                  <svg className="h-4 w-4 mr-2" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+                  </svg>
+                  <span className="text-sm truncate">YouTube Channel</span>
+                  <ExternalLink className="h-3 w-3 ml-1" />
+                </a>
+              </div>
+            )}
+            {athlete?.tiktok && (
+              <div>
+                <label className="block text-sm font-medium text-gray-400 mb-1">TikTok</label>
+                <a href={athlete.tiktok} target="_blank" rel="noopener noreferrer" className="flex items-center text-white hover:text-gray-300 transition-colors">
+                  <svg className="h-4 w-4 mr-2" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"/>
+                  </svg>
+                  <span className="text-sm truncate">TikTok Profile</span>
+                  <ExternalLink className="h-3 w-3 ml-1" />
+                </a>
+              </div>
+            )}
+            {athlete?.twitch && (
+              <div>
+                <label className="block text-sm font-medium text-gray-400 mb-1">Twitch</label>
+                <a href={athlete.twitch} target="_blank" rel="noopener noreferrer" className="flex items-center text-purple-500 hover:text-purple-400 transition-colors">
+                  <svg className="h-4 w-4 mr-2" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M11.571 4.714h1.715v5.143H11.57zm4.715 0H18v5.143h-1.714zM6 0L1.714 4.286v15.428h5.143V24l4.286-4.286h3.428L22.286 12V0zm14.571 11.143l-3.428 3.428h-3.429l-3 3v-3H6.857V1.714h13.714Z"/>
+                  </svg>
+                  <span className="text-sm truncate">Twitch Channel</span>
+                  <ExternalLink className="h-3 w-3 ml-1" />
+                </a>
+              </div>
+            )}
+            {athlete?.other && (
+              <div>
+                <label className="block text-sm font-medium text-gray-400 mb-1">Other</label>
+                <a href={athlete.other} target="_blank" rel="noopener noreferrer" className="flex items-center text-gray-400 hover:text-gray-300 transition-colors">
+                  <ExternalLink className="h-4 w-4 mr-2" />
+                  <span className="text-sm truncate">Other Link</span>
+                </a>
+              </div>
+            )}
+            {(!athlete?.instagram && !athlete?.twitter && !athlete?.youtube && !athlete?.tiktok && !athlete?.twitch && !athlete?.other) && (
+              <div className="col-span-full">
+                <span className="text-sm text-gray-500">No social media accounts linked</span>
+              </div>
+            )}
+          </div>
+          {athlete?.social_media_reach && (
+            <div className="mt-4">
+              <label className="block text-sm font-medium text-gray-400 mb-1">Social Media Reach</label>
+              <p className="text-white">{athlete.social_media_reach}</p>
+            </div>
+          )}
+        </div>
+
+        {/* Additional Information */}
+        <div className="bg-[#1a1a1a] border border-[#4B4C46] rounded-lg p-6 mb-6">
+          <h3 className="text-lg font-semibold text-white mb-4">Additional Information</h3>
+          <div className="space-y-4">
+            {athlete?.bio && (
+              <div>
+                <label className="block text-sm font-medium text-gray-400 mb-1">Bio</label>
+                <p className="text-white">{athlete.bio}</p>
+              </div>
+            )}
+            {athlete?.description && (
+              <div>
+                <label className="block text-sm font-medium text-gray-400 mb-1">Description</label>
+                <p className="text-white">{athlete.description}</p>
+              </div>
+            )}
+            <div>
+              <label className="block text-sm font-medium text-gray-400 mb-1">Furious Status</label>
+              <span className={`inline-flex px-3 py-1 text-sm font-semibold rounded-full ${athlete?.furious === '1' ? 'bg-red-600 text-white' : 'bg-gray-600 text-white'}`}>
+                {athlete?.furious === '1' ? 'Furious' : 'Normal'}
+              </span>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-400 mb-1">Last Updated</label>
+              <p className="text-white">{athlete?.updated_at ? new Date(athlete.updated_at).toLocaleString() : 'Not available'}</p>
             </div>
           </div>
         </div>
