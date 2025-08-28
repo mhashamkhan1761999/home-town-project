@@ -33,7 +33,7 @@ const Signup3 = ({ next, setData, goBack }) => {
                         {/* Age */}
                         <div className="w-full">
                             <label className='text-base sm:text-lg font-semibold text-[#D4BC6D] mb-2 inline-block'>
-                                Age
+                                Age  
                             </label>
                             <div className="flex rounded-t-lg bg-[rgba(217,217,217,0.03)] border-b border-[#4B4C46]">
                                 <div className="p-4">
@@ -54,7 +54,7 @@ const Signup3 = ({ next, setData, goBack }) => {
                         {/* Gender */}
                         <div className="w-full">
                             <label className='text-base sm:text-lg font-semibold text-[#D4BC6D] mb-2 inline-block'>
-                                Gender
+                                Gender <span className='text-[#666666]'>(optional)</span>
                             </label>
                             <div className="flex rounded-t-lg bg-[rgba(217,217,217,0.03)] border-b border-[#4B4C46]">
                                 <div className="p-4">
@@ -176,7 +176,7 @@ const Signup3 = ({ next, setData, goBack }) => {
                         {/* Grade Level */}
                         <div className="w-full">
                             <label className='text-base sm:text-lg font-semibold text-[#D4BC6D] mb-2 inline-block'>
-                                Grade Level
+                                Grade Level <span className='text-[#666666]'>(optional)</span>
                             </label>
                             <div className="flex rounded-t-lg bg-[rgba(217,217,217,0.03)] border-b border-[#4B4C46]">
                                 <div className="p-4">
