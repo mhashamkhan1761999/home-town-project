@@ -65,7 +65,7 @@ const featureList = [
   {
     id: 9,
     title: 'Custom Graphics',
-    description: "Your moment deserves more than just a post. Whether it’s a commitment, an announcement, or just a statement — we combine professional graphics with AI-powered videos to help you stand out. Get next-level visuals made just for you. From commitment graphics to custom video edits, this is where your story gets seen.",
+    description: "Collaborate with our design team to bring your vision to life. From commitment graphics and merchandise designs to logos, social media content, and more — all created seamlessly through your dashboard.",
     image: '/graphic.jpg',
     locked: false,
   },
@@ -163,7 +163,7 @@ const featureList = [
   {
     id: 20,
     title: 'Ai Video',
-    description: "Ai powered analytics and instant cashouts\nPlay at the next level\nSocial media promotion\nPro Dashboard\nIndustry leading profit sharing",
+    description: "Transform your ideas into stunning AI-powered videos with our creative team. Whatever you imagine, we’ll bring it to life — perfect for standout marketing and eye-catching content",
     image: '/question-mark.jpeg',
     locked: true,
   },
