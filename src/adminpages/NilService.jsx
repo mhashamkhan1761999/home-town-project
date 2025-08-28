@@ -72,6 +72,9 @@ const NilCategory = () => {
 
   const [isShowForm, setIsShowForm] = useState(false);
 
+  // 🔹 NEW — controls the card details error modal
+  const [showCardErrorModal, setShowCardErrorModal] = useState(false);
+
   // 🔹 Modal history management
   const launchServiceModal = useModalHistory(
     'launchService', 
@@ -113,9 +116,33 @@ const NilCategory = () => {
     }
   }, [launchServiceModal.shouldOpenModal, itemModal.shouldOpenModal]);
 
-  // 1️⃣ Click category → check concept API → either skip to products or show Launch Service modal
+  // 1️⃣ Click category → check card API → then check concept API → flow continues
   const handleCategoryClick = async (id) => {
+    // Handle special case from ServiceList
+    if (id === 'card-error') {
+      setShowCardErrorModal(true);
+      return;
+    }
+    
     setSelectedCardId(id);
+    
+    try {
+      // First check if card details exist
+      const cardResponse = await getRequest('/get-card');
+      
+      // If card API fails or returns 404, show card error modal
+      if (!cardResponse || cardResponse.status === 404) {
+        setShowCardErrorModal(true);
+        return;
+      }
+    } catch (error) {
+      // If card API fails (including 404), show card error modal
+      console.log('Card details not found or API error:', error);
+      if (error.response?.status === 404 || error.message?.includes('404') || !error.response) {
+        setShowCardErrorModal(true);
+        return;
+      }
+    }
     
     try {
       // Check if concept exists for this category
@@ -188,7 +215,7 @@ const NilCategory = () => {
             selectedCard={selectedCardId}
             setSelectedCardId={setSelectedCardId}
           />
-          <ServiceList />
+          <ServiceList onServiceClick={handleCategoryClick} />
         </>
       )}
 
@@ -337,6 +364,44 @@ const NilCategory = () => {
       {/* Splash */}
       {showSplash && (
         <Splash message="Launching your store..." />
+      )}
+
+      {/* Card Error Modal */}
+      {showCardErrorModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-50">
+          <div className="bg-black border border-[#4B4C46] rounded-2xl p-6 w-full max-w-md">
+            <div className="text-center">
+              <div className="mb-4">
+                <svg className="w-16 h-16 text-red-500 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.732-.833-2.464 0L4.35 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+                </svg>
+              </div>
+              <h2 className="text-2xl font-bold text-white mb-4">Card Details Required</h2>
+              <p className="text-gray-300 mb-6">
+                Please enter your card details first to proceed with the service.
+              </p>
+              <div className="flex justify-center space-x-3">
+                <button
+                  onClick={() => setShowCardErrorModal(false)}
+                  className="px-6 py-2 bg-[#4B4C46] text-white rounded-full hover:bg-[#5a5b54] transition"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={() => {
+                    setShowCardErrorModal(false);
+                    // Navigate to card details page or open card modal
+                    // You can implement this based on your app's structure
+                    navigate('/athlete/settings');
+                  }}
+                  className="px-6 py-2 bg-[#D4BC6D] text-black rounded-full hover:bg-[#b89f4e] transition"
+                >
+                  Enter Card Details
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
       )}
     </>
   );
@@ -1105,11 +1170,32 @@ const ItemModal2 = ({ item = null, onClose, onSuccesActive, categoryId }) => {
 };
 
 /* ---------- ServiceList Component ---------- */
-const ServiceList = () => {
+const ServiceList = ({ onServiceClick }) => {
   const navigate = useNavigate();
 
-  const handleServiceClick = () => {
-    navigate('/athlete/bundles');
+  const handleServiceClick = async () => {
+    // Check card details first before navigating
+    try {
+      // Check if card details exist
+      const cardResponse = await getRequest('/get-card');
+      
+      // If card API fails or returns 404, trigger the error modal through parent
+      if (!cardResponse || cardResponse.status === 404) {
+        // Since we need to show the modal from parent, we'll call onServiceClick with a special flag
+        onServiceClick && onServiceClick('card-error');
+        return;
+      }
+      
+      // If card exists, proceed to bundles page
+      navigate('/athlete/bundles');
+    } catch (error) {
+      // If card API fails (including 404), trigger the error modal through parent
+      console.log('Card details not found or API error:', error);
+      if (error.response?.status === 404 || error.message?.includes('404') || !error.response) {
+        onServiceClick && onServiceClick('card-error');
+        return;
+      }
+    }
   };
 
   return (
