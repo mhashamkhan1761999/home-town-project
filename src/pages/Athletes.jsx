@@ -64,9 +64,9 @@ const featureList = [
   },
   {
     id: 9,
-    title: 'Graphics and AI Video',
+    title: 'Custom Graphics',
     description: "Your moment deserves more than just a post. Whether it’s a commitment, an announcement, or just a statement — we combine professional graphics with AI-powered videos to help you stand out. Get next-level visuals made just for you. From commitment graphics to custom video edits, this is where your story gets seen.",
-    image: '/book.png',
+    image: '/graphic.jpg',
     locked: false,
   },
   {
@@ -156,6 +156,13 @@ const featureList = [
   {
     id: 19,
     title: 'Enterprise Support (MVP)',
+    description: "Ai powered analytics and instant cashouts\nPlay at the next level\nSocial media promotion\nPro Dashboard\nIndustry leading profit sharing",
+    image: '/question-mark.jpeg',
+    locked: true,
+  },
+  {
+    id: 20,
+    title: 'Ai Video',
     description: "Ai powered analytics and instant cashouts\nPlay at the next level\nSocial media promotion\nPro Dashboard\nIndustry leading profit sharing",
     image: '/question-mark.jpeg',
     locked: true,

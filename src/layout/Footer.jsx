@@ -35,7 +35,7 @@ const Footer = () => {
                                 <h4 className="text-lg font-medium text-[#D4BC6D] mb-6">Explore</h4>
                                 <div className="flex flex-col gap-5">
                                     <a href="/" className="text-base font-semibold text-white capitalize">Home</a>
-                                    <a href="/explore-athletes" className="text-base font-semibold text-white capitalize">Shop by</a>
+                                    <a href="/explore-athletes" className="text-base font-semibold text-white capitalize">Shop Store Front</a>
                                     <a href="/athletes" className="text-base font-semibold text-white capitalize">Services</a>
                                     <Link to="/our-team" className="text-base font-semibold text-white capitalize">About</Link>
                                 </div>

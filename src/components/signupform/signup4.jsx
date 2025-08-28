@@ -44,8 +44,8 @@ const Signup4 = ({ next, setData, goBack }) => {
                             </div>
                             <div className="grow">
                                 <input
-                                    {...register('team_name', { required: 'Team Name is required' })}
-                                    type="text" placeholder='Enter your team name' required className='h-full w-full border-0 outline-0 text-[#6B6B6B]' />
+                                    {...register('team_name', { required: 'Full Name is required' })}
+                                    type="text" placeholder='Enter your full name' required className='h-full w-full border-0 outline-0 text-[#6B6B6B]' />
                             </div>
                         </div>
                         {errors?.team_name && <p className="text-red-500 text-sm">{errors?.team_name?.message}</p>}
@@ -250,7 +250,7 @@ const Signup4 = ({ next, setData, goBack }) => {
                         </div>
                     </div>
 
-                    <p className='text-lg font-semibold text-[#D4BC6D] mb-5 inline-block'>
+                    <p className='text-2xl font-semibold text-[#D4BC6D] mb-5 inline-block'>
                         School Licensing Coordinator Info:
                     </p>
                     <div className="mb-12">

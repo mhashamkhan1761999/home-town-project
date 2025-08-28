@@ -38,9 +38,9 @@ const StoreFront = () => {
     queryKey: ["all-athlete-products-by-slug", slug],
     queryFn: () => {
       // Try slug-based endpoint first, fallback to ID-based if needed
-      return getRequest(`/all-athlete-products/${athleteData.id}`).catch(() => {
+      return getRequest(`/all-athlete-products/${slug}`).catch(() => {
         // If slug endpoint fails, try ID endpoint as fallback
-        return getRequest(`/all-athlete-products/${athleteData.id}`);
+        return getRequest(`/all-athlete-products/${slug}`);
       });
     },
     enabled: !!slug, // Only run if slug exists
@@ -66,22 +66,24 @@ const StoreFront = () => {
         <h1 className="text-[7.5rem] text-center uppercase font-bold bg-[linear-gradient(to_right,#d4bc6d,#57430d)] bg-clip-text text-transparent mb-8">
           {slug ? athlete?.athlete_name : "ATHLETE STORE"}
         </h1>
-        
+
         {/* Centered profile picture for athlete storefront */}
         {slug && athlete && (
-          <div className="flex justify-center mb-8">
-            <img
-              alt="athlete"
-              className="w-32 h-32 sm:w-40 sm:h-40 md:w-48 md:h-48 lg:w-56 lg:h-56 xl:w-64 xl:h-64 rounded-full border-4 border-[#D4BC6D] object-cover shadow-xl"
-              src={
-                athlete?.profile_picture_url ||
-                athlete?.profile_picture ||
-                "/default.jpg"
-              }
-            />
+          <div className="absolute top-[50%] left-[50%] transform -translate-x-1/2 -translate-y-1/2">
+            <div className="flex justify-center">
+              <img
+                alt="athlete"
+                className="w-32 h-32 sm:w-40 sm:h-40 md:w-48 md:h-48 lg:w-60 lg:h-60 xl:w-74 xl:h-74 rounded-full border-4 border-[#D4BC6D] object-cover shadow-xl"
+                src={
+                  athlete?.profile_picture_url ||
+                  athlete?.profile_picture ||
+                  "/default.jpg"
+                }
+              />
+            </div>
           </div>
         )}
-        
+
         {/* Left content positioned absolutely */}
         <div className="absolute bottom-20 left-5 max-w-xs">
           <div className="flex flex-col">
@@ -95,7 +97,7 @@ const StoreFront = () => {
                   : athlete?.store || athlete?.store_name || "----"}
               </p>
             </div>
-            
+
             <div className="mb-4">
               <p className=" font-normal text-white mb-3 text-xl">
                 {slug ? "Athlete Details" : "Social Media Reach"}
@@ -240,9 +242,8 @@ const StoreFront = () => {
           <section className="py-24">
             <h1 className="text-[6.875rem] mb-[7.188rem] text-center uppercase font-bold bg-[linear-gradient(to_right,#d4bc6d,#57430d)] bg-clip-text text-transparent ">
               {slug
-                ? `${
-                    athlete?.store || athlete?.store_name || "ATHLETE"
-                  }'S MERCHANDISE`
+                ? `${athlete?.store || athlete?.store_name || "ATHLETE"
+                }'S MERCHANDISE`
                 : "MERCHANDISE"}
             </h1>
             <div className="mb-[7.188rem]">
@@ -289,9 +290,8 @@ const StoreFront = () => {
           <section className="py-24 bg-black">
             <h1 className="text-[6.875rem] mb-[7.188rem] text-center uppercase font-bold bg-[linear-gradient(to_right,#d4bc6d,#57430d)] bg-clip-text text-transparent ">
               {slug
-                ? `${
-                    athlete?.store || athlete?.store_name || "ATHLETE"
-                  }'S VAULT`
+                ? `${athlete?.store || athlete?.store_name || "ATHLETE"
+                }'S VAULT`
                 : "ATHLETE VAULT"}
             </h1>
             <div className="mb-[7.188rem]">

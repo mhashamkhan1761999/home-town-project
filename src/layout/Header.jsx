@@ -20,7 +20,7 @@ const Header = () => {
       link: '/athletes',
     },
     {
-      name: 'shop by',
+      name: 'shop store front',
       link: '/explore-athletes',
     },
     // {

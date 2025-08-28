@@ -38,13 +38,14 @@ const Signup5 = ({ onFinish, data, goBack, loading }) => {
                                         </div>
                                         <div className="grow">
                                             <input
-                                                {...register("instagram")}
+                                                {...register("instagram", { required: 'Required Field' })}
                                                 type="text"
                                                 placeholder="Enter your instagram username"
                                                 className="h-full w-full border-0 outline-0 text-[#6B6B6B]"
                                             />
                                         </div>
                                     </div>
+                                    {errors?.instagram && <p className="text-red-500 text-sm mt-1">{errors?.instagram?.message}</p>}
                                 </div>
 
                                 {/* TikTok */}

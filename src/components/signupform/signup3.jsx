@@ -41,7 +41,7 @@ const Signup3 = ({ next, setData, goBack }) => {
                                 </div>
                                 <div className="grow">
                                     <input
-                                        {...register('age', { required: 'Age is required' })}
+                                        {...register('age', { required: false })}
                                         type="number"
                                         placeholder='Enter your age'
                                         className='h-full w-full bg-transparent border-0 outline-0 text-[#6B6B6B] p-4'
@@ -62,7 +62,7 @@ const Signup3 = ({ next, setData, goBack }) => {
                                 </div>
                                 <div className="grow pe-2.5">
                                     <select
-                                        {...register('gender', { required: 'Gender is required' })}
+                                        {...register('gender', { required: false })}
                                         className='h-full w-full bg-transparent border-0 outline-0 text-[#6B6B6B] p-4'
                                     >
                                         <option value="">Select your gender</option>
@@ -124,6 +124,28 @@ const Signup3 = ({ next, setData, goBack }) => {
                         </div>
                     </div>
 
+                    <div className="flex flex-col sm:flex-row gap-6 sm:gap-12">
+                        <div className="w-full">
+                            <label className='text-base sm:text-lg font-semibold text-[#D4BC6D] mb-2 inline-block'>
+                                State
+                            </label>
+                            <div className="flex rounded-t-lg bg-[rgba(217,217,217,0.03)] border-b border-[#4B4C46]">
+                                <div className="p-4">
+                                    <Building2 size={15} color='white' />
+                                </div>
+                                <div className="grow pe-2.5">
+                                    <input
+                                        {...register('state', { required: 'State is required' })}
+                                        type="text"
+                                        placeholder='Enter Your State'
+                                        className='h-full w-full bg-transparent border-0 outline-0 text-[#6B6B6B] p-4'
+                                    />
+                                </div>
+                            </div>
+                            {errors?.state && <p className="text-red-500 text-sm mt-1">{errors.state.message}</p>}
+                        </div>
+                    </div>
+
                     {/* Row 3: Level of Athlete + Grade Level */}
                     <div className="flex flex-col sm:flex-row gap-6 sm:gap-12">
                         {/* Level of Athlete */}
@@ -162,7 +184,7 @@ const Signup3 = ({ next, setData, goBack }) => {
                                 </div>
                                 <div className="grow pe-2.5">
                                     <input
-                                        {...register('grand_level', { required: 'Grade Level is required' })}
+                                        {...register('grand_level', { required: false })}
                                         type="text"
                                         placeholder='Enter Grade Level'
                                         className='h-full w-full bg-transparent border-0 outline-0 text-[#6B6B6B] p-4'
