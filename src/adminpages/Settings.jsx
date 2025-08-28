@@ -9,6 +9,14 @@ import { useDispatch } from 'react-redux';
 const Settings = () => {
     const dispatch = useDispatch();
     const [activeTab, setActiveTab] = React.useState("tab2");
+    
+    // Card details state
+    const [cardDetails, setCardDetails] = React.useState({
+        card: '',
+        expire_date: '',
+        security_code: '',
+        card_holder: ''
+    });
 
     const mutation = useMutation({
         mutationKey: ['close-account'],
@@ -29,8 +37,59 @@ const Settings = () => {
         }
     })
 
+    // Update card mutation
+    const updateCardMutation = useMutation({
+        mutationKey: ['update-card'],
+        mutationFn: (form) => postRequest('/update-card', form),
+        onSuccess: (data) => {
+            if (data?.statusCode === 200) {
+                toast.success(data?.message || 'Card details updated successfully!');
+            }
+        },
+        onError: (error) => {
+            toast.error(error?.message || 'Failed to update card details');
+        }
+    })
+
     const handleCloseAccount = (reason) => {
         mutation.mutate({ close_account: reason });
+    }
+
+    // Handle card input changes
+    const handleCardInputChange = (field, value) => {
+        setCardDetails(prev => ({
+            ...prev,
+            [field]: value
+        }));
+    }
+
+    // Format date for API (MM/YY format)
+    const formatDateForAPI = (dateValue) => {
+        if (!dateValue) return '';
+        const date = new Date(dateValue);
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const year = String(date.getFullYear()).slice(-2);
+        return `${month}/${year}`;
+    }
+
+    // Handle card update
+    const handleUpdateCard = () => {
+        // Validate required fields
+        if (!cardDetails.card || !cardDetails.expire_date || !cardDetails.security_code || !cardDetails.card_holder) {
+            toast.error('Please fill in all card details');
+            return;
+        }
+
+        // Prepare data for API
+        const formattedDate = formatDateForAPI(cardDetails.expire_date);
+        const updateData = {
+            card: cardDetails.card,
+            expire_date: formattedDate,
+            security_code: cardDetails.security_code,
+            card_holder: cardDetails.card_holder
+        };
+
+        updateCardMutation.mutate(updateData);
     }
 
 
@@ -123,13 +182,24 @@ const Settings = () => {
                                 <CreditCard color='#fff' className="w-4 h-4 sm:w-5 sm:h-5" />
                             </div>
                             <div className="grow">
-                                <input type="number" placeholder='123 **** **** ****' className='h-full w-full border-0 outline-0 text-[#D4BC6D] text-sm sm:text-base px-2 sm:px-0' />
+                                <input 
+                                    type="text" 
+                                    placeholder='4324343243243233' 
+                                    value={cardDetails.card}
+                                    onChange={(e) => handleCardInputChange('card', e.target.value)}
+                                    className='h-full w-full border-0 outline-0 text-[#D4BC6D] text-sm sm:text-base px-2 sm:px-0 bg-transparent' 
+                                />
                             </div>
-                            <div className="p-1 sm:p-2">
-                                <button className='bg-[#D4BC6D] py-1.5 sm:py-2 px-4 sm:px-8 text-xs sm:text-sm font-bold text-white rounded-full' type='button'>
-                                    Edit
+                            {/* <div className="p-1 sm:p-2">
+                                <button 
+                                    className='bg-[#D4BC6D] py-1.5 sm:py-2 px-4 sm:px-8 text-xs sm:text-sm font-bold text-white rounded-full hover:bg-[#c4ac5d] transition-colors' 
+                                    type='button'
+                                    onClick={handleUpdateCard}
+                                    disabled={updateCardMutation.isPending}
+                                >
+                                    {updateCardMutation.isPending ? 'Updating...' : 'Update'}
                                 </button>
-                            </div>
+                            </div> */}
                         </div>
                     </div>
                     <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 w-full">
@@ -142,13 +212,23 @@ const Settings = () => {
                                     <CalendarClock color='#fff' className="w-4 h-4 sm:w-5 sm:h-5" />
                                 </div>
                                 <div className="grow">
-                                    <input type="date" className='h-full w-full border-0 outline-0 text-[#D4BC6D] text-sm sm:text-base px-2 sm:px-0' />
+                                    <input 
+                                        type="month" 
+                                        value={cardDetails.expire_date}
+                                        onChange={(e) => handleCardInputChange('expire_date', e.target.value)}
+                                        className='h-full w-full border-0 outline-0 text-[#D4BC6D] text-sm sm:text-base px-2 sm:px-0 bg-transparent' 
+                                    />
                                 </div>
-                                <div className="p-1 sm:p-2">
-                                    <button className='bg-[#D4BC6D] py-1.5 sm:py-2 px-4 sm:px-8 text-xs sm:text-sm font-bold text-white rounded-full' type='button'>
-                                        Edit
+                                {/* <div className="p-1 sm:p-2">
+                                    <button 
+                                        className='bg-[#D4BC6D] py-1.5 sm:py-2 px-4 sm:px-8 text-xs sm:text-sm font-bold text-white rounded-full hover:bg-[#c4ac5d] transition-colors' 
+                                        type='button'
+                                        onClick={handleUpdateCard}
+                                        disabled={updateCardMutation.isPending}
+                                    >
+                                        {updateCardMutation.isPending ? 'Updating...' : 'Update'}
                                     </button>
-                                </div>
+                                </div> */}
                             </div>
                         </div>
                         <div className="mb-8 sm:mb-12 w-full sm:grow">
@@ -160,13 +240,25 @@ const Settings = () => {
                                     <Lock color='#fff' className="w-4 h-4 sm:w-5 sm:h-5" />
                                 </div>
                                 <div className="grow">
-                                    <input type="number" placeholder='123' className='h-full w-full border-0 outline-0 text-[#D4BC6D] text-sm sm:text-base px-2 sm:px-0' />
+                                    <input 
+                                        type="text" 
+                                        placeholder='123' 
+                                        value={cardDetails.security_code}
+                                        onChange={(e) => handleCardInputChange('security_code', e.target.value)}
+                                        maxLength="4"
+                                        className='h-full w-full border-0 outline-0 text-[#D4BC6D] text-sm sm:text-base px-2 sm:px-0 bg-transparent' 
+                                    />
                                 </div>
-                                <div className="p-1 sm:p-2">
-                                    <button className='bg-[#D4BC6D] py-1.5 sm:py-2 px-4 sm:px-8 text-xs sm:text-sm font-bold text-white rounded-full' type='button'>
-                                        Edit
+                                {/* <div className="p-1 sm:p-2">
+                                    <button 
+                                        className='bg-[#D4BC6D] py-1.5 sm:py-2 px-4 sm:px-8 text-xs sm:text-sm font-bold text-white rounded-full hover:bg-[#c4ac5d] transition-colors' 
+                                        type='button'
+                                        onClick={handleUpdateCard}
+                                        disabled={updateCardMutation.isPending}
+                                    >
+                                        {updateCardMutation.isPending ? 'Updating...' : 'Update'}
                                     </button>
-                                </div>
+                                </div> */}
                             </div>
                         </div>
                     </div>
@@ -179,14 +271,37 @@ const Settings = () => {
                                 <User color='#fff' className="w-4 h-4 sm:w-5 sm:h-5" />
                             </div>
                             <div className="grow">
-                                <input type="text" placeholder='Sam raye' className='h-full w-full border-0 outline-0 text-[#D4BC6D] text-sm sm:text-base px-2 sm:px-0' />
+                                <input 
+                                    type="text" 
+                                    placeholder='John Doe' 
+                                    value={cardDetails.card_holder}
+                                    onChange={(e) => handleCardInputChange('card_holder', e.target.value)}
+                                    className='h-full w-full border-0 outline-0 text-[#D4BC6D] text-sm sm:text-base px-2 sm:px-0 bg-transparent' 
+                                />
                             </div>
-                            <div className="p-1 sm:p-2">
-                                <button className='bg-[#D4BC6D] py-1.5 sm:py-2 px-4 sm:px-8 text-xs sm:text-sm font-bold text-white rounded-full' type='button'>
-                                    Edit
+                            {/* <div className="p-1 sm:p-2">
+                                <button 
+                                    className='bg-[#D4BC6D] py-1.5 sm:py-2 px-4 sm:px-8 text-xs sm:text-sm font-bold text-white rounded-full hover:bg-[#c4ac5d] transition-colors' 
+                                    type='button'
+                                    onClick={handleUpdateCard}
+                                    disabled={updateCardMutation.isPending}
+                                >
+                                    {updateCardMutation.isPending ? 'Updating...' : 'Update'}
                                 </button>
-                            </div>
+                            </div> */}
                         </div>
+                    </div>
+
+                    {/* Save All Button */}
+                    <div className="mb-8 sm:mb-12 flex justify-center">
+                        <button 
+                            className='bg-[#D4BC6D] py-3 px-12 text-base font-bold text-white rounded-full hover:bg-[#c4ac5d] transition-colors disabled:opacity-50 disabled:cursor-not-allowed' 
+                            type='button'
+                            onClick={handleUpdateCard}
+                            disabled={updateCardMutation.isPending}
+                        >
+                            {updateCardMutation.isPending ? 'Updating Card Details...' : 'Update All Card Details'}
+                        </button>
                     </div>
 
         {/* Notice */}
