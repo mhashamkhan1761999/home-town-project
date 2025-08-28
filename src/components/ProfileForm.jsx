@@ -29,6 +29,19 @@ const ProfileForm = () => {
       setValue('social_media_reach', profileData.social_media_reach || '');
       setValue('bio', profileData.bio || '');
       setValue('description', profileData.description || '');
+      setValue('athlete_name', profileData.athlete_name || '');
+      setValue('age', profileData.age || '');
+      setValue('gender', profileData.gender || '');
+      setValue('country', profileData.country || '');
+      setValue('city', profileData.city || '');
+      setValue('level_of_athlete', profileData.level_of_athlete || '');
+      setValue('grade_level', profileData.grand_level || profileData.grade_level || '');
+      setValue('team_name', profileData.team_name || '');
+      setValue('team_email', profileData.team_email || '');
+      setValue('director_info', profileData.director_info || '');
+      setValue('coach_info', profileData.coach_info || '');
+      setValue('school_name', profileData.school_name || '');
+      setValue('school_email', profileData.school_email || '');
     }
   }, [profileData]);
 
