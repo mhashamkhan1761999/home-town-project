@@ -42,6 +42,13 @@ const ProfileForm = () => {
       setValue('coach_info', profileData.coach_info || '');
       setValue('school_name', profileData.school_name || '');
       setValue('school_email', profileData.school_email || '');
+      setValue('school_phone', profileData.school_phone || '');
+      setValue('instagram', profileData.instagram || '');
+      setValue('tiktok', profileData.tiktok || '');
+      setValue('twitter', profileData.twitter || '');
+      setValue('youtube', profileData.youtube || '');
+      setValue('twitch', profileData.twitch || '');
+      setValue('other', profileData.other || '');
     }
   }, [profileData]);
 
@@ -71,6 +78,26 @@ const ProfileForm = () => {
     formData.append('social_media_reach', formValues.social_media_reach);
     formData.append('bio', formValues.bio);
     formData.append('description', formValues.description);
+    formData.append('athlete_name', formValues.athlete_name);
+    formData.append('age', formValues.age);
+    formData.append('gender', formValues.gender);
+    formData.append('country', formValues.country);
+    formData.append('city', formValues.city);
+    formData.append('level_of_athlete', formValues.level_of_athlete);
+    formData.append('grade_level', formValues.grade_level);
+    formData.append('team_name', formValues.team_name);
+    formData.append('team_email', formValues.team_email);
+    formData.append('director_info', formValues.director_info);
+    formData.append('coach_info', formValues.coach_info);
+    formData.append('school_name', formValues.school_name);
+    formData.append('school_email', formValues.school_email);
+    formData.append('school_phone', formValues.school_phone);
+    formData.append('instagram', formValues.instagram);
+    formData.append('tiktok', formValues.tiktok);
+    formData.append('twitter', formValues.twitter);
+    formData.append('youtube', formValues.youtube);
+    formData.append('twitch', formValues.twitch);
+    formData.append('other', formValues.other);
 
     if (formValues.profile_picture?.[0]) {
       formData.append('profile_picture', formValues.profile_picture[0]);
@@ -254,9 +281,9 @@ const ProfileForm = () => {
               className="w-full border border-gray-700 bg-black/50 text-white p-3 rounded-lg"
             >
               <option value="">Select Gender</option>
-              <option>Male</option>
-              <option>Female</option>
-              <option>Prefer not to say</option>
+              <option value="male">Male</option>
+              <option value="female">Female</option>
+              <option value="prefer_not_to_say">Prefer not to say</option>
             </select>
           </div>
 
@@ -315,6 +342,174 @@ const ProfileForm = () => {
               {...register('grade_level')}
               className="w-full border border-gray-700 bg-black/50 text-white p-3 rounded-lg"
             />
+          </div>
+
+          {/* Team Name */}
+          <div>
+            <label className="block text-sm font-medium mb-2 text-gray-300">
+              Team Name
+            </label>
+            <input
+              type="text"
+              {...register('team_name')}
+              className="w-full border border-gray-700 bg-black/50 text-white p-3 rounded-lg"
+            />
+          </div>
+
+          {/* Team Email */}
+          <div>
+            <label className="block text-sm font-medium mb-2 text-gray-300">
+              Team Email
+            </label>
+            <input
+              type="email"
+              {...register('team_email')}
+              className="w-full border border-gray-700 bg-black/50 text-white p-3 rounded-lg"
+            />
+          </div>
+
+          {/* Director Info */}
+          <div>
+            <label className="block text-sm font-medium mb-2 text-gray-300">
+              Director Info
+            </label>
+            <input
+              type="text"
+              {...register('director_info')}
+              className="w-full border border-gray-700 bg-black/50 text-white p-3 rounded-lg"
+            />
+          </div>
+
+          {/* Coach Info */}
+          <div>
+            <label className="block text-sm font-medium mb-2 text-gray-300">
+              Coach Info
+            </label>
+            <input
+              type="text"
+              {...register('coach_info')}
+              className="w-full border border-gray-700 bg-black/50 text-white p-3 rounded-lg"
+            />
+          </div>
+
+          {/* School Name */}
+          <div>
+            <label className="block text-sm font-medium mb-2 text-gray-300">
+              School Name
+            </label>
+            <input
+              type="text"
+              {...register('school_name')}
+              className="w-full border border-gray-700 bg-black/50 text-white p-3 rounded-lg"
+            />
+          </div>
+
+          {/* School Email */}
+          <div>
+            <label className="block text-sm font-medium mb-2 text-gray-300">
+              School Email
+            </label>
+            <input
+              type="email"
+              {...register('school_email')}
+              className="w-full border border-gray-700 bg-black/50 text-white p-3 rounded-lg"
+            />
+          </div>
+
+          {/* School Phone */}
+          <div>
+            <label className="block text-sm font-medium mb-2 text-gray-300">
+              School Phone
+            </label>
+            <input
+              type="tel"
+              {...register('school_phone')}
+              className="w-full border border-gray-700 bg-black/50 text-white p-3 rounded-lg"
+            />
+          </div>
+        </div>
+
+        {/* Social Media Section */}
+        <div className="mt-8">
+          <h3 className="text-xl font-bold mb-4 text-white">Social Media Links</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Instagram */}
+            <div>
+              <label className="block text-sm font-medium mb-2 text-gray-300">
+                Instagram
+              </label>
+              <input
+                type="url"
+                {...register('instagram')}
+                placeholder="https://instagram.com/username"
+                className="w-full border border-gray-700 bg-black/50 text-white p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#D4BC6D]"
+              />
+            </div>
+
+            {/* TikTok */}
+            <div>
+              <label className="block text-sm font-medium mb-2 text-gray-300">
+                TikTok
+              </label>
+              <input
+                type="url"
+                {...register('tiktok')}
+                placeholder="https://tiktok.com/@username"
+                className="w-full border border-gray-700 bg-black/50 text-white p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#D4BC6D]"
+              />
+            </div>
+
+            {/* Twitter */}
+            <div>
+              <label className="block text-sm font-medium mb-2 text-gray-300">
+                Twitter
+              </label>
+              <input
+                type="url"
+                {...register('twitter')}
+                placeholder="https://twitter.com/username"
+                className="w-full border border-gray-700 bg-black/50 text-white p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#D4BC6D]"
+              />
+            </div>
+
+            {/* YouTube */}
+            <div>
+              <label className="block text-sm font-medium mb-2 text-gray-300">
+                YouTube
+              </label>
+              <input
+                type="url"
+                {...register('youtube')}
+                placeholder="https://youtube.com/channel/..."
+                className="w-full border border-gray-700 bg-black/50 text-white p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#D4BC6D]"
+              />
+            </div>
+
+            {/* Twitch */}
+            <div>
+              <label className="block text-sm font-medium mb-2 text-gray-300">
+                Twitch
+              </label>
+              <input
+                type="url"
+                {...register('twitch')}
+                placeholder="https://twitch.tv/username"
+                className="w-full border border-gray-700 bg-black/50 text-white p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#D4BC6D]"
+              />
+            </div>
+
+            {/* Other Social Media */}
+            <div>
+              <label className="block text-sm font-medium mb-2 text-gray-300">
+                Other Social Media
+              </label>
+              <input
+                type="url"
+                {...register('other')}
+                placeholder="https://other-platform.com/username"
+                className="w-full border border-gray-700 bg-black/50 text-white p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#D4BC6D]"
+              />
+            </div>
           </div>
         </div>
 
