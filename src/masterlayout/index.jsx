@@ -64,25 +64,30 @@ const MasterLayout = () => {
 
     return (
         <>
-            <div className="p-2 md:p-4 flex bg-black h-[100dvh] overflow-y-auto">
+            <div className="p-2 md:p-4 flex bg-black h-[100dvh] overflow-hidden">
                 <div className="hidden md:flex w-[10rem] min-w-[10rem] max-w-[10rem] h-full flex-col bg-black card-gradient !border-[1.5px] rounded-3xl">
-                    <img src="/admin-logo.svg" alt="Logo" className="w-[4.438rem] h-auto mt-6 mx-auto" />
+                    {/* Header section */}
+                    <div className="flex-shrink-0">
+                        <img src="/admin-logo.svg" alt="Logo" className="w-[4.438rem] h-auto mt-6 mx-auto" />
 
-                    <div className="mt-6 mb-4 flex justify-center">
-                        <NavLink
-                            to="/athlete/profile"
-                            className="w-[3.5rem] h-[3.5rem] rounded-full overflow-hidden border-[2px] border-[#CAB265]">
-                            <img
-                                src={profileImage}
-                                alt="User Profile"
-                                className="w-full h-full object-cover object-center"
-                            />
-                        </NavLink>
+                        <div className="mt-6 mb-4 flex justify-center">
+                            <NavLink
+                                to="/athlete/profile"
+                                className="w-[3.5rem] h-[3.5rem] rounded-full overflow-hidden border-[2px] border-[#CAB265]">
+                                <img
+                                    src={profileImage}
+                                    alt="User Profile"
+                                    className="w-full h-full object-cover object-center"
+                                />
+                            </NavLink>
+                        </div>
+                        <div className="mb-[2.75rem] mt-[3.125rem]">
+                            <img src="/line.svg" alt="line" className="h-[1px] w-full" />
+                        </div>
                     </div>
-                    <div className="mb-[2.75rem] mt-[3.125rem]">
-                        <img src="/line.svg" alt="line" className="h-[1px] w-full" />
-                    </div>
-                    <div className="flex flex-col items-center justify-center gap-6 pb-4">
+
+                    {/* Navigation section - scrollable if needed */}
+                    <div className="flex-1 flex flex-col items-center justify-start gap-6 overflow-y-auto custom-scrollbar px-2 pb-4">
                         {/* <NavLink to="/athlete/profile"
                             className={({ isActive }) => isActive ? 'text-[#CAB265] font-bold text-base flex flex-col items-center gap-2' : 'text-[#6A6A69] font-bold text-base flex items-center gap-2 flex-col'}>
                             <User size={18} />
@@ -127,21 +132,25 @@ const MasterLayout = () => {
 
 
                     </div>
-                    <div className="mb-[2.75rem] mt-[3.125rem]">
-                        <img src="/line.svg" alt="line" className="h-[1px] w-full" />
-                    </div>
-                    <div className="flex flex-col mt-auto items-center gap-6 mb-11">
-                        <p
-                            className="text-[#6A6A69] font-bold text-base cursor-pointer hover:text-red-600 transition flex items-center gap-2"
-                            onClick={handleLogout}
-                        >
-                            <LogOut size={18} />
-                            Log Out
-                        </p>
+
+                    {/* Footer section - always at bottom */}
+                    <div className="flex-shrink-0">
+                        <div className="mb-[2.75rem] mt-[3.125rem]">
+                            <img src="/line.svg" alt="line" className="h-[1px] w-full" />
+                        </div>
+                        <div className="flex flex-col items-center gap-6 mb-6">
+                            <p
+                                className="text-[#6A6A69] font-bold text-base cursor-pointer hover:text-red-600 transition flex items-center gap-2"
+                                onClick={handleLogout}
+                            >
+                                <LogOut size={18} />
+                                Log Out
+                            </p>
+                        </div>
                     </div>
                 </div>
 
-                <div className="grow">
+                <div className="grow overflow-hidden">
                     <div className="w-full p-4 flex items-center">
                         {/* Mobile: Small logo + hamburger */}
                         <div className="flex md:hidden items-center justify-between w-full">
@@ -262,13 +271,26 @@ const MasterLayout = () => {
                                 .animate-spin-slow {
                                     animation: spin-slow 6s linear infinite;
                                 }
+                                .custom-scrollbar::-webkit-scrollbar {
+                                    width: 4px;
+                                }
+                                .custom-scrollbar::-webkit-scrollbar-track {
+                                    background: transparent;
+                                }
+                                .custom-scrollbar::-webkit-scrollbar-thumb {
+                                    background: #4B4C46;
+                                    border-radius: 2px;
+                                }
+                                .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+                                    background: #6A6A69;
+                                }
                                 `}</style>
 
                             </div>
                         </div>
                     </div>
 
-                    <div className="p-1 md:p-4">
+                    <div className="p-1 md:p-4 h-[calc(100vh-6rem)] md:h-[calc(100vh-8rem)] overflow-y-auto">
                         <Outlet />
                     </div>
                 </div>
