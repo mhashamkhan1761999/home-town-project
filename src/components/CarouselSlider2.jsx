@@ -186,8 +186,8 @@ const Card = ({
         </div>
 
         {/* Back Side */}
-        <div className="absolute inset-0 w-full h-full bg-[#111] rounded-2xl border border-[#2f2f2f] text-white px-6 py-8 flex items-center justify-center text-center rotate-y-180 backface-hidden">
-          <div>
+        <div className="absolute inset-0 w-full h-full bg-[url('/bg-2.jpeg')] bg-cover bg-no-repeat bg-center rounded-2xl border border-[#2f2f2f] text-white  flex items-center justify-center text-center rotate-y-180 backface-hidden">
+          <div className='w-full h-full bg-[rgba(0,0,0,0.7)] px-6 py-8'>
             {about.split('\n\n').map((section, idx) => {
               const [heading, ...rest] = section.split(':');
               return (
