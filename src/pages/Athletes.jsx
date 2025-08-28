@@ -298,16 +298,17 @@ const Athletes = () => {
                 <span className="font-bold text-base text-[#d4bc6d]">Coming Soon</span>
               </button>
               <div className="px-4 pb-4">
-                {[...Array(6)].map((_, index) => {
-                  const id = index + 12;
+                {[...Array(8)].map((_, index) => {
+                  const id = index + 13;
                   const titles = [
                     "Brand Marketplace",
-                    "LMS Online Course",
+                    "LMS Online Course", 
                     "Press",
                     "Newsroom",
                     "Books",
                     "Fan's Room",
                     "Enterprise Support (MVP)",
+                    "Ai Video",
                   ];
                   return (
                     <div key={id} className="flex items-center mb-2">
@@ -388,11 +389,11 @@ const Athletes = () => {
                       <h4 className="text-xl font-bold text-[#D4BC6D]">Coming Soon</h4>
                     </div>
                     {featureList?.slice(12)?.map((item, index) => {
-                      const id = index + 12;
+                      const id = index + 13;
 
                       return (
                         <div
-                          key={id}
+                          key={item.id}
                           onClick={() => {
                             setActiveFeature(item);
                           }}
@@ -400,7 +401,7 @@ const Athletes = () => {
                             }`}
                         >
                           <div className={`relative h-12 w-12 rounded-full text-white text-lg sm:text-xl font-medium flex items-center justify-center ${item?.id === activeFeature.id ? 'bg-[#d4bc6d]' : 'bg-[#666666]'}`}>
-                            {id}
+                            {item.id}
                           </div>
                           <div
                             className={`font-bold text-base sm:text-lg ml-4 ${item.id == activeFeature.id
