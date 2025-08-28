@@ -212,7 +212,7 @@ const Header = () => {
               to="/athlete-signup"
               className="bg-[#d4bc6d] rounded-full uppercase px-6 py-2 text-black text-sm font-semibold text-center"
             >
-              Sign Up As
+              Sign Up
             </Link>
           </div>
         </div>
