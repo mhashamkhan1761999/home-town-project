@@ -225,8 +225,8 @@ const StoreFront = () => {
             </div>
             <div className="px-2">
               <p className="font-bold text-lg text-white ">
-                “Description”:{" "}
-                {athlete?.description || "No description available"}
+                Description:{" "}
+                {athlete?.description || "---"}
               </p>
             </div>
           </div>

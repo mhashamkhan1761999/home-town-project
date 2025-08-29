@@ -129,19 +129,16 @@ const NilCategory = () => {
     try {
       // First check if card details exist
       const cardResponse = await getRequest('/get-card');
-      
+      console.log(cardResponse,"card")
+      console.log(cardResponse.data.statusCode,"cardhhhhhhh")
       // If card API fails or returns 404, show card error modal
-      if (!cardResponse || cardResponse.status === 404) {
+      if (cardResponse && cardResponse.data && (cardResponse.data?.statusCode === 204 || cardResponse.data?.status === "false")) {
         setShowCardErrorModal(true);
         return;
       }
     } catch (error) {
       // If card API fails (including 404), show card error modal
       console.log('Card details not found or API error:', error);
-      if (error.response?.status === 404 || error.message?.includes('404') || !error.response) {
-        setShowCardErrorModal(true);
-        return;
-      }
     }
     
     try {
