@@ -239,239 +239,208 @@ const SuperAdminProducts = () => {
   };
 
   return (
-    <>
-      <style>
-        {`
-          .scrollbar-thin::-webkit-scrollbar {
-            height: 6px;
-          }
-          .scrollbar-track-gray-800::-webkit-scrollbar-track {
-            background: #1f2937;
-            border-radius: 3px;
-          }
-          .scrollbar-thumb-gray-600::-webkit-scrollbar-thumb {
-            background: #4b5563;
-            border-radius: 3px;
-          }
-          .scrollbar-thumb-gray-600::-webkit-scrollbar-thumb:hover {
-            background: #6b7280;
-          }
-        `}
-      </style>
-      <div className="w-full min-h-screen overflow-hidden">
-        <div className="card-gradient !border-[1.5px] p-2 sm:p-4 lg:p-6 rounded-3xl min-h-0 m-2 sm:m-4">
-        {/* Header */}
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4 mb-4 sm:mb-6">
-          <h2 className="text-white font-bold text-lg sm:text-xl lg:text-2xl xl:text-3xl truncate">Manage Products</h2>
-          <button
-            onClick={() => {
-              addModal.openModal();
-              setShowAddModal(true);
-            }}
-            className="bg-[#D4BC6D] text-black px-3 sm:px-4 lg:px-6 py-2 sm:py-3 rounded-full font-semibold hover:bg-[#b89f4e] transition flex items-center gap-2 text-sm sm:text-base w-full sm:w-auto justify-center shrink-0"
+    <div className="card-gradient !border-[1.5px] p-6 rounded-3xl">
+      {/* Header */}
+      <div className="flex justify-between items-center mb-8">
+        <h2 className="text-white font-bold text-3xl">Manage Products</h2>
+        <button
+          onClick={() => {
+            addModal.openModal();
+            setShowAddModal(true);
+          }}
+          className="bg-[#D4BC6D] text-black px-6 py-3 rounded-full font-semibold hover:bg-[#b89f4e] transition flex items-center gap-2"
+        >
+          <Plus size={20} />
+          Add Product
+        </button>
+      </div>
+
+      {/* Filters */}
+      <div className="flex gap-4 mb-6">
+        <div className="relative flex-1">
+          <Search
+            className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[#838383]"
+            size={20}
+          />
+          <input
+            type="text"
+            placeholder="Search products..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="w-full pl-10 pr-4 py-3 bg-[#282828] border border-[#4B4C46] rounded-lg text-white placeholder-[#838383] focus:border-[#D4BC6D] outline-none"
+          />
+        </div>
+        <div className="min-w-[200px]">
+          <select
+            value={selectedCategory}
+            onChange={(e) => setSelectedCategory(e.target.value)}
+            className="w-full px-4 py-3 bg-[#282828] border border-[#4B4C46] rounded-lg text-white focus:border-[#D4BC6D] outline-none"
           >
-            <Plus size={16} className="sm:w-5 sm:h-5" />
-            <span className="hidden sm:inline">Add Product</span>
-            <span className="sm:hidden">Add</span>
-          </button>
+            <option value="">All Categories</option>
+            {displayCategories?.map((category) => (
+              <option key={category.id} value={category.id}>
+                {category.name}
+              </option>
+            ))}
+          </select>
         </div>
+      </div>
 
-        {/* Filters */}
-        <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 mb-4 sm:mb-6">
-          <div className="relative flex-1 min-w-0">
-            <Search
-              className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[#838383] z-10"
-              size={16}
-            />
-            <input
-              type="text"
-              placeholder="Search products..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-9 pr-3 py-2 sm:py-3 bg-[#282828] border border-[#4B4C46] rounded-lg text-white placeholder-[#838383] focus:border-[#D4BC6D] outline-none text-sm"
-            />
-          </div>
-          <div className="w-full sm:w-auto sm:min-w-[160px]">
-            <select
-              value={selectedCategory}
-              onChange={(e) => setSelectedCategory(e.target.value)}
-              className="w-full px-3 py-2 sm:py-3 bg-[#282828] border border-[#4B4C46] rounded-lg text-white focus:border-[#D4BC6D] outline-none text-sm"
-            >
-              <option value="">All Categories</option>
-              {displayCategories?.map((category) => (
-                <option key={category.id} value={category.id}>
-                  {category.name}
-                </option>
-              ))}
-            </select>
-          </div>
-        </div>
-
-        {/* Products Table */}
-        <div className="w-full overflow-x-auto bg-[#1a1a1a] py-4 rounded-lg border border-[#323232] scrollbar-thin scrollbar-track-gray-800 scrollbar-thumb-gray-600">
-          <div className="min-w-[800px]"> {/* Fixed minimum width for mobile */}
-            <table className="w-full">
-              <thead>
-                <tr className="text-left text-xs font-bold text-[#838383] border-b border-[#323232]">
-                  <th className="pb-3 px-2 sm:px-4 min-w-[60px]">IMAGE</th>
-                  <th className="pb-3 px-2 sm:px-4 min-w-[120px]">NAME</th>
-                  <th className="pb-3 px-2 sm:px-4 min-w-[100px]">CATEGORY</th>
-                  <th className="pb-3 px-2 sm:px-4 min-w-[80px]">PRICE</th>
-                  <th className="pb-3 px-2 sm:px-4 min-w-[70px]">STOCK</th>
-                  <th className="pb-3 px-2 sm:px-4 min-w-[80px]">STATUS</th>
-                  <th className="pb-3 px-2 sm:px-4 min-w-[120px]">ACTIONS</th>
+      {/* Products Table */}
+      <div className="overflow-x-auto">
+        <table className="w-full">
+          <thead>
+            <tr className="text-left text-sm font-bold text-[#838383] border-b border-[#323232]">
+              <th className="pb-4">IMAGE</th>
+              <th className="pb-4">NAME</th>
+              <th className="pb-4">CATEGORY</th>
+              <th className="pb-4">PRICE</th>
+              <th className="pb-4">STOCK</th>
+              <th className="pb-4">STATUS</th>
+              <th className="pb-4">ACTIONS</th>
+            </tr>
+          </thead>
+          <tbody>
+            {isLoading ? (
+              <tr>
+                <td colSpan="7" className="py-8 text-center text-[#838383]">
+                  Loading products...
+                </td>
               </tr>
-            </thead>
-            <tbody>
-              {isLoading ? (
-                <tr>
-                  <td colSpan="7" className="py-4 text-center text-[#838383] text-sm px-2">
-                    Loading products...
-                  </td>
-                </tr>
-              ) : paginatedProducts.length === 0 ? (
-                <tr>
-                  <td colSpan="7" className="py-4 text-center text-[#838383] text-sm px-2">
-                    No products found
-                  </td>
-                </tr>
-              ) : (
-                paginatedProducts.map((product) => (
-                  <tr
-                    key={product.id}
-                    className="border-b border-[#323232] hover:bg-[rgba(255,255,255,0.02)]"
-                  >
-                    <td className="py-2 sm:py-3 px-2 sm:px-4">
-                      <div className="w-8 h-8 sm:w-10 sm:h-10 bg-[#adacac] rounded-lg overflow-hidden flex-shrink-0">
-                        {(product.icon || product.image) ? (
-                          <img
-                            src={
-                              error
-                                ? `/${(product.icon || product.image)}`
-                                : `https://hometown.eagleeblaze.com/storage/app/public/${(product.icon || product.image)}`.replace(/\\/g, '/')
-                            }
-                            alt={product.name}
-                            className="w-full h-full object-cover"
-                            onError={(e) => {
-                              e.target.style.display = "none";
-                              e.target.nextSibling.style.display = "flex";
-                            }}
-                          />
-                        ) : null}
-                        <div
-                          className={`w-full h-full flex items-center justify-center text-[#838383] ${
-                            (product.icon || product.image) ? "hidden" : ""
-                          }`}
-                        >
-                          <Package size={16} className="sm:w-5 sm:h-5" />
-                        </div>
-                      </div>
-                    </td>
-                    <td className="py-2 sm:py-3 px-2 sm:px-4">
-                      <div className="min-w-0">
-                        <p className="text-white font-medium text-xs sm:text-sm line-clamp-1">
-                          {product.name}
-                        </p>
-                        <p className="text-[#838383] text-xs truncate max-w-[100px] sm:max-w-[120px]">
-                          {stripHtml(product.description)}
-                        </p>
-                      </div>
-                    </td>
-                    <td className="py-2 sm:py-3 px-2 sm:px-4 text-[#D4BC6D] text-xs sm:text-sm">
-                      <span className="truncate block max-w-[80px] sm:max-w-none">
-                        {product.category?.name || "N/A"}
-                      </span>
-                    </td>
-                    <td className="py-2 sm:py-3 px-2 sm:px-4 text-white font-bold text-xs sm:text-sm whitespace-nowrap">
-                      ${product.price}
-                    </td>
-                    <td className="py-2 sm:py-3 px-2 sm:px-4 text-white text-xs sm:text-sm whitespace-nowrap">
-                      {product.stock || "Unlimited"}
-                    </td>
-                    <td className="py-2 sm:py-3 px-2 sm:px-4">
-                      <span
-                        className={`px-2 py-1 rounded-full text-xs font-medium whitespace-nowrap ${
-                          product.status === "active"
-                            ? "bg-green-100 text-green-800"
-                            : "bg-red-100 text-red-800"
+            ) : paginatedProducts.length === 0 ? (
+              <tr>
+                <td colSpan="7" className="py-8 text-center text-[#838383]">
+                  No products found
+                </td>
+              </tr>
+            ) : (
+              paginatedProducts.map((product) => (
+                <tr
+                  key={product.id}
+                  className="border-b border-[#323232] hover:bg-[rgba(255,255,255,0.02)]"
+                >
+                  <td className="py-4">
+                    <div className="w-12 h-12 bg-[#adacac] rounded-lg overflow-hidden">
+                      {(product.icon || product.image) ? (
+                        <img
+                          src={
+                            error
+                              ? `/${(product.icon || product.image)}`
+                              : `https://hometown.eagleeblaze.com/storage/app/public/${(product.icon || product.image)}`.replace(/\\/g, '/')
+                          }
+                          alt={product.name}
+                          className="w-full h-full object-cover"
+                          onError={(e) => {
+                            e.target.style.display = "none";
+                            e.target.nextSibling.style.display = "flex";
+                          }}
+                        />
+                      ) : null}
+                      <div
+                        className={`w-full h-full flex items-center justify-center text-[#838383] ${
+                          (product.icon || product.image) ? "hidden" : ""
                         }`}
                       >
-                        {product.status || "Active"}
-                      </span>
-                    </td>
-                    <td className="py-2 sm:py-3 px-2 sm:px-4">
-                      <div className="flex gap-1 justify-start">
-                        <button
-                          onClick={() => handleView(product)}
-                          className="p-1.5 text-[#838383] hover:text-[#D4BC6D] transition flex-shrink-0"
-                          title="View Product"
-                        >
-                          <Eye size={12} className="sm:w-4 sm:h-4" />
-                        </button>
-                        <button
-                          onClick={() => handleEdit(product)}
-                          className="p-1.5 text-[#838383] hover:text-blue-400 transition flex-shrink-0"
-                          title="Edit Product"
-                        >
-                          <Edit size={12} className="sm:w-4 sm:h-4" />
-                        </button>
-                        <button
-                          onClick={() => handleDelete(product)}
-                          className="p-1.5 text-[#838383] hover:text-red-400 transition flex-shrink-0"
-                          title="Delete Product"
-                        >
-                          <Trash size={12} className="sm:w-4 sm:h-4" />
-                        </button>
+                        <Package size={20} />
                       </div>
-                    </td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-            </table>
-          </div>
+                    </div>
+                  </td>
+                  <td className="py-4">
+                    <div>
+                      <p className="text-white font-medium">{product.name}</p>
+                      <p className="text-[#838383] text-sm truncate max-w-[200px]">
+                        {stripHtml(product.description)}
+                      </p>
+                    </div>
+                  </td>
+                  <td className="py-4 text-[#D4BC6D]">
+                    {product.category?.name || "N/A"}
+                  </td>
+                  <td className="py-4 text-white font-bold">
+                    ${product.price}
+                  </td>
+                  <td className="py-4 text-white">
+                    {product.stock || "Unlimited"}
+                  </td>
+                  <td className="py-4">
+                    <span
+                      className={`px-3 py-1 rounded-full text-xs font-medium ${
+                        product.status === "active"
+                          ? "bg-green-100 text-green-800"
+                          : "bg-red-100 text-red-800"
+                      }`}
+                    >
+                      {product.status || "Active"}
+                    </span>
+                  </td>
+                  <td className="py-4">
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => handleView(product)}
+                        className="p-2 text-[#838383] hover:text-[#D4BC6D] transition"
+                        title="View Product"
+                      >
+                        <Eye size={16} />
+                      </button>
+                      <button
+                        onClick={() => handleEdit(product)}
+                        className="p-2 text-[#838383] hover:text-blue-400 transition"
+                        title="Edit Product"
+                      >
+                        <Edit size={16} />
+                      </button>
+                      <button
+                        onClick={() => handleDelete(product)}
+                        className="p-2 text-[#838383] hover:text-red-400 transition"
+                        title="Delete Product"
+                      >
+                        <Trash size={16} />
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))
+            )}
+          </tbody>
+        </table>
+      </div>
+
+      {/* Pagination */}
+      {totalPages > 1 && (
+        <div className="flex justify-center items-center gap-2 mt-6">
+          <button
+            onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+            disabled={currentPage === 1}
+            className="px-3 py-2 bg-[#282828] text-white rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[#3a3a3a] transition"
+          >
+            Previous
+          </button>
+
+          {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+            <button
+              key={page}
+              onClick={() => setCurrentPage(page)}
+              className={`px-3 py-2 rounded-lg transition ${
+                currentPage === page
+                  ? "bg-[#D4BC6D] text-black"
+                  : "bg-[#282828] text-white hover:bg-[#3a3a3a]"
+              }`}
+            >
+              {page}
+            </button>
+          ))}
+
+          <button
+            onClick={() =>
+              setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+            }
+            disabled={currentPage === totalPages}
+            className="px-3 py-2 bg-[#282828] text-white rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[#3a3a3a] transition"
+          >
+            Next
+          </button>
         </div>
-
-        {/* Pagination */}
-        {totalPages > 1 && (
-          <div className="flex flex-wrap justify-center items-center gap-2 mt-6 px-2 sm:px-0">
-            <button
-              onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-              disabled={currentPage === 1}
-              className="px-2 sm:px-3 py-2 bg-[#282828] text-white rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[#3a3a3a] transition text-sm sm:text-base flex-shrink-0"
-            >
-              <span className="hidden sm:inline">Previous</span>
-              <span className="sm:hidden">Prev</span>
-            </button>
-
-            <div className="flex gap-1 sm:gap-2 overflow-x-auto max-w-full">
-              {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-                <button
-                  key={page}
-                  onClick={() => setCurrentPage(page)}
-                  className={`px-2 sm:px-3 py-2 rounded-lg transition text-sm sm:text-base flex-shrink-0 ${
-                    currentPage === page
-                      ? "bg-[#D4BC6D] text-black"
-                      : "bg-[#282828] text-white hover:bg-[#3a3a3a]"
-                  }`}
-                >
-                  {page}
-                </button>
-              ))}
-            </div>
-
-            <button
-              onClick={() =>
-                setCurrentPage((prev) => Math.min(prev + 1, totalPages))
-              }
-              disabled={currentPage === totalPages}
-              className="px-2 sm:px-3 py-2 bg-[#282828] text-white rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[#3a3a3a] transition text-sm sm:text-base flex-shrink-0"
-            >
-              <span className="hidden sm:inline">Next</span>
-              <span className="sm:hidden">Next</span>
-            </button>
-          </div>
-        )}
+      )}
 
       {/* Modals */}
       {showAddModal && (
@@ -517,9 +486,7 @@ const SuperAdminProducts = () => {
           }}
         />
       )}
-      </div>
     </div>
-    </>
   );
 };
 
@@ -618,22 +585,22 @@ const AddProductModal = ({ onClose, categories }) => {
   ];
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4">
-      <div className="bg-black border border-[#4B4C46] rounded-2xl p-4 sm:p-6 w-full max-w-xs sm:max-w-2xl max-h-[90vh] overflow-y-auto">
-        <h3 className="text-xl sm:text-2xl font-bold text-[#D4BC6D] mb-4 sm:mb-6">
+    <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
+      <div className="bg-black border border-[#4B4C46] rounded-2xl p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+        <h3 className="text-2xl font-bold text-[#D4BC6D] mb-6">
           Add New Product
         </h3>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 sm:space-y-6">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           {/* Product Name */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-white font-medium mb-2 text-sm sm:text-base">
+              <label className="block text-white font-medium mb-2">
                 Product Name *
               </label>
               <input
                 {...register("name", { required: "Product name is required" })}
-                className="w-full p-2 sm:p-3 bg-[#282828] border border-[#4B4C46] rounded-lg text-white focus:border-[#D4BC6D] outline-none text-sm sm:text-base"
+                className="w-full p-3 bg-[#282828] border border-[#4B4C46] rounded-lg text-white focus:border-[#D4BC6D] outline-none"
                 placeholder="Enter product name"
               />
               {errors.name && (
@@ -642,12 +609,12 @@ const AddProductModal = ({ onClose, categories }) => {
             </div>
             
             <div>
-              <label className="block text-white font-medium mb-2 text-sm sm:text-base">
+              <label className="block text-white font-medium mb-2">
                 Category *
               </label>
               <select
                 {...register("category_id", { required: "Category is required" })}
-                className="w-full p-2 sm:p-3 bg-[#282828] border border-[#4B4C46] rounded-lg text-white focus:border-[#D4BC6D] outline-none text-sm sm:text-base"
+                className="w-full p-3 bg-[#282828] border border-[#4B4C46] rounded-lg text-white focus:border-[#D4BC6D] outline-none"
               >
                 <option value="">Select Category</option>
                 {categories?.map((category) => (
@@ -657,7 +624,7 @@ const AddProductModal = ({ onClose, categories }) => {
                 ))}
               </select>
               {errors.category_id && (
-                <p className="text-red-500 text-xs sm:text-sm mt-1">
+                <p className="text-red-500 text-sm mt-1">
                   {errors.category_id.message}
                 </p>
               )}
@@ -666,12 +633,12 @@ const AddProductModal = ({ onClose, categories }) => {
 
           {/* Sub Category */}
           <div>
-            <label className="block text-white font-medium mb-2 text-sm sm:text-base">
+            <label className="block text-white font-medium mb-2">
               Sub Category
             </label>
             <select
               {...register("sub_category")}
-              className="w-full p-2 sm:p-3 bg-[#282828] border border-[#4B4C46] rounded-lg text-white focus:border-[#D4BC6D] outline-none text-sm sm:text-base"
+              className="w-full p-3 bg-[#282828] border border-[#4B4C46] rounded-lg text-white focus:border-[#D4BC6D] outline-none"
             >
               <option value="">Select Sub Category</option>
               <option value="t-shirt">T-shirt</option>
@@ -945,23 +912,23 @@ const AddProductModal = ({ onClose, categories }) => {
               type="file"
               accept="image/*"
               onChange={(e) => setImage(e.target.files[0])}
-              className="w-full p-2 sm:p-3 bg-[#282828] border border-[#4B4C46] rounded-lg text-white focus:border-[#D4BC6D] outline-none text-sm sm:text-base"
+              className="w-full p-3 bg-[#282828] border border-[#4B4C46] rounded-lg text-white focus:border-[#D4BC6D] outline-none"
             />
           </div>
 
           {/* Buttons */}
-          <div className="flex flex-col sm:flex-row justify-end gap-3 sm:gap-4 pt-4">
+          <div className="flex justify-end gap-4 pt-4">
             <button
               type="button"
               onClick={onClose}
-              className="px-4 sm:px-6 py-2 sm:py-3 bg-[#4B4C46] text-white rounded-lg hover:bg-[#5a5b54] transition text-sm sm:text-base"
+              className="px-6 py-3 bg-[#4B4C46] text-white rounded-lg hover:bg-[#5a5b54] transition"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={mutation.isLoading}
-              className="px-4 sm:px-6 py-2 sm:py-3 bg-[#D4BC6D] text-black rounded-lg hover:bg-[#b89f4e] transition disabled:opacity-50 text-sm sm:text-base"
+              className="px-6 py-3 bg-[#D4BC6D] text-black rounded-lg hover:bg-[#b89f4e] transition disabled:opacity-50"
             >
               {mutation.isLoading ? "Adding..." : "Add Product"}
             </button>

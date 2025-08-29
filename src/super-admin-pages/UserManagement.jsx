@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Plus, Search, Edit, Trash2, Eye, User, Mail, Shield, EyeOff } from 'lucide-react';
 import { useMutation, useQuery } from '@tanstack/react-query';
-import { deleteRequest, getRequest, postRequest, putRequest } from '../api';
+import { deleteRequest, getRequest, postRequest } from '../api';
 import { queryClient } from '../main';
 
 const UserManagement = () => {
@@ -113,67 +113,66 @@ const UserManagement = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#1a1a1a] text-white p-4 sm:p-6">
+    <div className="min-h-screen bg-[#1a1a1a] text-white p-6">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <div className="mb-6 sm:mb-8">
-          <h1 className="text-2xl sm:text-3xl font-bold text-[#D4BC6D] mb-2">User Management</h1>
-          <p className="text-gray-400 text-sm sm:text-base">Manage system users and their permissions</p>
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-[#D4BC6D] mb-2">User Management</h1>
+          <p className="text-gray-400">Manage system users and their permissions</p>
         </div>
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-6 sm:mb-8">
-          <div className="bg-[#282828] border border-[#4B4C46] rounded-lg p-4 sm:p-6">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+          <div className="bg-[#282828] border border-[#4B4C46] rounded-lg p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-gray-400 text-xs sm:text-sm">Total Users</p>
-                <p className="text-xl sm:text-2xl font-bold text-white">{users?.length}</p>
+                <p className="text-gray-400 text-sm">Total Users</p>
+                <p className="text-2xl font-bold text-white">{users?.length}</p>
               </div>
-              <User className="h-6 w-6 sm:h-8 sm:w-8 text-[#D4BC6D]" />
+              <User className="h-8 w-8 text-[#D4BC6D]" />
             </div>
           </div>
 
-          <div className="bg-[#282828] border border-[#4B4C46] rounded-lg p-4 sm:p-6">
+          <div className="bg-[#282828] border border-[#4B4C46] rounded-lg p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-gray-400 text-xs sm:text-sm">Admins</p>
-                <p className="text-xl sm:text-2xl font-bold text-white">
+                <p className="text-gray-400 text-sm">Admins</p>
+                <p className="text-2xl font-bold text-white">
                   {users?.filter(u => u.role_type == 'Admin')?.length}</p>
               </div>
-              <Shield className="h-6 w-6 sm:h-8 sm:w-8 text-red-500" />
+              <Shield className="h-8 w-8 text-red-500" />
             </div>
           </div>
 
-          <div className="bg-[#282828] border border-[#4B4C46] rounded-lg p-4 sm:p-6">
+          <div className="bg-[#282828] border border-[#4B4C46] rounded-lg p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-gray-400 text-xs sm:text-sm">SuperAdmins</p>
-                <p className="text-xl sm:text-2xl font-bold text-white">
+                <p className="text-gray-400 text-sm">SuperAdmins</p>
+                <p className="text-2xl font-bold text-white">
                   {users?.filter(u => u.role_type == 'SuperAdmin')?.length}</p>
               </div>
-              <Shield className="h-6 w-6 sm:h-8 sm:w-8 text-blue-500" />
+              <Shield className="h-8 w-8 text-blue-500" />
             </div>
           </div>
 
-          <div className="bg-[#282828] border border-[#4B4C46] rounded-lg p-4 sm:p-6">
+          <div className="bg-[#282828] border border-[#4B4C46] rounded-lg p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-gray-400 text-xs sm:text-sm">Regular Users</p>
-                <p className="text-xl sm:text-2xl font-bold text-white">
+                <p className="text-gray-400 text-sm">Regular Users</p>
+                <p className="text-2xl font-bold text-white">
                   {users?.filter(u => u.role_type === 'User')?.length}</p>
               </div>
-              <User className="h-6 w-6 sm:h-8 sm:w-8 text-green-500" />
+              <User className="h-8 w-8 text-green-500" />
             </div>
           </div>
         </div>
 
         {/* Controls */}
-        <div className="bg-[#282828] border border-[#4B4C46] rounded-lg p-4 sm:p-6 mb-6">
-          <div className="flex flex-col gap-4">
-            {/* Search and Filter Row */}
-            <div className="flex flex-col sm:flex-row gap-4">
+        <div className="bg-[#282828] border border-[#4B4C46] rounded-lg p-6 mb-6">
+          <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
+            <div className="flex flex-col md:flex-row gap-4 flex-1">
               {/* Search */}
-              <div className="relative flex-1">
+              <div className="relative flex-1 max-w-md">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                 <input
                   type="text"
@@ -185,38 +184,33 @@ const UserManagement = () => {
               </div>
 
               {/* Role Filter */}
-              <div className="w-full sm:w-auto">
-                <select
-                  value={selectedRole}
-                  onChange={(e) => setSelectedRole(e.target.value)}
-                  className="w-full sm:w-auto px-4 py-2 bg-[#1a1a1a] border border-[#4B4C46] rounded-lg text-white focus:outline-none focus:border-[#D4BC6D]"
-                >
-                  {filterOptions?.map(role => (
-                    <option key={role} value={role} className="bg-[#1a1a1a]">
-                      {role}
-                    </option>
-                  ))}
-                </select>
-              </div>
+              <select
+                value={selectedRole}
+                onChange={(e) => setSelectedRole(e.target.value)}
+                className="px-4 py-2 bg-[#1a1a1a] border border-[#4B4C46] rounded-lg text-white focus:outline-none focus:border-[#D4BC6D]"
+              >
+                {filterOptions?.map(role => (
+                  <option key={role} value={role} className="bg-[#1a1a1a]">
+                    {role}
+                  </option>
+                ))}
+              </select>
             </div>
 
             {/* Add User Button */}
-            <div className="flex justify-end">
-              <button
-                onClick={handleAddUser}
-                className="flex items-center gap-2 px-4 py-2 bg-[#D4BC6D] text-black rounded-lg hover:bg-[#E6C977] transition-colors w-full sm:w-auto justify-center"
-              >
-                <Plus className="h-4 w-4" />
-                Add User
-              </button>
-            </div>
+            <button
+              onClick={handleAddUser}
+              className="flex items-center gap-2 px-4 py-2 bg-[#D4BC6D] text-black rounded-lg hover:bg-[#E6C977] transition-colors"
+            >
+              <Plus className="h-4 w-4" />
+              Add User
+            </button>
           </div>
         </div>
 
         {/* Users Table */}
         <div className="bg-[#282828] border border-[#4B4C46] rounded-lg overflow-hidden">
-          {/* Desktop Table */}
-          <div className="hidden md:block overflow-x-auto">
+          <div className="overflow-x-auto">
             <table className="w-full">
               <thead className="bg-[#1a1a1a] border-b border-[#4B4C46]">
                 <tr>
@@ -289,57 +283,6 @@ const UserManagement = () => {
                 ))}
               </tbody>
             </table>
-          </div>
-
-          {/* Mobile Cards */}
-          <div className="md:hidden">
-            {filteredUsers?.map((user) => (
-              <div key={user.id} className="p-4 border-b border-[#4B4C46] last:border-b-0">
-                <div className="flex items-start justify-between mb-3">
-                  <div className="flex items-center">
-                    <div className="h-10 w-10 rounded-full bg-[#D4BC6D] flex items-center justify-center">
-                      <User className="h-5 w-5 text-black" />
-                    </div>
-                    <div className="ml-3">
-                      <div className="text-sm font-medium text-white">
-                        {user?.name}
-                      </div>
-                      <div className="flex items-center mt-1">
-                        <Mail className="h-3 w-3 text-gray-400 mr-1" />
-                        <span className="text-xs text-gray-300">{user?.email}</span>
-                      </div>
-                    </div>
-                  </div>
-                  <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getRoleColor(user?.role_type)}`}>
-                    {user?.role_type}
-                  </span>
-                </div>
-                
-                <div className="flex items-center justify-end space-x-2 pt-2 border-t border-[#4B4C46]">
-                  <button
-                    onClick={() => handleViewUser(user)}
-                    className="p-2 text-gray-400 hover:text-[#D4BC6D] transition-colors"
-                    title="View User"
-                  >
-                    <Eye className="h-4 w-4" />
-                  </button>
-                  <button
-                    onClick={() => handleEditUser(user)}
-                    className="p-2 text-gray-400 hover:text-blue-400 transition-colors"
-                    title="Edit User"
-                  >
-                    <Edit className="h-4 w-4" />
-                  </button>
-                  <button
-                    onClick={() => handleDeleteUser(user)}
-                    className="p-2 text-gray-400 hover:text-red-400 transition-colors"
-                    title="Delete User"
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </button>
-                </div>
-              </div>
-            ))}
           </div>
 
           {filteredUsers?.length === 0 && (
@@ -444,9 +387,9 @@ const AddUserModal = ({ isOpen, onClose, users, setUsers }) => {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-[#282828] border border-[#4B4C46] rounded-lg p-4 sm:p-6 w-full max-w-md max-h-[90vh] overflow-y-auto">
-        <h2 className="text-lg sm:text-xl font-bold text-[#D4BC6D] mb-4">Add New User</h2>
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div className="bg-[#282828] border border-[#4B4C46] rounded-lg p-6 w-full max-w-md mx-4">
+        <h2 className="text-xl font-bold text-[#D4BC6D] mb-4">Add New User</h2>
 
         <form onSubmit={handleSubmit} className="space-y-4">
 
@@ -574,9 +517,9 @@ const EditUserModal = ({ isOpen, onClose, user, users, setUsers }) => {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-[#282828] border border-[#4B4C46] rounded-lg p-4 sm:p-6 w-full max-w-md max-h-[90vh] overflow-y-auto">
-        <h2 className="text-lg sm:text-xl font-bold text-[#D4BC6D] mb-4">Edit User</h2>
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div className="bg-[#282828] border border-[#4B4C46] rounded-lg p-6 w-full max-w-md mx-4">
+        <h2 className="text-xl font-bold text-[#D4BC6D] mb-4">Edit User</h2>
 
         <form onSubmit={handleSubmit} className="space-y-4">
 
@@ -669,9 +612,9 @@ const ViewUserModal = ({ isOpen, onClose, user }) => {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-[#282828] border border-[#4B4C46] rounded-lg p-4 sm:p-6 w-full max-w-md max-h-[90vh] overflow-y-auto">
-        <h2 className="text-lg sm:text-xl font-bold text-[#D4BC6D] mb-4">User Details</h2>
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div className="bg-[#282828] border border-[#4B4C46] rounded-lg p-6 w-full max-w-md mx-4">
+        <h2 className="text-xl font-bold text-[#D4BC6D] mb-4">User Details</h2>
 
         <div className="space-y-4">
           <div className="flex items-center justify-center mb-6">
@@ -741,9 +684,9 @@ const DeleteUserModal = ({ isOpen, onClose, user, users, setUsers }) => {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-[#282828] border border-[#4B4C46] rounded-lg p-4 sm:p-6 w-full max-w-md max-h-[90vh] overflow-y-auto">
-        <h2 className="text-lg sm:text-xl font-bold text-red-400 mb-4">Delete User</h2>
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div className="bg-[#282828] border border-[#4B4C46] rounded-lg p-6 w-full max-w-md mx-4">
+        <h2 className="text-xl font-bold text-red-400 mb-4">Delete User</h2>
 
         <div className="mb-6">
           <p className="text-gray-300 mb-2">
