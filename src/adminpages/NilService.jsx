@@ -477,6 +477,50 @@ const ProductType = ({ handleActive, selectedCard, category, reload, selectedPro
     queryFn: () => getRequest(`/product-types?category_id=${category}`),
   });
 
+
+const colorMapping = {
+    black: "#000000",
+    "black beauty": "#1C1C1C",
+    white: "#FFFFFF",
+    "light gray": "#D3D3D3",
+    "dark gray": "#A9A9A9",
+    "pirate gray": "#828282",
+    "stone gray": "#8B8C89",
+    "oat gray": "#CCC5B9",
+    "carbon gray": "#545454",
+    sand: "#C2B280",
+    "sand color": "#C2B280",
+    "milk tea": "#DDB892",
+    "light apricot": "#FDD5B1",
+    "honey peach": "#FFB97B",
+    yellow: "#FFFF00",
+    brown: "#8B4513",
+    "gray camel": "#C1B6A4",
+    "dark red": "#8B0000",
+    "watermelon red": "#FC6C85",
+    purple: "#800080",
+    "purple haze": "#9F00C5",
+    blue: "#0000FF",
+    "dark blue": "#000080",
+    navy: "#000080",
+    "colorful blue": "#3A75C4",
+    "dark green": "#006400",
+    "blackish green": "#1C352D",
+    "gray green": "#A8B2A1",
+    // legacy and fallback colors
+    red: "#FF0000",
+    green: "#008000",
+    orange: "#FFA500",
+    pink: "#FFC0CB",
+    gray: "#808080",
+  };
+
+    const getColorDisplay = (colorName) => {
+    const normalizedColor = colorName?.toLowerCase();
+    return colorMapping[normalizedColor] || normalizedColor || "#cccccc";
+  };
+
+
   const [searchTerm, setSearchTerm] = useState("");
   const [showFinalizeConfirm, setShowFinalizeConfirm] = useState(false);
   const [showSuccessPopup, setShowSuccessPopup] = useState(false);
@@ -584,9 +628,16 @@ const ProductType = ({ handleActive, selectedCard, category, reload, selectedPro
                             </h3>
                             <p className="text-gray-300 text-sm">Size: {item?.size}</p>
 
-                            <p className="text-gray-500 text-xs italic">
-                              Branded and premium packaging
-                            </p>
+                            <div className="flex flex-wrap gap-1 mt-2">
+                              {item.colors?.map((color, index) => (
+                                <div
+                                  key={index}
+                                  className="w-4 h-4 rounded-full border border-gray-400"
+                                  style={{ backgroundColor: getColorDisplay(color) }}
+                                  title={color}
+                                />
+                              ))}
+                            </div>
 
                             {/* Select Button */}
                             <button
