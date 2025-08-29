@@ -61,7 +61,11 @@ const StoreFront = () => {
     <>
       <section
         className="h-[90dvh] w-full bg-bottom bg-no-repeat bg-cover py-8 px-5 relative"
-        style={{ backgroundImage: `url(${athlete?.cover_photo_url || athlete?.cover_photo || "/basket.svg"})` }}
+        style={{
+          backgroundImage: `url(${
+            athlete?.cover_photo_url || athlete?.cover_photo || "/basket.svg"
+          })`,
+        }}
       >
         <h1 className="text-[7.5rem] text-center uppercase font-bold bg-[linear-gradient(to_right,#d4bc6d,#57430d)] bg-clip-text text-transparent mb-8">
           {slug ? athlete?.athlete_name : "ATHLETE STORE"}
@@ -85,89 +89,55 @@ const StoreFront = () => {
         )}
 
         {/* Left content positioned absolutely */}
-        <div className="absolute bottom-20 left-5 max-w-xs">
-          <div className="flex flex-col">
-            <div className="mb-4">
-              <div className="h-16 w-16 mb-2">
-                <img src={athlete?.badge_level?.image} alt="star" className="w-full h-full object-contain" />
+        <div className="absolute bottom-20 left-5 max-w-md md:max-w-lg lg:max-w-xl">
+          <div className="bg-[rgba(255, 255, 255,0.1)] backdrop-blur-sm rounded-xl border border-[#D4BC6D] p-8 space-y-6">
+            <div className="flex items-center space-x-6">
+              <div className="h-20 w-20">
+                <img
+                  src={athlete?.badge_level?.image}
+                  alt="star"
+                  className="w-full h-full object-contain"
+                />
               </div>
-              <p className="text-xl font-semibold text-white">
+              <p className="text-3xl font-bold text-white">
                 {isLoading
                   ? "Loading..."
                   : athlete?.store || athlete?.store_name || "----"}
               </p>
             </div>
 
-            <div className="mb-4">
-              <p className=" font-normal text-white mb-3 text-xl">
-                {slug ? "Athlete Details" : "Social Media Reach"}
+            <div>
+              <p className="text-xl font-medium text-[#D4BC6D] mb-4">
+                Athlete Details
               </p>
+              <div>
+                <h3 className="text-2xl font-semibold text-white mb-3">
+                  {athlete?.store || athlete?.store_name}
+                </h3>
+                <p className="text-lg text-[#D4BC6D] mb-3">
+                  {athlete?.sport || athlete?.level_of_athlete}
+                </p>
+                {athlete?.team_name && (
+                  <p className="text-lg text-white mb-2">
+                    Team: {athlete.team_name}
+                  </p>
+                )}
+                {athlete?.school_name && (
+                  <p className="text-lg text-white mb-2">
+                    School: {athlete.school_name}
+                  </p>
+                )}
+                {(athlete?.city || athlete?.country) && (
+                  <p className="text-lg text-white">
+                    City: {athlete?.city ? athlete.city + ", " : ""}
+                    {athlete?.country}
+                  </p>
+                )}
+              </div>
+            </div>
 
-              {slug && athlete ? (
-                <div>
-                  {/* Athlete details card */}
-                  <div className="bg-[rgba(255, 255, 255,0.1)] backdrop-blur-sm rounded-xl border border-[#D4BC6D] p-3 mb-4">
-                    <div className="mb-3">
-                      <h3 className="text-white font-bold text-lg">
-                        {athlete?.store || athlete?.store_name}
-                      </h3>
-                      <p className="text-[#D4BC6D]">
-                        {athlete?.sport || athlete?.level_of_athlete}
-                      </p>
-                    </div>
-                    {athlete?.team_name && (
-                      <p className="text-white mb-1">
-                        Team: {athlete.team_name}
-                      </p>
-                    )}
-                    {athlete?.school_name && (
-                      <p className="text-white  mb-1">
-                        School: {athlete.school_name}
-                      </p>
-                    )}
-                    {(athlete?.city || athlete?.country) && (
-                      <p className="text-white">
-                        City: {athlete?.city ? athlete.city + ", " : ""}
-                        {athlete?.country}
-                      </p>
-                    )}
-                  </div>
-                </div>
-              ) : (
-                // Show default social media reach
-                <div className="flex items-center p-2 border border-[#2D2D2D] rounded-full bg-[rgba(255, 255, 255,0.1)] mb-7">
-                  <img
-                    alt="avatar"
-                    className="w-16 h-16 rounded-full border-2 border-black object-cover"
-                    src="https://i.pravatar.cc/150?img=1"
-                    type="button"
-                  />
-                  <img
-                    alt="avatar"
-                    className="w-16 h-16 rounded-full border-2 border-black object-cover -ml-4"
-                    src="https://i.pravatar.cc/150?img=2"
-                    type="button"
-                  />
-                  <img
-                    alt="avatar"
-                    className="w-16 h-16 rounded-full border-2 border-black object-cover -ml-4"
-                    src="https://i.pravatar.cc/150?img=3"
-                    type="button"
-                  />
-                  <img
-                    alt="avatar"
-                    className="w-16 h-16 rounded-full border-2 border-black object-cover -ml-4"
-                    src="https://i.pravatar.cc/150?img=4"
-                    type="button"
-                  />
-                  <div className="w-16 h-16 rounded-full bg-[#D4BC6D] flex items-center justify-center text-white font-bold text-sm -ml-4 border-2 border-black">
-                    +500
-                  </div>
-                </div>
-              )}
-
-              <div className="inline-flex items-center gap-3 bg-white/10 backdrop-blur-sm rounded-full border border-[#D4BC6D] p-1.5 pr-6">
-                <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center">
+            <div className="inline-flex items-center gap-4 bg-white/10 backdrop-blur-sm rounded-full border border-[#D4BC6D] p-3">
+              <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center">
                   <svg
                     fill="none"
                     height="24"
@@ -218,15 +188,14 @@ const StoreFront = () => {
                     </defs>
                   </svg>
                 </div>
-                <span className="text-white font-normal text-xl">
-                  {athlete.school_name || "Arizona Univeristy"}
-                </span>
-              </div>
+              <span className="text-white font-medium text-xl">
+                {athlete.school_name || "Arizona University"}
+              </span>
             </div>
-            <div className="px-2">
-              <p className="font-bold text-lg text-white ">
-                Description:{" "}
-                {athlete?.description || "---"}
+
+            <div>
+              <p className="font-medium text-white text-lg">
+                Description: {athlete?.description || "---"}
               </p>
             </div>
           </div>
@@ -242,8 +211,9 @@ const StoreFront = () => {
           <section className="py-24">
             <h1 className="text-[6.875rem] mb-[7.188rem] text-center uppercase font-bold bg-[linear-gradient(to_right,#d4bc6d,#57430d)] bg-clip-text text-transparent ">
               {slug
-                ? `${athlete?.store || athlete?.store_name || "ATHLETE"
-                }'S MERCHANDISE`
+                ? `${
+                    athlete?.store || athlete?.store_name || "ATHLETE"
+                  }'S MERCHANDISE`
                 : "MERCHANDISE"}
             </h1>
             <div className="mb-[7.188rem]">
@@ -290,8 +260,9 @@ const StoreFront = () => {
           <section className="py-24 bg-black">
             <h1 className="text-[6.875rem] mb-[7.188rem] text-center uppercase font-bold bg-[linear-gradient(to_right,#d4bc6d,#57430d)] bg-clip-text text-transparent ">
               {slug
-                ? `${athlete?.store || athlete?.store_name || "ATHLETE"
-                }'S VAULT`
+                ? `${
+                    athlete?.store || athlete?.store_name || "ATHLETE"
+                  }'S VAULT`
                 : "ATHLETE VAULT"}
             </h1>
             <div className="mb-[7.188rem]">
