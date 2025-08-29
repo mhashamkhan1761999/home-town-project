@@ -429,11 +429,6 @@ const CashOutModal = ({ isOpen, onClose, user }) => {
       return;
     }
 
-    if (totalSaleAmount < 5) {
-      toast.error("Minimum withdrawal amount is $5.00");
-      return;
-    }
-
     // Send the total_sale amount to API
     cashOutMutation.mutate({ amount: totalSaleAmount });
   };
@@ -482,11 +477,7 @@ const CashOutModal = ({ isOpen, onClose, user }) => {
               </div>
             </div>
             <p className="text-xs text-gray-400 mt-2">
-              {totalSaleAmount < 10
-                ? `Minimum withdrawal amount: $10.00 (Current: $${totalSaleAmount.toFixed(
-                    2
-                  )})`
-                : "This amount will be withdrawn automatically"}
+              A 2% fee will be deducted by our cashout processor.
             </p>
           </div>
 
@@ -502,7 +493,7 @@ const CashOutModal = ({ isOpen, onClose, user }) => {
             <button
               type="submit"
               className="flex-1 py-3 px-4 bg-[#57430D] text-white rounded-lg hover:bg-[#ab965d] transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
-              disabled={cashOutMutation.isPending || totalSaleAmount < 10}
+              disabled={cashOutMutation.isPending || totalSaleAmount <= 0}
             >
               {cashOutMutation.isPending
                 ? "Processing..."
