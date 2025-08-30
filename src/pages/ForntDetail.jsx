@@ -55,7 +55,7 @@ const ForntDetail = () => {
                         {detail?.name}
                     </h1>
                     {/* Price */}
-                    <p className="text-2xl font-semibold text-green-600">$59.99</p>
+                    <p className="text-2xl font-semibold text-green-600">{detail?.price}</p>
                     {/* Description */}
                     <p className="text-white">
                         {detail?.description}

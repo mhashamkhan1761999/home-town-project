@@ -81,6 +81,14 @@ const Card = ({ id, name, image, images = [], description, price }) => {
                         ${price ?? "0.00"}
                     </p>
                 </div>
+
+                {/* View Button */}
+                <a
+                    href={`/product/${id}`}
+                    className="bg-[#57430D] py-2.5 inline-flex items-center justify-center text-white rounded-full w-full font-bold text-sm"
+                >
+                    View
+                </a>
             </div>
         </div>
     );

@@ -95,6 +95,7 @@ const VaultCard = ({ id, name, description, price, image, images, rating, subTit
                         </div>
                         <div className="">
                             <p className='m-0 text-lg font-bold text-white text-center'>
+                                {console.log(price,"pese")}
                                 ${price ? parseFloat(price)?.toFixed(2) : '0.00'}
                             </p>
                         </div>
