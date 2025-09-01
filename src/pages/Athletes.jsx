@@ -155,15 +155,15 @@ const featureList = [
   },
   {
     id: 19,
-    title: 'Enterprise Support (MVP)',
-    description: "Ai powered analytics and instant cashouts\nPlay at the next level\nSocial media promotion\nPro Dashboard\nIndustry leading profit sharing",
+    title: 'Enterprise Tier',
+    description: "The Full Brand Suite – MVP Tier is built for athletes and creators who want to keep 100% of their profits with no commissions. For a flat monthly fee, our team handles everything on your platform — from launching merchandise and building digital products to securing NIL opportunities — all fully customized to your brand so you can focus on growing your business and earning more.",
     image: '/question-mark.jpeg',
     locked: true,
   },
   {
     id: 20,
     title: 'Ai Video',
-    description: "Transform your ideas into stunning AI-powered videos with our creative team. Whatever you imagine, we’ll bring it to life — perfect for standout marketing and eye-catching content",
+    description: " Create captivating, custom videos with the perfect blend of our AI technology and professional editing team. Designed for social media promotion and beyond, we help you turn your vision into eye-catching content that stands out.",
     image: '/question-mark.jpeg',
     locked: true,
   },
