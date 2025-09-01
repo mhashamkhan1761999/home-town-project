@@ -226,9 +226,9 @@ const Athletes = () => {
             {/* Right Image */}
             <div>
               <img
-                src="/phone.svg"
+                src="/phone-2.png"
                 alt="about us"
-                className="w-full max-w-xs sm:max-w-md md:max-w-lg lg:max-w-[26rem] xl:max-w-[34rem] mx-auto object-contain"
+                className="w-full max-w-xs sm:max-w-md md:max-w-md lg:max-w-[17rem] xl:max-w-[24rem] mx-auto object-contain"
               />
             </div>
           </div>
