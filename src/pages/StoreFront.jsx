@@ -136,7 +136,7 @@ const StoreFront = () => {
               </div>
             </div>
 
-            <div className="inline-flex items-center gap-4 bg-white/10 backdrop-blur-sm rounded-full border border-[#D4BC6D] p-3">
+            {/* <div className="inline-flex items-center gap-4 bg-white/10 backdrop-blur-sm rounded-full border border-[#D4BC6D] p-3">
               <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center">
                 <svg
                   fill="none"
@@ -193,7 +193,7 @@ const StoreFront = () => {
                   {athlete.school_name || "Arizona University"}
                 </span>
               )}
-            </div>
+            </div> */}
             {athlete?.description && (
               <div>
                 <p className="font-medium text-white text-lg">
