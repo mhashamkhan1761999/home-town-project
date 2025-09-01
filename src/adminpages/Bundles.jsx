@@ -74,7 +74,7 @@ const Bundles = () => {
                 <div className="max-h-[75dvh] overflow-y-auto">
                     <div className="mb-24">
                         <div className="flex flex-wrap gap-7">
-                            {data?.map((item) => (
+                            {data?.filter(item => item?.title!= "Growth Bundles").map((item) => (
                                 <div key={item?.id} className="relative px-8 pt-16 pb-10 card-gradient !border-[1.5px] rounded-3xl w-[25.375rem]">
                                     {/* <div className={`absolute top-5 right-0 -translate-x-1/2 text-white text-base capitalize font-semibold px-4 py-1 rounded-full shadow-md ${getColor(item?.type)}`}>
                                         {item?.type}
