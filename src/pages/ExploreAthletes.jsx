@@ -264,7 +264,7 @@ const ExploreAthletes = () => {
                             <form onSubmit={handleSearch} className="flex items-center w-full p-1 rounded-full bg-[#2d2d2d] focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-offset-black focus-within:ring-[#D4BC6D] transition-all">
                                 <input
                                     className="w-full pl-5 pr-3 py-2 bg-transparent border-none text-white placeholder-neutral-500 focus:outline-none text-base sm:text-sm"
-                                    placeholder="Search by name, email, sport, team..."
+                                    placeholder="Search by name, sport, team..."
                                     type="search"
                                     value={searchTerm}
                                     onChange={(e) => setSearchTerm(e.target.value)}
