@@ -124,28 +124,23 @@ const OurTeam = () => {
                 <div class="max-w-5xl mx-auto text-center">
                     <h2 class="text-3xl md:text-4xl font-bold text-[#d4bc6d] mb-8">Our Team Ecosystem</h2>
 
-                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 text-gray-700 text-lg ">
-                        <div class="bg-gray-50 p-6 rounded-xl shadow-md hover:shadow-lg transition border border-[#d4bc6d]">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 gap-6 text-[#d4bc6d] text-lg ">
+                        <div class="bg-[#121212] p-6 rounded-xl shadow-md hover:shadow-lg transition border border-[#d4bc6d]">
                             <p class="font-semibold text-2xl text-gold-600">50+</p>
                             <p class="mt-1">Graphic Designers</p>
                         </div>
 
-                        <div class="bg-gray-50 p-6 rounded-xl shadow-md hover:shadow-lg transition">
-                            <p class="font-semibold text-2xl text-gold-600">10+</p>
-                            <p class="mt-1">Video Editors</p>
-                        </div>
-
-                        <div class="bg-gray-50 p-6 rounded-xl shadow-md hover:shadow-lg transition">
+                        <div class="bg-[#121212] p-6 rounded-xl shadow-md hover:shadow-lg transition border border-[#d4bc6d]">
                             <p class="font-semibold text-2xl text-gold-600">10+</p>
                             <p class="mt-1">Production Team</p>
                         </div>
 
-                        <div class="bg-gray-50 p-6 rounded-xl shadow-md hover:shadow-lg transition">
+                        <div class="bg-[#121212] p-6 rounded-xl shadow-md hover:shadow-lg transition border border-[#d4bc6d]">
                             <p class="font-semibold text-2xl text-gold-600">10+</p>
                             <p class="mt-1">Leads Team</p>
                         </div>
 
-                        <div class="bg-gray-50 p-6 rounded-xl shadow-md hover:shadow-lg transition">
+                        <div class="bg-[#121212] p-6 rounded-xl shadow-md hover:shadow-lg transition border border-[#d4bc6d]">
                             <p class="font-semibold text-2xl text-gold-600">25+</p>
                             <p class="mt-1">Internal Sales</p>
                         </div>
