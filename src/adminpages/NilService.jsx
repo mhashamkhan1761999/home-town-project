@@ -566,6 +566,7 @@ const colorMapping = {
           >
             Complete Service Launch
           </button>
+          <div className='text-[#D4BC6D] font-semibold md:text-3xl  md:ml-30'>Select Your Products</div>
           <div className="ms-auto">
             <select
               className="border border-[#d4bc6d] text-white p-2 w-full mb-4 rounded"
