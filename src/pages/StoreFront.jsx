@@ -188,16 +188,19 @@ const StoreFront = () => {
                   </defs>
                 </svg>
               </div>
-              <span className="text-white font-medium text-xl">
-                {athlete.school_name || "Arizona University"}
-              </span>
+              {athlete?.school_name && (
+                <span className="text-white font-medium text-xl">
+                  {athlete.school_name || "Arizona University"}
+                </span>
+              )}
             </div>
-
-            <div>
-              <p className="font-medium text-white text-lg">
-                Description: {athlete?.description || "---"}
-              </p>
-            </div>
+            {athlete?.description && (
+              <div>
+                <p className="font-medium text-white text-lg">
+                  Description: {athlete?.description}
+                </p>
+              </div>
+            )}
           </div>
         </div>
       </section>
