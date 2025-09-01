@@ -71,20 +71,13 @@ const featureList = [
   },
   {
     id: 10,
-    title: 'Player Card',
-    description: "Turn your moment into a collectible. Your official player card is more than a photo and a name — it’s a snapshot of your legacy. Fans will want to collect it, trade it, and show it off. Whether it’s glossy, signed, or limited edition, this is your chance to create something iconic. Cement your presence. Make it official",
-    image: '/player_card.png',
-    locked: false,
-  },
-  {
-    id: 11,
     title: 'Coffee',
     description: "More than a caffeine fix — it’s part of the routine. \n This category highlights the daily habits that keep athletes locked in. Whether it’s a morning jumpstart or an evening reset, coffee becomes a steady part of focus, energy, and rhythm. By sharing your blend, you’re letting others tap into the pace that drives you — on and off the court.",
     image: '/coffee.png',
     locked: false,
   },
   {
-    id: 12,
+    id: 11,
     title: 'Ambassador Program',
     description: `Earn by bringing your teammates, friends, or network into the platform.
 
@@ -100,21 +93,21 @@ const featureList = [
     locked: false,
   },
   {
-    id: 13,
+    id: 12,
     title: 'Brand Marketplace',
     description: "Hometown Hero connects athletes with brands through a streamlined digital marketplace. Athletes can land brand deals as either micro or NIL influencers, ranging from product-based promotions to paid sponsorships, affiliate partnerships, and event appearances.",
     image: '/question-mark.jpeg',
     locked: true,
   },
   {
-    id: 14,
+    id: 13,
     title: 'LMS Online Course',
     description: "Athletes can create and sell personalized online courses (e.g., training, skills, mindset) to their audience. Courses are linked to their merchandise store for cross-promotion, offering a new revenue stream and deeper fan engagement. We help set up a social community (e.g., Instagram) before launching the course.",
     image: '/question-mark.jpeg',
     locked: true,
   },
   {
-    id: 15,
+    id: 14,
     title: 'Press',
     description: `Get Featured. Get Noticed. Get Recruited.
 
@@ -129,21 +122,21 @@ const featureList = [
     locked: true,
   },
   {
-    id: 16,
+    id: 15,
     title: 'Newsroom',
     description: "The Newsroom is your space to get promoted, build your brand, and elevate your NIL. From athlete features and highlight reels to interviews and custom media, it’s all connected to your storefront — so fans see the full picture. Whether you're selected or choose to boost your visibility, this is where you get noticed and start standing out.",
     image: '/question-mark.jpeg',
     locked: true,
   },
   {
-    id: 17,
+    id: 16,
     title: 'Books',
     description: "Turn your story into something real — a novel, magazine, coffee table book, or anything in between. Fully customized with your own photos, graphics, and words, your book becomes a one-of-a-kind reflection of your journey. Whether it’s your athletic career, life story, or personal message — this is your chance to create something lasting, powerful, and uniquely yours.",
     image: '/question-mark.jpeg',
     locked: true,
   },
   {
-    id: 18,
+    id: 17,
     title: "Fan's Room",
     description: `Your fans support you — now it’s your turn to give them something unforgettable.
 
@@ -154,17 +147,24 @@ const featureList = [
     locked: true,
   },
   {
-    id: 19,
+    id: 18,
     title: 'Enterprise Tier',
     description: "The Full Brand Suite – MVP Tier is built for athletes and creators who want to keep 100% of their profits with no commissions. For a flat monthly fee, our team handles everything on your platform — from launching merchandise and building digital products to securing NIL opportunities — all fully customized to your brand so you can focus on growing your business and earning more.",
     image: '/question-mark.jpeg',
     locked: true,
   },
   {
-    id: 20,
+    id: 19,
     title: 'Ai Video',
     description: " Create captivating, custom videos with the perfect blend of our AI technology and professional editing team. Designed for social media promotion and beyond, we help you turn your vision into eye-catching content that stands out.",
     image: '/question-mark.jpeg',
+    locked: true,
+  },
+    {
+    id: 20,
+    title: 'Player Card',
+    description: "Turn your moment into a collectible. Your official player card is more than a photo and a name — it’s a snapshot of your legacy. Fans will want to collect it, trade it, and show it off. Whether it’s glossy, signed, or limited edition, this is your chance to create something iconic. Cement your presence. Make it official",
+    image: '/player_card.png',
     locked: true,
   },
 ];
@@ -173,6 +173,14 @@ const featureList = [
 
 const Athletes = () => {
   const [activeFeature, setActiveFeature] = useState(featureList[0]);
+
+  // Adjust logic to ensure all features, including locked ones, can update the activeFeature state
+  const handleFeatureClick = (feature) => {
+    if (feature.locked) {
+      console.warn(`${feature.title} is locked and cannot be activated.`);
+    }
+    setActiveFeature(feature);
+  };
 
   return (
     <>
@@ -260,7 +268,7 @@ const Athletes = () => {
               >
                 <button
                   className="w-full flex items-center justify-between px-4 py-3 text-left"
-                  onClick={() => setActiveFeature(feature)}
+                  onClick={() => handleFeatureClick(feature)}
                 >
                   <span className="flex items-center gap-2">
                     <span
@@ -298,8 +306,8 @@ const Athletes = () => {
                 <span className="font-bold text-base text-[#d4bc6d]">Coming Soon</span>
               </button>
               <div className="px-4 pb-4">
-                {[...Array(8)].map((_, index) => {
-                  const id = index + 13;
+                {[...Array(9)].map((_, index) => {
+                  const id = index + 12;
                   const titles = [
                     "Brand Marketplace",
                     "LMS Online Course", 
@@ -307,8 +315,9 @@ const Athletes = () => {
                     "Newsroom",
                     "Books",
                     "Fan's Room",
-                    "Enterprise Support (MVP)",
+                    "Enterprise Tier",
                     "Ai Video",
+                    "Player Card"
                   ];
                   return (
                     <div key={id} className="flex items-center mb-2">
@@ -352,11 +361,11 @@ const Athletes = () => {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                   {/* Unlocked Features */}
                   <div className="flex flex-col gap-4">
-                    {featureList?.slice(0, 12)?.map((feature) => (
+                    {featureList?.filter(feature => !feature.locked)?.map((feature) => (
                       <div
                         key={feature.id}
                         onClick={() => {
-                          if (!feature.locked) setActiveFeature(feature);
+                          handleFeatureClick(feature);
                         }}
                         className={`bg-[#ffffff19] flex items-center p-3 rounded-full cursor-pointer hover:bg-[#ffffff2d] transition ${feature.id === activeFeature.id ? 'border border-[#d4bc6d]' : ''
                           }`}
@@ -366,11 +375,6 @@ const Athletes = () => {
                             }`}
                         >
                           {feature.id}
-                          {feature.locked && (
-                            <span className="absolute -top-1 -right-1 text-xs bg-black rounded-full px-1 py-0.5">
-                              🔒
-                            </span>
-                          )}
                         </div>
                         <div
                           className={`font-bold text-base sm:text-lg ml-4 ${feature.id === activeFeature.id
@@ -388,14 +392,12 @@ const Athletes = () => {
                     <div className="p-2">
                       <h4 className="text-xl font-bold text-[#D4BC6D]">Coming Soon</h4>
                     </div>
-                    {featureList?.slice(12)?.map((item, index) => {
-                      const id = index + 13;
-
+                    {featureList?.filter(feature => feature.locked)?.map((item) => {
                       return (
                         <div
                           key={item.id}
                           onClick={() => {
-                            setActiveFeature(item);
+                            handleFeatureClick(item);
                           }}
                           className={`bg-[#ffffff19] flex items-center p-3 rounded-full cursor-pointer hover:bg-[#ffffff2d] transition ${item?.id === activeFeature.id ? 'border border-[#d4bc6d]' : ''
                             }`}

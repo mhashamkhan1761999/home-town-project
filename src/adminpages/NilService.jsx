@@ -15,7 +15,7 @@ import { useModalHistory, useNestedModalHistory } from '../hooks/useModalHistory
 const categoryImages = {
   "Clothing": "/serviceImages/clothes.jpg",
   "Acid Wash": "/serviceImages/acid-wash.jpg",
-  "Player Card": "/serviceImages/player-card.jpg",
+  // "Player Card": "/serviceImages/player-card.jpg",p
   "Jersey": "/serviceImages/Jerseys.jpg",
   "Footwear": "/serviceImages/footwear.png",
   "Home & Lifestyle": "/serviceImages/home-and-lifestyle.jpg",
@@ -130,7 +130,6 @@ const NilCategory = () => {
       // First check if card details exist
       const cardResponse = await getRequest('/get-card');
       console.log(cardResponse,"card")
-      console.log(cardResponse.data.statusCode,"cardhhhhhhh")
       // If card API fails or returns 404, show card error modal
       if (cardResponse && cardResponse.data && (cardResponse.data?.statusCode === 204 || cardResponse.data?.status === "false")) {
         setShowCardErrorModal(true);
@@ -413,8 +412,8 @@ const Category = ({ handleActive, selectedCard, setSelectedCardId }) => {
     queryKey: ['category'],
     queryFn: () => getRequest('/categories'),
   });
-
-  const filteredCategories = data?.filter((category) =>
+  const filterCategorieswithoutPlayer = data?.filter(cat => cat?.name?.toLowerCase() !== "player card") || [];
+  const filteredCategories = filterCategorieswithoutPlayer?.filter((category) =>
     category?.name?.toLowerCase()?.includes(searchTerm?.toLowerCase())
   );
 
@@ -1016,7 +1015,7 @@ const ItemModal2 = ({ item = null, onClose, onSuccesActive, categoryId }) => {
   });
 
   // Define categories that should only show logo option
-  const logoOnlyCategories = ['Player Card', 'Coffee', 'Health', 'Self Care', 'Strength Supplements'];
+  const logoOnlyCategories = ['Coffee', 'Health', 'Self Care', 'Strength Supplements'];
   
   // Get current category name
   const currentCategoryName = categories?.find(cat => cat.id === categoryId)?.name;
