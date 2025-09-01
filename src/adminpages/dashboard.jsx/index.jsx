@@ -119,11 +119,11 @@ const Dashboard = () => {
                       style={{
                         width: "16.6667%", // 100/6
                         background: isCurrent
-                          ? `linear-gradient(to right, #D4BC6D ${percent}%, transparent ${percent}%)`
+                          ? `linear-gradient(to right, #D4BC6D ${percent}%, transparent ${percent}%`
                           : "transparent",
                         transition: "background 0.3s",
                       }}
-                      className="h-full"
+                      className="h-full rounded-full"
                     />
                   );
                 }
