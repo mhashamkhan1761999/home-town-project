@@ -125,8 +125,8 @@ const ProfileForm = () => {
             alt="Cover"
             className="w-full h-full object-cover"
           />
-          <label className="absolute bottom-3 right-3 bg-black/70 text-white px-3 py-1 text-xs rounded cursor-pointer hover:bg-black/90">
-            Edit
+          <label className="absolute bottom-3 right-3 bg-[#D4BC6D] text-black px-3 py-1 text-xs rounded cursor-pointer">
+            Edit Image
             <input
               type="file"
               {...register('cover_photo')}
@@ -142,10 +142,10 @@ const ProfileForm = () => {
             <img
               src={profileData?.profile_picture_url || '/default-avatar.png'}
               alt="Profile"
-              className="w-32 h-32 rounded-full border-4 border-[#1b1b1b] object-cover"
+              className="w-32 h-32 border-[#f8d45d] rounded-full border-2 object-cover"
             />
-            <label className="absolute bottom-1 right-1 bg-black/70 text-white px-2 py-1 text-xs rounded cursor-pointer hover:bg-black/90">
-              Edit
+            <label className="absolute bottom-1 -right-8 bg-[#D4BC6D] text-black px-2 py-1 text-xs rounded cursor-pointer">
+              Edit Image
               <input
                 type="file"
                 {...register('profile_picture')}

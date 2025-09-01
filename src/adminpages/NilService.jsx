@@ -421,7 +421,7 @@ const Category = ({ handleActive, selectedCard, setSelectedCardId }) => {
   return (
     <div className="card-gradient !border-[1.5px] p-6 rounded-3xl">
       <div className="flex mb-11">
-        <h2 className='text-white font-bold text-3xl '>Category List</h2>
+        <h2 className='text-white font-bold text-3xl '>NIL Opportunities</h2>
 
         <div className="ms-auto">
           <input
