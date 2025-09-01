@@ -515,7 +515,18 @@ const colorMapping = {
   };
 
     const getColorDisplay = (colorName) => {
-    const normalizedColor = colorName?.toLowerCase();
+    // Handle cases where colorName is not a string
+    if (!colorName) return "#cccccc";
+    
+    // If it's an object, try to get the name or value property
+    if (typeof colorName === 'object') {
+      colorName = colorName.name || colorName.value || colorName.color || String(colorName);
+    }
+    
+    // Ensure it's a string before calling toLowerCase
+    const colorString = String(colorName);
+    const normalizedColor = colorString.toLowerCase();
+    
     return colorMapping[normalizedColor] || normalizedColor || "#cccccc";
   };
 
@@ -628,14 +639,31 @@ const colorMapping = {
                             <p className="text-gray-300 text-sm">Size: {item?.size}</p>
 
                             <div className="flex flex-wrap gap-1 mt-2">
-                              {item.colors?.map((color, index) => (
-                                <div
-                                  key={index}
-                                  className="w-4 h-4 rounded-full border border-gray-400"
-                                  style={{ backgroundColor: getColorDisplay(color) }}
-                                  title={color}
-                                />
-                              ))}
+                              {(() => {
+                                // Handle different color data formats
+                                let colorsArray = [];
+                                
+                                if (Array.isArray(item.colors)) {
+                                  colorsArray = item.colors;
+                                } else if (typeof item.colors === 'string') {
+                                  // If colors is a string, split by comma or use as single color
+                                  colorsArray = item.colors.includes(',') 
+                                    ? item.colors.split(',').map(c => c.trim())
+                                    : [item.colors];
+                                } else if (item.colors && typeof item.colors === 'object') {
+                                  // If colors is an object, try to extract values
+                                  colorsArray = Object.values(item.colors);
+                                }
+                                
+                                return colorsArray.map((color, index) => (
+                                  <div
+                                    key={index}
+                                    className="w-4 h-4 rounded-full border border-gray-400"
+                                    style={{ backgroundColor: getColorDisplay(color) }}
+                                    title={typeof color === 'string' ? color : String(color)}
+                                  />
+                                ));
+                              })()}
                             </div>
 
                             {/* Select Button */}
@@ -1061,7 +1089,7 @@ const ItemModal2 = ({ item = null, onClose, onSuccesActive, categoryId }) => {
   return (
     <div className="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-[100]">
       <div className="bg-black border border-[#4B4C46] rounded-2xl p-6 w-full max-w-3xl">
-        <h2 className="text-2xl font-bold text-[#D4BC6D] mb-6">Upload Your Assets</h2>
+        <h2 className="text-2xl font-bold text-[#D4BC6D] mb-6">Upload Your Details For Your Free Graphic</h2>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-5" id="product-form">
           <div className="h-[400px] overflow-y-auto pr-2 space-y-8">
 
