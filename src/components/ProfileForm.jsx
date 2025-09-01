@@ -179,106 +179,106 @@ const ProfileForm = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Store Name */}
           <div>
-            <label className="block text-sm font-medium mb-2 text-gray-300">
+            <label className="block text-sm font-medium mb-2 text-[#D4BC6D]">
               Store Name
             </label>
             <input
               type="text"
               {...register('store_name')}
-              className="w-full border border-gray-700 bg-black/50 text-white p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#D4BC6D]"
+              className="w-full border border-[#D4BC6D] bg-black/50 text-white p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#D4BC6D]"
             />
           </div>
 
           {/* Sport */}
           <div>
-            <label className="block text-sm font-medium mb-2 text-gray-300">
+            <label className="block text-sm font-medium mb-2 text-[#D4BC6D]">
               Sport
             </label>
             <input
               type="text"
               {...register('sport')}
-              className="w-full border border-gray-700 bg-black/50 text-white p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#D4BC6D]"
+              className="w-full border border-[#D4BC6D] bg-black/50 text-white p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#D4BC6D]"
             />
           </div>
 
           {/* Jersey Number */}
           <div>
-            <label className="block text-sm font-medium mb-2 text-gray-300">
+            <label className="block text-sm font-medium mb-2 text-[#D4BC6D]">
               Jersey #
             </label>
             <input
               type="number"
               {...register('jersey')}
-              className="w-full border border-gray-700 bg-black/50 text-white p-3 rounded-lg"
+              className="w-full border border-[#D4BC6D] bg-black/50 text-white p-3 rounded-lg"
             />
           </div>
 
-          {/* Hometown */}
+          {/* Home Town */}
           <div>
-            <label className="block text-sm font-medium mb-2 text-gray-300">
+            <label className="block text-sm font-medium mb-2 text-[#D4BC6D]">
               Home Town
             </label>
             <input
               type="text"
               {...register('hometown')}
-              className="w-full border border-gray-700 bg-black/50 text-white p-3 rounded-lg"
+              className="w-full border border-[#D4BC6D] bg-black/50 text-white p-3 rounded-lg"
             />
           </div>
 
-          {/* Quote */}
+          {/* Personalised Quote */}
           <div className="md:col-span-2">
-            <label className="block text-sm font-medium mb-2 text-gray-300">
+            <label className="block text-sm font-medium mb-2 text-[#D4BC6D]">
               Personalised Quote
             </label>
             <textarea
               {...register('quote')}
-              className="w-full border border-gray-700 bg-black/50 text-white p-3 rounded-lg h-24"
+              className="w-full border border-[#D4BC6D] bg-black/50 text-white p-3 rounded-lg h-24"
             />
           </div>
 
           {/* Store Description */}
           <div className="md:col-span-2">
-            <label className="block text-sm font-medium mb-2 text-gray-300">
+            <label className="block text-sm font-medium mb-2 text-[#D4BC6D]">
               Store Description
             </label>
             <textarea
               {...register('description')}
-              className="w-full border border-gray-700 bg-black/50 text-white p-3 rounded-lg h-28"
+              className="w-full border border-[#D4BC6D] bg-black/50 text-white p-3 rounded-lg h-28"
             />
           </div>
 
           {/* Athlete's Name */}
           <div>
-            <label className="block text-sm font-medium mb-2 text-gray-300">
+            <label className="block text-sm font-medium mb-2 text-[#D4BC6D]">
               Athlete's Name
             </label>
             <input
               type="text"
               {...register('athlete_name')}
-              className="w-full border border-gray-700 bg-black/50 text-white p-3 rounded-lg"
+              className="w-full border border-[#D4BC6D] bg-black/50 text-white p-3 rounded-lg"
             />
           </div>
 
           {/* Age */}
           <div>
-            <label className="block text-sm font-medium mb-2 text-gray-300">
+            <label className="block text-sm font-medium mb-2 text-[#D4BC6D]">
               Age
             </label>
             <input
               type="number"
               {...register('age')}
-              className="w-full border border-gray-700 bg-black/50 text-white p-3 rounded-lg"
+              className="w-full border border-[#D4BC6D] bg-black/50 text-white p-3 rounded-lg"
             />
           </div>
 
           {/* Gender */}
           <div>
-            <label className="block text-sm font-medium mb-2 text-gray-300">
+            <label className="block text-sm font-medium mb-2 text-[#D4BC6D]">
               Gender
             </label>
             <select
               {...register('gender')}
-              className="w-full border border-gray-700 bg-black/50 text-white p-3 rounded-lg"
+              className="w-full border border-[#D4BC6D] bg-black/50 text-white p-3 rounded-lg"
             >
               <option value="">Select Gender</option>
               <option value="male">Male</option>
@@ -289,12 +289,12 @@ const ProfileForm = () => {
 
           {/* Country */}
           <div>
-            <label className="block text-sm font-medium mb-2 text-gray-300">
+            <label className="block text-sm font-medium mb-2 text-[#D4BC6D]">
               Country
             </label>
             <select
               {...register('country')}
-              className="w-full border border-gray-700 bg-black/50 text-white p-3 rounded-lg"
+              className="w-full border border-[#D4BC6D] bg-black/50 text-white p-3 rounded-lg"
             >
               <option value="">Select Country</option>
               {countries.map((country, i) => (
@@ -305,24 +305,24 @@ const ProfileForm = () => {
 
           {/* City */}
           <div>
-            <label className="block text-sm font-medium mb-2 text-gray-300">
+            <label className="block text-sm font-medium mb-2 text-[#D4BC6D]">
               City
             </label>
             <input
               type="text"
               {...register('city')}
-              className="w-full border border-gray-700 bg-black/50 text-white p-3 rounded-lg"
+              className="w-full border border-[#D4BC6D] bg-black/50 text-white p-3 rounded-lg"
             />
           </div>
 
           {/* Level of Athlete */}
           <div>
-            <label className="block text-sm font-medium mb-2 text-gray-300">
+            <label className="block text-sm font-medium mb-2 text-[#D4BC6D]">
               Level of Athlete
             </label>
             <select
               {...register('level_of_athlete')}
-              className="w-full border border-gray-700 bg-black/50 text-white p-3 rounded-lg"
+              className="w-full border border-[#D4BC6D] bg-black/50 text-white p-3 rounded-lg"
             >
               <option value="">Select your level</option>
               <option value="Youth">Youth</option>
@@ -334,97 +334,97 @@ const ProfileForm = () => {
 
           {/* Grade Level */}
           <div>
-            <label className="block text-sm font-medium mb-2 text-gray-300">
+            <label className="block text-sm font-medium mb-2 text-[#D4BC6D]">
               Grade Level
             </label>
             <input
               type="text"
               {...register('grade_level')}
-              className="w-full border border-gray-700 bg-black/50 text-white p-3 rounded-lg"
+              className="w-full border border-[#D4BC6D] bg-black/50 text-white p-3 rounded-lg"
             />
           </div>
 
           {/* Team Name */}
           <div>
-            <label className="block text-sm font-medium mb-2 text-gray-300">
+            <label className="block text-sm font-medium mb-2 text-[#D4BC6D]">
               Team Name
             </label>
             <input
               type="text"
               {...register('team_name')}
-              className="w-full border border-gray-700 bg-black/50 text-white p-3 rounded-lg"
+              className="w-full border border-[#D4BC6D] bg-black/50 text-white p-3 rounded-lg"
             />
           </div>
 
           {/* Team Email */}
           <div>
-            <label className="block text-sm font-medium mb-2 text-gray-300">
+            <label className="block text-sm font-medium mb-2 text-[#D4BC6D]">
               Team Email
             </label>
             <input
               type="email"
               {...register('team_email')}
-              className="w-full border border-gray-700 bg-black/50 text-white p-3 rounded-lg"
+              className="w-full border border-[#D4BC6D] bg-black/50 text-white p-3 rounded-lg"
             />
           </div>
 
           {/* Director Info */}
           <div>
-            <label className="block text-sm font-medium mb-2 text-gray-300">
+            <label className="block text-sm font-medium mb-2 text-[#D4BC6D]">
               Director Info
             </label>
             <input
               type="text"
               {...register('director_info')}
-              className="w-full border border-gray-700 bg-black/50 text-white p-3 rounded-lg"
+              className="w-full border border-[#D4BC6D] bg-black/50 text-white p-3 rounded-lg"
             />
           </div>
 
           {/* Coach Info */}
           <div>
-            <label className="block text-sm font-medium mb-2 text-gray-300">
+            <label className="block text-sm font-medium mb-2 text-[#D4BC6D]">
               Coach Info
             </label>
             <input
               type="text"
               {...register('coach_info')}
-              className="w-full border border-gray-700 bg-black/50 text-white p-3 rounded-lg"
+              className="w-full border border-[#D4BC6D] bg-black/50 text-white p-3 rounded-lg"
             />
           </div>
 
           {/* School Name */}
           <div>
-            <label className="block text-sm font-medium mb-2 text-gray-300">
+            <label className="block text-sm font-medium mb-2 text-[#D4BC6D]">
               School Name
             </label>
             <input
               type="text"
               {...register('school_name')}
-              className="w-full border border-gray-700 bg-black/50 text-white p-3 rounded-lg"
+              className="w-full border border-[#D4BC6D] bg-black/50 text-white p-3 rounded-lg"
             />
           </div>
 
           {/* School Email */}
           <div>
-            <label className="block text-sm font-medium mb-2 text-gray-300">
+            <label className="block text-sm font-medium mb-2 text-[#D4BC6D]">
               School Email
             </label>
             <input
               type="email"
               {...register('school_email')}
-              className="w-full border border-gray-700 bg-black/50 text-white p-3 rounded-lg"
+              className="w-full border border-[#D4BC6D] bg-black/50 text-white p-3 rounded-lg"
             />
           </div>
 
           {/* School Phone */}
           <div>
-            <label className="block text-sm font-medium mb-2 text-gray-300">
+            <label className="block text-sm font-medium mb-2 text-[#D4BC6D]">
               School Phone
             </label>
             <input
               type="tel"
               {...register('school_phone')}
-              className="w-full border border-gray-700 bg-black/50 text-white p-3 rounded-lg"
+              className="w-full border border-[#D4BC6D] bg-black/50 text-white p-3 rounded-lg"
             />
           </div>
         </div>
@@ -435,79 +435,79 @@ const ProfileForm = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Instagram */}
             <div>
-              <label className="block text-sm font-medium mb-2 text-gray-300">
+              <label className="block text-sm font-medium mb-2 text-[#D4BC6D]">
                 Instagram
               </label>
               <input
                 type="url"
                 {...register('instagram')}
                 placeholder="https://instagram.com/username"
-                className="w-full border border-gray-700 bg-black/50 text-white p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#D4BC6D]"
+                className="w-full border border-[#D4BC6D] bg-black/50 text-white p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#D4BC6D]"
               />
             </div>
 
             {/* TikTok */}
             <div>
-              <label className="block text-sm font-medium mb-2 text-gray-300">
+              <label className="block text-sm font-medium mb-2 text-[#D4BC6D]">
                 TikTok
               </label>
               <input
                 type="url"
                 {...register('tiktok')}
                 placeholder="https://tiktok.com/@username"
-                className="w-full border border-gray-700 bg-black/50 text-white p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#D4BC6D]"
+                className="w-full border border-[#D4BC6D] bg-black/50 text-white p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#D4BC6D]"
               />
             </div>
 
             {/* Twitter */}
             <div>
-              <label className="block text-sm font-medium mb-2 text-gray-300">
+              <label className="block text-sm font-medium mb-2 text-[#D4BC6D]">
                 Twitter
               </label>
               <input
                 type="url"
                 {...register('twitter')}
                 placeholder="https://twitter.com/username"
-                className="w-full border border-gray-700 bg-black/50 text-white p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#D4BC6D]"
+                className="w-full border border-[#D4BC6D] bg-black/50 text-white p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#D4BC6D]"
               />
             </div>
 
             {/* YouTube */}
             <div>
-              <label className="block text-sm font-medium mb-2 text-gray-300">
+              <label className="block text-sm font-medium mb-2 text-[#D4BC6D]">
                 YouTube
               </label>
               <input
                 type="url"
                 {...register('youtube')}
                 placeholder="https://youtube.com/channel/..."
-                className="w-full border border-gray-700 bg-black/50 text-white p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#D4BC6D]"
+                className="w-full border border-[#D4BC6D] bg-black/50 text-white p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#D4BC6D]"
               />
             </div>
 
             {/* Twitch */}
             <div>
-              <label className="block text-sm font-medium mb-2 text-gray-300">
+              <label className="block text-sm font-medium mb-2 text-[#D4BC6D]">
                 Twitch
               </label>
               <input
                 type="url"
                 {...register('twitch')}
                 placeholder="https://twitch.tv/username"
-                className="w-full border border-gray-700 bg-black/50 text-white p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#D4BC6D]"
+                className="w-full border border-[#D4BC6D] bg-black/50 text-white p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#D4BC6D]"
               />
             </div>
 
             {/* Other Social Media */}
             <div>
-              <label className="block text-sm font-medium mb-2 text-gray-300">
+              <label className="block text-sm font-medium mb-2 text-[#D4BC6D]">
                 Other Social Media
               </label>
               <input
                 type="url"
                 {...register('other')}
                 placeholder="https://other-platform.com/username"
-                className="w-full border border-gray-700 bg-black/50 text-white p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#D4BC6D]"
+                className="w-full border border-[#D4BC6D] bg-black/50 text-white p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#D4BC6D]"
               />
             </div>
           </div>
