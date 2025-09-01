@@ -154,7 +154,7 @@ const MasterLayout = () => {
                     <div className="w-full p-4 flex items-center">
                         {/* Mobile: Small logo + hamburger */}
                         <div className="flex md:hidden items-center justify-between w-full">
-                            <img src="/hometown-logo.svg" alt="Header" className="w-24 h-auto" />
+                            <img src="/hometown-logo.svg" alt="Header" className="w-42 h-auto" />
                             <button
                                 className="p-2 text-white hover:text-[#D4BC6D]"
                                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
@@ -323,9 +323,9 @@ const MasterLayout = () => {
                                 />
                             </div>
                             <div className="text-center">
-                                <div className='text-[#D4BC6D] font-bold mb-1'>Diamond</div>
+                                <div className='text-[#D4BC6D] font-bold mb-1'>{user?.badge_level?.name || "Bronze"}</div>
                                 <div className='h-[8px] w-32 bg-[#282828] rounded-full mx-auto'>
-                                    <div className="h-full bg-[#D4BC6D] rounded-full" style={{ width: '60%' }} />
+                                    <div className="h-full bg-[#D4BC6D] rounded-full" style={{ width: `${user?.badge_level?.percentage || 0}%` }} />
                                 </div>
                             </div>
                         </div>
@@ -400,6 +400,24 @@ const MasterLayout = () => {
                                     </svg>
                                     <span className="font-semibold">Notifications</span>
                                     <span className="ml-auto bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">3</span>
+                                </div>
+                            </div>
+
+                            {/* Chatbot */}
+                            <div className="bg-white/10 rounded-lg p-3 mb-4 cursor-pointer hover:bg-white/20 transition">
+                                <div className="flex items-center gap-3 text-white">
+                                    <div className="relative w-8 h-8">
+                                        <img
+                                            src="/alek.jpeg"
+                                            onError={(e) => (e.target.src = '/default-avatar.png')}
+                                            alt="Agent Avatar"
+                                            className="w-full h-full object-cover object-center rounded-full border border-gray-700"
+                                        />
+                                        <div className="absolute -top-1 -right-1 flex items-center justify-center w-4 h-4 bg-red-500 text-white text-[8px] font-bold rounded-full">
+                                            1
+                                        </div>
+                                    </div>
+                                    <span className="font-semibold">Chat Now</span>
                                 </div>
                             </div>
                         </div>
