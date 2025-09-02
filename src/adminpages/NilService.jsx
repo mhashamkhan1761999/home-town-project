@@ -477,57 +477,39 @@ const ProductType = ({ handleActive, selectedCard, category, reload, selectedPro
   });
 
 
-const colorMapping = {
-    black: "#000000",
-    "black beauty": "#1C1C1C",
-    white: "#FFFFFF",
-    "light gray": "#D3D3D3",
-    "dark gray": "#A9A9A9",
-    "pirate gray": "#828282",
-    "stone gray": "#8B8C89",
-    "oat gray": "#CCC5B9",
-    "carbon gray": "#545454",
-    sand: "#C2B280",
-    "sand color": "#C2B280",
-    "milk tea": "#DDB892",
-    "light apricot": "#FDD5B1",
-    "honey peach": "#FFB97B",
-    yellow: "#FFFF00",
-    brown: "#8B4513",
-    "gray camel": "#C1B6A4",
-    "dark red": "#8B0000",
-    "watermelon red": "#FC6C85",
-    purple: "#800080",
-    "purple haze": "#9F00C5",
-    blue: "#0000FF",
-    "dark blue": "#000080",
-    navy: "#000080",
-    "colorful blue": "#3A75C4",
-    "dark green": "#006400",
-    "blackish green": "#1C352D",
-    "gray green": "#A8B2A1",
-    // legacy and fallback colors
-    red: "#FF0000",
-    green: "#008000",
-    orange: "#FFA500",
-    pink: "#FFC0CB",
-    gray: "#808080",
-  };
-
-    const getColorDisplay = (colorName) => {
-    // Handle cases where colorName is not a string
-    if (!colorName) return "#cccccc";
+  // Helper function to get actual color code from API response
+  const getColorCode = (colorData) => {
+    if (!colorData) return "#cccccc";
     
-    // If it's an object, try to get the name or value property
-    if (typeof colorName === 'object') {
-      colorName = colorName.name || colorName.value || colorName.color || String(colorName);
+    // If it's already a hex code string, return it
+    if (typeof colorData === 'string' && colorData.startsWith('#')) {
+      return colorData;
     }
     
-    // Ensure it's a string before calling toLowerCase
-    const colorString = String(colorName);
-    const normalizedColor = colorString.toLowerCase();
+    // If it's an object with code property (new API format)
+    if (typeof colorData === 'object' && colorData.code) {
+      return colorData.code;
+    }
     
-    return colorMapping[normalizedColor] || normalizedColor || "#cccccc";
+    // Fallback for any other cases
+    return "#cccccc";
+  };
+
+  // Helper function to get colors array from the API response
+  const getColorsArray = (colorsData) => {
+    if (!colorsData) return [];
+    
+    // If it's already an array, return it
+    if (Array.isArray(colorsData)) {
+      return colorsData;
+    }
+    
+    // If it's an object, convert values to array
+    if (typeof colorsData === 'object') {
+      return Object.values(colorsData);
+    }
+    
+    return [];
   };
 
 
@@ -668,28 +650,16 @@ const colorMapping = {
                             <p className="text-gray-300 text-sm">Size: {item?.size}</p>
 
                             <div className="flex flex-wrap gap-1 mt-2">
-                             {(() => {
-                                // Handle different color data formats
-                                let colorsArray = [];
-                                
-                                if (Array.isArray(item.colors)) {
-                                  colorsArray = item.colors;
-                                } else if (typeof item.colors === 'string') {
-                                  // If colors is a string, split by comma or use as single color
-                                  colorsArray = item.colors.includes(',') 
-                                    ? item.colors.split(',').map(c => c.trim())
-                                    : [item.colors];
-                                } else if (item.colors && typeof item.colors === 'object') {
-                                  // If colors is an object, try to extract values
-                                  colorsArray = Object.values(item.colors);
-                                }
+                              {(() => {
+                                // Get colors using the new helper function
+                                const colorsArray = getColorsArray(item.colors);
                                 
                                 return colorsArray.map((color, index) => (
                                   <div
                                     key={index}
                                     className="w-4 h-4 rounded-full border border-gray-400"
-                                    style={{ backgroundColor: getColorDisplay(color) }}
-                                    title={typeof color === 'string' ? color : String(color)}
+                                    style={{ backgroundColor: getColorCode(color) }}
+                                    title={color?.name || 'Color'}
                                   />
                                 ));
                               })()}
@@ -864,20 +834,32 @@ const ItemModal = ({ item, onClose, onSuccesActive }) => {
   };
 
 
-  const options = [
-    { label: 'Red', value: 'red', color: '#FF0000' },
-    { label: 'Blue', value: 'blue', color: '#0000FF' },
-    { label: 'Green', value: 'green', color: '#008000' },
-    { label: 'Black', value: 'black', color: '#000000' },
-    { label: 'White', value: 'white', color: '#FFFFFF' },
-    { label: 'Yellow', value: 'yellow', color: '#FFFF00' },
-    { label: 'Purple', value: 'purple', color: '#800080' },
-    { label: 'Orange', value: 'orange', color: '#FFA500' },
-    { label: 'Pink', value: 'pink', color: '#FFC0CB' },
-    { label: 'Gray', value: 'gray', color: '#808080' },
-    { label: 'Brown', value: 'brown', color: '#A52A2A' },
-    { label: 'Navy', value: 'navy', color: '#000080' },
-  ];
+  // Get actual colors from the product data
+  const getProductColors = (item) => {
+    if (!item?.colors) return [];
+    
+    // Handle array format: [{"name": "Black Beauty", "code": "#000000"}, ...]
+    if (Array.isArray(item.colors)) {
+      return item.colors.map(color => ({
+        label: color.name,
+        value: color.code,
+        color: color.code
+      }));
+    }
+    
+    // Handle object format: {"4": {"name": "Testing", "code": "#473437"}}
+    if (typeof item.colors === 'object') {
+      return Object.values(item.colors).map(color => ({
+        label: color.name,
+        value: color.code,
+        color: color.code
+      }));
+    }
+    
+    return [];
+  };
+
+  const options = getProductColors(item);
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-50 p-4">
@@ -929,7 +911,7 @@ const ItemModal = ({ item, onClose, onSuccesActive }) => {
                   ...opt,
                   label: (
                     <div className="flex items-center gap-2">
-                      <span className="w-4 h-4 rounded-full border" style={{ backgroundColor: opt.value }}></span>
+                      <span className="w-4 h-4 rounded-full border" style={{ backgroundColor: opt.color }}></span>
                       {opt.label}
                     </div>
                   )
