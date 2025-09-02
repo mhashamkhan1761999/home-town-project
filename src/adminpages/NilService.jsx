@@ -531,11 +531,33 @@ const colorMapping = {
   };
 
 
+
+
   const [searchTerm, setSearchTerm] = useState("");
   const [showFinalizeConfirm, setShowFinalizeConfirm] = useState(false);
   const [showSuccessPopup, setShowSuccessPopup] = useState(false);
   const [showSplash, setShowSplash] = useState(false);
   const navigate = useNavigate();
+
+  // API mutation for updating concept status
+  const updateConceptMutation = useMutation({
+    mutationKey: ['update-concept'],
+    mutationFn: ({ category_id, status }) => postRequest('/update-concept', { category_id, status }),
+    onSuccess: (response, variables) => {
+      if (variables.status === 'Cancelled') {
+        // Reload and navigate to nil-service page after cancellation
+        window.location.reload();
+      }
+      // For 'Completed' status, the existing flow continues normally
+    },
+    onError: (error) => {
+      console.error('Failed to update concept status:', error);
+      // Still reload on error for cancel to maintain functionality
+      if (error.variables?.status === 'Cancelled') {
+        window.location.reload();
+      }
+    }
+  });
 
   const uniqueCategories = Array.from(new Set(data?.map(item => item?.sub_category?.name)));
   const filterUniqueCategories = Array.from(new Set(
@@ -555,10 +577,17 @@ const colorMapping = {
       <div className="card-gradient !border-[1.5px] p-6 rounded-3xl">
         <div className="flex mb-11 gap-5">
           <button
-            onClick={() => window.location.reload()}
+            onClick={() => {
+              // Call the update-concept API with status "Cancelled"
+              updateConceptMutation.mutate({ 
+                category_id: category, 
+                status: 'Cancelled' 
+              });
+            }}
             className="bg-[#d4bc6d] rounded-full h-[40px] uppercase px-6 py-3 text-black text-sm font-semibold"
+            disabled={updateConceptMutation.isLoading}
           >
-            Cancel Service
+            {updateConceptMutation.isLoading ? 'Cancelling...' : 'Cancel Service'}
           </button>
           <button
             onClick={() => setShowFinalizeConfirm(true)}
@@ -566,7 +595,6 @@ const colorMapping = {
           >
             Complete Service Launch
           </button>
-          <div className='text-[#D4BC6D] font-semibold md:text-3xl  md:ml-30'>Select Your Products</div>
           <div className="ms-auto">
             <select
               className="border border-[#d4bc6d] text-white p-2 w-full mb-4 rounded"
@@ -640,7 +668,7 @@ const colorMapping = {
                             <p className="text-gray-300 text-sm">Size: {item?.size}</p>
 
                             <div className="flex flex-wrap gap-1 mt-2">
-                              {(() => {
+                             {(() => {
                                 // Handle different color data formats
                                 let colorsArray = [];
                                 
@@ -742,12 +770,19 @@ const colorMapping = {
             <div className="flex justify-end mt-6">
               <button
                 onClick={() => {
+                  // First call the update-concept API with status "Completed"
+                  updateConceptMutation.mutate({ 
+                    category_id: category, 
+                    status: 'Completed' 
+                  });
+                  // Continue with existing flow
                   setShowSuccessPopup(false);
                   setShowSplash(true);
                 }}
                 className="px-4 py-2 bg-[#D4BC6D] text-black rounded-full"
+                disabled={updateConceptMutation.isLoading}
               >
-                Continue
+                {updateConceptMutation.isLoading ? 'Completing...' : 'Continue'}
               </button>
             </div>
           </div>
