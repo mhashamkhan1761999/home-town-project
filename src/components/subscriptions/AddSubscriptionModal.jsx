@@ -14,42 +14,54 @@ const AddSubscriptionModal = ({ onClose, isEdit, mutate }) => {
     const stripe = useStripe()
     const elements = useElements()
     const [showSuccessModal, setShowSuccessModal] = useState(false)
+    const [isProcessing, setIsProcessing] = useState(false)
 
-    const purchaseMutation = useMutation({
-        mutationKey: ['buy-bundle'],
-        mutationFn: (form) => postRequest('/buy-bundles', form),
-        onSuccess: (data) => {
-            if (data?.statusCode === 200) {
-                toast.success(data?.message);
-                setShowSuccessModal(true);
-                // Call the parent mutate function if needed
-                if (mutate) {
-                    // Don't call mutate directly since we're handling success here
-                }
-            }
-        },
-        onError: (error) => {
-            toast.error(error?.message || 'Payment failed');
+    // Remove the internal purchaseMutation and use the passed mutate function
+    const handleSuccess = (data) => {
+        if (data?.statusCode === 200) {
+            toast.success(data?.message);
+            setShowSuccessModal(true);
+            setIsProcessing(false);
         }
-    })
+    }
+
+    const handleError = (error) => {
+        toast.error(error?.message || 'Payment failed');
+        setIsProcessing(false);
+    }
 
 
 
     const onSubmit = async (e) => {
         e.preventDefault()
-        let data = {}
+        console.log('=== AddSubscriptionModal onSubmit called ===');
+        
         if (!stripe || !elements) return
-
+        
+        setIsProcessing(true);
         const card = elements.getElement(CardElement)
         const { error, token } = await stripe.createToken(card)
 
         if (error) {
             console.error(error)
             toast?.error(error.message);
+            setIsProcessing(false);
         } else {
-            data['package_id'] = isEdit?.id
-            data['stripe_token'] = token?.id
-            purchaseMutation.mutate(data)
+            const data = {
+                package_id: isEdit?.id,
+                stripe_token: token?.id
+            }
+            
+            console.log('AddSubscriptionModal - Form data prepared:', data);
+            console.log('AddSubscriptionModal - Calling mutate function');
+            
+            // Call the mutate function passed from parent
+            if (mutate) {
+                mutate(data);
+            } else {
+                console.error('No mutate function provided to AddSubscriptionModal');
+                setIsProcessing(false);
+            }
         }
     }
 
@@ -101,9 +113,9 @@ const AddSubscriptionModal = ({ onClose, isEdit, mutate }) => {
                             className="bg-[#D4BC6D] text-white py-2 px-4 rounded-full"
                             type='submit'
                             form='timing-form'
-                            disabled={purchaseMutation.isPending}
+                            disabled={isProcessing}
                         >
-                            {purchaseMutation.isPending ? 'Processing...' : 'Submit'}
+                            {isProcessing ? 'Processing...' : 'Submit'}
                         </button>
                     </div>
                 </div>

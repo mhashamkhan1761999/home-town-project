@@ -1,4 +1,5 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useRef } from 'react'
+import { useNavigate } from 'react-router-dom';
 import { getRequest, postRequest } from '../api';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import AddSubscriptionModal from '../components/subscriptions/AddSubscriptionModal';
@@ -6,12 +7,19 @@ import { queryClient } from '../main';
 import { loadStripe } from '@stripe/stripe-js';
 import { Elements } from '@stripe/react-stripe-js';
 import { useModalHistory } from '../hooks/useModalHistory';
+import { toast } from 'react-hot-toast';
 
 
 const stripePromise = loadStripe('pk_test_51LO709EoIN0qcO1SAQ6hl12BkCOI93FAQ8u9n2cnVA4kuz4YIpx0c50TeUJHHGUFiZnniCvwal7FS1ZM5EHyCy8400wxefrAoU');
 
 const Bundles = () => {
+    const navigate = useNavigate();
     const [isShow, setIsShow] = React.useState(false);
+    const [showDescriptionModal, setShowDescriptionModal] = React.useState(false);
+    const [currentBundle, setCurrentBundle] = React.useState(null);
+    const [descriptions, setDescriptions] = React.useState([]);
+    const [currentDescriptionIndex, setCurrentDescriptionIndex] = React.useState(0);
+    const descriptionsRef = useRef([]); // Add ref to store descriptions
     
     // Modal history management
     const bundleModal = useModalHistory('bundleModal', isShow !== false, () => setIsShow(false));
@@ -33,13 +41,34 @@ const Bundles = () => {
 
     const mutation = useMutation({
         mutationKey: ['add-subscription'],
-        mutationFn: (form) => postRequest('/buy-bundles', form),
+        mutationFn: (form) => {
+            console.log('=== MUTATION FUNCTION CALLED ===');
+            console.log('Mutation received data:', form);
+            console.log('Data type:', typeof form);
+            console.log('Data keys:', Object.keys(form));
+            console.log('Content field exists:', 'content' in form);
+            console.log('Content value:', form.content);
+            console.log('=== END MUTATION LOG ===');
+            return postRequest('/buy-bundles', form);
+        },
         onSuccess: (data) => {
+            console.log('Mutation success:', data);
             if (data?.statusCode === 200) {
                 toast.success(data?.message);
                 setIsShow(false);
+                // Reset states
+                setShowDescriptionModal(false);
+                setCurrentBundle(null);
+                setDescriptions([]);
+                setCurrentDescriptionIndex(0);
+                descriptionsRef.current = []; // Reset ref
                 // queryClient.invalidateQueries({ queryKey: ['get-packages'] });
+                navigate("/athlete/my-subscription")
             }
+        },
+        onError: (error) => {
+            console.log('Mutation error:', error);
+            toast.error(error?.message || 'Payment failed');
         }
     })
 
@@ -57,8 +86,49 @@ const Bundles = () => {
         if (item?.type == 'free') {
             mutation.mutate({ package_id: item?.id });
         } else {
-            setIsShow(item);
-            bundleModal.openModal({ bundle: item });
+            // Start description collection process
+            setCurrentBundle(item);
+            const graphicCount = parseInt(item?.graphic || 1);
+            const initialDescriptions = new Array(graphicCount).fill('');
+            setDescriptions(initialDescriptions);
+            descriptionsRef.current = initialDescriptions; // Initialize ref
+            setCurrentDescriptionIndex(0);
+            setShowDescriptionModal(true);
+        }
+    }
+
+    const handleDescriptionNext = (description) => {
+        const newDescriptions = [...descriptions];
+        newDescriptions[currentDescriptionIndex] = description || null;
+        setDescriptions(newDescriptions);
+        descriptionsRef.current = newDescriptions; // Update ref immediately
+
+        if (currentDescriptionIndex < descriptions.length - 1) {
+            // Move to next description
+            setCurrentDescriptionIndex(currentDescriptionIndex + 1);
+        } else {
+            // All descriptions collected, close description modal and open payment modal
+            console.log('All descriptions collected:', newDescriptions);
+            setShowDescriptionModal(false);
+            setIsShow(currentBundle);
+            bundleModal.openModal({ bundle: currentBundle });
+        }
+    }
+
+    const handleDescriptionSkip = () => {
+        handleDescriptionNext('');
+    }
+
+    const handleDescriptionBack = () => {
+        if (currentDescriptionIndex > 0) {
+            setCurrentDescriptionIndex(currentDescriptionIndex - 1);
+        } else {
+            // Close description modal if at first step
+            setShowDescriptionModal(false);
+            setCurrentBundle(null);
+            setDescriptions([]);
+            setCurrentDescriptionIndex(0);
+            descriptionsRef.current = []; // Reset ref
         }
     }
 
@@ -118,11 +188,135 @@ const Bundles = () => {
                         onClose={() => {
                             bundleModal.closeModal();
                             setIsShow(false);
+                            // Reset description states when payment modal is closed
+                            setShowDescriptionModal(false);
+                            setCurrentBundle(null);
+                            setDescriptions([]);
+                            setCurrentDescriptionIndex(0);
+                            descriptionsRef.current = []; // Reset ref
                         }}
                         isEdit={isShow}
-                        mutate={mutation.mutate}
+                        mutate={(formData) => {
+                            console.log('=== MUTATE FUNCTION CALLED ===');
+                            
+                            // Use ref to get the most current descriptions
+                            const finalDescriptions = descriptionsRef.current;
+                            console.log('Final descriptions being sent:', finalDescriptions);
+                            console.log('Form data received:', formData);
+                            console.log('Form data type:', typeof formData);
+                            console.log('Is FormData:', formData instanceof FormData);
+                            console.log('Current bundle:', currentBundle);
+                            
+                            // Handle both FormData and regular object
+                            let dataWithContent;
+                            
+                            if (formData instanceof FormData) {
+                                // If it's FormData, append content to it
+                                console.log('Handling as FormData');
+                                dataWithContent = new FormData();
+                                
+                                // Copy existing FormData entries
+                                for (let [key, value] of formData.entries()) {
+                                    dataWithContent.append(key, value);
+                                }
+                                
+                                // Add content as JSON string
+                                dataWithContent.append('content', JSON.stringify(finalDescriptions));
+                                
+                                console.log('FormData entries:');
+                                for (let [key, value] of dataWithContent.entries()) {
+                                    console.log(`${key}:`, value);
+                                }
+                            } else {
+                                // If it's a regular object
+                                console.log('Handling as regular object');
+                                dataWithContent = {
+                                    package_id: formData.package_id || currentBundle?.id,
+                                    stripe_token: formData.stripe_token,
+                                    content: finalDescriptions
+                                };
+                                
+                                // Add any other properties from formData
+                                Object.keys(formData).forEach(key => {
+                                    if (!['package_id', 'stripe_token'].includes(key)) {
+                                        dataWithContent[key] = formData[key];
+                                    }
+                                });
+                                
+                                console.log('Complete payload being sent:', dataWithContent);
+                                console.log('Payload keys:', Object.keys(dataWithContent));
+                            }
+                            
+                            console.log('=== CALLING MUTATION ===');
+                            mutation.mutate(dataWithContent);
+                        }}
                     />
                 </Elements>
+            )}
+
+            {/* Description Collection Modal */}
+            {showDescriptionModal && currentBundle && (
+                <div className="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-50 p-4">
+                    <div className="bg-black border border-[#4B4C46] rounded-2xl p-6 w-full max-w-lg">
+                        <div className="mb-6">
+                            <h2 className="text-2xl font-bold text-[#D4BC6D] mb-2">
+                                Graphic Description
+                            </h2>
+                            <p className="text-gray-300 text-sm">
+                                Graphic {currentDescriptionIndex + 1} of {descriptions.length} for {currentBundle?.title}
+                            </p>
+                            <div className="mt-4 bg-gray-700 rounded-full h-2">
+                                <div 
+                                    className="bg-[#D4BC6D] h-2 rounded-full transition-all duration-300" 
+                                    style={{ width: `${((currentDescriptionIndex + 1) / descriptions.length) * 100}%` }}
+                                />
+                            </div>
+                        </div>
+
+                        <div className="mb-6">
+                            <label className="block text-sm font-medium text-white mb-2">
+                                Description for Graphic {currentDescriptionIndex + 1} (Optional)
+                            </label>
+                            <textarea
+                                placeholder="Enter description for this graphic or leave empty to skip..."
+                                defaultValue={descriptions[currentDescriptionIndex] || ''}
+                                className="w-full p-3 border border-[#4B4C46] rounded-lg bg-transparent text-white focus:border-[#D4BC6D] outline-none resize-none"
+                                rows="4"
+                                id="description-input"
+                            />
+                            <p className="text-xs text-gray-400 mt-1">
+                                You can leave this empty and continue to the next graphic.
+                            </p>
+                        </div>
+
+                        <div className="flex justify-between gap-3">
+                            <button
+                                onClick={handleDescriptionBack}
+                                className="px-4 py-2 bg-[#4B4C46] text-white rounded-lg hover:bg-[#5a5b54] transition"
+                            >
+                                {currentDescriptionIndex === 0 ? 'Cancel' : 'Back'}
+                            </button>
+                            
+                            <div className="flex gap-2">
+                                <button
+                                    onClick={handleDescriptionSkip}
+                                    className="px-4 py-2 bg-transparent border border-gray-600 text-gray-300 rounded-lg hover:bg-gray-600 transition"
+                                >
+                                    Skip
+                                </button>
+                                <button
+                                    onClick={() => {
+                                        const input = document.getElementById('description-input');
+                                        handleDescriptionNext(input.value);
+                                    }}
+                                    className="px-4 py-2 bg-[#D4BC6D] text-black rounded-lg hover:bg-[#b89f4e] transition font-medium"
+                                >
+                                    {currentDescriptionIndex === descriptions.length - 1 ? 'Continue to Payment' : 'Next'}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             )}
         </>
     )
