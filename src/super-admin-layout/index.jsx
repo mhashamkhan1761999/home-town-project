@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { logout } from '../redux/slices/authSlice.js';
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { BarChart3, Package, Home, LogOut, Users, ShoppingCart, Trophy, Menu, X, DollarSign } from "lucide-react";
+import { BarChart3, Package, Home, LogOut, Users, ShoppingCart, Trophy, Menu, X, DollarSign, CreditCard } from "lucide-react";
 import AdminModal from "../components/AdminModal.jsx";
 import AdminModal2 from '../components/AdminModal2.jsx';
 
@@ -171,6 +171,14 @@ const SuperAdminLayout = () => {
                             <Package size={18} />
                             Graphic Form Queries
                         </NavLink>
+
+                        <NavLink to="/admin/bundle-subscription"
+                            className={({ isActive }) => isActive ? 'text-[#CAB265] font-bold text-base flex items-center gap-3' : 'text-[#6A6A69] font-bold text-base flex items-center gap-3'}
+                            onClick={() => setIsMobileMenuOpen(false)}
+                        >
+                            <CreditCard size={18} />
+                            Bundle Subscription
+                        </NavLink>
                     </div>
                     
                     <div className="mt-8 mb-6">
@@ -259,6 +267,12 @@ const SuperAdminLayout = () => {
                             className={({ isActive }) => isActive ? 'text-[#CAB265] font-bold text-base flex flex-col items-center gap-2 text-center' : 'text-[#6A6A69] font-bold text-base flex items-center gap-2 text-center flex-col'}>
                             <Package size={18} />
                             Graphic Queries
+                        </NavLink>
+
+                        <NavLink to="/admin/bundle-subscription"
+                            className={({ isActive }) => isActive ? 'text-[#CAB265] font-bold text-base flex flex-col items-center gap-2 text-center' : 'text-[#6A6A69] font-bold text-base flex items-center gap-2 text-center flex-col'}>
+                            <CreditCard size={18} />
+                            Bundle Subscription
                         </NavLink>
                     </div>
                     

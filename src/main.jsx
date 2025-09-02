@@ -51,8 +51,7 @@ import ManageCashout from './super-admin-pages/ManageCashout.jsx'
 import GraphicFormQueries from './super-admin-pages/GraphicFormQueries.jsx'
 import PrivateRoute from './routes/PrivateRoute.jsx'
 import AdminPrivateRoute from './routes/AdminPrivateRoute.jsx'
-
-
+import BundleSubscription from './super-admin-pages/BundleSubscription.jsx'
 export const queryClient = new QueryClient();
 
 
@@ -106,6 +105,7 @@ const AllRoutes = () => {
           <Route path='my-products' element={<SuperAdminMyProducts />} />
           <Route path='manage-cashout' element={<ManageCashout />} />
           <Route path='graphic-queries' element={<GraphicFormQueries />} />
+          <Route path='bundle-subscription' element={<BundleSubscription />} />
         </Route>
       </Route>
     </Routes>
