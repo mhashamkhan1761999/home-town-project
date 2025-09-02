@@ -652,7 +652,7 @@ const ProductType = ({ handleActive, selectedCard, category, reload, selectedPro
                             <div className="flex flex-wrap gap-1 mt-2">
                               {(() => {
                                 // Get colors using the new helper function
-                                const colorsArray = getColorsArray(item.colors);
+                                const colorsArray = getColorsArray(item.colors_data);
                                 
                                 return colorsArray.map((color, index) => (
                                   <div
@@ -839,7 +839,7 @@ const ItemModal = ({ item, onClose, onSuccesActive }) => {
     if (!item?.colors) return [];
     
     // Handle array format: [{"name": "Black Beauty", "code": "#000000"}, ...]
-    if (Array.isArray(item.colors)) {
+    if (Array.isArray(item.colors_data)) {
       return item.colors.map(color => ({
         label: color.name,
         value: color.code,
@@ -848,8 +848,8 @@ const ItemModal = ({ item, onClose, onSuccesActive }) => {
     }
     
     // Handle object format: {"4": {"name": "Testing", "code": "#473437"}}
-    if (typeof item.colors === 'object') {
-      return Object.values(item.colors).map(color => ({
+    if (typeof item.colors_data === 'object') {
+      return Object.values(item.colors_data).map(color => ({
         label: color.name,
         value: color.code,
         color: color.code

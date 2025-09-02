@@ -1377,47 +1377,41 @@ const ViewProductModal = ({ product, onClose }) => {
     }, {});
   }, [subCategories]);
 
-  // Color mapping for display
-  const colorMapping = {
-    black: "#000000",
-    "black beauty": "#1C1C1C",
-    white: "#FFFFFF",
-    "light gray": "#D3D3D3",
-    "dark gray": "#A9A9A9",
-    "pirate gray": "#828282",
-    "stone gray": "#8B8C89",
-    "oat gray": "#CCC5B9",
-    "carbon gray": "#545454",
-    sand: "#C2B280",
-    "sand color": "#C2B280",
-    "milk tea": "#DDB892",
-    "light apricot": "#FDD5B1",
-    "honey peach": "#FFB97B",
-    yellow: "#FFFF00",
-    brown: "#8B4513",
-    "gray camel": "#C1B6A4",
-    "dark red": "#8B0000",
-    "watermelon red": "#FC6C85",
-    purple: "#800080",
-    "purple haze": "#9F00C5",
-    blue: "#0000FF",
-    "dark blue": "#000080",
-    navy: "#000080",
-    "colorful blue": "#3A75C4",
-    "dark green": "#006400",
-    "blackish green": "#1C352D",
-    "gray green": "#A8B2A1",
-    // legacy and fallback colors
-    red: "#FF0000",
-    green: "#008000",
-    orange: "#FFA500",
-    pink: "#FFC0CB",
-    gray: "#808080",
+  // Helper functions to handle different color formats
+  const parseColors = (colorsData) => {
+    if (!colorsData) return [];
+    
+    // If it's already an array, return it
+    if (Array.isArray(colorsData)) {
+      return colorsData;
+    }
+    
+    // If it's an object, convert it to array
+    if (typeof colorsData === 'object') {
+      return Object.values(colorsData);
+    }
+    
+    // If it's a string, try to parse it
+    if (typeof colorsData === 'string') {
+      try {
+        const parsed = JSON.parse(colorsData);
+        if (Array.isArray(parsed)) {
+          return parsed;
+        }
+        if (typeof parsed === 'object') {
+          return Object.values(parsed);
+        }
+      } catch (e) {
+        console.error('Error parsing colors:', e);
+      }
+    }
+    
+    return [];
   };
 
-  const getColorDisplay = (colorName) => {
-    const normalizedColor = colorName?.toLowerCase();
-    return colorMapping[normalizedColor] || normalizedColor || "#cccccc";
+  const getProductColors = (product) => {
+    // First try colors_data, then fall back to colors
+    return parseColors(product.colors_data) || parseColors(product.colors) || [];
   };
 
   return (
@@ -1621,47 +1615,30 @@ const ViewProductModal = ({ product, onClose }) => {
             </div>
 
             {/* Available Colors */}
-            {product.colors && (
-              <div className="bg-[#282828] rounded-lg p-4">
-                <h4 className="text-[#D4BC6D] font-semibold mb-4">Available Colors</h4>
-                <div className="flex flex-wrap gap-3">
-                  {(function () {
-                    let colors = [];
-                    if (Array.isArray(product.colors)) {
-                      colors = product.colors;
-                    } else if (typeof product.colors === "string") {
-                      try {
-                        const parsed = JSON.parse(product.colors);
-                        if (Array.isArray(parsed)) colors = parsed;
-                        else colors = [];
-                      } catch {
-                        colors = product.colors
-                          .split(",")
-                          .map((c) => c.trim())
-                          .filter(Boolean);
-                      }
-                    }
-                    return colors.map((color, index) => {
-                      const hex = getColorDisplay(color.trim());
-                      return (
-                        <div
-                          key={index}
-                          className="flex items-center gap-3 bg-[#1a1a1a] px-4 py-3 rounded-lg border border-[#4B4C46]"
-                        >
-                          <span
-                            className="w-6 h-6 rounded-full border-2 border-gray-400"
-                            style={{ backgroundColor: hex }}
-                          ></span>
-                          <span className="text-white text-sm font-medium capitalize">
-                            {color}
-                          </span>
-                        </div>
-                      );
-                    });
-                  })()}
+            {(function() {
+              const colors = getProductColors(product);
+              return colors.length > 0 ? (
+                <div className="bg-[#282828] rounded-lg p-4">
+                  <h4 className="text-[#D4BC6D] font-semibold mb-4">Available Colors</h4>
+                  <div className="flex flex-wrap gap-3">
+                    {colors.map((color, index) => (
+                      <div
+                        key={index}
+                        className="flex items-center gap-3 bg-[#1a1a1a] px-4 py-3 rounded-lg border border-[#4B4C46]"
+                      >
+                        <span
+                          className="w-6 h-6 rounded-full border-2 border-gray-400"
+                          style={{ backgroundColor: color.code || '#cccccc' }}
+                        ></span>
+                        <span className="text-white text-sm font-medium">
+                          {color.name || 'Unknown Color'}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
                 </div>
-              </div>
-            )}
+              ) : null;
+            })()}
           </div>
         </div>
 
