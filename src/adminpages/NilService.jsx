@@ -825,7 +825,10 @@ const ItemModal = ({ item, onClose, onSuccesActive }) => {
     formData.append("name", values?.name || item?.name || '');
     formData.append("description", values?.description || '');
     formData.append("price", values?.price || 10);
-    formData.append("colors", JSON.stringify(colorList?.map((i) => i?.value)));
+    formData.append("colors", JSON.stringify(colorList?.map((i) => ({
+      name: i?.colorName || i?.label || 'Unknown',
+      code: i?.value
+    }))));
     formData.append("placement", values?.placement || '');
     if (image) formData.append("image", image);
     formData.append("design_service", values?.design_service || false);
@@ -844,6 +847,7 @@ const ItemModal = ({ item, onClose, onSuccesActive }) => {
         label: color.name,
         value: color.code,
         color: color.code,
+        colorName: color.name,
         key: `color-${index}`
       }));
     }
@@ -854,6 +858,7 @@ const ItemModal = ({ item, onClose, onSuccesActive }) => {
         label: color.name,
         value: color.code,
         color: color.code,
+        colorName: color.name,
         key: `color-${index}`
       }));
     }

@@ -675,7 +675,18 @@ const ProductViewModal = ({
                         try {
                           // The API returns colors as a JSON string
                           const parsedColors = JSON.parse(product.colors);
-                          colors = Array.isArray(parsedColors) ? parsedColors : [];
+                          
+                          if (Array.isArray(parsedColors)) {
+                            // Check if it's the new format with objects {name, code}
+                            if (parsedColors.length > 0 && typeof parsedColors[0] === 'object' && parsedColors[0].name && parsedColors[0].code) {
+                              colors = parsedColors; // New format: array of {name, code} objects
+                            } else {
+                              // Old format: array of color strings
+                              colors = parsedColors.map(color => ({ name: color, code: null }));
+                            }
+                          } else {
+                            colors = [];
+                          }
                         } catch (e) {
                           console.warn('Failed to parse colors:', product.colors);
                           colors = [];
@@ -683,10 +694,11 @@ const ProductViewModal = ({
                       }
                       // Handle fallback colors format (array)
                       else if (Array.isArray(product.colors)) {
-                        colors = product.colors;
+                        // Convert old format to new format
+                        colors = product.colors.map(color => ({ name: color, code: null }));
                       }
 
-                      // Color mapping for proper hex values
+                      // Color mapping for proper hex values (fallback for old format)
                       const colorMapping = {
                         black: "#000000",
                         white: "#FFFFFF",
@@ -706,9 +718,10 @@ const ProductViewModal = ({
                       };
 
                       return colors.length > 0 ? (
-                        colors.map((color, index) => {
-                          const normalizedColor = color.toLowerCase().trim();
-                          const hexColor = colorMapping[normalizedColor] || color;
+                        colors.map((colorObj, index) => {
+                          // Use the provided code if available, otherwise fallback to mapping
+                          const displayName = colorObj.name || 'Unknown';
+                          const hexColor = colorObj.code || colorMapping[displayName.toLowerCase().trim()] || '#CCCCCC';
                           
                           return (
                             <div
@@ -718,9 +731,9 @@ const ProductViewModal = ({
                               <span
                                 className="w-4 h-4 rounded-full border border-gray-300"
                                 style={{ backgroundColor: hexColor }}
-                                title={color}
+                                title={`${displayName} (${hexColor})`}
                               ></span>
-                              <span className="capitalize">{color}</span>
+                              <span className="capitalize">{displayName}</span>
                             </div>
                           );
                         })
