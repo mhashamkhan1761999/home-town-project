@@ -16,21 +16,69 @@ const ForntDetail = () => {
         queryFn: () => getRequest(`/product-detail/${params?.id}`), // Fetch function
     });
 
-    const [active, setActive] = React.useState('blue');
-
+    const [active, setActive] = React.useState(null);
 
     const handleAddToCart = (data) => {
         const { id, name, description, price, color } = data;
         if (!isInCart) {
-            dispatch(addToCart({ id, name, description, price, color }));
+            // Find the selected color object to get both name and code
+            const selectedColorObj = colors.find(c => c.code === color) || { name: 'Unknown', code: color };
+            dispatch(addToCart({ 
+                id, 
+                name, 
+                description, 
+                price, 
+                color: color,
+                colorName: selectedColorObj.name
+            }));
             toast?.success('Add to Cart Successfully');
         }
     };
 
-
-
     const detail = data?.[0] || {};
-    const colors = data?.[0]?.colors ? JSON.parse(data?.[0]?.colors) : [];
+    
+    // Parse colors with support for new format {name, code} and old format [string]
+    const parseColors = (colorsData) => {
+        if (!colorsData) return [];
+        
+        try {
+            const parsedColors = JSON.parse(colorsData);
+            
+            if (Array.isArray(parsedColors)) {
+                // Check if it's the new format with objects {name, code}
+                if (parsedColors.length > 0 && typeof parsedColors[0] === 'object' && parsedColors[0].name && parsedColors[0].code) {
+                    return parsedColors; // New format: array of {name, code} objects
+                } else {
+                    // Old format: array of color strings - convert to new format with fallback colors
+                    const colorMapping = {
+                        black: "#000000", white: "#FFFFFF", red: "#FF0000", blue: "#0000FF",
+                        green: "#008000", yellow: "#FFFF00", purple: "#800080", orange: "#FFA500",
+                        pink: "#FFC0CB", gray: "#808080", grey: "#808080", brown: "#A52A2A",
+                        navy: "#000080", gold: "#FFD700", silver: "#C0C0C0"
+                    };
+                    return parsedColors.map(color => ({
+                        name: color,
+                        code: colorMapping[color.toLowerCase().trim()] || '#CCCCCC'
+                    }));
+                }
+            }
+        } catch (e) {
+            console.warn('Failed to parse colors:', colorsData);
+        }
+        
+        return [];
+    };
+    
+    const colors = parseColors(detail?.colors);
+    
+    // Set initial active color when colors are loaded
+    React.useEffect(() => {
+        if (colors.length > 0 && !active) {
+            setActive(colors[0].code);
+        } else if (colors.length === 0 && !active) {
+            setActive('blue'); // fallback for products without colors
+        }
+    }, [colors, active]);
     const isInCart = cartItems?.some(item => item.id == detail.id);
 
 
@@ -85,13 +133,39 @@ const ForntDetail = () => {
                         <label className="block mb-2 font-semibold text-white">
                             Select Color:
                         </label>
-                        <div className="flex gap-3">
-                            {/* {colors?.length > 0 && colors?.map((color, idx) => (
-                                <button key={idx} className="w-8 h-8 rounded-full border-2 border-gray-300 bg-red-500 focus:ring-2 focus:ring-red-400 focus:outline-none" />
-                            ))} */}
-
-                            <button className="w-8 h-8 rounded-full border-2 border-gray-300 bg-blue-500 focus:ring-2 focus:ring-blue-400 focus:outline-none" />
-                            <button className="w-8 h-8 rounded-full border-2 border-gray-300 bg-green-500 focus:ring-2 focus:ring-green-400 focus:outline-none" />
+                        <div className="flex gap-3 flex-wrap">
+                            {colors.length > 0 ? (
+                                colors.map((colorObj, idx) => (
+                                    <button
+                                        key={idx}
+                                        className={`w-8 h-8 rounded-full border-2 transition-all ${
+                                            active === colorObj.code
+                                                ? 'border-[#D4BC6D] ring-2 ring-[#D4BC6D] ring-opacity-50'
+                                                : 'border-gray-300 hover:border-gray-200'
+                                        } focus:outline-none`}
+                                        style={{ backgroundColor: colorObj.code }}
+                                        title={`${colorObj.name} (${colorObj.code})`}
+                                        onClick={() => setActive(colorObj.code)}
+                                    />
+                                ))
+                            ) : (
+                                <div className="flex gap-3">
+                                    <button 
+                                        className={`w-8 h-8 rounded-full border-2 transition-all ${
+                                            active === 'blue' ? 'border-[#D4BC6D] ring-2 ring-[#D4BC6D] ring-opacity-50' : 'border-gray-300'
+                                        } bg-blue-500 focus:outline-none`}
+                                        onClick={() => setActive('blue')}
+                                        title="Blue"
+                                    />
+                                    <button 
+                                        className={`w-8 h-8 rounded-full border-2 transition-all ${
+                                            active === 'green' ? 'border-[#D4BC6D] ring-2 ring-[#D4BC6D] ring-opacity-50' : 'border-gray-300'
+                                        } bg-green-500 focus:outline-none`}
+                                        onClick={() => setActive('green')}
+                                        title="Green"
+                                    />
+                                </div>
+                            )}
                         </div>
                     </div>
                     {/* Add to Cart */}
