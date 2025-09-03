@@ -836,23 +836,25 @@ const ItemModal = ({ item, onClose, onSuccesActive }) => {
 
   // Get actual colors from the product data
   const getProductColors = (item) => {
-    if (!item?.colors) return [];
+    if (!item?.colors_data) return [];
     
     // Handle array format: [{"name": "Black Beauty", "code": "#000000"}, ...]
     if (Array.isArray(item.colors_data)) {
-      return item.colors.map(color => ({
+      return item.colors_data.map((color, index) => ({
         label: color.name,
         value: color.code,
-        color: color.code
+        color: color.code,
+        key: `color-${index}`
       }));
     }
     
     // Handle object format: {"4": {"name": "Testing", "code": "#473437"}}
-    if (typeof item.colors_data === 'object') {
-      return Object.values(item.colors_data).map(color => ({
+    if (typeof item.colors_data === 'object' && item.colors_data !== null) {
+      return Object.values(item.colors_data).map((color, index) => ({
         label: color.name,
         value: color.code,
-        color: color.code
+        color: color.code,
+        key: `color-${index}`
       }));
     }
     
@@ -907,10 +909,11 @@ const ItemModal = ({ item, onClose, onSuccesActive }) => {
               </label>
               <Select
                 isMulti
-                options={options.map(opt => ({
+                options={options.map((opt, index) => ({
                   ...opt,
+                  key: opt.key || `color-option-${index}`,
                   label: (
-                    <div className="flex items-center gap-2">
+                    <div key={opt.key || `color-option-${index}`} className="flex items-center gap-2">
                       <span className="w-4 h-4 rounded-full border" style={{ backgroundColor: opt.color }}></span>
                       {opt.label}
                     </div>
