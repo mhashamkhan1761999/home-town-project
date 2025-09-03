@@ -53,18 +53,79 @@ const StoreFront = () => {
   });
   console.log("Athlete products:", athleteProducts);
 
+  // Function to get sport-based background image
+  const getSportBackground = (sport) => {
+    if (!sport) return "/basket.svg";
+    
+    // Create mapping for sports to images (handling both cases)
+    const sportImageMap = {
+      // Common sports variations
+      'baseball': 'Baseball or Softball.jpg',
+      'softball': 'Baseball or Softball.jpg',
+      'basketball': 'BasketBall.jpg',
+      'boxing': 'Boxing.jpg',
+      'cricket': 'Cricket.jpg',
+      'football': 'Football.jpg',
+      'golf': 'Golf.jpg',
+      'mma': 'MMA or UFC or Fighting.jpg',
+      'ufc': 'MMA or UFC or Fighting.jpg',
+      'fighting': 'MMA or UFC or Fighting.jpg',
+      'rugby': 'Rugby.jpg',
+      'soccer': 'Soccer.jpg',
+      'surfing': 'Surfing.jpg',
+      'swimming': 'Swimming.jpg',
+      'track': 'Track.jpg',
+      'volleyball': 'Volleyball.jpg'
+    };
+    
+    // Normalize sport name (lowercase, remove spaces and special chars)
+    const normalizedSport = sport.toLowerCase().trim().replace(/[^a-z]/g, '');
+    
+    // Try to find exact match first
+    if (sportImageMap[normalizedSport]) {
+      return `/sportImages/${sportImageMap[normalizedSport]}`;
+    }
+    
+    // Try partial matches for compound sports
+    for (const [key, imageName] of Object.entries(sportImageMap)) {
+      if (normalizedSport.includes(key) || key.includes(normalizedSport)) {
+        return `/sportImages/${imageName}`;
+      }
+    }
+    
+    // Default fallback
+    return "/basket.svg";
+  };
+
   // Determine which data to use
   const athlete = athleteData || {};
   const products = slug ? athleteProducts : [];
   const isLoading = slug ? isAthleteLoading || isProductsLoading : false;
+  
+  // Get the appropriate background image
+  const getBackgroundImage = () => {
+    // First priority: athlete's cover photo
+    if (athlete?.cover_photo_url) {
+      return athlete.cover_photo_url;
+    }
+    if (athlete?.cover_photo) {
+      return athlete.cover_photo;
+    }
+    
+    // Second priority: sport-based image
+    if (athlete?.sport) {
+      return getSportBackground(athlete.sport);
+    }
+    
+    // Final fallback
+    return "/basket.svg";
+  };
   return (
     <>
       <section
         className="h-[90dvh] w-full bg-bottom bg-no-repeat bg-cover py-8 px-5 relative"
         style={{
-          backgroundImage: `url(${
-            athlete?.cover_photo_url || athlete?.cover_photo || "/basket.svg"
-          })`,
+          backgroundImage: `url(${getBackgroundImage()})`,
         }}
       >
         <h1 className="text-[7.5rem] text-center uppercase font-bold bg-[linear-gradient(to_right,#d4bc6d,#57430d)] bg-clip-text text-transparent mb-8">
