@@ -350,9 +350,10 @@ const Dashboard = () => {
               {/* Completion */}
               <td className="px-2 sm:px-6 py-4 border-b border-[#323232]">
                 <div className="text-[#D4BC6D] font-bold mb-0.5 text-xs sm:text-sm">
-                  {Math.min((service.total_item_sold || 0) * 10, 100)}%
+                  {service.status == "Cancelled" ? "Cancelled": `${Math.min((service.total_item_sold || 0) * 10, 100)}%`}
                 </div>
-                <div className="h-[8px] sm:h-[10px] w-[120px] sm:w-[150px] bg-[#282828] rounded-full">
+                {service.status != "Cancelled" &&
+                (<div className="h-[8px] sm:h-[10px] w-[120px] sm:w-[150px] bg-[#282828] rounded-full">
                   <div
                     className="h-full bg-[#D4BC6D] rounded-full"
                     style={{
@@ -362,7 +363,7 @@ const Dashboard = () => {
                       )}%`,
                     }}
                   />
-                </div>
+                </div>)}
               </td>
             </tr>
           ))
