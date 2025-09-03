@@ -90,7 +90,7 @@ const StoreFront = () => {
 
         {/* Left content positioned absolutely */}
         <div className="absolute bottom-20 left-5 max-w-md md:max-w-lg lg:max-w-xl">
-          <div className="bg-[rgba(255, 255, 255,0.1)] backdrop-blur-sm rounded-xl border border-[#D4BC6D] p-8 space-y-6">
+          <div className="bg-[rgba(255, 255, 255,0.1)] bg-white rounded-xl border border-[#D4BC6D] p-8 space-y-6">
             <div className="flex items-center space-x-6">
               <div className="h-20 w-20">
                 <img
@@ -99,7 +99,7 @@ const StoreFront = () => {
                   className="w-full h-full object-contain"
                 />
               </div>
-              <p className="text-3xl font-bold text-white">
+              <p className="text-3xl font-bold text-[#D4BC6D]">
                 {isLoading
                   ? "Loading..."
                   : athlete?.store || athlete?.store_name || "----"}
@@ -111,24 +111,24 @@ const StoreFront = () => {
                 Athlete Details
               </p>
               <div>
-                <h3 className="text-2xl font-semibold text-white mb-3">
+                <h3 className="text-2xl font-semibold text-[#D4BC6D] mb-3">
                   {athlete?.store || athlete?.store_name}
                 </h3>
                 <p className="text-lg text-[#D4BC6D] mb-3">
                   {athlete?.sport || athlete?.level_of_athlete}
                 </p>
                 {athlete?.team_name && (
-                  <p className="text-lg text-white mb-2">
+                  <p className="text-lg text-[#D4BC6D] mb-2">
                     Team: {athlete.team_name}
                   </p>
                 )}
                 {athlete?.school_name && (
-                  <p className="text-lg text-white mb-2">
+                  <p className="text-lg text-[#D4BC6D] mb-2">
                     School: {athlete.school_name}
                   </p>
                 )}
                 {(athlete?.city || athlete?.country) && (
-                  <p className="text-lg text-white">
+                  <p className="text-lg text-[#D4BC6D]">
                     City: {athlete?.city ? athlete.city + ", " : ""}
                     {athlete?.country}
                   </p>
