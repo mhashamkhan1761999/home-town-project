@@ -239,16 +239,16 @@ const SuperAdminProducts = () => {
   };
 
   return (
-    <div className="card-gradient !border-[1.5px] p-6 rounded-3xl">
+    <div className="card-gradient !border-[1.5px] p-4 sm:p-6 rounded-3xl max-w-full overflow-hidden">
       {/* Header */}
-      <div className="flex justify-between items-center mb-8">
-        <h2 className="text-white font-bold text-3xl">Manage Products</h2>
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 sm:mb-8 gap-4">
+        <h2 className="text-white font-bold text-2xl sm:text-3xl">Manage Products</h2>
         <button
           onClick={() => {
             addModal.openModal();
             setShowAddModal(true);
           }}
-          className="mr-10 bg-[#D4BC6D] text-black px-6 py-3 rounded-full font-semibold hover:bg-[#b89f4e] transition flex items-center gap-2"
+          className="w-full sm:w-auto bg-[#D4BC6D] text-black px-4 sm:px-6 py-3 rounded-full font-semibold hover:bg-[#b89f4e] transition flex items-center justify-center gap-2"
         >
           <Plus size={20} />
           Add Product
@@ -256,7 +256,7 @@ const SuperAdminProducts = () => {
       </div>
 
       {/* Filters */}
-      <div className="flex gap-4 mb-6">
+      <div className="flex flex-col sm:flex-row gap-4 mb-6">
         <div className="relative flex-1">
           <Search
             className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[#838383]"
@@ -270,7 +270,7 @@ const SuperAdminProducts = () => {
             className="w-full pl-10 pr-4 py-3 bg-[#282828] border border-[#4B4C46] rounded-lg text-white placeholder-[#838383] focus:border-[#D4BC6D] outline-none"
           />
         </div>
-        <div className="min-w-[200px]">
+        <div className="w-full sm:min-w-[200px] sm:max-w-[250px]">
           <select
             value={selectedCategory}
             onChange={(e) => setSelectedCategory(e.target.value)}
@@ -286,18 +286,18 @@ const SuperAdminProducts = () => {
         </div>
       </div>
 
-      {/* Products Table */}
-      <div className="overflow-x-auto">
-        <table className="w-full">
+      {/* Products Table - Desktop View */}
+      <div className="hidden lg:block overflow-x-auto">
+        <table className="w-full table-fixed">
           <thead>
             <tr className="text-left text-sm font-bold text-[#838383] border-b border-[#323232]">
-              <th className="pb-4">IMAGE</th>
-              <th className="pb-4">NAME</th>
-              <th className="pb-4">CATEGORY</th>
-              <th className="pb-4">PRICE</th>
-              <th className="pb-4">STOCK</th>
-              <th className="pb-4">STATUS</th>
-              <th className="pb-4">ACTIONS</th>
+              <th className="pb-4 w-16">IMAGE</th>
+              <th className="pb-4 w-64">NAME</th>
+              <th className="pb-4 w-32">CATEGORY</th>
+              <th className="pb-4 w-24">PRICE</th>
+              <th className="pb-4 w-24">STOCK</th>
+              <th className="pb-4 w-24">STATUS</th>
+              <th className="pb-4 w-28">ACTIONS</th>
             </tr>
           </thead>
           <tbody>
@@ -320,7 +320,7 @@ const SuperAdminProducts = () => {
                   className="border-b border-[#323232] hover:bg-[rgba(255,255,255,0.02)]"
                 >
                   <td className="py-4">
-                    <div className="w-12 h-12 bg-[#adacac] rounded-lg overflow-hidden">
+                    <div className="w-12 h-12 bg-[#adacac] rounded-lg overflow-hidden flex-shrink-0">
                       {(product.icon || product.image) ? (
                         <img
                           src={
@@ -345,26 +345,30 @@ const SuperAdminProducts = () => {
                       </div>
                     </div>
                   </td>
-                  <td className="py-4">
-                    <div>
-                      <p className="text-white font-medium">{product.name}</p>
-                      <p className="text-[#838383] text-sm truncate max-w-[200px]">
-                        {stripHtml(product.description)}
+                  <td className="py-4 pr-4">
+                    <div className="min-w-0">
+                      <p className="text-white font-medium truncate" title={product.name}>
+                        {product.name}
+                      </p>
+                      <p className="text-[#838383] text-sm truncate" title={stripHtml(product.description)}>
+                        {stripHtml(product.description)?.length > 50 
+                          ? `${stripHtml(product.description).substring(0, 50)}...` 
+                          : stripHtml(product.description)}
                       </p>
                     </div>
                   </td>
-                  <td className="py-4 text-[#D4BC6D]">
+                  <td className="py-4 text-[#D4BC6D] truncate">
                     {product.category?.name || "N/A"}
                   </td>
                   <td className="py-4 text-white font-bold">
                     ${product.price}
                   </td>
-                  <td className="py-4 text-white">
+                  <td className="py-4 text-white truncate">
                     {product.stock || "Unlimited"}
                   </td>
                   <td className="py-4">
                     <span
-                      className={`px-3 py-1 rounded-full text-xs font-medium ${
+                      className={`px-2 py-1 rounded-full text-xs font-medium whitespace-nowrap ${
                         product.status === "active"
                           ? "bg-green-100 text-green-800"
                           : "bg-red-100 text-red-800"
@@ -374,27 +378,27 @@ const SuperAdminProducts = () => {
                     </span>
                   </td>
                   <td className="py-4">
-                    <div className="flex gap-2">
+                    <div className="flex gap-1">
                       <button
                         onClick={() => handleView(product)}
                         className="p-2 text-[#838383] hover:text-[#D4BC6D] transition"
                         title="View Product"
                       >
-                        <Eye size={16} />
+                        <Eye size={14} />
                       </button>
                       <button
                         onClick={() => handleEdit(product)}
                         className="p-2 text-[#838383] hover:text-blue-400 transition"
                         title="Edit Product"
                       >
-                        <Edit size={16} />
+                        <Edit size={14} />
                       </button>
                       <button
                         onClick={() => handleDelete(product)}
                         className="p-2 text-[#838383] hover:text-red-400 transition"
                         title="Delete Product"
                       >
-                        <Trash size={16} />
+                        <Trash size={14} />
                       </button>
                     </div>
                   </td>
@@ -405,37 +409,153 @@ const SuperAdminProducts = () => {
         </table>
       </div>
 
+      {/* Products Cards - Mobile/Tablet View */}
+      <div className="lg:hidden space-y-4">
+        {isLoading ? (
+          <div className="py-8 text-center text-[#838383]">
+            Loading products...
+          </div>
+        ) : paginatedProducts.length === 0 ? (
+          <div className="py-8 text-center text-[#838383]">
+            No products found
+          </div>
+        ) : (
+          paginatedProducts.map((product) => (
+            <div
+              key={product.id}
+              className="bg-[rgba(255,255,255,0.05)] border border-[#323232] rounded-lg p-4 hover:bg-[rgba(255,255,255,0.08)] transition"
+            >
+              <div className="flex items-start gap-4">
+                {/* Product Image */}
+                <div className="w-16 h-16 bg-[#adacac] rounded-lg overflow-hidden flex-shrink-0">
+                  {(product.icon || product.image) ? (
+                    <img
+                      src={
+                        error
+                          ? `/${(product.icon || product.image)}`
+                          : `https://hometown.eagleeblaze.com/storage/app/public/${(product.icon || product.image)}`.replace(/\\/g, '/')
+                      }
+                      alt={product.name}
+                      className="w-full h-full object-cover"
+                      onError={(e) => {
+                        e.target.style.display = "none";
+                        e.target.nextSibling.style.display = "flex";
+                      }}
+                    />
+                  ) : null}
+                  <div
+                    className={`w-full h-full flex items-center justify-center text-[#838383] ${
+                      (product.icon || product.image) ? "hidden" : ""
+                    }`}
+                  >
+                    <Package size={24} />
+                  </div>
+                </div>
+
+                {/* Product Info */}
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-start justify-between mb-2">
+                    <h3 className="text-white font-medium text-lg truncate pr-2">
+                      {product.name}
+                    </h3>
+                    <span
+                      className={`px-2 py-1 rounded-full text-xs font-medium whitespace-nowrap flex-shrink-0 ${
+                        product.status === "active"
+                          ? "bg-green-100 text-green-800"
+                          : "bg-red-100 text-red-800"
+                      }`}
+                    >
+                      {product.status || "Active"}
+                    </span>
+                  </div>
+                  
+                  <p className="text-[#838383] text-sm mb-3 line-clamp-2">
+                    {stripHtml(product.description)}
+                  </p>
+                  
+                  <div className="grid grid-cols-2 gap-4 text-sm mb-4">
+                    <div>
+                      <span className="text-[#838383]">Category:</span>
+                      <span className="text-[#D4BC6D] ml-2">
+                        {product.category?.name || "N/A"}
+                      </span>
+                    </div>
+                    <div>
+                      <span className="text-[#838383]">Stock:</span>
+                      <span className="text-white ml-2">
+                        {product.stock || "Unlimited"}
+                      </span>
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-center justify-between">
+                    <div className="text-white font-bold text-lg">
+                      ${product.price}
+                    </div>
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => handleView(product)}
+                        className="p-2 text-[#838383] hover:text-[#D4BC6D] transition bg-[rgba(255,255,255,0.1)] rounded-lg"
+                        title="View Product"
+                      >
+                        <Eye size={16} />
+                      </button>
+                      <button
+                        onClick={() => handleEdit(product)}
+                        className="p-2 text-[#838383] hover:text-blue-400 transition bg-[rgba(255,255,255,0.1)] rounded-lg"
+                        title="Edit Product"
+                      >
+                        <Edit size={16} />
+                      </button>
+                      <button
+                        onClick={() => handleDelete(product)}
+                        className="p-2 text-[#838383] hover:text-red-400 transition bg-[rgba(255,255,255,0.1)] rounded-lg"
+                        title="Delete Product"
+                      >
+                        <Trash size={16} />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          ))
+        )}
+      </div>
+
       {/* Pagination */}
       {totalPages > 1 && (
-        <div className="flex justify-center items-center gap-2 mt-6">
+        <div className="flex flex-wrap justify-center items-center gap-2 mt-6">
           <button
             onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
             disabled={currentPage === 1}
-            className="px-3 py-2 bg-[#282828] text-white rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[#3a3a3a] transition"
+            className="px-3 py-2 bg-[#282828] text-white rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[#3a3a3a] transition text-sm"
           >
             Previous
           </button>
 
-          {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-            <button
-              key={page}
-              onClick={() => setCurrentPage(page)}
-              className={`px-3 py-2 rounded-lg transition ${
-                currentPage === page
-                  ? "bg-[#D4BC6D] text-black"
-                  : "bg-[#282828] text-white hover:bg-[#3a3a3a]"
-              }`}
-            >
-              {page}
-            </button>
-          ))}
+          <div className="flex gap-1 flex-wrap justify-center">
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+              <button
+                key={page}
+                onClick={() => setCurrentPage(page)}
+                className={`px-3 py-2 rounded-lg transition text-sm ${
+                  currentPage === page
+                    ? "bg-[#D4BC6D] text-black"
+                    : "bg-[#282828] text-white hover:bg-[#3a3a3a]"
+                }`}
+              >
+                {page}
+              </button>
+            ))}
+          </div>
 
           <button
             onClick={() =>
               setCurrentPage((prev) => Math.min(prev + 1, totalPages))
             }
             disabled={currentPage === totalPages}
-            className="px-3 py-2 bg-[#282828] text-white rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[#3a3a3a] transition"
+            className="px-3 py-2 bg-[#282828] text-white rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[#3a3a3a] transition text-sm"
           >
             Next
           </button>
