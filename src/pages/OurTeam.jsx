@@ -31,7 +31,7 @@ const OurTeam = () => {
 
                         {
                             name: 'Thomas Jenkins',
-                            image: '/team3.jpeg',
+                            image: '/thomas.jpg',
                             rating: 0,
                             subTitle: 'Vice President',
                             sport: 'Wrestling, Rugby',
@@ -43,7 +43,7 @@ const OurTeam = () => {
                         },
                         {
                             name: 'Benjamin Jenkins',
-                            image: '/team2.jpeg',
+                            image: '/ben.jpg',
                             rating: 0,
                             subTitle: 'Founder',
                             sport: 'Basketball',
@@ -54,7 +54,7 @@ const OurTeam = () => {
                         },
                         {
                             name: 'Alek Giotopoulos Moore',
-                            image: '/team1.jpeg',
+                            image: '/alek.jpg',
                             rating: 0,
                             subTitle: 'CEO',
                             sport: 'Basketball',

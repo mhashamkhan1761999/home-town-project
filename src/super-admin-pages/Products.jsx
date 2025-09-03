@@ -248,7 +248,7 @@ const SuperAdminProducts = () => {
             addModal.openModal();
             setShowAddModal(true);
           }}
-          className="bg-[#D4BC6D] text-black px-6 py-3 rounded-full font-semibold hover:bg-[#b89f4e] transition flex items-center gap-2"
+          className="mr-10 bg-[#D4BC6D] text-black px-6 py-3 rounded-full font-semibold hover:bg-[#b89f4e] transition flex items-center gap-2"
         >
           <Plus size={20} />
           Add Product

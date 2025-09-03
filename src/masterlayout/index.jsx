@@ -246,7 +246,7 @@ const MasterLayout = () => {
 
                                     {/* Avatar Image */}
                                     <img
-                                        src="/alek.jpeg"
+                                        src="/alek-nil.jpg"
                                         onError={(e) => (e.target.src = '/default-avatar.png')}
                                         alt="Agent Avatar"
                                         className="absolute inset-[3px] w-[calc(100%-6px)] h-[calc(100%-6px)] object-cover object-center rounded-full border border-gray-700 shadow-lg"
@@ -408,7 +408,7 @@ const MasterLayout = () => {
                                 <div className="flex items-center gap-3 text-white">
                                     <div className="relative w-8 h-8">
                                         <img
-                                            src="/alek.jpeg"
+                                            src="/alek-nil.jpg"
                                             onError={(e) => (e.target.src = '/default-avatar.png')}
                                             alt="Agent Avatar"
                                             className="w-full h-full object-cover object-center rounded-full border border-gray-700"

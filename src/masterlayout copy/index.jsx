@@ -220,7 +220,7 @@ const MasterLayout = () => {
                             <div className="relative w-[4.563rem] h-[4.563rem]">
                                 {/* Avatar Image */}
                                 <img
-                                    src="/alek.jpeg"
+                                    src="/alek-nil.jpg"
                                     onError={(e) => (e.target.src = '/default-avatar.png')}
                                     alt="Admin Avatar"
                                     className="w-full h-full object-cover object-center rounded-full border border-gray-300"
