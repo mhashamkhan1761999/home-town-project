@@ -429,7 +429,7 @@ const ViewOrderModal = ({ isOpen, onClose, order }) => {
 
               <div>
                 <label className="block text-sm font-medium text-gray-400 mb-1">Full Name</label>
-                <p className="text-white">{order.fullName}</p>
+                <p className="text-white">{order.full_name}</p>
               </div>
 
               <div>
@@ -439,7 +439,8 @@ const ViewOrderModal = ({ isOpen, onClose, order }) => {
 
               <div>
                 <label className="block text-sm font-medium text-gray-400 mb-1">Total Price</label>
-                <p className="text-[#D4BC6D] font-bold text-lg">${parseFloat(order.totalPrice)?.toFixed(2)}</p>
+                {console.log(order)}
+                <p className="text-[#D4BC6D] font-bold text-lg">${order.total_price * 1}</p>
               </div>
 
               <div>
