@@ -58,7 +58,7 @@ const Header = () => {
             >
               <Link
                 to={item.link ?? "#"}
-                className="text-white text-base font-medium capitalize inline-flex items-center"
+                className="text-white text-base underline font-medium capitalize inline-flex items-center"
               >
                 {item.name}
                 {item.items?.length && (
