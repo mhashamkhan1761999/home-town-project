@@ -133,9 +133,23 @@ const OrderManagement = () => {
   };
 
   const handleStatusChange = (orderId, newStatus) => {
+    // Convert status string to numeric value for backend
+    const getStatusNumber = (status) => {
+      switch (status.toLowerCase()) {
+        case 'pending':
+          return 0;
+        case 'sent':
+          return 1;
+        case 'return request':
+          return 2;
+        default:
+          return 0;
+      }
+    };
+
     mutation.mutate({
       id: orderId,
-      data: { status: newStatus?.toLowerCase() }
+      data: { status: getStatusNumber(newStatus) }
     })
     // setOrders(orders.map(order =>
     //   order.id === orderId ? { ...order, status: newStatus } : order
@@ -385,6 +399,19 @@ const OrderManagement = () => {
 const ViewOrderModal = ({ isOpen, onClose, order }) => {
   if (!isOpen) return null;
 
+  // Helper function to parse color data
+  const parseColorData = (colorString) => {
+    try {
+      if (!colorString) return null;
+      // If it's already an object, return it
+      if (typeof colorString === 'object') return colorString;
+      // If it's a string, try to parse it as JSON
+      return JSON.parse(colorString);
+    } catch (error) {
+      return null;
+    }
+  };
+
   const getStatusColor = (status) => {
     switch (status) {
       case 'Pending':
@@ -493,6 +520,9 @@ const ViewOrderModal = ({ isOpen, onClose, order }) => {
                       Product Name
                     </th>
                     <th className="px-4 py-3 text-left text-sm font-medium text-gray-400 uppercase tracking-wider">
+                      Color
+                    </th>
+                    <th className="px-4 py-3 text-left text-sm font-medium text-gray-400 uppercase tracking-wider">
                       Price
                     </th>
                     <th className="px-4 py-3 text-left text-sm font-medium text-gray-400 uppercase tracking-wider">
@@ -504,26 +534,43 @@ const ViewOrderModal = ({ isOpen, onClose, order }) => {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-[#4B4C46]">
-                  {order?.items?.map((item) => (
-                    <tr key={item.id} className="hover:bg-[#282828] transition-colors">
-                      <td className="px-4 py-3 text-sm text-white">
-                        {item?.product?.name}
-                      </td>
-                      <td className="px-4 py-3 text-sm text-[#D4BC6D]">
-                        ${parseFloat(item?.product?.price).toFixed(2)}
-                      </td>
-                      <td className="px-4 py-3 text-sm text-white">
-                        {item?.quantity}
-                      </td>
-                      <td className="px-4 py-3 text-sm text-[#D4BC6D] font-medium">
-                        ${parseFloat(item?.price * item?.quantity).toFixed(2)}
-                      </td>
-                    </tr>
-                  ))}
+                  {order?.items?.map((item) => {
+                    const colorData = parseColorData(item?.color);
+                    return (
+                      <tr key={item.id} className="hover:bg-[#282828] transition-colors">
+                        <td className="px-4 py-3 text-sm text-white">
+                          {item?.product?.name}
+                        </td>
+                        <td className="px-4 py-3 text-sm text-white">
+                          {colorData ? (
+                            <div className="flex items-center gap-2">
+                              <div 
+                                className="w-4 h-4 rounded-full border border-gray-600" 
+                                style={{ backgroundColor: colorData.code }}
+                                title={`${colorData.name} (${colorData.code})`}
+                              ></div>
+                              <span className="text-xs">{colorData.name}</span>
+                            </div>
+                          ) : (
+                            <span className="text-gray-500 text-xs">No color</span>
+                          )}
+                        </td>
+                        <td className="px-4 py-3 text-sm text-[#D4BC6D]">
+                          ${parseFloat(item?.product?.price).toFixed(2)}
+                        </td>
+                        <td className="px-4 py-3 text-sm text-white">
+                          {item?.quantity}
+                        </td>
+                        <td className="px-4 py-3 text-sm text-[#D4BC6D] font-medium">
+                          ${parseFloat(item?.price * item?.quantity).toFixed(2)}
+                        </td>
+                      </tr>
+                    );
+                  })}
                 </tbody>
                 <tfoot className="bg-[#282828] border-t border-[#4B4C46]">
                   <tr>
-                    <td colSpan="3" className="px-4 py-3 text-sm font-medium text-gray-400 text-right">
+                    <td colSpan="4" className="px-4 py-3 text-sm font-medium text-gray-400 text-right">
                       Total Amount:
                     </td>
                     <td className="px-4 py-3 text-sm font-bold text-[#D4BC6D]">

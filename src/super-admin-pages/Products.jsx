@@ -1579,7 +1579,7 @@ const ViewProductModal = ({ product, onClose }) => {
                     <label className="text-[#838383] text-sm">Price</label>
                     <p className="text-[#D4BC6D] font-bold text-lg">${product?.price || '0.00'}</p>
                   </div>
-                  <div>
+                  {/* <div>
                     <label className="text-[#838383] text-sm">Status</label>
                     <p className={`font-medium px-3 py-1 rounded-full text-sm inline-block ${
                       product?.status === 'active' ? 'bg-green-600 text-white' :
@@ -1588,7 +1588,7 @@ const ViewProductModal = ({ product, onClose }) => {
                     }`}>
                       {product?.status || 'Unknown'}
                     </p>
-                  </div>
+                  </div> */}
                 </div>
               </div>
             </div>
