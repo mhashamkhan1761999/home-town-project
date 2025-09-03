@@ -200,6 +200,19 @@ const Header = () => {
             </div>
           ))}
 
+          <Link
+            to="/cart"
+            className=" rounded-full uppercase text-white text-sm font-semibold flex items-center relative"
+          >
+            Cart
+
+            {cartItems?.length > 0 && (
+              <span className="absolute -top-2 -right-2 bg-red-500 text-white text-base font-semibold rounded-full h-6 w-6 flex items-center justify-center">
+                {cartItems?.length}
+              </span>
+            )}
+          </Link>
+
           {/* Mobile Buttons */}
           <div className="flex flex-col gap-3 mt-4">
             <a
