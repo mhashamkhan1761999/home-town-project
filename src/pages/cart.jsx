@@ -12,13 +12,25 @@ function CartItem({ item }) {
     };
 
     const handleDecrease = () => {
-        dispatch(removeFromCart(item.id));
+        dispatch(removeFromCart({ id: item.id, color: item.color }));
     };
 
     return (
         <div className="flex justify-between items-center p-6 border-b border-[#D4BC6D] border-[1.5px] my-5 rounded-2xl">
             <div>
                 <h4 className="text-white text-xl font-semibold">{item.name}</h4>
+                {item.color && item.colorName && (
+                    <div className="flex items-center gap-2 mt-1">
+                        <span className="text-white text-sm">Color:</span>
+                        <div className="flex items-center gap-2">
+                            <div 
+                                className="w-4 h-4 rounded-full border border-white/30"
+                                style={{ backgroundColor: item.color }}
+                            ></div>
+                            <span className="text-white text-sm">{item.colorName}</span>
+                        </div>
+                    </div>
+                )}
                 <p className="text-white text-xl">Price: ${item?.price ? parseFloat(item?.price).toFixed(2) : '0.00'}</p>
                 <p className="text-white text-xl">Quantity: {item.quantity}</p>
                 <div className="flex items-center mt-1">
@@ -43,7 +55,7 @@ function CartItem({ item }) {
                 <p className="text-white text-xl">Total: ${item.total ? parseFloat(item.total).toFixed(2) : '0.00'}</p>
             </div>
             <button
-                onClick={() => dispatch(removeFromCart(item.id))}
+                onClick={() => dispatch(removeFromCart({ id: item.id, color: item.color }))}
                 className="bg-red-400 text-white px-4 py-2 rounded hover:bg-red-500"
                 type='button'
             >
@@ -63,7 +75,7 @@ const Cart = () => {
     };
 
     const handleDecrease = (item) => {
-        dispatch(removeFromCart(item.id));
+        dispatch(removeFromCart({ id: item.id, color: item.color }));
     };
 
 
@@ -96,6 +108,7 @@ const Cart = () => {
                                         <thead className="bg-[#1b1b1b] text-[#D4BC6D]">
                                             <tr>
                                                 <th className="px-6 py-4 text-left">Product</th>
+                                                <th className="px-6 py-4 text-center">Color</th>
                                                 <th className="px-6 py-4 text-center">Quantity</th>
                                                 <th className="px-6 py-4 text-center">Price</th>
                                                 <th className="px-6 py-4 text-center">Subtotal</th>
@@ -103,8 +116,21 @@ const Cart = () => {
                                         </thead>
                                         <tbody className="divide-y divide-gray-700">
                                             {cart.items.map(item => (
-                                                <tr key={item.id}>
+                                                <tr key={`${item.id}-${item.color}`}>
                                                     <td className="px-6 py-4">{item.name}</td>
+                                                    <td className="px-6 py-4 text-center">
+                                                        {item.color && item.colorName ? (
+                                                            <div className="flex items-center justify-center gap-2">
+                                                                <div 
+                                                                    className="w-4 h-4 rounded-full border border-white/30"
+                                                                    style={{ backgroundColor: item.color }}
+                                                                ></div>
+                                                                <span className="text-xs">{item.colorName}</span>
+                                                            </div>
+                                                        ) : (
+                                                            <span className="text-xs text-gray-400">N/A</span>
+                                                        )}
+                                                    </td>
                                                     <td className="px-6 py-4 text-center">
                                                         <div className="flex items-center justify-center gap-2">
                                                             <button

@@ -38,7 +38,15 @@ const CheckoutForm = () => {
 
 
   const onSubmit = async (data) => {
-    data['items'] = cart?.items?.map((val => ({ product_id: val?.id, quantity: val?.quantity, price: val?.price }))) || [];
+    data['items'] = cart?.items?.map((val => ({ 
+      product_id: val?.id, 
+      quantity: val?.quantity, 
+      price: val?.price,
+      color: {
+        name: val?.colorName || 'Unknown',
+        code: val?.color || '#000000'
+      }
+    }))) || [];
 
     if (!stripe || !elements) return
 
@@ -134,8 +142,19 @@ const CheckoutForm = () => {
             <h3 className="text-3xl font-bold mb-6">Order Summary</h3>
             <ul className="space-y-3">
               {cart?.items?.map(item => (
-                <li key={item.id} className="flex justify-between">
-                  <span>{item.name} × {item.quantity}</span>
+                <li key={`${item.id}-${item.color}`} className="flex justify-between items-center">
+                  <div className="flex flex-col">
+                    <span>{item.name} × {item.quantity}</span>
+                    {item.color && item.colorName && (
+                      <div className="flex items-center gap-2 mt-1">
+                        <div 
+                          className="w-3 h-3 rounded-full border border-white/30"
+                          style={{ backgroundColor: item.color }}
+                        ></div>
+                        <span className="text-xs text-gray-300">{item.colorName}</span>
+                      </div>
+                    )}
+                  </div>
                   <span>${(item.price * item.quantity).toFixed(2)}</span>
                 </li>
               ))}

@@ -10,7 +10,10 @@ const cartSlice = createSlice({
     reducers: {
         addToCart(state, action) {
             const newItem = action.payload;
-            const existingItem = state?.items?.find(item => item.id === newItem.id);
+            // Check for existing item with same ID and color combination
+            const existingItem = state?.items?.find(item => 
+                item.id === newItem.id && item.color === newItem.color
+            );
             state.totalQuantity++;
             state.totalPrice += parseInt(newItem.price);
 
@@ -18,7 +21,10 @@ const cartSlice = createSlice({
                 state.items.push({
                     ...newItem,
                     quantity: 1,
-                    total: newItem.price
+                    total: newItem.price,
+                    // Ensure color data is properly stored
+                    color: newItem.color || '#000000',
+                    colorName: newItem.colorName || 'Unknown'
                 });
             } else {
                 existingItem.quantity++;
@@ -26,15 +32,31 @@ const cartSlice = createSlice({
             }
         },
         removeFromCart(state, action) {
-            const id = action.payload;
-            const existingItem = state.items.find(item => item.id === id);
+            const payload = action.payload;
+            // Support both old format (just ID) and new format (object with ID and color)
+            const itemId = typeof payload === 'object' ? payload.id : payload;
+            const itemColor = typeof payload === 'object' ? payload.color : null;
+            
+            let existingItem;
+            if (itemColor) {
+                // Find item by both ID and color
+                existingItem = state.items.find(item => item.id === itemId && item.color === itemColor);
+            } else {
+                // Fallback to find by ID only (for backward compatibility)
+                existingItem = state.items.find(item => item.id === itemId);
+            }
+            
             if (!existingItem) return;
 
             state.totalQuantity--;
             state.totalPrice -= parseInt(existingItem.price);
 
             if (existingItem.quantity === 1) {
-                state.items = state.items.filter(item => item.id !== id);
+                if (itemColor) {
+                    state.items = state.items.filter(item => !(item.id === itemId && item.color === itemColor));
+                } else {
+                    state.items = state.items.filter(item => item.id !== itemId);
+                }
             } else {
                 existingItem.quantity--;
                 existingItem.total -= existingItem.price;

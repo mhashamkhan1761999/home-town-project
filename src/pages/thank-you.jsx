@@ -13,7 +13,7 @@ const ThankYou = () => {
             </p>
             <Link
                 className="bg-[#D4BC6D] text-black px-6 py-2 rounded-2xl font-semibold hover:bg-[#bba557] transition"
-                to="/store-front"
+                to={`/store-front`}
             >
                 Continue Shopping
             </Link>
