@@ -16,8 +16,8 @@ const BundleSubscription = () => {
     try {
       setLoading(true);
       const response = await getRequest('/admin/get-bundle-subscription');
-      console.log('Bundle Subscriptions Data:', response);
-      setSubscriptions(response);
+      const reversed = response.reverse();
+      setSubscriptions(reversed);
     } catch (err) {
       console.error('Error fetching bundle subscriptions:', err);
       setError('Failed to fetch bundle subscriptions');
@@ -33,7 +33,6 @@ const BundleSubscription = () => {
     try {
       setModalLoading(true);
       const response = await getRequest(`/admin/view-bundle-subscription/${id}`);
-      console.log('Bundle Subscription Details:', response);
       setSelectedSubscription(response);
       setShowModal(true);
     } catch (err) {
