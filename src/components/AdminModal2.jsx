@@ -20,7 +20,6 @@ const AdminModal2 = ({ onClose, userAge: passedUserAge }) => {
         mutationKey: ['add-agree'],
         mutationFn: (data) => postRequest('/age-agreemnet', data),
         onSuccess: (data) => {
-            .log('agree', data);
             if (data?.statusCode === 200) {
                 dispatch(saveUser({ user: data?.response?.data }));
                 onClose();
