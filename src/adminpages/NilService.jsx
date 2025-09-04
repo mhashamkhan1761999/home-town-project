@@ -75,6 +75,9 @@ const NilCategory = () => {
   // 🔹 NEW — controls the card details error modal
   const [showCardErrorModal, setShowCardErrorModal] = useState(false);
 
+  // 🔹 Store the graphic form data to be submitted later
+  const [savedGraphicFormData, setSavedGraphicFormData] = useState(null);
+
   // 🔹 Modal history management
   const launchServiceModal = useModalHistory(
     'launchService', 
@@ -160,7 +163,13 @@ const NilCategory = () => {
   };
 
   // 2️⃣ After Launch Service form → go to product list
-  const handleLaunchServiceComplete = () => {
+  const handleLaunchServiceComplete = (formData = null, categoryId = null) => {
+    // Save the graphic form data if provided
+    if (formData && categoryId) {
+      setSavedGraphicFormData({ formData, categoryId });
+      console.log('Saved graphic form data for later submission:', { formData, categoryId });
+    }
+    
     launchServiceModal.closeModal();
     setShowLaunchService(false);
     setIsShow(1); // product list
@@ -314,6 +323,8 @@ const NilCategory = () => {
           category={selectedCardId}
           reload={() => setIsShow(false)}
           selectedProducts={selectedProducts}
+          savedGraphicFormData={savedGraphicFormData}
+          setSavedGraphicFormData={setSavedGraphicFormData}
         />
       )}
 
@@ -470,10 +481,26 @@ const Category = ({ handleActive, selectedCard, setSelectedCardId }) => {
  * ProductType: now accepts `selectedProducts` prop so it can render Select vs Selected,
  * and prevent opening modal when product already selected.
  */
-const ProductType = ({ handleActive, selectedCard, category, reload, selectedProducts = [] }) => {
+const ProductType = ({ handleActive, selectedCard, category, reload, selectedProducts = [], savedGraphicFormData, setSavedGraphicFormData }) => {
   const { data } = useQuery({
     queryKey: ['product-type', category],
     queryFn: () => getRequest(`/product-types?category_id=${category}`),
+  });
+
+  // Add mutation for store-concept API
+  const storeConcepMutation = useMutation({
+    mutationKey: ['store-concept'],
+    mutationFn: ({ formData, categoryId }) => {
+      const queryParam = categoryId ? `?category_id=${categoryId}` : '';
+      return postRequest(`/store-concept${queryParam}`, formData, true);
+    },
+    onSuccess: () => {
+      console.log('Store concept submitted successfully');
+      queryClient.invalidateQueries({ queryKey: ['get-products'] });
+    },
+    onError: (error) => {
+      console.error('Error submitting store concept:', error);
+    },
   });
 
 
@@ -706,12 +733,22 @@ const ProductType = ({ handleActive, selectedCard, category, reload, selectedPro
               </button>
               <button
                 onClick={() => {
+                  // Call store-concept API if graphic form data exists
+                  if (savedGraphicFormData) {
+                    console.log('Submitting store concept with saved data:', savedGraphicFormData);
+                    storeConcepMutation.mutate({
+                      formData: savedGraphicFormData.formData,
+                      categoryId: savedGraphicFormData.categoryId
+                    });
+                  }
+                  
                   setShowFinalizeConfirm(false);
                   setShowSuccessPopup(true);
                 }}
                 className="px-4 py-2 bg-green-600 text-white rounded"
+                disabled={storeConcepMutation.isLoading}
               >
-                Yes
+                {storeConcepMutation.isLoading ? 'Processing...' : 'Yes'}
               </button>
             </div>
           </div>
@@ -745,6 +782,10 @@ const ProductType = ({ handleActive, selectedCard, category, reload, selectedPro
                     category_id: category, 
                     status: 'Completed' 
                   });
+                  
+                  // Clear the saved graphic form data since process is complete
+                  setSavedGraphicFormData(null);
+                  
                   // Continue with existing flow
                   setShowSuccessPopup(false);
                   setShowSplash(true);
@@ -1082,31 +1123,19 @@ const ItemModal2 = ({ item = null, onClose, onSuccesActive, categoryId }) => {
     }
   }, [isLogoOnlyCategory, setValue]);
 
-  const mutation = useMutation({
-    mutationKey: ['store-concept'],
-    mutationFn: (form) => {
-      // Send category_id as query parameter
-      const queryParam = categoryId ? `?category_id=${categoryId}` : '';
-      return postRequest(`/store-concept${queryParam}`, form, true);
-    },
-    onSuccess: () => {
-      // onClose();
-      onSuccesActive();
-      queryClient.invalidateQueries({ queryKey: ['get-products'] });
-
-    },
-  });
+  // Remove the mutation from here - we'll call it later from the Complete Service Launch
 
   const onSubmit = (values) => {
-    // No need to find category_id here since we're passing it as query param
-    const newData = convertToFormData({
+    // Instead of calling the API, just save the form data and close
+    const formData = convertToFormData({
       ...values,
-      // Remove category_id from body since it's now a query parameter
     });
-
-    mutation.mutate(newData);
-    // console.log('item', newData);
-    // console.log('categoryId sent as query param:', categoryId);
+    
+    console.log('Saving graphic form data for later submission:', formData);
+    console.log('categoryId for later submission:', categoryId);
+    
+    // Pass the form data and category ID back to parent via onSuccesActive
+    onSuccesActive(formData, categoryId);
   };
 
 
