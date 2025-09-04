@@ -122,7 +122,7 @@ const OrderManagement = () => {
       order?.full_name?.toLowerCase()?.includes(searchTerm?.toLowerCase()) ||
       order.email?.toLowerCase()?.includes(searchTerm?.toLowerCase());
 
-    const matchesStatus = selectedStatus == 'All' || order?.status == selectedStatus;
+    const matchesStatus = selectedStatus === 'All' || order?.status?.toLowerCase() === selectedStatus?.toLowerCase();
     const matchesAthlete = selectedAthlete === 'All' || order?.items?.some(item => {
       const athlete = item?.product?.athlete;
       return athlete?.store_name === selectedAthlete || athlete?.athlete_name === selectedAthlete;
