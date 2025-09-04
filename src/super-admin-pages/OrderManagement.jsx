@@ -123,10 +123,12 @@ const OrderManagement = () => {
       order.email?.toLowerCase()?.includes(searchTerm?.toLowerCase());
 
     const matchesStatus = selectedStatus == 'All' || order?.status == selectedStatus;
-    const matchesAthlete = selectedAthlete === 'All' || order?.items?.some(item => item?.product?.athlete?.store_name === selectedAthlete);
-    const matchesAthleteName = selectedAthlete === 'All' || order?.items?.some(item => item?.product?.athlete?.athlete_name === selectedAthlete);
+    const matchesAthlete = selectedAthlete === 'All' || order?.items?.some(item => {
+      const athlete = item?.product?.athlete;
+      return athlete?.store_name === selectedAthlete || athlete?.athlete_name === selectedAthlete;
+    });
 
-    return matchesSearch && matchesStatus && matchesAthlete && matchesAthleteName;
+    return matchesSearch && matchesStatus && matchesAthlete;
   });
 
   const handleViewOrder = (order) => {
@@ -277,7 +279,7 @@ const OrderManagement = () => {
                 className="px-4 py-2 bg-[#1a1a1a] border border-[#4B4C46] rounded-lg text-white focus:outline-none focus:border-[#D4BC6D] text-sm"
               >
                 <option value="All">All Athletes</option>
-                {filterOptions.map(name => (
+                {athleteNamesName.map(name => (
                   <option key={name} value={name}>{name}</option>
                 ))}
               </select>
