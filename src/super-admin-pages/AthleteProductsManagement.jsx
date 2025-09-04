@@ -126,7 +126,6 @@ const AthleteProductsManagement = () => {
       console.error('Error response:', error.response);
       console.error('Error status:', error.response?.status);
       console.error('Error data:', error.response?.data);
-      console.log('Backend error occurred, using fallback data');
     }
   });
 
@@ -154,7 +153,7 @@ const AthleteProductsManagement = () => {
   const viewProductMutation = useMutation({
     mutationFn: (id) => getRequest(`/admin/view-athlete-product/${id}`),
     onSuccess: (res) => {
-      console.log('Product details fetched:', res);
+      // console.log('Product details fetched:', res);
       // Update selected product with API data if needed
       if (res && res.data) {
         setSelectedProduct(prevProduct => ({
@@ -196,7 +195,7 @@ const AthleteProductsManagement = () => {
       return postRequest(`/admin/store-images/${productId}`, formData, true);
     },
     onSuccess: (res) => {
-      console.log('Product data uploaded successfully:', res);
+      // console.log('Product data uploaded successfully:', res);
       toast.success(res?.message || 'Product data saved successfully');
       // Optionally refresh product data
       queryClient.invalidateQueries(['admin-athlete-products']);

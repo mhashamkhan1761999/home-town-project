@@ -34,7 +34,7 @@ const AthletesSignUp = () => {
                 throw new Error(data.message || 'Failed to create athlete');
             }
 
-            console.log('Athlete Created:', data);
+            // console.log('Athlete Created:', data);
             return data;
         } catch (error) {
             console.error('Error creating athlete:', error);
@@ -47,7 +47,7 @@ const AthletesSignUp = () => {
         setLoading(true);
         createAthlete(data)
             .then((response) => {
-                console.log('response', response);
+                // console.log('response', response);
 
                 if (response?.status) {
                     // ✅ Save session data
@@ -71,7 +71,7 @@ const AthletesSignUp = () => {
                 setLoading(false);
             });
 
-        console.log('Finish:', data);
+        // console.log('Finish:', data);
     };
 
 

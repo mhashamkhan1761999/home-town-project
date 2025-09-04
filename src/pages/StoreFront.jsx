@@ -51,7 +51,7 @@ const StoreFront = () => {
       console.error("Error fetching athlete products:", error);
     },
   });
-  console.log("Athlete products:", athleteProducts);
+  // console.log("Athlete products:", athleteProducts);
 
   // Function to get sport-based background image
   const getSportBackground = (sport) => {

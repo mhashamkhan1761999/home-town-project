@@ -35,7 +35,7 @@ const ManageCashout = () => {
             return postRequest('/admin/update-cashout', formData, true);
         },
         onSuccess: (response) => {
-            console.log('Cashout update successful:', response);
+            // console.log('Cashout update successful:', response);
             // Show success notification
             toast.success(response?.message || 'Payment confirmed successfully!');
             // Refetch the cashout requests to get updated data
@@ -49,11 +49,11 @@ const ManageCashout = () => {
     });
 
     // Console log the response for debugging
-    React.useEffect(() => {
-        if (cashoutRequests) {
-            console.log('Cashout requests data structure:', cashoutRequests);
-        }
-    }, [cashoutRequests]);
+    // React.useEffect(() => {
+    //     if (cashoutRequests) {
+    //         console.log('Cashout requests data structure:', cashoutRequests);
+    //     }
+    // }, [cashoutRequests]);
 
     const statusTypes = ['All', 'Pending', 'Completed'];
 
@@ -82,7 +82,7 @@ const ManageCashout = () => {
     };
 
     const handlePaymentComplete = (paymentData) => {
-        console.log('Payment completed:', paymentData);
+        // console.log('Payment completed:', paymentData);
 
         // Call API to update cashout status
         updateCashoutMutation.mutate({

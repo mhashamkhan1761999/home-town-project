@@ -28,10 +28,10 @@ const MySubscription = () => {
         }
     };
 
-    console.log('My Subscription Data:', data);
-    console.log('My Bundles Data:', bundlesData);
-    console.log('Bundles Loading:', bundlesLoading);
-    console.log('Bundles Error:', bundlesError);
+    // console.log('My Subscription Data:', data);
+    // console.log('My Bundles Data:', bundlesData);
+    // console.log('Bundles Loading:', bundlesLoading);
+    // console.log('Bundles Error:', bundlesError);
 
     return (
         <>

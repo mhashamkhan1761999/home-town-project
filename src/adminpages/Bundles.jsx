@@ -42,17 +42,17 @@ const Bundles = () => {
     const mutation = useMutation({
         mutationKey: ['add-subscription'],
         mutationFn: (form) => {
-            console.log('=== MUTATION FUNCTION CALLED ===');
-            console.log('Mutation received data:', form);
-            console.log('Data type:', typeof form);
-            console.log('Data keys:', Object.keys(form));
-            console.log('Content field exists:', 'content' in form);
-            console.log('Content value:', form.content);
-            console.log('=== END MUTATION LOG ===');
+            // console.log('=== MUTATION FUNCTION CALLED ===');
+            // console.log('Mutation received data:', form);
+            // console.log('Data type:', typeof form);
+            // console.log('Data keys:', Object.keys(form));
+            // console.log('Content field exists:', 'content' in form);
+            // console.log('Content value:', form.content);
+            // console.log('=== END MUTATION LOG ===');
             return postRequest('/buy-bundles', form);
         },
         onSuccess: (data) => {
-            console.log('Mutation success:', data);
+            // console.log('Mutation success:', data);
             if (data?.statusCode === 200) {
                 toast.success(data?.message);
                 setIsShow(false);
@@ -108,7 +108,6 @@ const Bundles = () => {
             setCurrentDescriptionIndex(currentDescriptionIndex + 1);
         } else {
             // All descriptions collected, close description modal and open payment modal
-            console.log('All descriptions collected:', newDescriptions);
             setShowDescriptionModal(false);
             setIsShow(currentBundle);
             bundleModal.openModal({ bundle: currentBundle });
@@ -132,7 +131,6 @@ const Bundles = () => {
         }
     }
 
-    console.log(data, "data");
 
     return (
         <>
@@ -197,15 +195,14 @@ const Bundles = () => {
                         }}
                         isEdit={isShow}
                         mutate={(formData) => {
-                            console.log('=== MUTATE FUNCTION CALLED ===');
                             
                             // Use ref to get the most current descriptions
                             const finalDescriptions = descriptionsRef.current;
-                            console.log('Final descriptions being sent:', finalDescriptions);
-                            console.log('Form data received:', formData);
-                            console.log('Form data type:', typeof formData);
-                            console.log('Is FormData:', formData instanceof FormData);
-                            console.log('Current bundle:', currentBundle);
+                            // console.log('Final descriptions being sent:', finalDescriptions);
+                            // console.log('Form data received:', formData);
+                            // console.log('Form data type:', typeof formData);
+                            // console.log('Is FormData:', formData instanceof FormData);
+                            // console.log('Current bundle:', currentBundle);
                             
                             // Handle both FormData and regular object
                             let dataWithContent;
@@ -223,13 +220,12 @@ const Bundles = () => {
                                 // Add content as JSON string
                                 dataWithContent.append('content', JSON.stringify(finalDescriptions));
                                 
-                                console.log('FormData entries:');
                                 for (let [key, value] of dataWithContent.entries()) {
                                     console.log(`${key}:`, value);
                                 }
                             } else {
                                 // If it's a regular object
-                                console.log('Handling as regular object');
+                                // console.log('Handling as regular object');
                                 dataWithContent = {
                                     package_id: formData.package_id || currentBundle?.id,
                                     stripe_token: formData.stripe_token,
@@ -242,12 +238,12 @@ const Bundles = () => {
                                         dataWithContent[key] = formData[key];
                                     }
                                 });
-                                
-                                console.log('Complete payload being sent:', dataWithContent);
-                                console.log('Payload keys:', Object.keys(dataWithContent));
+
+                                // console.log('Complete payload being sent:', dataWithContent);
+                                // console.log('Payload keys:', Object.keys(dataWithContent));
                             }
-                            
-                            console.log('=== CALLING MUTATION ===');
+
+                            // console.log('=== CALLING MUTATION ===');
                             mutation.mutate(dataWithContent);
                         }}
                     />

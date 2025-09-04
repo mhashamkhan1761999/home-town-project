@@ -19,7 +19,7 @@ const Checkout = () => {
   const onSubmit = (data) => {
     data['stripe_token'] = 'tok_visa'
     data['items'] = cart?.items?.map((val => ({ product_id: val?.id, quantity: val?.quantity, price: val?.price }))) || [];
-    console.log('Billing Details:', data);
+    // console.log('Billing Details:', data);
   }
 
   return (

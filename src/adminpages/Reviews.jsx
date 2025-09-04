@@ -10,7 +10,7 @@ const Reviews = () => {
     });
 
 
-    console.log('categoriesad', cate, isLoading, error);
+    // console.log('categoriesad', cate, isLoading, error);
 
 
     const data = [

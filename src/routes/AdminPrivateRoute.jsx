@@ -5,7 +5,7 @@ import { useSelector } from "react-redux";
 const AdminPrivateRoute = ({ children }) => {
     const newState = useSelector((state) => state?.authenticate)
 
-    console.log("PrivateRoute", !newState?.user?.role);
+    // console.log("PrivateRoute", !newState?.user?.role);
 
     return (newState?.isAuthenticated && !newState?.user?.role) ? <>{children}</> : <Navigate to="/admin/login" replace={true} />
 };

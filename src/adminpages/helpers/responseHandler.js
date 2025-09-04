@@ -15,7 +15,7 @@ export const responseError = async (e) => {
             data.push({ message: e.data?.message, color: 'warning' });
         }
 
-        console.log('validation error', data);
+        // console.log('validation error', data);
         await badRequestConfirmation(data)
     }
     else if (e.data?.statusCode === 422 || e.data?.statusCode === 405) {
@@ -25,7 +25,7 @@ export const responseError = async (e) => {
 
         let data = [];
         for (let key in e.data?.errors) {
-            console.log('login', e.data?.errors[key]?.message, e.data?.errors[key])
+            // console.log('login', e.data?.errors[key]?.message, e.data?.errors[key])
             if (e.data?.errors?.hasOwnProperty(key)) {
 
                 data.push({
@@ -38,7 +38,7 @@ export const responseError = async (e) => {
             data.push({ message: e.data?.message, color: 'warning' });
         }
 
-        console.log('validation error', data);
+        // console.log('validation error', data);
         await badRequestConfirmation(data)
     }
     else if (e.statusCode === 404) {
@@ -46,7 +46,7 @@ export const responseError = async (e) => {
     }
     else {
         // data.push({message : e.message ,color : 'danger' });
-        console.log(e?.data?.message);
+        // console.log(e?.data?.message);
         await error500(e?.data?.message);
 
     }

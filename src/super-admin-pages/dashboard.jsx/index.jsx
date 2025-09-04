@@ -16,7 +16,7 @@ const SuperAdminDashboard = () => {
         }
     });
 
-    console.log("SuperAdminDashboard data", data);
+    // console.log("SuperAdminDashboard data", data);
 
     // State for filter periods
     const [salesTimeFilter, setSalesTimeFilter] = useState('1week');

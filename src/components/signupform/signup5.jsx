@@ -12,7 +12,7 @@ const Signup5 = ({ onFinish, data, goBack, loading }) => {
 
     const onSubmit = (newData) => {
         const allData = { ...data, newData }
-        console.log('Form Data:', data);
+        // console.log('Form Data:', data);
         onFinish(allData)
     };
     return (

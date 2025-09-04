@@ -34,7 +34,7 @@ const AddSubscriptionModal = ({ onClose, isEdit, mutate }) => {
 
     const onSubmit = async (e) => {
         e.preventDefault()
-        console.log('=== AddSubscriptionModal onSubmit called ===');
+        // console.log('=== AddSubscriptionModal onSubmit called ===');
         
         if (!stripe || !elements) return
         
@@ -43,7 +43,7 @@ const AddSubscriptionModal = ({ onClose, isEdit, mutate }) => {
         const { error, token } = await stripe.createToken(card)
 
         if (error) {
-            console.error(error)
+            // console.error(error)
             toast?.error(error.message);
             setIsProcessing(false);
         } else {
@@ -52,8 +52,8 @@ const AddSubscriptionModal = ({ onClose, isEdit, mutate }) => {
                 stripe_token: token?.id
             }
             
-            console.log('AddSubscriptionModal - Form data prepared:', data);
-            console.log('AddSubscriptionModal - Calling mutate function');
+            // console.log('AddSubscriptionModal - Form data prepared:', data);
+            // console.log('AddSubscriptionModal - Calling mutate function');
             
             // Call the mutate function passed from parent
             if (mutate) {

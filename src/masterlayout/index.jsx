@@ -49,14 +49,14 @@ const MasterLayout = () => {
     useEffect(() => {
         if (user?.agree == 0) {
             setIsShow(true);
-            console.log('User Agree: ', user?.agree);
+            // console.log('User Agree: ', user?.agree);
         }
     }, [user?.agree])
 
     useEffect(() => {
         if (!user?.athlete_name) {
             setIsShow2(true);
-            console.log('User Age: ', user?.age);
+            // console.log('User Age: ', user?.age);
         }
     }, [user?.age])
 

@@ -82,7 +82,7 @@ const ForntDetail = () => {
     const isInCart = cartItems?.some(item => item.id == detail.id);
 
 
-    console.log('Product Details:', isInCart);
+    // console.log('Product Details:', isInCart);
 
 
     return (

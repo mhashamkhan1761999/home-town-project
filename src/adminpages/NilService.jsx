@@ -129,7 +129,7 @@ const NilCategory = () => {
     try {
       // First check if card details exist
       const cardResponse = await getRequest('/get-card');
-      console.log(cardResponse,"card")
+      // console.log(cardResponse,"card")
       // If card API fails or returns 404, show card error modal
       if (cardResponse && cardResponse.data && (cardResponse.data?.statusCode === 204 || cardResponse.data?.status === "false")) {
         setShowCardErrorModal(true);
@@ -1105,8 +1105,8 @@ const ItemModal2 = ({ item = null, onClose, onSuccesActive, categoryId }) => {
     });
 
     mutation.mutate(newData);
-    console.log('item', newData);
-    console.log('categoryId sent as query param:', categoryId);
+    // console.log('item', newData);
+    // console.log('categoryId sent as query param:', categoryId);
   };
 
 

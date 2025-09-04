@@ -24,7 +24,7 @@ const CarouselSlider = ({ data }) => {
                 // slide start from 3 slide
 
                 onSlideChange={(swiper) => {
-                    console.log('Slide changed to index:', swiper.activeIndex);
+                    // console.log('Slide changed to index:', swiper.activeIndex);
                     if (swiper.activeIndex === 0) {
                         swiper.slideTo(2); // Go to the third slide
                     }

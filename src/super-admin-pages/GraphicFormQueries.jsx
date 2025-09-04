@@ -21,13 +21,13 @@ const GraphicFormQueries = () => {
         }
     });
 
-    // Console log the response for debugging
-    React.useEffect(() => {
-        if (conceptQueries) {
-            console.log('Concept queries data structure:', conceptQueries);
-            console.log('Individual query sample:', conceptQueries[0]);
-        }
-    }, [conceptQueries]);
+    // // Console log the response for debugging
+    // React.useEffect(() => {
+    //     if (conceptQueries) {
+    //         console.log('Concept queries data structure:', conceptQueries);
+    //         console.log('Individual query sample:', conceptQueries[0]);
+    //     }
+    // }, [conceptQueries]);
 
     const statusTypes = ['All']; // Since there's no status field in the data, we'll just use All for now
 

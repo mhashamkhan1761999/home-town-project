@@ -482,7 +482,6 @@ const ViewOrderModal = ({ isOpen, onClose, order }) => {
 
               <div>
                 <label className="block text-sm font-medium text-gray-400 mb-1">Total Price</label>
-                {console.log(order)}
                 <p className="text-[#D4BC6D] font-bold text-lg">${order.total_price * 1}</p>
               </div>
 

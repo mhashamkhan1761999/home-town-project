@@ -48,9 +48,9 @@ const BundleSubscription = () => {
   }, []);
 
   // Debug modal state
-  useEffect(() => {
-    console.log('Modal State - showModal:', showModal, 'selectedSubscription:', selectedSubscription);
-  }, [showModal, selectedSubscription]);
+  // useEffect(() => {
+  //   console.log('Modal State - showModal:', showModal, 'selectedSubscription:', selectedSubscription);
+  // }, [showModal, selectedSubscription]);
 
   // Filter subscriptions based on search term
   const filteredSubscriptions = subscriptions.filter(subscription =>

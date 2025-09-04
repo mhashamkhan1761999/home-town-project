@@ -9,7 +9,7 @@ const useFetch = (endpoint) => {
     const fetchData = async () => {
         try {
             const response = await getRequest(endpoint);
-            console.log('API Successfully Run:', response);
+            // console.log('API Successfully Run:', response);
             setData(response?.data);
         } catch (err) {
             setError(err.message);

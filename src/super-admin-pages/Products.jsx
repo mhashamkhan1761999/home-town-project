@@ -141,7 +141,7 @@ const SuperAdminProducts = () => {
     queryKey: ["categories"],
     queryFn: () => getRequest("/categories"),
     onError: (error) => {
-      console.log("Backend not available for categories, using fallback data");
+      console.log("Backend not available for categories, using fallback data", error);
     },
   });
 

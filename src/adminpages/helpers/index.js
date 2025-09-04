@@ -7,7 +7,7 @@ export const badRequestConfirmation = (errors) => {
         return val;
     })
     text += '</ul>'
-    console.log(text);
+    // console.log(text);
     return Swal.fire({
         title: 'Validation Error',
         html: text,
@@ -48,7 +48,7 @@ export const error500 = (message) => {
 export const convertToFormData = (data = {}) => {
     let x = new FormData();
     Object?.entries(data)?.map(([key, val]) => {
-        console.log(key, val)
+        // console.log(key, val)
         if (val) {
             x.append(key, val)
         }

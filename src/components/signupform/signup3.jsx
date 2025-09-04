@@ -15,7 +15,7 @@ const Signup3 = ({ next, setData, goBack }) => {
 
     const onSubmit = (data) => {
         setData(prev => ({ ...prev, ...data }))
-        console.log('Form Data:', data);
+        // console.log('Form Data:', data);
         setTimeout(() => {
             next()
         }, 500)

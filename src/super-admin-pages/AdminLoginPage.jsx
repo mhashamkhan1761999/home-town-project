@@ -23,7 +23,7 @@ const AdminLoginPage = () => {
         onSuccess: (data) => {
             console.log('Login Response:', data);
             if (data?.statusCode == 200) {
-                console.log('Login Successful:', data);
+                // console.log('Login Successful:', data);
 
                 dispatch(saveAuthenticated(data?.response?.data))
                 toast?.success(data?.message);

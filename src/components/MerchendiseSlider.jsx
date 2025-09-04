@@ -6,7 +6,7 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import { EffectCoverflow } from 'swiper/modules';
 
 const MerchendiseSlider = ({ data }) => {
-    console.log(data) 
+    // console.log(data) 
 
     return (
         <div className="w-full py-10 marchindise ms-28">
@@ -44,7 +44,7 @@ export default MerchendiseSlider;
 
 // ✅ Card Component
 const Card = ({ id, name, image, images = [], description, price }) => {
-    console.log(images,"img")
+    // console.log(images,"img")
     // Choose correct image
     const displayImage =
         image

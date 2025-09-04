@@ -73,10 +73,10 @@ export const postRequest = async (endpoint, data = {}, file = false) => {
             }
         };
         const response = await api.post(endpoint, data, headers);
-        console.log('Api Successfully Run:', response.data);
+        // console.log('Api Successfully Run:', response.data);
         return response.data;
     } catch (error) {
-        console.log('errow', error.response)
+        // console.log('errow', error.response)
         responseError(error.response)
         // throw new Error(error.response?.data?.message || `POST request to ${ endpoint } failed`);
     }
@@ -90,10 +90,10 @@ export const putRequest = async (endpoint, data = {}, file = false) => {
             }
         };
         const response = await api.put(endpoint, data, headers);
-        console.log('Api Successfully Run:', response.data);
+        // console.log('Api Successfully Run:', response.data);
         return response.data;
     } catch (error) {
-        console.log('errow', error.response)
+        // console.log('errow', error.response)
         responseError(error.response)
     }
 };

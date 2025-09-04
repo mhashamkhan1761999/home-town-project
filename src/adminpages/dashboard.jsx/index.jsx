@@ -13,8 +13,8 @@ import toast from "react-hot-toast";
 
 const Dashboard = () => {
   const user = useSelector((state) => state.authenticate.user);
-  console.log("Authenticated user from Redux:", user);
-  console.log(user.total_sale); // "0"
+  // console.log("Authenticated user from Redux:", user);
+  // console.log(user.total_sale); // "0"
 
   const { slug } = user || {};
   const {
@@ -32,7 +32,7 @@ const Dashboard = () => {
       console.error("Error fetching athlete data:", error);
     },
   });
-  console.log("Athlete data:", athleteData);
+  // console.log("Athlete data:", athleteData);
 
   const [isCashOutModalOpen, setIsCashOutModalOpen] = useState(false);
 
@@ -51,7 +51,7 @@ const Dashboard = () => {
       console.error("Error fetching dashboard stats:", error);
     },
   });
-  console.log(dashboardStats);
+  // console.log(dashboardStats);
 
   const data = [
     {
@@ -405,7 +405,7 @@ const CashOutModal = ({ isOpen, onClose, user }) => {
   const cashOutMutation = useMutation({
     mutationFn: (data) => postRequest("/store-cashout", data),
     onSuccess: (response) => {
-      console.log("Cash out request successful:", response);
+      // console.log("Cash out request successful:", response);
       toast.success(
         response?.message ||
           `Cash out request for $${totalSaleAmount.toFixed(

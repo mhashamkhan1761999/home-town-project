@@ -48,9 +48,9 @@ const LoginPage = () => {
         mutationKey: ['login'],
         mutationFn: (form) => postRequest('/auth/login', form),
         onSuccess: (data) => {
-            console.log('Login Response:', data);
+            // console.log('Login Response:', data);
             if (data?.statusCode == 200) {
-                console.log('Login Successful:', data);
+                // console.log('Login Successful:', data);
 
                 dispatch(saveAuthenticated(data?.response?.data))
                 toast?.success(data?.message);
@@ -67,7 +67,7 @@ const LoginPage = () => {
         mutationKey: ['forgot-password'],
         mutationFn: (form) => postRequest('/auth/forgot-password', form),
         onSuccess: (data) => {
-            console.log('Forgot Password Response:', data);
+            // console.log('Forgot Password Response:', data);
             if (data?.statusCode == 200) {
                 toast.success('Reset code sent to your email');
                 setResetEmail(data?.email || resetEmail);
@@ -86,7 +86,7 @@ const LoginPage = () => {
         mutationKey: ['verify-code'],
         mutationFn: (form) => postRequest('/auth/verify-code', form),
         onSuccess: (data) => {
-            console.log('Verify Code Response:', data);
+            // console.log('Verify Code Response:', data);
             if (data?.statusCode == 200) {
                 toast.success('Code verified successfully');
                 setShowVerifyCodeModal(false);
@@ -95,7 +95,7 @@ const LoginPage = () => {
             }
         },
         onError: (error) => {
-            console.error('Verify Error:', error);
+            // console.error('Verify Error:', error);
             toast.error(error?.response?.data?.message || 'Invalid verification code');
         }
     });
@@ -104,7 +104,7 @@ const LoginPage = () => {
         mutationKey: ['reset-password'],
         mutationFn: (form) => postRequest('/auth/reset-password', form),
         onSuccess: (data) => {
-            console.log('Reset Password Response:', data);
+            // console.log('Reset Password Response:', data);
             if (data?.statusCode == 200) {
                 toast.success('Password reset successfully');
                 setShowResetPasswordModal(false);
@@ -114,7 +114,7 @@ const LoginPage = () => {
             }
         },
         onError: (error) => {
-            console.error('Reset Password Error:', error);
+            // console.error('Reset Password Error:', error);
             toast.error(error?.response?.data?.message || 'Failed to reset password');
         }
     });
