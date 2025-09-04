@@ -55,7 +55,62 @@ const Settings = () => {
         mutation.mutate({ close_account: reason });
     }
 
-    // Handle card input changes
+    // Format card number with spaces (4-4-4-4 format)
+    const formatCardNumber = (value) => {
+        // Remove all non-digit characters
+        const digitsOnly = value.replace(/\D/g, '');
+        
+        // Limit to 16 digits
+        const limitedDigits = digitsOnly.slice(0, 16);
+        
+        // Add spaces every 4 digits
+        const formatted = limitedDigits.replace(/(\d{4})(?=\d)/g, '$1 ');
+        
+        return formatted;
+    };
+
+    // Handle card number input with formatting
+    const handleCardNumberChange = (value) => {
+        const formattedValue = formatCardNumber(value);
+        
+        // Store the raw digits (without spaces) for backend
+        const rawDigits = formattedValue.replace(/\s/g, '');
+        
+        setCardDetails(prev => ({
+            ...prev,
+            card: rawDigits // Store raw digits for backend
+        }));
+    };
+
+    // Handle card holder name input (letters, spaces, hyphens only)
+    const handleCardHolderChange = (value) => {
+        // Allow only letters, spaces, hyphens, and apostrophes
+        const allowedChars = value.replace(/[^a-zA-Z\s\-']/g, '');
+        
+        // Convert to uppercase for consistency (as cards typically show names in uppercase)
+        const formatted = allowedChars.toUpperCase();
+        
+        setCardDetails(prev => ({
+            ...prev,
+            card_holder: formatted
+        }));
+    };
+
+    // Handle security code input (only numbers, 3-4 digits)
+    const handleSecurityCodeChange = (value) => {
+        // Remove all non-digit characters
+        const digitsOnly = value.replace(/\D/g, '');
+        
+        // Limit to 4 digits
+        const limitedDigits = digitsOnly.slice(0, 4);
+        
+        setCardDetails(prev => ({
+            ...prev,
+            security_code: limitedDigits
+        }));
+    };
+
+    // Handle other card input changes
     const handleCardInputChange = (field, value) => {
         setCardDetails(prev => ({
             ...prev,
@@ -184,10 +239,14 @@ const Settings = () => {
                             <div className="grow">
                                 <input 
                                     type="text" 
-                                    placeholder='4324343243243233' 
-                                    value={cardDetails.card}
-                                    onChange={(e) => handleCardInputChange('card', e.target.value)}
+                                    placeholder='4324 3432 4324 3233' 
+                                    value={formatCardNumber(cardDetails.card)}
+                                    onChange={(e) => handleCardNumberChange(e.target.value)}
+                                    maxLength="19"
                                     className='h-full w-full border-0 outline-0 text-[#D4BC6D] text-sm sm:text-base px-2 sm:px-0 bg-transparent' 
+                                    inputMode="numeric"
+                                    pattern="[0-9\s]*"
+                                    autoComplete="cc-number"
                                 />
                             </div>
                             {/* <div className="p-1 sm:p-2">
@@ -244,9 +303,12 @@ const Settings = () => {
                                         type="text" 
                                         placeholder='123' 
                                         value={cardDetails.security_code}
-                                        onChange={(e) => handleCardInputChange('security_code', e.target.value)}
+                                        onChange={(e) => handleSecurityCodeChange(e.target.value)}
                                         maxLength="4"
                                         className='h-full w-full border-0 outline-0 text-[#D4BC6D] text-sm sm:text-base px-2 sm:px-0 bg-transparent' 
+                                        inputMode="numeric"
+                                        pattern="[0-9]*"
+                                        autoComplete="cc-csc"
                                     />
                                 </div>
                                 {/* <div className="p-1 sm:p-2">
@@ -273,10 +335,12 @@ const Settings = () => {
                             <div className="grow">
                                 <input 
                                     type="text" 
-                                    placeholder='John Doe' 
+                                    placeholder='JOHN DOE' 
                                     value={cardDetails.card_holder}
-                                    onChange={(e) => handleCardInputChange('card_holder', e.target.value)}
+                                    onChange={(e) => handleCardHolderChange(e.target.value)}
+                                    maxLength="50"
                                     className='h-full w-full border-0 outline-0 text-[#D4BC6D] text-sm sm:text-base px-2 sm:px-0 bg-transparent' 
+                                    autoComplete="cc-name"
                                 />
                             </div>
                             {/* <div className="p-1 sm:p-2">
