@@ -37,24 +37,31 @@ const GraphicFormQueries = () => {
             return [];
         }
 
-        return conceptQueries.filter(query => {
-            // Search logic based on actual data structure
-            const athleteName = query.athlete?.athlete_name || query.athlete?.store_name || query.athlete?.email || '';
-            const searchFields = [
-                athleteName,
-                query.description,
-                query.content,
-                query.athlete?.bio,
-                query.athlete?.description
-            ].filter(Boolean).join(' ').toLowerCase();
+        return conceptQueries
+            .filter(query => {
+                // Search logic based on actual data structure
+                const athleteName = query.athlete?.athlete_name || query.athlete?.store_name || query.athlete?.email || '';
+                const searchFields = [
+                    athleteName,
+                    query.description,
+                    query.content,
+                    query.athlete?.bio,
+                    query.athlete?.description
+                ].filter(Boolean).join(' ').toLowerCase();
 
-            const matchesSearch = searchFields.includes(searchTerm.toLowerCase());
+                const matchesSearch = searchFields.includes(searchTerm.toLowerCase());
 
-            // For now, we'll use 'All' since there's no status field in the data
-            const matchesStatus = selectedStatus === 'All';
+                // For now, we'll use 'All' since there's no status field in the data
+                const matchesStatus = selectedStatus === 'All';
 
-            return matchesSearch && matchesStatus;
-        });
+                return matchesSearch && matchesStatus;
+            })
+            .sort((a, b) => {
+                // Sort by created_at in descending order (newest first)
+                const dateA = new Date(a.created_at);
+                const dateB = new Date(b.created_at);
+                return dateB - dateA;
+            });
     }, [conceptQueries, searchTerm, selectedStatus]);
 
     const getStatusColor = (status) => {

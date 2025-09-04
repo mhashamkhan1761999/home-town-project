@@ -113,6 +113,7 @@ const OrderManagement = () => {
 
   // Get all athlete names for filter dropdown
   const athleteNames = Array.from(new Set(orders?.flatMap(order => order?.items?.map(item => item?.product?.athlete?.store_name).filter(Boolean)))).filter(Boolean);
+  const athleteNamesName = Array.from(new Set(orders?.flatMap(order => order?.items?.map(item => item?.product?.athlete?.athlete_name).filter(Boolean)))).filter(Boolean);
 
   // Filter orders based on search term, status, and athlete name
   const filteredOrders = orders?.filter(order => {
@@ -123,8 +124,9 @@ const OrderManagement = () => {
 
     const matchesStatus = selectedStatus == 'All' || order?.status == selectedStatus;
     const matchesAthlete = selectedAthlete === 'All' || order?.items?.some(item => item?.product?.athlete?.store_name === selectedAthlete);
+    const matchesAthleteName = selectedAthlete === 'All' || order?.items?.some(item => item?.product?.athlete?.athlete_name === selectedAthlete);
 
-    return matchesSearch && matchesStatus && matchesAthlete;
+    return matchesSearch && matchesStatus && matchesAthlete && matchesAthleteName;
   });
 
   const handleViewOrder = (order) => {
@@ -264,6 +266,18 @@ const OrderManagement = () => {
               >
                 <option value="All">All Athletes</option>
                 {athleteNames.map(name => (
+                  <option key={name} value={name}>{name}</option>
+                ))}
+              </select>
+
+
+              <select
+                value={selectedAthlete}
+                onChange={e => setSelectedAthlete(e.target.value)}
+                className="px-4 py-2 bg-[#1a1a1a] border border-[#4B4C46] rounded-lg text-white focus:outline-none focus:border-[#D4BC6D] text-sm"
+              >
+                <option value="All">All Athletes</option>
+                {filterOptions.map(name => (
                   <option key={name} value={name}>{name}</option>
                 ))}
               </select>
