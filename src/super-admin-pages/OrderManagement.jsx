@@ -337,7 +337,7 @@ const OrderManagement = () => {
                       </td>
                       <td className="px-3 sm:px-6 py-4 whitespace-nowrap">
                         <div className="text-xs sm:text-sm font-medium text-white">
-                          {order?.items?.[0]?.product?.athlete?.store_name || 'N/A'}
+                          {order?.items?.[0]?.product?.athlete?.athlete_name || order?.items?.[0]?.product?.athlete?.store_name || 'N/A'}
                         </div>
                       </td>
                       <td className="px-3 sm:px-6 py-4 whitespace-nowrap">
