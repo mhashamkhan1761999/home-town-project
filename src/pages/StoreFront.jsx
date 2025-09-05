@@ -132,7 +132,7 @@ const StoreFront = () => {
           {slug ? athlete?.athlete_name : "ATHLETE STORE"}
         </h1>
         {/* Centered profile picture for athlete storefront */}
-        {slug && athlete && (
+        {slug && athlete && (athlete?.profile_picture_url || athlete?.profile_picture) &&(
           <div className="absolute top-50 left-[50%] transform -translate-x-1/2 md:top-[50%] md:left-[50%] md:translate-x-[-50%] md:translate-y-[-50%]">
             <div className="flex justify-center">
               <img
