@@ -40,7 +40,7 @@ const Home = () => {
                             </h2>
 
                             <p className="text-base sm:text-[1.125rem] text-white mb-6 sm:mb-10">
-                                At Hometown Hero, we handle everything — from the graphics to the setup to your personal storefront — so you can stay focused on the grind. Whether it’s merch, supplements, or any other NIL service, you’ll have access to over 300+ products to build, sell, and profit from.
+                                At Hometown Hero, we give athletes the tools to build their brand and provide them with a personalized storefront to put it in the spotlight. Hometown Hero makes NIL simple. With access to over 400 products, you can create, launch, and grow your brand with ease. Every sale becomes a step toward building something bigger.
                                 <br className="block" />
                                 <br className="block" />
                                 With Hometown Hero, you gain the platform, resources, and support to maximize every opportunity. The possibilities are endless, and the only limit is how far you’re willing to take your brand. Are you ready to unleash the full potential of your NIL?

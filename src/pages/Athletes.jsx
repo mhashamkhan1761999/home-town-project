@@ -218,9 +218,11 @@ const Athletes = () => {
               </h2>
 
               <p className="text-sm sm:text-base lg:text-lg text-white mb-6 sm:mb-8 lg:mb-10">
-                Hometown Hero is a platform built for athletes, by athletes, designed to empower players at every stage of their journey—whether they are building their brand for the future or actively monetizing their name, image, and likeness (NIL).
+                Hometown Hero is a platform built for athletes, by athletes—designed to empower players at every stage of their journey, whether they are building for the future or actively monetizing their name, image, and likeness (NIL).
                 <br className="hidden sm:block" /><br className="hidden sm:block" />
-                For athletes currently earning through NIL, Hometown Hero offers a comprehensive, AI-powered platform that helps players monetize their talents, secure brand collaborations, and maximize their earning potential. With advanced tools for real-time earnings tracking, data-driven insights, and automated brand connections, we streamline the process of building and managing your NIL success. Whether it's selling products through your storefront, such as online courses, player cards, and merchandise, securing sponsorship deals, or monetizing content, our platform provides athletes with all the tools they need to grow their brand, expand their influence, and take full control of their financial future.
+                Whether you’ve already begun your NIL journey or are just getting started, Hometown Hero gives you the opportunity to grow. With our AI-powered dashboard, you can launch in minutes, track earnings in real time, and unlock new opportunities instantly. Data-driven insights make it simple to manage and maximize your NIL success.
+                <br className="hidden sm:block" /><br className="hidden sm:block" />
+                At Hometown Hero, we provide athletes with the platform, the storefront, and the support to take their brand to the next level. Fast to start, simple to manage, and built to last. Maximize every opportunity and unleash the potential of your NIL.
               </p>
 
               <Link
