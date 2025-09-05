@@ -96,7 +96,7 @@ const OurTeam = () => {
                             about: "Role at Hometown Hero: As Head of Department, Raza oversees team management, sales strategy, and daily operations, ensuring smooth execution and high performance across all initiatives.\n\nResume of Accomplishments: With 5 years of experience in sales, team management, and leadership, Raza has consistently led teams to exceed targets and played a key role in driving revenue growth through strategic planning and hands-on execution. His leadership and operational expertise help power Hometown Hero’s continued success."
                         },
                     ]?.map((member, index) => (
-                        <div className="max-w-sm bg-black rounded-2xl shadow-lg border border-[#d4bc6d] overflow-hidden hover:shadow-xl transition-shadow duration-300">
+                        <div className="max-w-sm bg-black rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300">
 
                             <div className="p-6">
                                 <h2 className="text-2xl font-bold text-white">{member?.name}</h2>
