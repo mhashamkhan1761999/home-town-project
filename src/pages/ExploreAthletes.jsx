@@ -344,7 +344,7 @@ const ExploreAthletes = () => {
                 />
 
                 {/* See More Button */}
-                {!showSeeMore && allAthletesForSeeMore.length > 0 && (
+                {/* {!showSeeMore && allAthletesForSeeMore.length > 0 && (
                     <div className="text-center mt-12 mb-8">
                         <button
                             onClick={handleSeeMoreClick}
@@ -357,7 +357,7 @@ const ExploreAthletes = () => {
                             Discover {allAthletesForSeeMore.length} more talented athletes
                         </p>
                     </div>
-                )}
+                )} */}
             </section>
 
             {/* See More Athletes Section */}
