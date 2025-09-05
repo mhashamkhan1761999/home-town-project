@@ -164,7 +164,7 @@ const featureList = [
     id: 20,
     title: 'Player Card',
     description: "Turn your moment into a collectible. Your official player card is more than a photo and a name — it’s a snapshot of your legacy. Fans will want to collect it, trade it, and show it off. Whether it’s glossy, signed, or limited edition, this is your chance to create something iconic. Cement your presence. Make it official",
-    image: '/player_card.png',
+    image: '/question-mark.jpeg',
     locked: true,
   },
 ];
