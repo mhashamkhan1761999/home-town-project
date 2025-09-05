@@ -357,18 +357,14 @@ const Home = () => {
                 </h1>
 
                 <p className="text-base sm:text-lg md:text-xl text-center font-medium text-[#adadad] max-w-[95%] md:max-w-[1200px] mx-auto pb-8 md:pb-10">
-                    Within the first month, we’ll be selecting the Furious 5 — our top 5 earning athletes on the platform.
-                    <br className="hidden sm:block" />
-                    Being part of the Furious 5 comes with exclusive perks, special recognition, and opportunities to grow your brand even further.
-                    <br className="hidden sm:block" />
-                    Let’s see who earns their spot. It’s game time.
+                    The Furious 5 spotlights the top five earning athletes on our platform each month—those driving the highest NIL earnings share and setting the standard for success. Securing a spot isn’t just about recognition; it’s about proving you’re among the best and unlocking exclusive perks, elevated visibility, and a platform-wide spotlight on your brand. The Furious 5 rotates monthly, so who will rise, who will fall, and who will make it to the top? The race to the Furious 5 is on.
                 </p>
 
-                <p className="text-base sm:text-lg md:text-xl text-center font-medium text-[#adadad] max-w-[95%] md:max-w-[1200px] mx-auto pb-8 md:pb-10">
+                {/* <p className="text-base sm:text-lg md:text-xl text-center font-medium text-[#adadad] max-w-[95%] md:max-w-[1200px] mx-auto pb-8 md:pb-10">
                     Our top 5 earning athletes, leading in NIL. Members gain exclusive access to brand partnerships, priority NIL opportunities, and elevated exposure across the
                     <br className="hidden sm:block" />
                     platform. Our team reviews earnings monthly to ensure the top performers hold their place among the Furious 5.
-                </p>
+                </p> */}
 
                 {/* <h4 className="text-[1.8rem] sm:text-[2.5rem] md:text-[3.25rem] font-extrabold text-center bg-[linear-gradient(to_right,#d4bc6d,#57430d)] bg-clip-text text-transparent">
                     Athletes Partnered With
