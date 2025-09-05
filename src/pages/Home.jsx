@@ -143,7 +143,7 @@ const Home = () => {
                                 </div>
                             </div>
                             <p className="text-gray-300 leading-relaxed text-sm sm:text-base">
-                                Unlike other platforms that offer athletes just 5-20% of profits, our platform provides athletes with up to <span className="text-[#d4bc6d] font-semibold">80% profit sharing</span>, reflecting our values that athletes should receive the benefits, not our platform.
+                                Unlike other platforms that offer just 5–10% commissions, Hometown Hero provides athletes with the opportunity to earn up to 50% commissions, reflecting our athlete-first mindset and commitment to supporting the Hometown Hero family.
                             </p>
                         </div>
 
@@ -162,7 +162,7 @@ const Home = () => {
                                 </div>
                             </div>
                             <p className="text-gray-300 leading-relaxed text-sm sm:text-base">
-                                Our platform is powered by <span className="text-[#d4bc6d] font-semibold">advanced AI technology</span>, delivering data-driven audience insights, smart recommendations to help influencers and athletes level of success.
+                                Our platform is powered by advanced AI technology, delivering sales analytics, audience insights, and clear growth recommendations to help athletes build stronger brands and reach new levels of success.
                             </p>
                         </div>
 
@@ -181,7 +181,7 @@ const Home = () => {
                                 </div>
                             </div>
                             <p className="text-gray-300 leading-relaxed text-sm sm:text-base">
-                                We'll amplify your social media presence through our <span className="text-[#d4bc6d] font-semibold">strategic marketing</span>, optimizing your profiles, creating promotional content, and personal insights, to position you to grow your following and turn your viewer into value.
+                                We’ll amplify your social media presence with strategic posts; from optimizing your profiles, to crafting collaboration posts to boost your personal insights, we position you to grow your following and turn your views into value.
                             </p>
                         </div>
 
@@ -200,7 +200,7 @@ const Home = () => {
                                 </div>
                             </div>
                             <p className="text-gray-300 leading-relaxed text-sm sm:text-base">
-                                Launch a wide range of NIL services from <span className="text-[#d4bc6d] font-semibold">merch and supplements</span> and a licences. We bring the technical expertise that makes it Live. It's fast, simple, and designed for you to reach success on what matters most.
+                                Launch a wide range of NIL services and start earning from your Name, Image, and Likeness. We bring the marketplace, and with just a few clicks your services are live. It’s fast, simple, and designed so you can stay focused on what matters most: the game.
                             </p>
                         </div>
 
@@ -225,7 +225,7 @@ const Home = () => {
                                     </div>
                                 </div>
                                 <p className="text-gray-300 leading-relaxed text-sm sm:text-base">
-                                    Every athlete on our platform gets paired with a <span className="text-[#d4bc6d] font-semibold">dedicated team of graphic NIL agents</span>, we handle the brand building so our athletes can stay focused on their game.
+                                    Every athlete on our platform gets hands-on support to make building a brand easier. With a dedicated team of graphic designers, editors, and NIL agents, we handle the brand-building so athletes can stay focused on their game.
                                 </p>
                             </div>
 
@@ -244,7 +244,7 @@ const Home = () => {
                                     </div>
                                 </div>
                                 <p className="text-gray-300 leading-relaxed text-sm sm:text-base">
-                                    <span className="text-[#d4bc6d] font-semibold">No upfront costs</span>. Your journey to NIL success begins without any financial barriers. Every service builds into your product every launch. Free. Every launch helps with building the brand.
+                                    No upfront costs. Just pure opportunity. Your dashboard? Free. Every service? Free. Graphics? Free. Every launch? Backed with built-in promotion. We handle the setup, the design, and the push — so you can hit the ground running, build your brand, and start earning from day one.
                                 </p>
                             </div>
 
@@ -264,7 +264,7 @@ const Home = () => {
                                     </div>
                                 </div>
                                 <p className="text-gray-300 leading-relaxed text-sm sm:text-base">
-                                    When it comes time to get paid, our cashout is as <span className="text-[#d4bc6d] font-semibold">transparent, reliable access</span> to their earnings offering immediate and reliable access within reach.
+                                   When it comes time to get paid, our cashout system ensures athletes have immediate and reliable access to their earnings, offering transparency, control, and the confidence that every dollar earned is always within reach.
                                 </p>
                             </div>
 
