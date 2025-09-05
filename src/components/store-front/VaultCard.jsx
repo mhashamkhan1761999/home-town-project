@@ -21,11 +21,11 @@ const VaultCard = ({ id, name, description, price, image, images, rating, subTit
     return (
         <>
             <div className="w-full h-full bg-[url('/card.svg')] bg-cover bg-center bg-no-repeat rounded-2xl relative">
-                <div className="p-3 absolute top-14 right-1.5">
+                {/* <div className="p-3 absolute top-14 right-1.5">
                     <p className='m-0 text-[1.389rem] font-semibold text-white text-center'>
                         {id?.toString()?.padStart(2, '0')}
                     </p>
-                </div>
+                </div> */}
                 <div className="flex flex-col justify-end h-full px-6 pt-6">
                     <div type="button" onClick={() => navigate(`/product/${id}`)} className="h-[15.25rem] w-full bg-center bg-cover bg-no-repeat"
                         style={{

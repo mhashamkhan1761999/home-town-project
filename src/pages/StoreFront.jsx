@@ -273,11 +273,12 @@ const StoreFront = () => {
         <>
           <section className="py-24">
             <h1 className="text-[6.875rem] mb-[7.188rem] text-center uppercase font-bold bg-[linear-gradient(to_right,#d4bc6d,#57430d)] bg-clip-text text-transparent ">
-              {slug
+              {/* {slug
                 ? `${
                     athlete?.store || athlete?.store_name || "ATHLETE"
                   }'S MERCHANDISE`
-                : "MERCHANDISE"}
+                : "MERCHANDISE"} */}
+                Featured
             </h1>
             <div className="mb-[7.188rem]">
               <div className="flex justify-center space-x-5 mb-[81px]">
@@ -335,12 +336,6 @@ const StoreFront = () => {
                   type="button"
                 >
                   All
-                </button>
-                <button
-                  className="bg-gray-800 text-[#D4BC6D] text-sm font-medium py-3 px-8 rounded-full shadow-lg transition-colors"
-                  type="button"
-                >
-                  New Arrival
                 </button>
                 <button
                   className="bg-gray-800 text-[#D4BC6D] text-sm font-medium py-3 px-8 rounded-full shadow-lg transition-colors"
