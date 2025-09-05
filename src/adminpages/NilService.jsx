@@ -1098,14 +1098,25 @@ const ItemModal2 = ({ item = null, onClose, onSuccesActive, categoryId }) => {
   });
 
   const onSubmit = (values) => {
-    // No need to find category_id here since we're passing it as query param
-    const newData = convertToFormData({
-      ...values,
-      // Remove category_id from body since it's now a query parameter
+    // Create FormData manually to handle image array properly
+    const formData = new FormData();
+    
+    // Handle all form fields except images
+    Object.entries(values).forEach(([key, value]) => {
+      if (key !== 'image' && value) {
+        formData.append(key, value);
+      }
     });
+    
+    // Handle images as a single array field
+    if (values.image && Array.isArray(values.image)) {
+      values.image.forEach((file) => {
+        formData.append('image[]', file);
+      });
+    }
 
-    mutation.mutate(newData);
-    // console.log('item', newData);
+    mutation.mutate(formData);
+    // console.log('formData with image array created');
     // console.log('categoryId sent as query param:', categoryId);
   };
 
