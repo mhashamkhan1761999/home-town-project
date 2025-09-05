@@ -162,64 +162,6 @@ const Settings = () => {
         // },
         {
             id: "tab2",
-            label: "Store Policies",
-            content: (
-                <>
-                    <h2 className='text-[#D4BC6D] font-black text-lg mb-2.5'>
-                        Privay Policy:
-                    </h2>
-                    <div className='text-white font-medium text-sm mb-7 space-y-4'>
-                        <p><strong>1. Introduction</strong><br />
-                        Hometown Hero ("we," "us," or "our") operates a web and mobile app that connects athletes with fans and sells custom merchandise. This Privacy Policy explains how we collect, use, and protect your personal information.</p>
-
-                        <p><strong>2. What We Collect</strong><br />
-                        We may collect the following types of information:<br />
-                        - Personal details like your name, email address, and social media handles.<br />
-                        - Information related to athletes and users such as clicks, interactions, and activity on the platform.<br />
-                        - Technical data like your IP address, browser, and device type.</p>
-
-                        <p><strong>3. How We Collect It</strong><br />
-                        We gather information when you:<br />
-                        - Fill out forms on our website or app<br />
-                        - Interact with our platform (clicks, navigation, logins, etc.)<br />
-                        - Use third-party tools (like Google Analytics or others we may integrate)<br />
-                        - Receive cookies and tracking data from your browser</p>
-
-                        <p><strong>4. Why We Collect It</strong><br />
-                        We collect data to:<br />
-                        - Process orders and deliver merchandise<br />
-                        - Personalize your experience and recommend content<br />
-                        - Improve our platform through analytics<br />
-                        - Send updates, product news, and occasional promotions via email or in-app messages</p>
-
-                        <p><strong>5. Who We Share It With</strong><br />
-                        We don’t sell or rent your personal information.<br />
-                        We only share necessary data with trusted service providers like payment processors, email tools, or shipping services — just to help us run the business.</p>
-
-                        <p><strong>6. Your Rights</strong><br />
-                        You have the right to:<br />
-                        - View or update your personal info<br />
-                        - Request your data be deleted<br />
-                        - Opt out of marketing emails at any time</p>
-
-                        <p><strong>7. How We Protect Your Info</strong><br />
-                        We use secure servers, encrypted connections, and password protections to keep your data safe. Only authorized team members can access sensitive info.</p>
-
-                        <p><strong>8. For All Ages</strong><br />
-                        Hometown Hero is open to users of all ages. We do not knowingly collect personal information from kids under 13 without parental consent.</p>
-
-                        <p><strong>9. Updates to This Policy</strong><br />
-                        If anything changes in how we handle your data, we’ll notify you through in-app notifications or email.</p>
-
-                        <p><strong>10. Contact Us</strong><br />
-                        If you have any questions or concerns, reach out anytime through the NIL agent.</p>
-                    </div>
-                </>
-            )
-
-        },
-        {
-            id: "tab3",
             label: "Payment Info",
             content: (
                 <>
@@ -382,6 +324,64 @@ const Settings = () => {
 
                 </>
             )
+        },
+                {
+            id: "tab3",
+            label: "Store Policies",
+            content: (
+                <>
+                    <h2 className='text-[#D4BC6D] font-black text-lg mb-2.5'>
+                        Privay Policy:
+                    </h2>
+                    <div className='text-white font-medium text-sm mb-7 space-y-4'>
+                        <p><strong>1. Introduction</strong><br />
+                        Hometown Hero ("we," "us," or "our") operates a web and mobile app that connects athletes with fans and sells custom merchandise. This Privacy Policy explains how we collect, use, and protect your personal information.</p>
+
+                        <p><strong>2. What We Collect</strong><br />
+                        We may collect the following types of information:<br />
+                        - Personal details like your name, email address, and social media handles.<br />
+                        - Information related to athletes and users such as clicks, interactions, and activity on the platform.<br />
+                        - Technical data like your IP address, browser, and device type.</p>
+
+                        <p><strong>3. How We Collect It</strong><br />
+                        We gather information when you:<br />
+                        - Fill out forms on our website or app<br />
+                        - Interact with our platform (clicks, navigation, logins, etc.)<br />
+                        - Use third-party tools (like Google Analytics or others we may integrate)<br />
+                        - Receive cookies and tracking data from your browser</p>
+
+                        <p><strong>4. Why We Collect It</strong><br />
+                        We collect data to:<br />
+                        - Process orders and deliver merchandise<br />
+                        - Personalize your experience and recommend content<br />
+                        - Improve our platform through analytics<br />
+                        - Send updates, product news, and occasional promotions via email or in-app messages</p>
+
+                        <p><strong>5. Who We Share It With</strong><br />
+                        We don’t sell or rent your personal information.<br />
+                        We only share necessary data with trusted service providers like payment processors, email tools, or shipping services — just to help us run the business.</p>
+
+                        <p><strong>6. Your Rights</strong><br />
+                        You have the right to:<br />
+                        - View or update your personal info<br />
+                        - Request your data be deleted<br />
+                        - Opt out of marketing emails at any time</p>
+
+                        <p><strong>7. How We Protect Your Info</strong><br />
+                        We use secure servers, encrypted connections, and password protections to keep your data safe. Only authorized team members can access sensitive info.</p>
+
+                        <p><strong>8. For All Ages</strong><br />
+                        Hometown Hero is open to users of all ages. We do not knowingly collect personal information from kids under 13 without parental consent.</p>
+
+                        <p><strong>9. Updates to This Policy</strong><br />
+                        If anything changes in how we handle your data, we’ll notify you through in-app notifications or email.</p>
+
+                        <p><strong>10. Contact Us</strong><br />
+                        If you have any questions or concerns, reach out anytime through the NIL agent.</p>
+                    </div>
+                </>
+            )
+
         },
         {
             id: "tab4",
