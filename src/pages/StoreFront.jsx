@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useMemo } from "react";
 import MerchendiseSlider from "../components/MerchendiseSlider";
 import AthletesVaultSlider from "../components/store-front/AthletesVaultSlider";
 import { useQuery } from "@tanstack/react-query";
@@ -7,6 +7,10 @@ import { useParams } from "react-router-dom";
 
 const StoreFront = () => {
   const { slug } = useParams();
+  
+  // State for filter buttons
+  const [activeFilter, setActiveFilter] = useState('all');
+  const [activeVaultFilter, setActiveVaultFilter] = useState('all');
   // Fetch athlete details if slug is provided
   const {
     data: athleteData,
@@ -101,6 +105,149 @@ const StoreFront = () => {
   const athlete = athleteData || {};
   const products = slug ? athleteProducts : [];
   const isLoading = slug ? isAthleteLoading || isProductsLoading : false;
+  
+  // Create mock products data for demonstration when no products are available
+  const mockProducts = [
+    {
+      id: 1,
+      name: "Hair, Skin & Nails Gummies",
+      price: 25.00,
+      category: "Health",
+      image: "/shirt.svg",
+      isNewRelease: true,
+      isBestSeller: false,
+      created_at: new Date('2024-01-15'),
+    },
+    {
+      id: 2,
+      name: "Raglan Sleeve T-Shirt",
+      price: 25.00,
+      category: "Clothing",
+      image: "/shirt.svg",
+      isNewRelease: true,
+      isBestSeller: true,
+      created_at: new Date('2024-01-20'),
+    },
+    {
+      id: 3,
+      name: "Heavyweight Oversized Tee",
+      price: 25.00,
+      category: "Clothing",
+      image: "/shirt.svg",
+      isNewRelease: false,
+      isBestSeller: true,
+      created_at: new Date('2023-12-10'),
+    },
+    {
+      id: 4,
+      name: "Botanical Hair Growth Serum",
+      price: 25.00,
+      category: "Health",
+      image: "/shirt.svg",
+      isNewRelease: false,
+      isBestSeller: true,
+      created_at: new Date('2023-11-15'),
+    },
+    {
+      id: 5,
+      name: "Oversized Regular Tee",
+      price: 25.00,
+      category: "Clothing",
+      image: "/shirt.svg",
+      isNewRelease: true,
+      isBestSeller: false,
+      created_at: new Date('2024-01-25'),
+    },
+    {
+      id: 6,
+      name: "Premium Coffee Blend",
+      price: 25.00,
+      category: "Coffee",
+      image: "/shirt.svg",
+      isNewRelease: false,
+      isBestSeller: true,
+      created_at: new Date('2023-10-20'),
+    },
+    {
+      id: 7,
+      name: "Protein Powder",
+      price: 25.00,
+      category: "Supplements",
+      image: "/shirt.svg",
+      isNewRelease: true,
+      isBestSeller: false,
+      created_at: new Date('2024-01-30'),
+    },
+    {
+      id: 8,
+      name: "Training Hoodie",
+      price: 25.00,
+      category: "Clothing",
+      image: "/shirt.svg",
+      isNewRelease: false,
+      isBestSeller: true,
+      created_at: new Date('2023-09-15'),
+    },
+    {
+      id: 9,
+      name: "Sports Water Bottle",
+      price: 25.00,
+      category: "Accessories",
+      image: "/shirt.svg",
+      isNewRelease: true,
+      isBestSeller: false,
+      created_at: new Date('2024-02-01'),
+    },
+    {
+      id: 10,
+      name: "Athletic Shorts",
+      price: 25.00,
+      category: "Clothing",
+      image: "/shirt.svg",
+      isNewRelease: false,
+      isBestSeller: false,
+      created_at: new Date('2023-08-10'),
+    }
+  ];
+
+  // Use products from API if available, otherwise use mock data
+  const allProducts = products && products.length > 0 ? products : mockProducts;
+
+  // Filter products for Featured section
+  const filteredProducts = useMemo(() => {
+    if (activeFilter === 'all') {
+      return allProducts;
+    } else if (activeFilter === 'new-release') {
+      // Sort by creation date and take the 5 newest
+      return [...allProducts]
+        .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
+        .slice(0, 5);
+    } else if (activeFilter === 'best-seller') {
+      // Filter by best seller flag or take random 5 products as best sellers
+      const bestSellers = allProducts.filter(product => product.isBestSeller);
+      if (bestSellers.length >= 5) {
+        return bestSellers.slice(0, 5);
+      } else {
+        // If not enough best sellers, take first 5 products
+        return allProducts.slice(0, 5);
+      }
+    }
+    return allProducts;
+  }, [allProducts, activeFilter]);
+
+  // Filter products for Vault section
+  const filteredVaultProducts = useMemo(() => {
+    if (activeVaultFilter === 'all') {
+      return allProducts;
+    } else if (activeVaultFilter === 'card-deals') {
+      return allProducts.filter(product => product.category === 'Cards' || product.name.toLowerCase().includes('card'));
+    } else if (activeVaultFilter === 'supplement') {
+      return allProducts.filter(product => product.category === 'Supplements' || product.category === 'Health');
+    } else if (activeVaultFilter === 'ebook') {
+      return allProducts.filter(product => product.category === 'E-Books' || product.name.toLowerCase().includes('book'));
+    }
+    return allProducts;
+  }, [allProducts, activeVaultFilter]);
   
   // Get the appropriate background image
   const getBackgroundImage = () => {
@@ -283,42 +430,42 @@ const StoreFront = () => {
             <div className="mb-[7.188rem]">
               <div className="flex justify-center space-x-5 mb-[81px]">
                 <button
-                  className="bg-[#D4BC6D] text-black text-sm font-medium py-3 px-8 rounded-full shadow-lg transition-colors"
+                  className={`${
+                    activeFilter === 'all' 
+                      ? 'bg-[#D4BC6D] text-black' 
+                      : 'bg-gray-800 text-[#D4BC6D]'
+                  } text-sm font-medium py-3 px-8 rounded-full shadow-lg transition-colors hover:bg-[#C4AC5D] hover:text-black`}
                   type="button"
+                  onClick={() => setActiveFilter('all')}
                 >
                   All
                 </button>
                 <button
-                  className="bg-gray-800 text-[#D4BC6D] text-sm font-medium py-3 px-8 rounded-full shadow-lg transition-colors"
+                  className={`${
+                    activeFilter === 'new-release' 
+                      ? 'bg-[#D4BC6D] text-black' 
+                      : 'bg-gray-800 text-[#D4BC6D]'
+                  } text-sm font-medium py-3 px-8 rounded-full shadow-lg transition-colors hover:bg-[#C4AC5D] hover:text-black`}
                   type="button"
+                  onClick={() => setActiveFilter('new-release')}
                 >
                   New Release
                 </button>
                 <button
-                  className="bg-gray-800 text-[#D4BC6D] text-sm font-medium py-3 px-8 rounded-full shadow-lg transition-colors"
+                  className={`${
+                    activeFilter === 'best-seller' 
+                      ? 'bg-[#D4BC6D] text-black' 
+                      : 'bg-gray-800 text-[#D4BC6D]'
+                  } text-sm font-medium py-3 px-8 rounded-full shadow-lg transition-colors hover:bg-[#C4AC5D] hover:text-black`}
                   type="button"
+                  onClick={() => setActiveFilter('best-seller')}
                 >
                   Best Seller
                 </button>
               </div>
             </div>
 
-            <MerchendiseSlider
-              data={
-                products || [
-                  { id: 1 },
-                  { id: 2 },
-                  { id: 3 },
-                  { id: 4 },
-                  { id: 5 },
-                  { id: 6 },
-                  { id: 7 },
-                  { id: 8 },
-                  { id: 9 },
-                  { id: 10 },
-                ]
-              }
-            />
+            <MerchendiseSlider data={filteredProducts} />
           </section>
 
           <section className="py-24 bg-black">
@@ -332,33 +479,53 @@ const StoreFront = () => {
             <div className="mb-[7.188rem]">
               <div className="flex justify-center space-x-5 mb-[81px]">
                 <button
-                  className="bg-[#D4BC6D] text-black text-sm font-medium py-3 px-8 rounded-full shadow-lg transition-colors"
+                  className={`${
+                    activeVaultFilter === 'all' 
+                      ? 'bg-[#D4BC6D] text-black' 
+                      : 'bg-gray-800 text-[#D4BC6D]'
+                  } text-sm font-medium py-3 px-8 rounded-full shadow-lg transition-colors hover:bg-[#C4AC5D] hover:text-black`}
                   type="button"
+                  onClick={() => setActiveVaultFilter('all')}
                 >
                   All
                 </button>
                 <button
-                  className="bg-gray-800 text-[#D4BC6D] text-sm font-medium py-3 px-8 rounded-full shadow-lg transition-colors"
+                  className={`${
+                    activeVaultFilter === 'card-deals' 
+                      ? 'bg-[#D4BC6D] text-black' 
+                      : 'bg-gray-800 text-[#D4BC6D]'
+                  } text-sm font-medium py-3 px-8 rounded-full shadow-lg transition-colors hover:bg-[#C4AC5D] hover:text-black`}
                   type="button"
+                  onClick={() => setActiveVaultFilter('card-deals')}
                 >
                   Card Deals
                 </button>
                 <button
-                  className="bg-gray-800 text-[#D4BC6D] text-sm font-medium py-3 px-8 rounded-full shadow-lg transition-colors"
+                  className={`${
+                    activeVaultFilter === 'supplement' 
+                      ? 'bg-[#D4BC6D] text-black' 
+                      : 'bg-gray-800 text-[#D4BC6D]'
+                  } text-sm font-medium py-3 px-8 rounded-full shadow-lg transition-colors hover:bg-[#C4AC5D] hover:text-black`}
                   type="button"
+                  onClick={() => setActiveVaultFilter('supplement')}
                 >
                   Supplement Company
                 </button>
                 <button
-                  className="bg-gray-800 text-[#D4BC6D] text-sm font-medium py-3 px-8 rounded-full shadow-lg transition-colors"
+                  className={`${
+                    activeVaultFilter === 'ebook' 
+                      ? 'bg-[#D4BC6D] text-black' 
+                      : 'bg-gray-800 text-[#D4BC6D]'
+                  } text-sm font-medium py-3 px-8 rounded-full shadow-lg transition-colors hover:bg-[#C4AC5D] hover:text-black`}
                   type="button"
+                  onClick={() => setActiveVaultFilter('ebook')}
                 >
                   E Book
                 </button>
               </div>
             </div>
 
-            <AthletesVaultSlider data={products || allProductsData} />
+            <AthletesVaultSlider data={filteredVaultProducts} />
           </section>
         </>
       )}
