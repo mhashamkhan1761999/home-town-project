@@ -341,8 +341,8 @@ const AthleteManagement = () => {
           </div>
         </div>
 
-        {/* Athletes Table */}
-        <div className="bg-[#282828] border border-[#4B4C46] rounded-lg overflow-hidden">
+        {/* Athletes Table - Desktop */}
+        <div className="hidden lg:block bg-[#282828] border border-[#4B4C46] rounded-lg overflow-hidden">
           <div className="overflow-x-auto">
             <div className="min-w-[700px]">
               <table className="w-full">
@@ -503,6 +503,155 @@ const AthleteManagement = () => {
             </div>
           )}
         </div>
+
+        {/* Athletes Cards - Mobile */}
+        <div className="lg:hidden space-y-3 p-3">
+          {filteredAthletes?.map((athlete) => (
+            <div key={athlete.id} className="bg-[#282828] border border-[#4B4C46] rounded-lg p-4">
+              {/* Athlete Info Row */}
+              <div className="flex items-center space-x-3 mb-3">
+                <div className="h-12 w-12 rounded-full overflow-hidden border-2 border-[#D4BC6D]">
+                  <img
+                    src={
+                      athlete?.profile_picture_url
+                        ? athlete.profile_picture_url.startsWith('http')
+                          ? athlete.profile_picture_url.replace(/\\/g, '/')
+                          : `https://hometown.eagleeblaze.com/storage/app/public/${athlete.profile_picture_url}`.replace(/\\/g, '/')
+                        : '/default.jpg'
+                    }
+                    alt={athlete?.athlete_name}
+                    className="h-full w-full object-cover"
+                    onError={(e) => {
+                      e.target.src = '/default.jpg';
+                    }}
+                  />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2">
+                    <p className="text-sm font-medium text-white truncate">
+                      {athlete?.athlete_name}
+                    </p>
+                    {athlete?.badge_level?.image && (
+                      <img
+                        src={athlete.badge_level.image}
+                        alt={athlete.badge_level.name}
+                        className="h-5 w-5 rounded-full border border-[#D4BC6D]"
+                        title={athlete.badge_level.name}
+                      />
+                    )}
+                  </div>
+                  <p className="text-xs text-gray-400">{athlete?.level_of_athlete}</p>
+                  <p className="text-xs text-gray-400">{athlete?.sport}</p>
+                </div>
+                <button
+                  onClick={() => handleViewAthlete(athlete)}
+                  className="p-2 text-gray-400 hover:text-[#D4BC6D] transition-colors"
+                  title="Full Profile Info"
+                >
+                  <Eye className="h-4 w-4" />
+                </button>
+              </div>
+
+              {/* Details Grid */}
+              <div className="grid grid-cols-2 gap-3 mb-3">
+                {/* Card Status */}
+                <div>
+                  <p className="text-xs font-medium text-gray-400 mb-1">Card Status</p>
+                  <div className="flex items-center">
+                    {athlete?.card ? (
+                      <div className="flex items-center text-green-500">
+                        <CreditCard className="h-3 w-3 mr-1" />
+                        <span className="text-xs font-medium">Card Added</span>
+                      </div>
+                    ) : (
+                      <div className="flex items-center text-red-500">
+                        <CreditCard className="h-3 w-3 mr-1" />
+                        <span className="text-xs font-medium">No Card</span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* Status */}
+                <div>
+                  <p className="text-xs font-medium text-gray-400 mb-1">Status</p>
+                  <select
+                    value={numberToStatus[athlete?.status] || athlete?.status}
+                    onChange={(e) => handleStatusChange(athlete?.id, e.target.value)}
+                    className={`text-xs font-semibold rounded-full px-2 py-1 focus:outline-none focus:ring-2 focus:ring-[#D4BC6D] w-full ${getStatusColor(numberToStatus[athlete.status] || athlete.status)}`}
+                  >
+                    {statusTypes.map(status => (
+                      <option key={status} value={status.toLowerCase()} className="bg-[#1a1a1a] text-white">
+                        {status}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              {/* Social Media & Furious Row */}
+              <div className="flex items-center justify-between">
+                {/* Social Media */}
+                <div>
+                  <p className="text-xs font-medium text-gray-400 mb-1">Social Media</p>
+                  <div className="flex items-center space-x-2">
+                    {athlete?.social_media?.instagram && (
+                      <a href={athlete.social_media.instagram} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-pink-500 transition-colors">
+                        <Instagram className="h-3 w-3" />
+                      </a>
+                    )}
+                    {athlete?.social_media?.twitter && (
+                      <a href={athlete.social_media.twitter} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-blue-400 transition-colors">
+                        <Twitter className="h-3 w-3" />
+                      </a>
+                    )}
+                    {athlete?.social_media?.facebook && (
+                      <a href={athlete.social_media.facebook} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-blue-600 transition-colors">
+                        <Facebook className="h-3 w-3" />
+                      </a>
+                    )}
+                    {(!athlete?.social_media?.instagram && !athlete?.social_media?.twitter && !athlete?.social_media?.facebook) && (
+                      <span className="text-xs text-gray-500">No social media</span>
+                    )}
+                  </div>
+                </div>
+
+                {/* Furious 5 */}
+                <div>
+                  <p className="text-xs font-medium text-gray-400 mb-1">Furious 5</p>
+                  <div className="flex items-center">
+                    <button
+                      onClick={() => handleFuriousToggle(athlete?.id, athlete?.furious)}
+                      disabled={furiousMutation.isLoading}
+                      className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-[#D4BC6D] focus:ring-offset-2 focus:ring-offset-gray-800 ${
+                        athlete?.furious === "1" 
+                          ? 'bg-[#D4BC6D]' 
+                          : 'bg-gray-600'
+                      } ${furiousMutation.isLoading ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
+                      title={athlete?.furious === "1" ? "Remove from Furious 5" : "Add to Furious 5"}
+                    >
+                      <span
+                        className={`inline-block h-3 w-3 transform rounded-full bg-white transition-transform ${
+                          athlete?.furious === "1" ? 'translate-x-5' : 'translate-x-1'
+                        }`}
+                      />
+                    </button>
+                    {athlete?.furious === "1" && (
+                      <Star className="h-3 w-3 text-[#D4BC6D] ml-2" fill="currentColor" />
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+          ))}
+
+          {filteredAthletes?.length === 0 && (
+            <div className="text-center py-12">
+              <Users className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+              <p className="text-gray-400">No athletes found matching your criteria</p>
+            </div>
+          )}
+        </div>
       </div>
 
       {/* View Athlete Modal */}
@@ -554,22 +703,22 @@ const ViewAthleteModal = ({ isOpen, onClose, athlete }) => {
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[9999] p-4">
-      <div className="bg-[#282828] border border-[#4B4C46] rounded-lg p-4 sm:p-6 w-full max-w-4xl mx-4 max-h-[90vh] overflow-y-auto">
-        <div className="flex justify-between items-center mb-6">
-          <h2 className="text-xl sm:text-2xl font-bold text-[#D4BC6D]">Athlete Profile</h2>
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[9999] p-2 sm:p-4">
+      <div className="bg-[#282828] border border-[#4B4C46] rounded-lg p-3 sm:p-4 lg:p-6 w-full max-w-4xl mx-2 sm:mx-4 max-h-[95vh] sm:max-h-[90vh] overflow-y-auto">
+        <div className="flex justify-between items-center mb-4 sm:mb-6">
+          <h2 className="text-lg sm:text-xl lg:text-2xl font-bold text-[#D4BC6D]">Athlete Profile</h2>
           <button
             onClick={onClose}
             className="text-gray-400 hover:text-white transition-colors"
           >
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
             </svg>
           </button>
         </div>
 
         {/* Cover Picture */}
-        <div className="relative h-32 sm:h-48 rounded-lg overflow-hidden mb-6">
+        <div className="relative h-24 sm:h-32 lg:h-48 rounded-lg overflow-hidden mb-4 sm:mb-6">
           <img
             src={athlete?.cover_photo}
             alt="Cover"
@@ -579,8 +728,8 @@ const ViewAthleteModal = ({ isOpen, onClose, athlete }) => {
             }}
           />
           <div className="absolute inset-0 bg-black bg-opacity-40"></div>
-          <div className="absolute bottom-4 left-4 flex items-center">
-            <div className="h-16 w-16 sm:h-20 sm:w-20 rounded-full overflow-hidden border-4 border-[#D4BC6D]">
+          <div className="absolute bottom-2 sm:bottom-4 left-2 sm:left-4 flex items-center">
+            <div className="h-12 w-12 sm:h-16 sm:w-16 lg:h-20 lg:w-20 rounded-full overflow-hidden border-2 sm:border-4 border-[#D4BC6D]">
               <img
                 src={
                   athlete?.profile_picture
@@ -596,14 +745,14 @@ const ViewAthleteModal = ({ isOpen, onClose, athlete }) => {
                 }}
               />
             </div>
-            <div className="ml-4 text-white">
-              <h3 className="text-lg sm:text-xl font-bold">{athlete?.athlete_name}</h3>
-              <p className="text-sm opacity-90">{athlete?.sport}</p>
+            <div className="ml-2 sm:ml-4 text-white">
+              <h3 className="text-sm sm:text-lg lg:text-xl font-bold">{athlete?.athlete_name}</h3>
+              <p className="text-xs sm:text-sm opacity-90">{athlete?.sport}</p>
             </div>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 mb-4 sm:mb-6">
           {/* Personal Information */}
           <div className="space-y-4">
             <h3 className="text-lg font-semibold text-white mb-4">Personal Information</h3>
@@ -703,24 +852,24 @@ const ViewAthleteModal = ({ isOpen, onClose, athlete }) => {
 
         {/* Badge Level Section */}
         {athlete?.badge_level && (
-          <div className="bg-[#1a1a1a] border border-[#4B4C46] rounded-lg p-6 mb-6">
-            <h3 className="text-lg font-semibold text-white mb-4">Badge Level</h3>
+          <div className="bg-[#1a1a1a] border border-[#4B4C46] rounded-lg p-3 sm:p-6 mb-4 sm:mb-6">
+            <h3 className="text-base sm:text-lg font-semibold text-white mb-3 sm:mb-4">Badge Level</h3>
             <div className="flex items-center justify-center">
-              <div className="flex items-center space-x-4">
+              <div className="flex flex-col sm:flex-row items-center space-y-2 sm:space-y-0 sm:space-x-4">
                 <img
                   src={athlete.badge_level.image}
                   alt={athlete.badge_level.name}
-                  className="h-16 w-16 object-contain"
+                  className="h-12 w-12 sm:h-16 sm:w-16 object-contain"
                   onError={(e) => {
                     e.target.src = '/default.jpg';
                   }}
                 />
-                <div>
-                  <p className={`text-xl font-bold ${getLevelColor(athlete.badge_level.name)}`}>
+                <div className="text-center sm:text-left">
+                  <p className={`text-lg sm:text-xl font-bold ${getLevelColor(athlete.badge_level.name)}`}>
                     {athlete.badge_level.name}
                   </p>
-                  <p className="text-gray-400 text-sm">Badge Progress: {athlete.badge_level.percentage}%</p>
-                  <div className="w-32 bg-gray-700 rounded-full h-2 mt-2">
+                  <p className="text-gray-400 text-xs sm:text-sm">Badge Progress: {athlete.badge_level.percentage}%</p>
+                  <div className="w-24 sm:w-32 bg-gray-700 rounded-full h-2 mt-2 mx-auto sm:mx-0">
                     <div 
                       className="bg-[#D4BC6D] h-2 rounded-full transition-all duration-300"
                       style={{ width: `${athlete.badge_level.percentage}%` }}
@@ -734,9 +883,9 @@ const ViewAthleteModal = ({ isOpen, onClose, athlete }) => {
 
         {/* Team Information */}
         {(athlete?.team_name || athlete?.team_email || athlete?.team_email_2) && (
-          <div className="bg-[#1a1a1a] border border-[#4B4C46] rounded-lg p-6 mb-6">
-            <h3 className="text-lg font-semibold text-white mb-4">Team Information</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="bg-[#1a1a1a] border border-[#4B4C46] rounded-lg p-3 sm:p-6 mb-4 sm:mb-6">
+            <h3 className="text-base sm:text-lg font-semibold text-white mb-3 sm:mb-4">Team Information</h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
               {athlete?.team_name && (
                 <div>
                   <label className="block text-sm font-medium text-gray-400 mb-1">Team Name</label>
@@ -773,9 +922,9 @@ const ViewAthleteModal = ({ isOpen, onClose, athlete }) => {
 
         {/* School Information */}
         {(athlete?.school_name || athlete?.school_email || athlete?.school_phone) && (
-          <div className="bg-[#1a1a1a] border border-[#4B4C46] rounded-lg p-6 mb-6">
-            <h3 className="text-lg font-semibold text-white mb-4">School Information</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="bg-[#1a1a1a] border border-[#4B4C46] rounded-lg p-3 sm:p-6 mb-4 sm:mb-6">
+            <h3 className="text-base sm:text-lg font-semibold text-white mb-3 sm:mb-4">School Information</h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
               {athlete?.school_name && (
                 <div>
                   <label className="block text-sm font-medium text-gray-400 mb-1">School Name</label>
@@ -799,9 +948,9 @@ const ViewAthleteModal = ({ isOpen, onClose, athlete }) => {
         )}
 
         {/* Social Media Information */}
-        <div className="bg-[#1a1a1a] border border-[#4B4C46] rounded-lg p-6 mb-6">
-          <h3 className="text-lg font-semibold text-white mb-4">Social Media</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="bg-[#1a1a1a] border border-[#4B4C46] rounded-lg p-3 sm:p-6 mb-4 sm:mb-6">
+          <h3 className="text-base sm:text-lg font-semibold text-white mb-3 sm:mb-4">Social Media</h3>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
             {athlete?.instagram && (
               <div>
                 <label className="block text-sm font-medium text-gray-400 mb-1">Instagram</label>
@@ -874,17 +1023,17 @@ const ViewAthleteModal = ({ isOpen, onClose, athlete }) => {
             )}
           </div>
           {athlete?.social_media_reach && (
-            <div className="mt-4">
-              <label className="block text-sm font-medium text-gray-400 mb-1">Social Media Reach</label>
-              <p className="text-white">{athlete.social_media_reach}</p>
+            <div className="mt-3 sm:mt-4">
+              <label className="block text-xs sm:text-sm font-medium text-gray-400 mb-1">Social Media Reach</label>
+              <p className="text-white text-sm sm:text-base">{athlete.social_media_reach}</p>
             </div>
           )}
         </div>
 
         {/* Additional Information */}
-        <div className="bg-[#1a1a1a] border border-[#4B4C46] rounded-lg p-6 mb-6">
-          <h3 className="text-lg font-semibold text-white mb-4">Additional Information</h3>
-          <div className="space-y-4">
+        <div className="bg-[#1a1a1a] border border-[#4B4C46] rounded-lg p-3 sm:p-6 mb-4 sm:mb-6">
+          <h3 className="text-base sm:text-lg font-semibold text-white mb-3 sm:mb-4">Additional Information</h3>
+          <div className="space-y-3 sm:space-y-4">
             {athlete?.bio && (
               <div>
                 <label className="block text-sm font-medium text-gray-400 mb-1">Bio</label>
@@ -929,7 +1078,7 @@ const ViewAthleteModal = ({ isOpen, onClose, athlete }) => {
         <div className="flex justify-end">
           <button
             onClick={onClose}
-            className="px-6 py-2 bg-[#D4BC6D] text-black rounded-lg hover:bg-[#E6C977] transition-colors"
+            className="px-4 sm:px-6 py-2 bg-[#D4BC6D] text-black rounded-lg hover:bg-[#E6C977] transition-colors text-sm sm:text-base"
           >
             Close
           </button>

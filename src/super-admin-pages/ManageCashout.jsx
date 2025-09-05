@@ -231,8 +231,8 @@ const ManageCashout = () => {
                             </div>
                         </div>
 
-                        {/* Cashout Requests Table */}
-                        <div className="bg-[#282828] border border-[#4B4C46] rounded-lg overflow-hidden">
+                        {/* Cashout Requests Table - Desktop */}
+                        <div className="hidden lg:block bg-[#282828] border border-[#4B4C46] rounded-lg overflow-hidden">
                             <div className="overflow-x-auto">
                                 <div className="min-w-[800px]">
                                     <table className="w-full">
@@ -338,6 +338,86 @@ const ManageCashout = () => {
                                 </div>
                             </div>
                         </div>
+
+                        {/* Cashout Requests Cards - Mobile */}
+                        <div className="lg:hidden space-y-3 p-3">
+                            {filteredRequests.length === 0 ? (
+                                <div className="text-center py-12">
+                                    <DollarSign className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                                    <p className="text-gray-400">{isLoading ? 'Loading...' : 'No cashout requests found'}</p>
+                                </div>
+                            ) : (
+                                filteredRequests.map((request) => (
+                                    <div key={request.id} className="bg-[#282828] border border-[#4B4C46] rounded-lg p-4">
+                                        {/* Athlete Info Row */}
+                                        <div className="flex items-center space-x-3 mb-3">
+                                            <img
+                                                className="h-12 w-12 rounded-full object-cover"
+                                                src={request.athlete?.profile_image || request.athlete?.avatar || '/default.jpg'}
+                                                alt={request.athlete?.name || request.athlete?.email || 'Athlete'}
+                                                onError={(e) => {
+                                                    e.target.src = '/default.jpg';
+                                                }}
+                                            />
+                                            <div className="flex-1 min-w-0">
+                                                <p className="text-sm font-medium text-white truncate">
+                                                    {request.athlete?.athlete_name || request.athlete?.email || 'Unknown Athlete'}
+                                                </p>
+                                                {request.athlete?.email && request.athlete?.athlete_name && (
+                                                    <p className="text-xs text-gray-400 truncate">
+                                                        {request.athlete.email}
+                                                    </p>
+                                                )}
+                                                <p className="text-lg font-bold text-[#D4BC6D]">
+                                                    ${parseFloat(request.amount || 0).toLocaleString()}
+                                                </p>
+                                            </div>
+                                        </div>
+
+                                        {/* Details Grid */}
+                                        <div className="grid grid-cols-2 gap-3 mb-3">
+                                            {/* Request Date */}
+                                            <div>
+                                                <p className="text-xs font-medium text-gray-400 mb-1">Request Date</p>
+                                                <div className="text-sm text-gray-400">
+                                                    {new Date(request.created_at).toLocaleDateString()}
+                                                </div>
+                                                <div className="text-xs text-gray-500">
+                                                    {new Date(request.created_at).toLocaleTimeString()}
+                                                </div>
+                                            </div>
+
+                                            {/* Attachment */}
+                                            <div>
+                                                <p className="text-xs font-medium text-gray-400 mb-1">Attachment</p>
+                                                {request.attachment ? (
+                                                    <button className="text-[#D4BC6D] hover:text-[#ab965d] text-sm flex items-center">
+                                                        <Eye className="h-3 w-3 mr-1" />
+                                                        View
+                                                    </button>
+                                                ) : (
+                                                    <span className="text-gray-500 text-sm">No attachment</span>
+                                                )}
+                                            </div>
+                                        </div>
+
+                                        {/* Action Button */}
+                                        <div className="flex justify-end">
+                                            {request.status?.toLowerCase() === 'pending' ? (
+                                                <button
+                                                    onClick={() => handlePayNow(request)}
+                                                    className="bg-[#57430D] hover:bg-[#ab965d] text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors"
+                                                >
+                                                    Pay Now
+                                                </button>
+                                            ) : (
+                                                <span className="text-green-500 text-sm font-medium px-4 py-2">Completed</span>
+                                            )}
+                                        </div>
+                                    </div>
+                                ))
+                            )}
+                        </div>
                     </>
                 )}
 
@@ -384,23 +464,23 @@ const PayNowModal = ({ isOpen, onClose, cashout, onPaymentComplete, isUpdating =
     };
 
     return (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[9999] p-4">
-            <div className="bg-[#282828] card-gradient border-[1.5px] rounded-3xl p-4 sm:p-6 w-full max-w-md mx-4">
-                <div className="flex justify-between items-center mb-6">
-                    <h2 className="text-xl sm:text-2xl font-bold text-[#D4BC6D]">Confirm Payment</h2>
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[9999] p-2 sm:p-4">
+            <div className="bg-[#282828] card-gradient border-[1.5px] rounded-3xl p-3 sm:p-4 lg:p-6 w-full max-w-md mx-2 sm:mx-4">
+                <div className="flex justify-between items-center mb-4 sm:mb-6">
+                    <h2 className="text-lg sm:text-xl lg:text-2xl font-bold text-[#D4BC6D]">Confirm Payment</h2>
                     <button
                         onClick={onClose}
                         className="text-gray-400 hover:text-white transition-colors"
                         disabled={isUpdating}
                     >
-                        <X className="w-6 h-6" />
+                        <X className="w-5 h-5 sm:w-6 sm:h-6" />
                     </button>
                 </div>
 
-                <div className="mb-6">
-                    <div className="bg-[#1a1a1a] rounded-lg p-4 mb-4">
-                        <p className="text-sm text-gray-400 mb-2">Payment Details</p>
-                        <p className="text-white font-semibold">
+                <div className="mb-4 sm:mb-6">
+                    <div className="bg-[#1a1a1a] rounded-lg p-3 sm:p-4 mb-3 sm:mb-4">
+                        <p className="text-xs sm:text-sm text-gray-400 mb-2">Payment Details</p>
+                        <p className="text-sm sm:text-base text-white font-semibold">
                             {cashout.athlete?.name || cashout.athlete?.email || 'Unknown Athlete'}
                         </p>
                         {cashout.athlete?.email && cashout.athlete?.name && (
@@ -408,7 +488,7 @@ const PayNowModal = ({ isOpen, onClose, cashout, onPaymentComplete, isUpdating =
                                 {cashout.athlete.email}
                             </p>
                         )}
-                        <p className="text-[#D4BC6D] text-xl font-bold">
+                        <p className="text-[#D4BC6D] text-lg sm:text-xl font-bold">
                             ${parseFloat(cashout.amount || 0).toLocaleString()}
                         </p>
                         <p className="text-xs text-gray-400 mt-2">
@@ -418,7 +498,7 @@ const PayNowModal = ({ isOpen, onClose, cashout, onPaymentComplete, isUpdating =
                 </div>
 
                 <form onSubmit={handleSubmit}>
-                    <div className="mb-6">
+                    <div className="mb-4 sm:mb-6">
                         <label htmlFor="attachment" className="block text-sm font-medium text-white mb-2">
                             Payment Proof (Optional)
                         </label>
@@ -428,7 +508,7 @@ const PayNowModal = ({ isOpen, onClose, cashout, onPaymentComplete, isUpdating =
                                 id="attachment"
                                 accept="image/*"
                                 onChange={handleFileChange}
-                                className="w-full px-4 py-3 bg-[#1a1a1a] border border-[#4B4C46] rounded-lg text-white file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-[#57430D] file:text-white hover:file:bg-[#ab965d] file:cursor-pointer"
+                                className="w-full px-3 sm:px-4 py-2 sm:py-3 bg-[#1a1a1a] border border-[#4B4C46] rounded-lg text-white text-sm file:mr-2 sm:file:mr-4 file:py-1 sm:file:py-2 file:px-2 sm:file:px-4 file:rounded-full file:border-0 file:text-xs sm:file:text-sm file:font-semibold file:bg-[#57430D] file:text-white hover:file:bg-[#ab965d] file:cursor-pointer"
                                 disabled={isUpdating}
                             />
                         </div>
@@ -439,18 +519,18 @@ const PayNowModal = ({ isOpen, onClose, cashout, onPaymentComplete, isUpdating =
                         )}
                     </div>
 
-                    <div className="flex gap-3">
+                    <div className="flex gap-2 sm:gap-3">
                         <button
                             type="button"
                             onClick={onClose}
-                            className="flex-1 py-3 px-4 bg-transparent border border-gray-600 text-gray-300 rounded-lg hover:bg-gray-600 transition-colors font-medium"
+                            className="flex-1 py-2 sm:py-3 px-3 sm:px-4 bg-transparent border border-gray-600 text-gray-300 rounded-lg hover:bg-gray-600 transition-colors font-medium text-sm sm:text-base"
                             disabled={isUpdating}
                         >
                             Cancel
                         </button>
                         <button
                             type="submit"
-                            className="flex-1 py-3 px-4 bg-[#57430D] text-white rounded-lg hover:bg-[#ab965d] transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                            className="flex-1 py-2 sm:py-3 px-3 sm:px-4 bg-[#57430D] text-white rounded-lg hover:bg-[#ab965d] transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed text-sm sm:text-base"
                             disabled={isUpdating}
                         >
                             {isUpdating ? 'Processing...' : 'Confirm Payment'}

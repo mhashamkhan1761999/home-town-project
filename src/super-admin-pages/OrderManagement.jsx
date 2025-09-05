@@ -276,7 +276,8 @@ const OrderManagement = () => {
 
         {/* Orders Table */}
         <div className="bg-[#282828] border border-[#4B4C46] rounded-lg overflow-hidden">
-          <div className="overflow-x-auto">
+          {/* Desktop Table View */}
+          <div className="hidden lg:block overflow-x-auto">
             <div className="min-w-[1000px]">
               <table className="w-full">
                 <thead className="bg-[#1a1a1a] border-b border-[#4B4C46]">
@@ -375,6 +376,59 @@ const OrderManagement = () => {
                 </tbody>
               </table>
             </div>
+          </div>
+
+          {/* Mobile Card View */}
+          <div className="lg:hidden space-y-3 p-3">
+            {filteredOrders?.map((order) => (
+              <div key={order?.id} className="bg-[#1a1a1a] border border-[#4B4C46] rounded-lg p-4">
+                <div className="flex items-start justify-between mb-3">
+                  <div className="flex-1">
+                    <div className="text-sm font-medium text-[#D4BC6D] mb-1">
+                      Order: {order?.id}
+                    </div>
+                    <div className="text-sm font-medium text-white mb-1">
+                      {order?.full_name}
+                    </div>
+                    <div className="text-xs text-gray-300">
+                      {order.email}
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <div className="text-sm font-medium text-[#D4BC6D] mb-2">
+                      ${parseFloat(order?.total_price)?.toFixed(2)}
+                    </div>
+                    <select
+                      value={order?.status}
+                      onChange={(e) => handleStatusChange(order?.id, e.target.value)}
+                      className={`text-xs font-semibold rounded-full px-2 py-1 focus:outline-none ${getStatusColor(order.status)}`}
+                    >
+                      {statusTypes?.map(status => (
+                        <option key={status} value={status?.toLowerCase()} className="bg-[#1a1a1a] text-white">
+                          {status}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+                
+                <div className="space-y-1 mb-3 text-xs text-gray-300">
+                  <div><span className="text-gray-400">Shop:</span> {order?.items[0].product.athlete?.store_name || 'N/A'}</div>
+                  <div><span className="text-gray-400">Category:</span> {order?.items?.[0]?.product?.category?.name || 'N/A'}</div>
+                  <div><span className="text-gray-400">Athlete:</span> {order?.items?.[0]?.product?.athlete?.athlete_name || order?.items?.[0]?.product?.athlete?.store_name || 'N/A'}</div>
+                </div>
+                
+                <div className="flex justify-center pt-3 border-t border-[#4B4C46]">
+                  <button
+                    onClick={() => handleViewOrder(order)}
+                    className="flex items-center gap-1 px-4 py-2 text-xs text-gray-400 hover:text-[#D4BC6D] transition-colors"
+                  >
+                    <Eye className="h-3 w-3" />
+                    View Details
+                  </button>
+                </div>
+              </div>
+            ))}
           </div>
 
           {filteredOrders?.length === 0 && (
