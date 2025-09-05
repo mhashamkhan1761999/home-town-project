@@ -56,11 +56,11 @@ const Card = ({ id, name, image, images = [], description, price }) => {
     return (
         <div className="w-full h-full bg-[url('/card.svg')] bg-cover bg-center bg-no-repeat rounded-2xl relative">
             {/* Product ID */}
-            <div className="p-3 absolute top-14 right-1.5">
+            {/* <div className="p-3 absolute top-14 right-1.5">
                 <p className="m-0 text-[1.389rem] font-semibold text-white text-center">
                     {id?.toString()?.padStart(2, '0')}
                 </p>
-            </div>
+            </div> */}
 
             <div className="flex flex-col justify-end h-full px-6 pt-6">
                 {/* Image */}
