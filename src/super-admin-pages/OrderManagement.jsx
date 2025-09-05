@@ -138,22 +138,9 @@ const OrderManagement = () => {
 
   const handleStatusChange = (orderId, newStatus) => {
     // Convert status string to numeric value for backend
-    const getStatusNumber = (status) => {
-      switch (status.toLowerCase()) {
-        case 'pending':
-          return 0;
-        case 'sent':
-          return 1;
-        case 'return request':
-          return 2;
-        default:
-          return 0;
-      }
-    };
-
     mutation.mutate({
       id: orderId,
-      data: { status: getStatusNumber(newStatus) }
+      data: { status: newStatus }
     })
     // setOrders(orders.map(order =>
     //   order.id === orderId ? { ...order, status: newStatus } : order
