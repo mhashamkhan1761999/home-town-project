@@ -202,7 +202,7 @@ const Header = () => {
 
           <Link
             to="/cart"
-            className=" rounded-full uppercase text-white text-sm font-semibold flex items-center relative"
+            className=" rounded-full text-white text-sm font-semibold flex items-center relative"
           >
             Cart
 
@@ -212,6 +212,26 @@ const Header = () => {
               </span>
             )}
           </Link>
+
+          {(isAuthenticated) && (
+            <>
+              {user?.role == 'athlete' ? (
+                <Link
+                  to="/athlete/dashboard"
+                  className="py-3 text-white text-sm font-semibold"
+                >
+                  Dashboard
+                </Link>
+              ) : (
+                <Link
+                  to="/admin/dashboard"
+                  className="py-3 text-white text-sm font-semibold"
+                >
+                  Dashboard
+                </Link>
+              )}
+            </>
+          )}
 
           {/* Mobile Buttons */}
           <div className="flex flex-col gap-3 mt-4">
