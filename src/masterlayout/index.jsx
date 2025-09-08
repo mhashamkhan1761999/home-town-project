@@ -238,7 +238,14 @@ const MasterLayout = () => {
                                 </>
 
 
-                                <div className="relative w-[4.563rem] h-[4.563rem] cursor-pointer group">
+                                <div className="relative w-[4.563rem] h-[4.563rem] cursor-pointer group"         onClick={() => {
+          if (window.zE) {
+            window.zE("webWidget", "open");
+          } else {
+            console.error("Zendesk not loaded yet");
+          }
+        }}
+      >
                                     {/* Outer animated gradient ring */}
                                     <div className="absolute inset-0 rounded-full p-[3px] bg-gradient-to-r from-pink-500 via-purple-500 to-pink-500 animate-spin-slow">
                                         <div className="w-full h-full rounded-full bg-black"></div>
@@ -404,7 +411,13 @@ const MasterLayout = () => {
                             </div>
 
                             {/* Chatbot */}
-                            <div className="bg-white/10 rounded-lg p-3 mb-4 cursor-pointer hover:bg-white/20 transition">
+                            <div className="bg-white/10 rounded-lg p-3 mb-4 cursor-pointer hover:bg-white/20 transition"         onClick={() => {
+                                if (window.zE) {
+                                    window.zE("webWidget", "open");
+                                } else {
+                                    console.error("Zendesk not loaded yet");
+                                }
+                                }}>
                                 <div className="flex items-center gap-3 text-white">
                                     <div className="relative w-8 h-8">
                                         <img

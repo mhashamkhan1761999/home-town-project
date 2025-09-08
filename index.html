@@ -8,10 +8,22 @@
   <link rel="stylesheet" href="/src/index.css">
   <title>Home Town Hero</title>
 </head>
+<!-- Zendesk Widget -->
+<script id="ze-snippet" src="https://static.zdassets.com/ekr/snippet.js?key=92dd97f9-6c59-4836-a7e4-76093c880e65"></script>
 
 <body>
   <div id="root"></div>
   <script type="module" src="/src/main.jsx"></script>
+  <script>
+  // Hide default Zendesk button
+  window.zESettings = {
+    webWidget: {
+      launcher: {
+        labelVisible: false,
+      },
+    },
+  };
+</script>
 </body>
 
 </html>
