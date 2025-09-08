@@ -1,13 +1,18 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { getRequest, postRequest } from '../api';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import AddSubscriptionModal from '../components/subscriptions/AddSubscriptionModal';
 import { queryClient } from '../main';
 import { loadStripe } from '@stripe/stripe-js';
 import { Elements } from '@stripe/react-stripe-js';
+import toast from 'react-hot-toast';
 
 
 const MySubscription = () => {
+    // State for bundle details modal
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [selectedBundle, setSelectedBundle] = useState(null);
+
     const { data, isLoading, error } = useQuery({
         queryKey: ['my-packages'], // Unique key for caching
         queryFn: () => getRequest('/my-subscriptions'), // Fetch function
@@ -26,6 +31,27 @@ const MySubscription = () => {
             case 'yearly': return 'bg-purple-500';
             default: return 'bg-gray-400';
         }
+    };
+
+    // Mutation for updating bundle content
+    const updateBundleMutation = useMutation({
+        mutationFn: ({ bundle_id, content }) => postRequest('/update-bundle', { bundle_id, content }),
+        onSuccess: (response) => {
+            toast.success(response?.message || 'Bundle updated successfully!');
+            setIsModalOpen(false);
+            // Refetch the bundles data to show updated content
+            queryClient.invalidateQueries(['my-bundles']);
+        },
+        onError: (error) => {
+            console.error('Error updating bundle:', error);
+            toast.error(error?.response?.data?.message || 'Failed to update bundle. Please try again.');
+        }
+    });
+
+    // Function to handle opening the details modal
+    const handleViewDetails = (bundle) => {
+        setSelectedBundle(bundle);
+        setIsModalOpen(true);
     };
 
     // console.log('My Subscription Data:', data);
@@ -291,12 +317,19 @@ const MySubscription = () => {
                                                 <span className="text-green-400 text-xs sm:text-sm font-medium">Active</span>
                                             </div>
 
-                                            <div className="text-xs text-gray-400">
-                                                Updated: {new Date(bundle.updated_at).toLocaleDateString('en-US', {
-                                                    month: 'short',
-                                                    day: 'numeric'
-                                                })}
-                                            </div>
+                                            <button
+                                                onClick={() => handleViewDetails(bundle)}
+                                                className="bg-[#D4BC6D] hover:bg-[#C4AC5D] text-black font-medium text-xs sm:text-sm px-3 py-1.5 rounded-lg transition-colors duration-200"
+                                            >
+                                                View Details
+                                            </button>
+                                        </div>
+
+                                        <div className="text-xs text-gray-400 mt-2 text-center">
+                                            Updated: {new Date(bundle.updated_at).toLocaleDateString('en-US', {
+                                                month: 'short',
+                                                day: 'numeric'
+                                            })}
                                         </div>
                                     </div>
                                 ))}
@@ -330,9 +363,249 @@ const MySubscription = () => {
                 </div>
             </div>
 
-
+            {/* Bundle Details Modal */}
+            {isModalOpen && selectedBundle && (
+                <BundleDetailsModal
+                    bundle={selectedBundle}
+                    isOpen={isModalOpen}
+                    onClose={() => {
+                        setIsModalOpen(false);
+                        setSelectedBundle(null);
+                    }}
+                    onUpdate={updateBundleMutation.mutate}
+                    isUpdating={updateBundleMutation.isPending}
+                />
+            )}
         </>
     )
 }
+
+// Bundle Details Modal Component
+const BundleDetailsModal = ({ bundle, isOpen, onClose, onUpdate, isUpdating }) => {
+    const [editingContent, setEditingContent] = useState([]);
+    const [isEditing, setIsEditing] = useState(false);
+
+    // Initialize editing content when modal opens
+    React.useEffect(() => {
+        if (bundle?.content) {
+            setEditingContent([...bundle.content]);
+        }
+    }, [bundle]);
+
+    const handleContentChange = (index, value) => {
+        const newContent = [...editingContent];
+        newContent[index] = value;
+        setEditingContent(newContent);
+    };
+
+    const handleSaveChanges = () => {
+        // Filter out null/empty values and send to API
+        const filteredContent = editingContent.filter(item => item !== null && item !== undefined && item.trim() !== '');
+        onUpdate({
+            bundle_id: bundle.id,
+            content: filteredContent
+        });
+        setIsEditing(false);
+    };
+
+    const addContentField = () => {
+        setEditingContent([...editingContent, '']);
+    };
+
+    const removeContentField = (index) => {
+        const newContent = editingContent.filter((_, i) => i !== index);
+        setEditingContent(newContent);
+    };
+
+    if (!isOpen) return null;
+
+    return (
+        <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4">
+            <div className="bg-[#282828] card-gradient border-[1.5px] rounded-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden">
+                {/* Modal Header */}
+                <div className="flex items-center justify-between p-4 sm:p-6 border-b border-gray-700">
+                    <h2 className="text-xl sm:text-2xl font-bold text-[#D4BC6D]">
+                        Bundle Details
+                    </h2>
+                    <button
+                        onClick={onClose}
+                        className="text-gray-400 hover:text-white transition-colors"
+                        disabled={isUpdating}
+                    >
+                        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                </div>
+
+                {/* Modal Body */}
+                <div className="p-4 sm:p-6 overflow-y-auto max-h-[calc(90vh-200px)]">
+                    {/* Bundle Info */}
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+                        <div className="space-y-4">
+                            <div>
+                                <label className="block text-sm font-medium text-gray-400 mb-1">Bundle ID</label>
+                                <p className="text-white text-lg font-semibold">#{bundle.id}</p>
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-gray-400 mb-1">Package Title</label>
+                                <p className="text-white text-lg">{bundle.package?.title || 'N/A'}</p>
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-gray-400 mb-1">Price</label>
+                                <p className="text-[#D4BC6D] text-xl font-bold">${bundle.package?.price}</p>
+                            </div>
+                        </div>
+                        <div className="space-y-4">
+                            <div>
+                                <label className="block text-sm font-medium text-gray-400 mb-1">Graphics Count</label>
+                                <p className="text-white text-lg">{bundle.package?.graphic} Graphics</p>
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-gray-400 mb-1">Purchased Date</label>
+                                <p className="text-white text-lg">
+                                    {new Date(bundle.created_at).toLocaleDateString('en-US', {
+                                        year: 'numeric',
+                                        month: 'long',
+                                        day: 'numeric'
+                                    })}
+                                </p>
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-gray-400 mb-1">Description</label>
+                                <p className="text-white text-sm">{bundle.package?.description || 'No description available'}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Content Details */}
+                    <div className="bg-[#1a1a1a] rounded-lg p-4 sm:p-6">
+                        <div className="flex items-center justify-between mb-4">
+                            <h3 className="text-lg font-semibold text-[#D4BC6D] flex items-center gap-2">
+                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                </svg>
+                                Content Details
+                            </h3>
+                            {!isEditing && (
+                                <button
+                                    onClick={() => setIsEditing(true)}
+                                    className="bg-[#D4BC6D] hover:bg-[#C4AC5D] text-black font-medium text-sm px-4 py-2 rounded-lg transition-colors"
+                                    disabled={isUpdating}
+                                >
+                                    Edit Content
+                                </button>
+                            )}
+                        </div>
+
+                        <div className="text-sm text-gray-400 mb-4">
+                            {editingContent.filter(item => item !== null && item !== undefined && item.trim() !== '').length} / {bundle.package?.graphic} Items
+                        </div>
+
+                        <div className="space-y-3">
+                            {isEditing ? (
+                                <>
+                                    {editingContent.map((content, index) => (
+                                        <div key={index} className="flex gap-2">
+                                            <div className="flex-1">
+                                                <label className="block text-xs text-gray-400 mb-1">Content #{index + 1}</label>
+                                                <div className="flex gap-2">
+                                                    <textarea
+                                                        value={content || ''}
+                                                        onChange={(e) => handleContentChange(index, e.target.value)}
+                                                        placeholder={`Enter content ${index + 1}...`}
+                                                        className="flex-1 min-h-[80px] p-3 bg-[#282828] border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#D4BC6D] resize-none"
+                                                        disabled={isUpdating}
+                                                    />
+                                                    <button
+                                                        onClick={() => removeContentField(index)}
+                                                        className="self-start mt-6 text-red-400 hover:text-red-300 p-1"
+                                                        disabled={isUpdating}
+                                                    >
+                                                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                                        </svg>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ))}
+                                    
+                                    {editingContent.length < parseInt(bundle.package?.graphic) && (
+                                        <button
+                                            onClick={addContentField}
+                                            className="w-full border-2 border-dashed border-gray-600 hover:border-[#D4BC6D] text-gray-400 hover:text-[#D4BC6D] py-3 px-4 rounded-lg transition-colors flex items-center justify-center gap-2"
+                                            disabled={isUpdating}
+                                        >
+                                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                                            </svg>
+                                            Add Content Field
+                                        </button>
+                                    )}
+                                </>
+                            ) : (
+                                <>
+                                    {editingContent.map((content, index) => (
+                                        <div key={index} className="bg-[#282828] rounded-lg p-4">
+                                            <div className="flex items-center justify-between mb-2">
+                                                <span className="text-sm font-medium text-gray-400">Content #{index + 1}</span>
+                                                <span className={`text-xs px-2 py-1 rounded-full ${
+                                                    content && content.trim() !== '' 
+                                                        ? 'bg-green-600 text-green-100' 
+                                                        : 'bg-yellow-600 text-yellow-100'
+                                                }`}>
+                                                    {content && content.trim() !== '' ? 'Submitted' : 'Pending'}
+                                                </span>
+                                            </div>
+                                            <div className="text-white">
+                                                {content && content.trim() !== '' ? (
+                                                    <p className="whitespace-pre-wrap">{content}</p>
+                                                ) : (
+                                                    <p className="text-gray-500 italic">No content submitted</p>
+                                                )}
+                                            </div>
+                                        </div>
+                                    ))}
+                                </>
+                            )}
+                        </div>
+                    </div>
+                </div>
+
+                {/* Modal Footer */}
+                {isEditing && (
+                    <div className="flex gap-3 p-4 sm:p-6 border-t border-gray-700">
+                        <button
+                            onClick={() => {
+                                setIsEditing(false);
+                                // Reset to original content
+                                setEditingContent([...bundle.content]);
+                            }}
+                            className="flex-1 py-3 px-4 bg-transparent border border-gray-600 text-gray-300 rounded-lg hover:bg-gray-600 transition-colors font-medium"
+                            disabled={isUpdating}
+                        >
+                            Cancel
+                        </button>
+                        <button
+                            onClick={handleSaveChanges}
+                            className="flex-1 py-3 px-4 bg-[#D4BC6D] text-black rounded-lg hover:bg-[#C4AC5D] transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                            disabled={isUpdating}
+                        >
+                            {isUpdating ? (
+                                <div className="flex items-center justify-center gap-2">
+                                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-black"></div>
+                                    Saving...
+                                </div>
+                            ) : (
+                                'Save Changes'
+                            )}
+                        </button>
+                    </div>
+                )}
+            </div>
+        </div>
+    );
+};
 
 export default MySubscription
