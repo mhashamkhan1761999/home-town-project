@@ -296,20 +296,23 @@ const Dashboard = () => {
                         </div>
                     </div> */}
 <div className="w-full overflow-x-auto">
-  <div className="min-w-[250px] sm:min-w-[600px] max-h-[350px] overflow-y-auto">
+  <div className="min-w-[300px] sm:min-w-[700px] max-h-[350px] overflow-y-auto">
     <table className="w-full bg-transparent border-0 rounded-lg shadow-sm">
       <thead>
         <tr className="bg-[rgba(0,0,0,0.02)] text-left text-xs sm:text-sm font-bold text-[#838383]">
-          <th className="px-2 sm:px-6 py-3 border-b border-[#323232] whitespace-nowrap">
+          <th className="px-2 sm:px-4 py-3 border-b border-[#323232] whitespace-nowrap">
+            # of Products
+          </th>
+          <th className="px-2 sm:px-4 py-3 border-b border-[#323232] whitespace-nowrap">
             Service Launch
           </th>
-          <th className="px-2 sm:px-6 py-3 border-b border-[#323232] whitespace-nowrap">
+          <th className="px-2 sm:px-4 py-3 border-b border-[#323232] whitespace-nowrap">
             Total Item Sold
           </th>
-          <th className="px-2 sm:px-6 py-3 border-b border-[#323232] whitespace-nowrap">
+          <th className="px-2 sm:px-4 py-3 border-b border-[#323232] whitespace-nowrap">
             TOTAL PROFITS
           </th>
-          <th className="px-2 sm:px-6 py-3 border-b border-[#323232] whitespace-nowrap">
+          <th className="px-2 sm:px-4 py-3 border-b border-[#323232] whitespace-nowrap">
             COMPLETION
           </th>
         </tr>
@@ -319,9 +322,16 @@ const Dashboard = () => {
         {dashboardStats?.services?.length > 0 ? (
           dashboardStats.services.map((service) => (
             <tr key={service.id} className="hover:bg-[rgba(255,255,255,0.05)]">
+              {/* # of Products */}
+              <td className="px-2 sm:px-4 py-4 border-b border-[#323232]">
+                <div className="text-[#D4BC6D] font-bold text-xs sm:text-sm">
+                  {service.total_products ?? 0}
+                </div>
+              </td>
+
               {/* Service Launch */}
-              <td className="px-2 sm:px-6 py-4 border-b border-[#323232]">
-                <div className="flex items-center gap-2 sm:gap-6">
+              <td className="px-2 sm:px-4 py-4 border-b border-[#323232]">
+                <div className="flex items-center gap-2 sm:gap-4">
                   <div className="text-[#D4BC6D] font-bold">
                     <div className="text-xs sm:text-sm">
                       {service.category?.name || "Unknown"}
@@ -334,33 +344,30 @@ const Dashboard = () => {
               </td>
 
               {/* Total Item Sold */}
-              <td className="px-2 sm:px-6 py-4 border-b border-[#323232]">
+              <td className="px-2 sm:px-4 py-4 border-b border-[#323232]">
                 <div className="text-[#D4BC6D] font-bold text-xs sm:text-sm">
                   {service.total_item_sold ?? 0}
                 </div>
               </td>
 
               {/* Total Profits */}
-              <td className="px-2 sm:px-6 py-4 border-b border-[#323232]">
+              <td className="px-2 sm:px-4 py-4 border-b border-[#323232]">
                 <div className="text-[#D4BC6D] font-bold text-xs sm:text-sm">
                   ${service.total_profit ?? 0}
                 </div>
               </td>
 
               {/* Completion */}
-              <td className="px-2 sm:px-6 py-4 border-b border-[#323232]">
+              <td className="px-2 sm:px-4 py-4 border-b border-[#323232]">
                 <div className="text-[#D4BC6D] font-bold mb-0.5 text-xs sm:text-sm">
-                  {service.status == "Cancelled" ? "Cancelled": `${Math.min((service.total_item_sold || 0) * 10, 100)}%`}
+                  {service.status == "Cancelled" ? "Cancelled": `${Math.round(service.total_completion ?? 0)}%`}
                 </div>
                 {service.status != "Cancelled" &&
-                (<div className="h-[8px] sm:h-[10px] w-[120px] sm:w-[150px] bg-[#282828] rounded-full">
+                (<div className="h-[8px] sm:h-[10px] w-[100px] sm:w-[120px] bg-[#282828] rounded-full">
                   <div
                     className="h-full bg-[#D4BC6D] rounded-full"
                     style={{
-                      width: `${Math.min(
-                        (service.total_item_sold || 0) * 10,
-                        100
-                      )}%`,
+                      width: `${Math.min(Math.round(service.total_completion ?? 0), 100)}%`,
                     }}
                   />
                 </div>)}
@@ -371,7 +378,7 @@ const Dashboard = () => {
           <tr>
             <td
               colSpan={5}
-              className="px-2 sm:px-6 py-6 text-center text-gray-400"
+              className="px-2 sm:px-4 py-6 text-center text-gray-400"
             >
               No services found
             </td>
