@@ -70,7 +70,7 @@ const MasterLayout = () => {
                     <div className="flex-shrink-0">
                         <img src="/admin-logo.svg" alt="Logo" className="w-[4.438rem] h-auto mt-6 mx-auto" />
 
-                        <div className="mt-6 mb-4 flex justify-center">
+                        <div className="mt-6 mb-4 flex flex-col justify-center items-center gap-3">
                             <NavLink
                                 to="/athlete/profile"
                                 className="w-[3.5rem] h-[3.5rem] rounded-full overflow-hidden border-[2px] border-[#CAB265]">
@@ -80,6 +80,7 @@ const MasterLayout = () => {
                                     className="w-full h-full object-cover object-center"
                                 />
                             </NavLink>
+                            <NavLink to="/athlete/profile" className="text-[#6A6A69] z-40 font-bold text-base">Profile</NavLink>
                         </div>
                         <div className="mb-[2.75rem] mt-[3.125rem]">
                             <img src="/line.svg" alt="line" className="h-[1px] w-full" />
