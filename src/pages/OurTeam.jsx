@@ -70,7 +70,7 @@ const OurTeam = () => {
             </section>
 
 
-            <section className="py-16 px-4 sm:px-6 lg:px-8">
+            {/* <section className="py-16 px-4 sm:px-6 lg:px-8">
 
                 <div className="flex gap-5 justify-center mt-5">
                     {[
@@ -117,10 +117,10 @@ const OurTeam = () => {
                     ))}
                 </div>
 
-            </section>
+            </section> */}
 
 
-            <section className="py-16 bg-black px-4 sm:px-6 lg:px-8">
+            <section className="mt-20 py-16 bg-black px-4 sm:px-6 lg:px-8">
                 <div class="max-w-5xl mx-auto text-center">
                     <h2 class="text-3xl md:text-4xl font-bold text-[#d4bc6d] mb-8">Our Team Ecosystem</h2>
 
