@@ -89,8 +89,8 @@ const featureList = [
   - You earn 5% of their sales for up to 60 days  
 
   There’s no limit to how many athletes you can refer — grow your network, help others monetize, and earn while you do it.`,
-    image: '/Abassador.png',
-    locked: false,
+    image: '/question-mark.jpeg',
+    locked: true,
   },
   {
     id: 12,
@@ -308,9 +308,10 @@ const Athletes = () => {
                 <span className="font-bold text-base text-[#d4bc6d]">Coming Soon</span>
               </button>
               <div className="px-4 pb-4">
-                {[...Array(9)].map((_, index) => {
-                  const id = index + 12;
+                {[...Array(10)].map((_, index) => {
+                  const id = index + 11;
                   const titles = [
+                    "Ambassador Program",
                     "Brand Marketplace",
                     "LMS Online Course", 
                     "Press",
