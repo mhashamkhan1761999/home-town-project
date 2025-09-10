@@ -1,5 +1,5 @@
 // NilService.jsx
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useMemo } from 'react'
 import serviceCategoryContent from '../data/serviceCategoryContent'
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { getRequest, postRequest } from '../api';
@@ -1063,24 +1063,34 @@ const ItemModal2 = ({ item = null, onClose, onSuccesActive, categoryId }) => {
   const [image, setImage] = useState(null);
 
   // Fetch categories for mapping
-  const { data: categories } = useQuery({
+  const { data: categories, isLoading: categoriesLoading } = useQuery({
     queryKey: ['categories'],
     queryFn: () => getRequest('/categories'),
   });
 
   // Define categories that should only show logo option
-  const logoOnlyCategories = ['Coffee', 'Health', 'Self Care', 'Strength Supplements'];
+  const logoOnlyCategories = ['Jersey', 'Footwear', 'Accessories', 'Strength Supplements', 'Health', 'Self Care', 'Coffee'];
   
   // Get current category name
   const currentCategoryName = categories?.find(cat => cat.id === categoryId)?.name;
-  const isLogoOnlyCategory = logoOnlyCategories.includes(currentCategoryName);
+  
+  // Enhanced logic to determine if it's a logo-only category
+  // Use both category name (when available) and category ID to determine logo-only status
+  const isLogoOnlyCategory = useMemo(() => {
+    if (currentCategoryName) {
+      return logoOnlyCategories.includes(currentCategoryName);
+    }
+    // If categories are still loading, check if we can determine from existing patterns
+    // Since all current categories are logo-only, default to true during loading
+    return categoriesLoading;
+  }, [currentCategoryName, categoriesLoading, logoOnlyCategories]);
 
   // Pre-select logo option for logo-only categories
   useEffect(() => {
-    if (isLogoOnlyCategory) {
+    if (!categoriesLoading && categories && isLogoOnlyCategory) {
       setValue('selectedCategory', 'logo');
     }
-  }, [isLogoOnlyCategory, setValue]);
+  }, [isLogoOnlyCategory, setValue, categoriesLoading, categories]);
 
   const mutation = useMutation({
     mutationKey: ['store-concept'],
@@ -1127,12 +1137,20 @@ const ItemModal2 = ({ item = null, onClose, onSuccesActive, categoryId }) => {
     <div className="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-[100]">
       <div className="bg-black border border-[#4B4C46] rounded-2xl p-6 w-full max-w-3xl">
         <h2 className="text-2xl font-bold text-[#D4BC6D] mb-6">Upload Your Details For Your Free Graphic</h2>
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-5" id="product-form">
-          <div className="h-[400px] overflow-y-auto pr-2 space-y-8">
+        
+        {/* Show loading state while categories are being fetched */}
+        {categoriesLoading ? (
+          <div className="flex items-center justify-center py-8">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#D4BC6D]"></div>
+            <span className="ml-3 text-[#D4BC6D]">Loading...</span>
+          </div>
+        ) : (
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-5" id="product-form">
+          <div className="max-h-[400px] overflow-y-auto pr-2 space-y-8">
 
             {/* Multiple Image Upload */}
             <label className="text-base font-semibold text-[#D4BC6D] mb-3 block">
-              {isLogoOnlyCategory ? "Example Photos Of Your Logo (Optional)" : "Upload Your Exact Photos (Multiple Allowed)"}
+              {isLogoOnlyCategory ? "Upload example logos (Optional)" : "Upload the exact photos you want included in the graphic"}
             </label>
             <div style={{ display: 'flex', alignItems: 'center' }}>
               <input
@@ -1185,7 +1203,7 @@ const ItemModal2 = ({ item = null, onClose, onSuccesActive, categoryId }) => {
             {/* Content / Theme Ideas */}
             <div>
               <label className="text-base font-semibold text-[#D4BC6D] mb-3 block">
-                Tell Us Your Content, Theme, and Layout Ideas:
+                Tell us your theme, content, and layout ideas for your graphic (Required)
               </label>
               <textarea
                 {...register("content", { required: "Content is required" })}
@@ -1200,61 +1218,41 @@ const ItemModal2 = ({ item = null, onClose, onSuccesActive, categoryId }) => {
 
 
             {/* Radio Select for Category */}
+            {!isLogoOnlyCategory && (
             <div className="mt-6">
               <label className="text-base font-semibold text-[#D4BC6D] mb-3 block">
-                Select One Category
+                Select your graphic type, examples:
               </label>
               <div className="grid grid-cols-2 gap-4">
-                {isLogoOnlyCategory ? (
-                  // Only show logo option for specific categories
-                  <label
-                    className="relative p-3 rounded-lg border border-[#D4BC6D] bg-[rgba(212,188,109,0.1)] shadow-lg cursor-pointer transition col-span-2"
-                  >
-                    <input
-                      type="radio"
-                      value="logo"
-                      {...register("selectedCategory", { required: true })}
-                      className="absolute top-2 left-2"
-                      defaultChecked
-                    />
-                    <span className="block font-semibold text-[#D4BC6D] mb-2 px-5">Logo</span>
-                    <img src="/3.jpeg" alt="Logo" className="w-full h-full object-cover rounded-md" />
-                  </label>
-                ) : (
-                  // Show all options for other categories
-                  [
-                    { id: "merch", label: "Merch Collage", example: "/2.jpeg" },
-                    { id: "favorite", label: "Favorite Picture", example: "/1.jpeg" },
-                    { id: "logo", label: "Logo", example: "/3.jpeg" },
-                    { id: "other?", label: "Other?", example: "/question-mark.jpeg" },
-                  ].map(({ id, label, example }) => {
-                    const isSelected = watch("selectedCategory") === id;
-                    return (
-                      <label
-                        key={id}
-                        className={`relative p-3 rounded-lg border cursor-pointer transition 
-                                  ${isSelected ? "border-[#D4BC6D] bg-[rgba(212,188,109,0.1)] shadow-lg" : "border-[#4B4C46] hover:border-[#D4BC6D]"}`}
-                      >
-                        <input
-                          type="radio"
-                          value={id}
-                          {...register("selectedCategory", { required: true })}
-                          className="absolute top-2 left-2"
-                        />
-                        <span className="block font-semibold text-[#D4BC6D] mb-2 px-5">{label}</span>
-                        <img src={example} alt={label} className="w-full h-full object-cover rounded-md" />
-                      </label>
-                    )
-                  })
-                )}
+                {[
+                  { id: "merch", label: "Merch Collage", example: "/2.jpeg" },
+                  { id: "favorite", label: "Favorite Picture", example: "/1.jpeg" },
+                  { id: "logo", label: "Logo", example: "/3.jpeg" },
+                  { id: "other?", label: "Other?", example: "/question-mark.jpeg" },
+                ].map(({ id, label, example }) => {
+                  const isSelected = watch("selectedCategory") === id;
+                  return (
+                    <label
+                      key={id}
+                      className={`relative p-3 rounded-lg border cursor-pointer transition 
+                                ${isSelected ? "border-[#D4BC6D] bg-[rgba(212,188,109,0.1)] shadow-lg" : "border-[#4B4C46] hover:border-[#D4BC6D]"}`}
+                    >
+                      <input
+                        type="radio"
+                        value={id}
+                        {...register("selectedCategory", { required: true })}
+                        className="absolute top-2 left-2"
+                      />
+                      <span className="block font-semibold text-[#D4BC6D] mb-2 px-5">{label}</span>
+                      <img src={example} alt={label} className="w-full h-full object-cover rounded-md" />
+                    </label>
+                  )
+                })}
               </div>
               {errors?.selectedCategory && (
                 <p className="text-red-500 text-sm mt-1">Please select one category</p>
               )}
-            </div>
-
-
-
+            </div>)}
           </div>
 
           {/* Buttons */}
@@ -1275,6 +1273,7 @@ const ItemModal2 = ({ item = null, onClose, onSuccesActive, categoryId }) => {
             </button>
           </div>
         </form>
+        )}
       </div>
     </div>
 
