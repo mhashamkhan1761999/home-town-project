@@ -9,6 +9,35 @@ const GraphicFormQueries = () => {
     const [isViewModalOpen, setIsViewModalOpen] = useState(false);
     const [selectedQuery, setSelectedQuery] = useState(null);
 
+    // Helper function to parse image array from JSON string
+    const parseImageArray = (imageString) => {
+        if (!imageString) return [];
+        try {
+            const parsed = JSON.parse(imageString);
+            return Array.isArray(parsed) ? parsed : [];
+        } catch (error) {
+            console.error('Error parsing image array:', error);
+            return [];
+        }
+    };
+
+    // Helper function to check if query has any attachments
+    const hasAttachments = (query) => {
+        const imageArray = parseImageArray(query.image);
+        return query.picture || query.graphic_picture || query.logo || imageArray.length > 0;
+    };
+
+    // Helper function to get attachment count
+    const getAttachmentCount = (query) => {
+        const imageArray = parseImageArray(query.image);
+        let count = 0;
+        if (query.picture) count++;
+        if (query.graphic_picture) count++;
+        if (query.logo) count++;
+        count += imageArray.length;
+        return count;
+    };
+
     // API call to get concept queries
     const { data: conceptQueries = [], isLoading, error } = useQuery({
         queryKey: ['concept-queries'],
@@ -305,15 +334,15 @@ const GraphicFormQueries = () => {
                                                                 <span className="text-xs text-yellow-400">Logo</span>
                                                             </div>
                                                         )}
-                                                        {query.image && (
+                                                        {parseImageArray(query.image).length > 0 && (
                                                             <div className="flex items-center gap-1">
                                                                 <div className="w-6 h-6 bg-purple-600 rounded flex items-center justify-center">
                                                                     <Package className="h-3 w-3 text-white" />
                                                                 </div>
-                                                                <span className="text-xs text-purple-400">Image</span>
+                                                                <span className="text-xs text-purple-400">Images ({parseImageArray(query.image).length})</span>
                                                             </div>
                                                         )}
-                                                        {!query.picture && !query.graphic_picture && !query.logo && !query.image && (
+                                                        {!hasAttachments(query) && (
                                                             <span className="text-xs text-gray-500">No attachments</span>
                                                         )}
                                                     </div>
@@ -462,15 +491,15 @@ const GraphicFormQueries = () => {
                                                                             <span className="text-xs text-yellow-400">Logo</span>
                                                                         </div>
                                                                     )}
-                                                                    {query.image && (
+                                                                    {parseImageArray(query.image).length > 0 && (
                                                                         <div className="flex items-center gap-2">
                                                                             <div className="w-8 h-8 bg-purple-600 rounded flex items-center justify-center">
                                                                                 <Package className="h-4 w-4 text-white" />
                                                                             </div>
-                                                                            <span className="text-xs text-purple-400">Image</span>
+                                                                            <span className="text-xs text-purple-400">Images ({parseImageArray(query.image).length})</span>
                                                                         </div>
                                                                     )}
-                                                                    {!query.picture && !query.graphic_picture && !query.logo && !query.image && (
+                                                                    {!hasAttachments(query) && (
                                                                         <span className="text-xs text-gray-500">No attachments</span>
                                                                     )}
                                                                 </div>
@@ -528,11 +557,31 @@ const ViewDetailsModal = ({ isOpen, onClose, query }) => {
 
     if (!isOpen) return null;
 
+    // Parse image array from JSON string if it exists
+    const parseImageArray = (imageString) => {
+        if (!imageString) return [];
+        try {
+            const parsed = JSON.parse(imageString);
+            return Array.isArray(parsed) ? parsed : [];
+        } catch (error) {
+            console.error('Error parsing image array:', error);
+            return [];
+        }
+    };
+
+    const submittedImages = parseImageArray(query.image);
+    
     const images = [
+        // Individual image fields
         { url: query.picture, type: 'Picture', color: 'blue' },
         { url: query.graphic_picture, type: 'Graphic', color: 'green' },
         { url: query.logo, type: 'Logo', color: 'yellow' },
-        { url: query.image, type: 'Image', color: 'purple' }
+        // Multiple images from the image array
+        ...submittedImages.map((imgPath, index) => ({
+            url: imgPath,
+            type: `Image ${index + 1}`,
+            color: 'purple'
+        }))
     ].filter(img => img.url);
 
     const downloadImage = (url, filename) => {
