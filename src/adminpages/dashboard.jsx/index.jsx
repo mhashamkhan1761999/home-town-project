@@ -485,7 +485,7 @@ const CashOutModal = ({ isOpen, onClose, user }) => {
               </div>
             </div>
             <p className="text-xs text-gray-400 mt-2">
-              A 2% fee will be deducted by our cashout processor.
+              A  2.9% + 30¢ fee will be deducted by our cashout processor.
             </p>
           </div>
 
