@@ -140,19 +140,19 @@ const NilCategory = () => {
       console.log('Card details not found or API error:', error);
     }
     
-    try {
-      // Check if concept exists for this category
-      const response = await getRequest(`/check-concept?category_id=${id}`);
+    // try {
+    //   // Check if concept exists for this category
+    //   const response = await getRequest(`/check-concept?category_id=${id}`);
       
-      // If successful (concept exists), skip splash and launch service form, go directly to products
-      if (response && response.status !== 404) {
-        setIsShow(1); // Go directly to product list
-        return;
-      }
-    } catch (error) {
-      // If API fails or returns 404, continue with normal flow (splash + launch service form)
-      console.log('Concept not found or API error, showing normal flow:', error);
-    }
+    //   // If successful (concept exists), skip splash and launch service form, go directly to products
+    //   if (response && response.status !== 404) {
+    //     setIsShow(1); // Go directly to product list
+    //     return;
+    //   }
+    // } catch (error) {
+    //   // If API fails or returns 404, continue with normal flow (splash + launch service form)
+    //   console.log('Concept not found or API error, showing normal flow:', error);
+    // }
     
     // Normal flow: show launch service modal (splash + form)
     launchServiceModal.openModal({ categoryId: id });
@@ -521,11 +521,13 @@ const ProductType = ({ handleActive, selectedCard, category, reload, selectedPro
   const [showSplash, setShowSplash] = useState(false);
   const navigate = useNavigate();
 
+  const concept_id = localStorage.getItem('concept_id');
   // API mutation for updating concept status
   const updateConceptMutation = useMutation({
     mutationKey: ['update-concept'],
-    mutationFn: ({ category_id, status }) => postRequest('/update-concept', { category_id, status }),
+    mutationFn: ({ category_id, status }) => postRequest('/update-concept', { category_id, status , concept_id }),
     onSuccess: (response, variables) => {
+      localStorage.removeItem('concept_id');
       if (variables.status === 'Cancelled') {
         // Reload and navigate to nil-service page after cancellation
         window.location.reload();
@@ -818,6 +820,7 @@ const ItemModal = ({ item, onClose, onSuccesActive }) => {
       alert("Minimum price should be 10");
       return;
     }
+    const conceptId = localStorage.getItem('concept_id');
 
     const formData = new FormData();
     formData.append("category_id", item?.selectedCardId);
@@ -829,6 +832,7 @@ const ItemModal = ({ item, onClose, onSuccesActive }) => {
       name: i?.colorName || i?.label || 'Unknown',
       code: i?.value
     }))));
+    formData.append("concept_id", conceptId || '');
     formData.append("placement", values?.placement || '');
     if (image) formData.append("image", image);
     formData.append("design_service", values?.design_service || false);
@@ -1099,7 +1103,9 @@ const ItemModal2 = ({ item = null, onClose, onSuccesActive, categoryId }) => {
       const queryParam = categoryId ? `?category_id=${categoryId}` : '';
       return postRequest(`/store-concept${queryParam}`, form, true);
     },
-    onSuccess: () => {
+    onSuccess: (response) => {
+      console.log(response.response?.data?.id,"dekh le bhai")
+      localStorage.setItem('concept_id',response.response?.data?.id)
       // onClose();
       onSuccesActive();
       queryClient.invalidateQueries({ queryKey: ['get-products'] });
