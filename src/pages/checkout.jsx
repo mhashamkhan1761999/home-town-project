@@ -5,7 +5,7 @@ import { loadStripe } from '@stripe/stripe-js';
 import CheckoutForm from '../components/CheckoutForm';
 import { useForm } from 'react-hook-form';
 
-const stripePromise = loadStripe('pk_test_51LO709EoIN0qcO1SAQ6hl12BkCOI93FAQ8u9n2cnVA4kuz4YIpx0c50TeUJHHGUFiZnniCvwal7FS1ZM5EHyCy8400wxefrAoU');
+const stripePromise = loadStripe('pk_test_51REvJgR0EqcqzPLH5CL2723m2l8hkmEjNQ6Qkm3b3EJEVziLUIJsTOg2ehrSdsXqMEKwi6OaFaivlZpX9N3rg6Eu00GZHqnM7X');
 
 const Checkout = () => {
   const cart = useSelector(state => state.cart);
