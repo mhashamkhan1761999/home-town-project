@@ -35,7 +35,12 @@ const MySubscription = () => {
 
     // Mutation for updating bundle content
     const updateBundleMutation = useMutation({
-        mutationFn: ({ bundle_id, content }) => postRequest('/update-bundle', { bundle_id, content }),
+        mutationFn: (data) => {
+            console.log('Mutation received data:', data);
+            const isFormData = data instanceof FormData;
+            console.log('Is FormData:', isFormData);
+            return postRequest('/update-bundle', data, isFormData);
+        },
         onSuccess: (response) => {
             toast.success(response?.message || 'Bundle updated successfully!');
             setIsModalOpen(false);
@@ -382,39 +387,108 @@ const MySubscription = () => {
 
 // Bundle Details Modal Component
 const BundleDetailsModal = ({ bundle, isOpen, onClose, onUpdate, isUpdating }) => {
-    const [editingContent, setEditingContent] = useState([]);
+    const [editingData, setEditingData] = useState([]);
     const [isEditing, setIsEditing] = useState(false);
 
-    // Initialize editing content when modal opens
+    // Initialize editing data when modal opens
     React.useEffect(() => {
         if (bundle?.content) {
-            setEditingContent([...bundle.content]);
+            // Handle both old format (array of strings) and new format (array of objects)
+            const formattedData = bundle.content.map(item => {
+                if (typeof item === 'string') {
+                    // Old format: convert string to object
+                    return { content: item, image: null };
+                } else if (typeof item === 'object' && item !== null) {
+                    // New format: ensure both properties exist
+                    return { 
+                        content: item.content || '', 
+                        image: item.image || null 
+                    };
+                }
+                return { content: '', image: null };
+            });
+            setEditingData(formattedData);
+        } else {
+            // Initialize with empty data based on graphics count
+            const graphicCount = parseInt(bundle.package?.graphic) || 1;
+            setEditingData(new Array(graphicCount).fill({ content: '', image: null }));
         }
     }, [bundle]);
 
-    const handleContentChange = (index, value) => {
-        const newContent = [...editingContent];
-        newContent[index] = value;
-        setEditingContent(newContent);
+    const handleContentChange = (index, field, value) => {
+        const newData = [...editingData];
+        newData[index] = { ...newData[index], [field]: value };
+        setEditingData(newData);
+    };
+
+    const handleImageChange = (index, file) => {
+        const newData = [...editingData];
+        newData[index] = { ...newData[index], image: file };
+        setEditingData(newData);
     };
 
     const handleSaveChanges = () => {
-        // Filter out null/empty values and send to API
-        const filteredContent = editingContent.filter(item => item !== null && item !== undefined && item.trim() !== '');
-        onUpdate({
-            bundle_id: bundle.id,
-            content: filteredContent
-        });
+        // Check if there are any new files being uploaded
+        const hasNewFiles = editingData.some(item => item.image && item.image instanceof File);
+        
+        if (hasNewFiles) {
+            // Use FormData for file uploads
+            const formData = new FormData();
+            formData.append('bundle_id', bundle.id);
+            
+            // Add each graphic's data
+            editingData.forEach((item, index) => {
+                // Only include items that have content or image
+                if ((item.content && item.content.trim() !== '') || item.image) {
+                    // Add content
+                    formData.append(`data[${index}][content]`, item.content || '');
+                    
+                    // Add image file if it's a new file, or image URL if it's existing
+                    if (item.image) {
+                        if (item.image instanceof File) {
+                            // New file upload
+                            formData.append(`data[${index}][image]`, item.image);
+                        } else if (typeof item.image === 'string') {
+                            // Existing image URL
+                            formData.append(`data[${index}][image_url]`, item.image);
+                        }
+                    }
+                }
+            });
+            
+            console.log('=== FormData being sent for update ===');
+            for (let [key, value] of formData.entries()) {
+                console.log(`${key}:`, value);
+            }
+            
+            onUpdate(formData);
+        } else {
+            // No new files, use regular JSON
+            const filteredData = editingData.filter(item => 
+                (item.content && item.content.trim() !== '') || item.image
+            );
+            
+            const payload = {
+                bundle_id: bundle.id,
+                data: filteredData
+            };
+            
+            console.log('=== JSON payload being sent for update ===');
+            console.log(payload);
+            
+            onUpdate(payload);
+        }
+        
         setIsEditing(false);
     };
 
-    const addContentField = () => {
-        setEditingContent([...editingContent, '']);
+    const addDataField = () => {
+        setEditingData([...editingData, { content: '', image: null }]);
     };
 
-    const removeContentField = (index) => {
-        const newContent = editingContent.filter((_, i) => i !== index);
-        setEditingContent(newContent);
+    const removeDataField = (index) => {
+        const newData = editingData.filter((_, i) => i !== index);
+        setEditingData(newData);
     };
 
     if (!isOpen) return null;
@@ -499,70 +573,127 @@ const BundleDetailsModal = ({ bundle, isOpen, onClose, onUpdate, isUpdating }) =
                         </div>
 
                         <div className="text-sm text-gray-400 mb-4">
-                            {editingContent.filter(item => item !== null && item !== undefined && item.trim() !== '').length} / {bundle.package?.graphic} Items
+                            {editingData.filter(item => (item.content && item.content.trim() !== '') || item.image).length} / {bundle.package?.graphic} Items
                         </div>
 
                         <div className="space-y-3">
                             {isEditing ? (
                                 <>
-                                    {editingContent.map((content, index) => (
-                                        <div key={index} className="flex gap-2">
-                                            <div className="flex-1">
-                                                <label className="block text-xs text-gray-400 mb-1">Content #{index + 1}</label>
-                                                <div className="flex gap-2">
+                                    {editingData.map((item, index) => (
+                                        <div key={index} className="border border-gray-600 rounded-lg p-4">
+                                            <div className="flex items-center justify-between mb-3">
+                                                <label className="block text-sm font-medium text-gray-400">Graphic #{index + 1}</label>
+                                                <button
+                                                    onClick={() => removeDataField(index)}
+                                                    className="text-red-400 hover:text-red-300 p-1"
+                                                    disabled={isUpdating}
+                                                >
+                                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                                    </svg>
+                                                </button>
+                                            </div>
+                                            
+                                            <div className="space-y-4">
+                                                {/* Content Input */}
+                                                <div>
+                                                    <label className="block text-xs text-gray-400 mb-2">Description</label>
                                                     <textarea
-                                                        value={content || ''}
-                                                        onChange={(e) => handleContentChange(index, e.target.value)}
-                                                        placeholder={`Enter content ${index + 1}...`}
-                                                        className="flex-1 min-h-[80px] p-3 bg-[#282828] border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#D4BC6D] resize-none"
+                                                        value={item.content || ''}
+                                                        onChange={(e) => handleContentChange(index, 'content', e.target.value)}
+                                                        placeholder={`Enter description for graphic ${index + 1}...`}
+                                                        className="w-full min-h-[80px] p-3 bg-[#282828] border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#D4BC6D] resize-none"
                                                         disabled={isUpdating}
                                                     />
-                                                    <button
-                                                        onClick={() => removeContentField(index)}
-                                                        className="self-start mt-6 text-red-400 hover:text-red-300 p-1"
-                                                        disabled={isUpdating}
-                                                    >
-                                                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                                        </svg>
-                                                    </button>
+                                                </div>
+                                                
+                                                {/* Image Input */}
+                                                <div>
+                                                    <label className="block text-xs text-gray-400 mb-2">Image</label>
+                                                    <div className="space-y-2">
+                                                        {/* Current image display */}
+                                                        {item.image && typeof item.image === 'string' && (
+                                                            <div className="relative">
+                                                                <img 
+                                                                    src={item.image} 
+                                                                    alt={`Graphic ${index + 1}`}
+                                                                    className="w-full max-w-xs h-32 object-cover rounded-lg border border-gray-600"
+                                                                />
+                                                                <button
+                                                                    onClick={() => handleContentChange(index, 'image', null)}
+                                                                    className="absolute top-2 right-2 bg-red-500 hover:bg-red-600 text-white rounded-full p-1"
+                                                                    disabled={isUpdating}
+                                                                >
+                                                                    <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                                                                    </svg>
+                                                                </button>
+                                                            </div>
+                                                        )}
+                                                        
+                                                        {/* File input */}
+                                                        <input
+                                                            type="file"
+                                                            accept="image/*"
+                                                            onChange={(e) => handleImageChange(index, e.target.files[0])}
+                                                            className="block w-full text-sm text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-[#D4BC6D] file:text-black hover:file:bg-[#C4AC5D] file:cursor-pointer"
+                                                            disabled={isUpdating}
+                                                        />
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
                                     ))}
                                     
-                                    {editingContent.length < parseInt(bundle.package?.graphic) && (
+                                    {editingData.length < parseInt(bundle.package?.graphic) && (
                                         <button
-                                            onClick={addContentField}
+                                            onClick={addDataField}
                                             className="w-full border-2 border-dashed border-gray-600 hover:border-[#D4BC6D] text-gray-400 hover:text-[#D4BC6D] py-3 px-4 rounded-lg transition-colors flex items-center justify-center gap-2"
                                             disabled={isUpdating}
                                         >
                                             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
                                             </svg>
-                                            Add Content Field
+                                            Add Graphic Field
                                         </button>
                                     )}
                                 </>
                             ) : (
                                 <>
-                                    {editingContent.map((content, index) => (
+                                    {editingData.map((item, index) => (
                                         <div key={index} className="bg-[#282828] rounded-lg p-4">
                                             <div className="flex items-center justify-between mb-2">
-                                                <span className="text-sm font-medium text-gray-400">Content #{index + 1}</span>
+                                                <span className="text-sm font-medium text-gray-400">Graphic #{index + 1}</span>
                                                 <span className={`text-xs px-2 py-1 rounded-full ${
-                                                    content && content.trim() !== '' 
+                                                    (item.content && item.content.trim() !== '') || item.image
                                                         ? 'bg-green-600 text-green-100' 
                                                         : 'bg-yellow-600 text-yellow-100'
                                                 }`}>
-                                                    {content && content.trim() !== '' ? 'Submitted' : 'Pending'}
+                                                    {(item.content && item.content.trim() !== '') || item.image ? 'Submitted' : 'Pending'}
                                                 </span>
                                             </div>
-                                            <div className="text-white">
-                                                {content && content.trim() !== '' ? (
-                                                    <p className="whitespace-pre-wrap">{content}</p>
+                                            
+                                            {/* Content Display */}
+                                            <div className="mb-3">
+                                                <label className="text-xs text-gray-400 mb-1 block">Description:</label>
+                                                {item.content && item.content.trim() !== '' ? (
+                                                    <p className="text-white whitespace-pre-wrap text-sm">{item.content}</p>
                                                 ) : (
-                                                    <p className="text-gray-500 italic">No content submitted</p>
+                                                    <p className="text-gray-500 italic text-sm">No description provided</p>
+                                                )}
+                                            </div>
+                                            
+                                            {/* Image Display */}
+                                            <div>
+                                                <label className="text-xs text-gray-400 mb-1 block">Image:</label>
+                                                {item.image ? (
+                                                    <img 
+                                                        src={typeof item.image === 'string' ? item.image : URL.createObjectURL(item.image)}
+                                                        alt={`Graphic ${index + 1}`}
+                                                        className="w-full max-w-xs h-32 object-cover rounded-lg border border-gray-600"
+                                                    />
+                                                ) : (
+                                                    <p className="text-gray-500 italic text-sm">No image provided</p>
                                                 )}
                                             </div>
                                         </div>
@@ -579,8 +710,21 @@ const BundleDetailsModal = ({ bundle, isOpen, onClose, onUpdate, isUpdating }) =
                         <button
                             onClick={() => {
                                 setIsEditing(false);
-                                // Reset to original content
-                                setEditingContent([...bundle.content]);
+                                // Reset to original data
+                                if (bundle?.content) {
+                                    const formattedData = bundle.content.map(item => {
+                                        if (typeof item === 'string') {
+                                            return { content: item, image: null };
+                                        } else if (typeof item === 'object' && item !== null) {
+                                            return { 
+                                                content: item.content || '', 
+                                                image: item.image || null 
+                                            };
+                                        }
+                                        return { content: '', image: null };
+                                    });
+                                    setEditingData(formattedData);
+                                }
                             }}
                             className="flex-1 py-3 px-4 bg-transparent border border-gray-600 text-gray-300 rounded-lg hover:bg-gray-600 transition-colors font-medium"
                             disabled={isUpdating}

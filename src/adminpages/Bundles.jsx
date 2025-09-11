@@ -18,9 +18,9 @@ const Bundles = () => {
     const [isShow, setIsShow] = React.useState(false);
     const [showDescriptionModal, setShowDescriptionModal] = React.useState(false);
     const [currentBundle, setCurrentBundle] = React.useState(null);
-    const [descriptions, setDescriptions] = React.useState([]);
+    const [formData, setFormData] = React.useState([]);
     const [currentDescriptionIndex, setCurrentDescriptionIndex] = React.useState(0);
-    const descriptionsRef = useRef([]); // Add ref to store descriptions
+    const formDataRef = useRef([]); // Add ref to store form data (content + images)
     
     // Modal history management
     const bundleModal = useModalHistory('bundleModal', isShow !== false, () => setIsShow(false));
@@ -43,14 +43,10 @@ const Bundles = () => {
     const mutation = useMutation({
         mutationKey: ['add-subscription'],
         mutationFn: (form) => {
-            // console.log('=== MUTATION FUNCTION CALLED ===');
-            // console.log('Mutation received data:', form);
-            // console.log('Data type:', typeof form);
-            // console.log('Data keys:', Object.keys(form));
-            // console.log('Content field exists:', 'content' in form);
-            // console.log('Content value:', form.content);
-            // console.log('=== END MUTATION LOG ===');
-            return postRequest('/buy-bundles', form);
+            // Check if form is FormData (contains files)
+            const isFormData = form instanceof FormData;
+            console.log('Mutation - Is FormData:', isFormData);
+            return postRequest('/buy-bundles', form, isFormData);
         },
         onSuccess: (data) => {
             // console.log('Mutation success:', data);
@@ -60,9 +56,9 @@ const Bundles = () => {
                 // Reset states
                 setShowDescriptionModal(false);
                 setCurrentBundle(null);
-                setDescriptions([]);
+                setFormData([]);
                 setCurrentDescriptionIndex(0);
-                descriptionsRef.current = []; // Reset ref
+                formDataRef.current = []; // Reset ref
                 // queryClient.invalidateQueries({ queryKey: ['get-packages'] });
                 navigate("/athlete/my-subscription")
             }
@@ -90,21 +86,21 @@ const Bundles = () => {
             // Start description collection process
             setCurrentBundle(item);
             const graphicCount = parseInt(item?.graphic || 1);
-            const initialDescriptions = new Array(graphicCount).fill('');
-            setDescriptions(initialDescriptions);
-            descriptionsRef.current = initialDescriptions; // Initialize ref
+            const initialFormData = new Array(graphicCount).fill({ content: '', image: null });
+            setFormData(initialFormData);
+            formDataRef.current = initialFormData; // Initialize ref
             setCurrentDescriptionIndex(0);
             setShowDescriptionModal(true);
         }
     }
 
-    const handleDescriptionNext = (description) => {
-        const newDescriptions = [...descriptions];
-        newDescriptions[currentDescriptionIndex] = description || null;
-        setDescriptions(newDescriptions);
-        descriptionsRef.current = newDescriptions; // Update ref immediately
+    const handleDescriptionNext = (formEntry) => {
+        const newFormData = [...formData];
+        newFormData[currentDescriptionIndex] = formEntry || { content: '', image: null };
+        setFormData(newFormData);
+        formDataRef.current = newFormData; // Update ref immediately
 
-        if (currentDescriptionIndex < descriptions.length - 1) {
+        if (currentDescriptionIndex < formData.length - 1) {
             // Move to next description
             setCurrentDescriptionIndex(currentDescriptionIndex + 1);
         } else {
@@ -116,7 +112,7 @@ const Bundles = () => {
     }
 
     const handleDescriptionSkip = () => {
-        handleDescriptionNext('');
+        handleDescriptionNext({ content: '', image: null });
     }
 
     const handleDescriptionBack = () => {
@@ -126,9 +122,9 @@ const Bundles = () => {
             // Close description modal if at first step
             setShowDescriptionModal(false);
             setCurrentBundle(null);
-            setDescriptions([]);
+            setFormData([]);
             setCurrentDescriptionIndex(0);
-            descriptionsRef.current = []; // Reset ref
+            formDataRef.current = []; // Reset ref
         }
     }
 
@@ -190,47 +186,62 @@ const Bundles = () => {
                             // Reset description states when payment modal is closed
                             setShowDescriptionModal(false);
                             setCurrentBundle(null);
-                            setDescriptions([]);
+                            setFormData([]);
                             setCurrentDescriptionIndex(0);
-                            descriptionsRef.current = []; // Reset ref
+                            formDataRef.current = []; // Reset ref
                         }}
                         isEdit={isShow}
                         mutate={(formData) => {
                             
-                            // Use ref to get the most current descriptions
-                            const finalDescriptions = descriptionsRef.current;
-                            // console.log('Final descriptions being sent:', finalDescriptions);
-                            // console.log('Form data received:', formData);
-                            // console.log('Form data type:', typeof formData);
-                            // console.log('Is FormData:', formData instanceof FormData);
-                            // console.log('Current bundle:', currentBundle);
+                            // Use ref to get the most current form data
+                            const finalFormData = formDataRef.current;
+                            console.log('Final form data being sent:', finalFormData);
+                            console.log('Form data received:', formData);
                             
-                            // Handle both FormData and regular object
-                            let dataWithContent;
+                            // Check if there are any files to upload
+                            const hasFiles = finalFormData.some(item => item.image && item.image instanceof File);
                             
-                            if (formData instanceof FormData) {
-                                // If it's FormData, append content to it
-                                console.log('Handling as FormData');
-                                dataWithContent = new FormData();
+                            if (hasFiles) {
+                                // Use FormData for file uploads
+                                const dataWithContent = new FormData();
                                 
-                                // Copy existing FormData entries
-                                for (let [key, value] of formData.entries()) {
-                                    dataWithContent.append(key, value);
-                                }
+                                // Add basic payment info
+                                dataWithContent.append('package_id', formData.package_id || currentBundle?.id);
+                                dataWithContent.append('stripe_token', formData.stripe_token);
                                 
-                                // Add content as JSON string
-                                dataWithContent.append('content', JSON.stringify(finalDescriptions));
+                                // Add each graphic's data
+                                finalFormData.forEach((item, index) => {
+                                    // Add content
+                                    dataWithContent.append(`data[${index}][content]`, item.content || '');
+                                    
+                                    // Add image file if exists
+                                    if (item.image && item.image instanceof File) {
+                                        dataWithContent.append(`data[${index}][image]`, item.image);
+                                    }
+                                });
                                 
+                                // Add any other properties from formData
+                                Object.keys(formData).forEach(key => {
+                                    if (!['package_id', 'stripe_token'].includes(key)) {
+                                        dataWithContent.append(key, formData[key]);
+                                    }
+                                });
+
+                                console.log('=== FormData contents ===');
                                 for (let [key, value] of dataWithContent.entries()) {
                                     console.log(`${key}:`, value);
                                 }
+
+                                mutation.mutate(dataWithContent);
                             } else {
-                                // If it's a regular object
-                                // console.log('Handling as regular object');
-                                dataWithContent = {
+                                // No files, use regular JSON
+                                const dataWithContent = {
                                     package_id: formData.package_id || currentBundle?.id,
                                     stripe_token: formData.stripe_token,
-                                    content: finalDescriptions
+                                    data: finalFormData.map(item => ({
+                                        content: item.content || '',
+                                        image: null
+                                    }))
                                 };
                                 
                                 // Add any other properties from formData
@@ -240,12 +251,11 @@ const Bundles = () => {
                                     }
                                 });
 
-                                // console.log('Complete payload being sent:', dataWithContent);
-                                // console.log('Payload keys:', Object.keys(dataWithContent));
-                            }
+                                console.log('=== JSON payload ===');
+                                console.log(dataWithContent);
 
-                            // console.log('=== CALLING MUTATION ===');
-                            mutation.mutate(dataWithContent);
+                                mutation.mutate(dataWithContent);
+                            }
                         }}
                     />
                 </Elements>
@@ -257,32 +267,80 @@ const Bundles = () => {
                     <div className="bg-black border border-[#4B4C46] rounded-2xl p-6 w-full max-w-lg">
                         <div className="mb-6">
                             <h2 className="text-2xl font-bold text-[#D4BC6D] mb-2">
-                                Graphic Description
+                                Graphic Details
                             </h2>
                             <p className="text-gray-300 text-sm">
-                                Graphic {currentDescriptionIndex + 1} of {descriptions.length} for {currentBundle?.title}
+                                Graphic {currentDescriptionIndex + 1} of {formData.length} for {currentBundle?.title}
                             </p>
                             <div className="mt-4 bg-gray-700 rounded-full h-2">
                                 <div 
                                     className="bg-[#D4BC6D] h-2 rounded-full transition-all duration-300" 
-                                    style={{ width: `${((currentDescriptionIndex + 1) / descriptions.length) * 100}%` }}
+                                    style={{ width: `${((currentDescriptionIndex + 1) / formData.length) * 100}%` }}
                                 />
                             </div>
                         </div>
 
-                        <div className="mb-6">
-                            <label className="block text-sm font-medium text-white mb-2">
-                                Description for Graphic {currentDescriptionIndex + 1} (Optional)
-                            </label>
-                            <textarea
-                                placeholder="Enter description for this graphic or leave empty to skip..."
-                                defaultValue={descriptions[currentDescriptionIndex] || ''}
-                                className="w-full p-3 border border-[#4B4C46] rounded-lg bg-transparent text-white focus:border-[#D4BC6D] outline-none resize-none"
-                                rows="4"
-                                id="description-input"
-                            />
-                            <p className="text-xs text-gray-400 mt-1">
-                                You can leave this empty and continue to the next graphic.
+                        <div className="mb-6 space-y-4">
+                            <div>
+                                <label className="block text-sm font-medium text-white mb-2">
+                                    Description for Graphic {currentDescriptionIndex + 1} (Optional)
+                                </label>
+                                <textarea
+                                    placeholder="Enter description for this graphic or leave empty to skip..."
+                                    defaultValue={formData[currentDescriptionIndex]?.content || ''}
+                                    className="w-full p-3 border border-[#4B4C46] rounded-lg bg-transparent text-white focus:border-[#D4BC6D] outline-none resize-none"
+                                    rows="4"
+                                    id="description-input"
+                                />
+                            </div>
+                            
+                            <div>
+                                <label className="block text-sm font-medium text-white mb-2">
+                                    Upload Image for Graphic {currentDescriptionIndex + 1} (Optional)
+                                </label>
+                                <div className="relative">
+                                    <input
+                                        type="file"
+                                        accept="image/*"
+                                        id="image-input"
+                                        className="hidden"
+                                        onChange={(e) => {
+                                            const file = e.target.files[0];
+                                            if (file) {
+                                                // Preview the selected image
+                                                const reader = new FileReader();
+                                                reader.onload = (e) => {
+                                                    const preview = document.getElementById('image-preview');
+                                                    if (preview) {
+                                                        preview.src = e.target.result;
+                                                        preview.classList.remove('hidden');
+                                                    }
+                                                };
+                                                reader.readAsDataURL(file);
+                                            }
+                                        }}
+                                    />
+                                    <label 
+                                        htmlFor="image-input"
+                                        className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-[#4B4C46] rounded-lg cursor-pointer hover:border-[#D4BC6D] transition-colors bg-transparent"
+                                    >
+                                        <svg className="w-8 h-8 text-gray-400 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                                        </svg>
+                                        <span className="text-sm text-gray-400">Click to upload image</span>
+                                    </label>
+                                    
+                                    {/* Image Preview */}
+                                    <img 
+                                        id="image-preview" 
+                                        className="hidden mt-2 max-w-full h-32 object-cover rounded-lg border border-[#4B4C46]" 
+                                        alt="Preview" 
+                                    />
+                                </div>
+                            </div>
+                            
+                            <p className="text-xs text-gray-400">
+                                Both description and image are optional. You can skip either or both and continue.
                             </p>
                         </div>
 
@@ -304,11 +362,16 @@ const Bundles = () => {
                                 <button
                                     onClick={() => {
                                         const input = document.getElementById('description-input');
-                                        handleDescriptionNext(input.value);
+                                        const imageInput = document.getElementById('image-input');
+                                        const formEntry = {
+                                            content: input.value || '',
+                                            image: imageInput.files[0] || null
+                                        };
+                                        handleDescriptionNext(formEntry);
                                     }}
                                     className="px-4 py-2 bg-[#D4BC6D] text-black rounded-lg hover:bg-[#b89f4e] transition font-medium"
                                 >
-                                    {currentDescriptionIndex === descriptions.length - 1 ? 'Continue to Payment' : 'Next'}
+                                    {currentDescriptionIndex === formData.length - 1 ? 'Continue to Payment' : 'Next'}
                                 </button>
                             </div>
                         </div>
