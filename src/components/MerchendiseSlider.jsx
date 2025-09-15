@@ -48,9 +48,9 @@ const Card = ({ id, name, image, images = [], description, price }) => {
     // Choose correct image
     const displayImage =
         image
-            ? `https://hometown.eagleeblaze.com/storage/app/public/${image}`
+            ? `https://admin.hometownheroagency.com/storage/app/public/${image}`
             : images.length > 0
-            ? `https://hometown.eagleeblaze.com/storage/app/public/${images[0].image}`
+            ? `https://admin.hometownheroagency.com/storage/app/public/${images[0].image}`
             : '/shirt.svg';
 
     return (

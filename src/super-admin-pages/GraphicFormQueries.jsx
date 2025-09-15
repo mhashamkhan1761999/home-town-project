@@ -586,7 +586,7 @@ const ViewDetailsModal = ({ isOpen, onClose, query }) => {
 
     const downloadImage = (url, filename) => {
         const link = document.createElement('a');
-        link.href = `https://hometown.eagleeblaze.com/storage/app/${url}`;
+        link.href = `https://admin.hometownheroagency.com/storage/app/${url}`;
         link.download = filename;
         link.target = '_blank';
         document.body.appendChild(link);
@@ -713,10 +713,10 @@ const ViewDetailsModal = ({ isOpen, onClose, query }) => {
                                                 </button>
                                             </div>
                                             <img
-                                                src={`https://hometown.eagleeblaze.com/storage/app/${img.url}`}
+                                                src={`https://admin.hometownheroagency.com/storage/app/${img.url}`}
                                                 alt={img.type}
                                                 className="w-full max-h-48 object-contain rounded cursor-pointer hover:opacity-80 transition-opacity"
-                                                onClick={() => setSelectedImage(`https://hometown.eagleeblaze.com/storage/app/${img.url}`)}
+                                                onClick={() => setSelectedImage(`https://admin.hometownheroagency.com/storage/app/${img.url}`)}
                                                 onError={(e) => {
                                                     e.target.src = '/default.jpg';
                                                 }}

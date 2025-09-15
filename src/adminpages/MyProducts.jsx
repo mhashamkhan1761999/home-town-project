@@ -105,7 +105,7 @@ const MyProducts = () => {
                 style={{
                     backgroundImage: `url(${
                     item?.icon
-                        ? `https://hometown.eagleeblaze.com/storage/app/public/${item.icon}`
+                        ? `https://admin.hometownheroagency.com/storage/app/public/${item.icon}`
                         : '/mark.jpeg'
                     })`,
                 }}
@@ -113,7 +113,7 @@ const MyProducts = () => {
                 {/* <img
                     src={
                     item?.icon
-                        ? `https://hometown.eagleeblaze.com/storage/app/public/${item.icon}`
+                        ? `https://admin.hometownheroagency.com/storage/app/public/${item.icon}`
                         : '/shirt.svg'
                     }
                     alt={item?.name}

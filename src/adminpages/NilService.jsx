@@ -626,7 +626,7 @@ const ProductType = ({ handleActive, selectedCard, category, reload, selectedPro
                           <div className="relative bg-[url('/mark.jpeg')] bg-cover bg-no-repeat rounded-3xl overflow-hidden h-[13.5rem] flex justify-center items-center">
                             <img
                               src={
-                                "https://hometown.eagleeblaze.com/storage/app/public/" +
+                                "https://admin.hometownheroagency.com/storage/app/public/" +
                                 item?.icon
                               }
                               alt={item?.name}

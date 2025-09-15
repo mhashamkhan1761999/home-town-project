@@ -379,7 +379,7 @@ const AthleteManagement = () => {
                                 athlete?.profile_picture_url
                                   ? athlete.profile_picture_url.startsWith('http')
                                     ? athlete.profile_picture_url.replace(/\\/g, '/')
-                                    : `https://hometown.eagleeblaze.com/storage/app/public/${athlete.profile_picture_url}`.replace(/\\/g, '/')
+                                    : `https://admin.hometownheroagency.com/storage/app/public/${athlete.profile_picture_url}`.replace(/\\/g, '/')
                                   : '/default.jpg'
                               }
                               alt={athlete?.athlete_name}
@@ -516,7 +516,7 @@ const AthleteManagement = () => {
                       athlete?.profile_picture_url
                         ? athlete.profile_picture_url.startsWith('http')
                           ? athlete.profile_picture_url.replace(/\\/g, '/')
-                          : `https://hometown.eagleeblaze.com/storage/app/public/${athlete.profile_picture_url}`.replace(/\\/g, '/')
+                          : `https://admin.hometownheroagency.com/storage/app/public/${athlete.profile_picture_url}`.replace(/\\/g, '/')
                         : '/default.jpg'
                     }
                     alt={athlete?.athlete_name}
@@ -735,7 +735,7 @@ const ViewAthleteModal = ({ isOpen, onClose, athlete }) => {
                   athlete?.profile_picture
                     ? athlete.profile_picture.startsWith('http')
                       ? athlete.profile_picture.replace(/\\/g, '/')
-                      : `https://hometown.eagleeblaze.com/storage/app/public/${athlete.profile_picture}`.replace(/\\/g, '/')
+                      : `https://admin.hometownheroagency.com/storage/app/public/${athlete.profile_picture}`.replace(/\\/g, '/')
                     : '/default.jpg'
                 }
                 alt={athlete?.athlete_name}

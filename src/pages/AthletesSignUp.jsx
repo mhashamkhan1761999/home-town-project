@@ -18,7 +18,7 @@ const AthletesSignUp = () => {
 
     const createAthlete = async (athleteData) => {
         try {
-            const response = await fetch('https://hometown.eagleeblaze.com/public/api/create-athlete', {
+            const response = await fetch('https://admin.hometownheroagency.com/public/api/create-athlete', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

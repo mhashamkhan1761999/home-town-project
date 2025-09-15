@@ -29,7 +29,7 @@ const VaultCard = ({ id, name, description, price, image, images, rating, subTit
                 <div className="flex flex-col justify-end h-full px-6 pt-6">
                     <div type="button" onClick={() => navigate(`/product/${id}`)} className="h-[15.25rem] w-full bg-center bg-cover bg-no-repeat"
                         style={{
-                            backgroundImage: `url(${images?.length > 0 ? `https://hometown.eagleeblaze.com/storage/app/public/${images?.[0]?.image}` : '/404.avif'})`
+                            backgroundImage: `url(${images?.length > 0 ? `https://admin.hometownheroagency.com/storage/app/public/${images?.[0]?.image}` : '/404.avif'})`
                         }}
                     ></div>
                     <div type="button" onClick={() => navigate(`/product/${id}`)} className="flex justify-between items-center mb-4">

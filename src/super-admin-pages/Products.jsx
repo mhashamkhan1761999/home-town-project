@@ -326,7 +326,7 @@ const SuperAdminProducts = () => {
                           src={
                             error
                               ? `/${(product.icon || product.image)}`
-                              : `https://hometown.eagleeblaze.com/storage/app/public/${(product.icon || product.image)}`.replace(/\\/g, '/')
+                              : `https://admin.hometownheroagency.com/storage/app/public/${(product.icon || product.image)}`.replace(/\\/g, '/')
                           }
                           alt={product.name}
                           className="w-full h-full object-cover"
@@ -433,7 +433,7 @@ const SuperAdminProducts = () => {
                       src={
                         error
                           ? `/${(product.icon || product.image)}`
-                          : `https://hometown.eagleeblaze.com/storage/app/public/${(product.icon || product.image)}`.replace(/\\/g, '/')
+                          : `https://admin.hometownheroagency.com/storage/app/public/${(product.icon || product.image)}`.replace(/\\/g, '/')
                       }
                       alt={product.name}
                       className="w-full h-full object-cover"
@@ -1391,7 +1391,7 @@ const EditProductModal = ({ product, onClose, categories }) => {
               </label>
               <div className="w-32 h-32 bg-[#282828] rounded-lg overflow-hidden">
                 <img
-                  src={`https://hometown.eagleeblaze.com/storage/app/public/${product.image}`}
+                  src={`https://admin.hometownheroagency.com/storage/app/public/${product.image}`}
                   alt={product.name}
                   className="w-full h-full object-cover"
                 />
@@ -1550,7 +1550,7 @@ const ViewProductModal = ({ product, onClose }) => {
                 <h4 className="text-[#D4BC6D] font-semibold mb-3">Product Image</h4>
                 <div className="w-full h-64 bg-[#1a1a1a] rounded-lg overflow-hidden">
                   <img
-                    src={`https://hometown.eagleeblaze.com/storage/app/public/${(product.icon || product.image)}`.replace(/\\/g, '/')}
+                    src={`https://admin.hometownheroagency.com/storage/app/public/${(product.icon || product.image)}`.replace(/\\/g, '/')}
                     alt={product.name}
                     className="w-full h-full object-cover bg-[#adacac]"
                   />
@@ -1640,7 +1640,7 @@ const ViewProductModal = ({ product, onClose }) => {
                   {product?.icon ? (
                     <div className="mt-2">
                       <img
-                        src={`https://hometown.eagleeblaze.com/storage/app/public/${product.icon}`.replace(/\\/g, '/')}
+                        src={`https://admin.hometownheroagency.com/storage/app/public/${product.icon}`.replace(/\\/g, '/')}
                         alt="Product Icon"
                         className="w-16 h-16 object-cover rounded-lg border border-[#4B4C46]"
                         onError={(e) => {
@@ -1703,7 +1703,7 @@ const ViewProductModal = ({ product, onClose }) => {
                   {product?.size_chart ? (
                     <div className="mt-2">
                       <img
-                        src={`https://hometown.eagleeblaze.com/storage/app/public/${product.size_chart}`.replace(/\\/g, '/')}
+                        src={`https://admin.hometownheroagency.com/storage/app/public/${product.size_chart}`.replace(/\\/g, '/')}
                         alt="Size Chart"
                         className="max-w-full h-auto rounded-lg border border-[#4B4C46]"
                         onError={(e) => {
