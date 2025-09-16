@@ -21,6 +21,13 @@ const CheckoutForm = () => {
     formState: { errors },
   } = useForm();
 
+  // Calculate shipping and tax
+  const subtotal = parseFloat(cart?.totalPrice || 0);
+  const totalQuantity = cart?.totalQuantity || 0;
+  const shipping = totalQuantity < 2 ? 5 : 0;
+  const tax = (subtotal * 0.029) + 1.30; // 2.9% of subtotal
+  const grandTotal = subtotal + shipping + tax;
+
 
 
   const mutation = useMutation({
@@ -47,6 +54,10 @@ const CheckoutForm = () => {
         code: val?.color || '#000000'
       }
     }))) || [];
+
+    // Add shipping and tax to the order data
+    data['shipping'] = shipping;
+    data['tax'] = tax;
 
     if (!stripe || !elements) return
 
@@ -158,9 +169,22 @@ const CheckoutForm = () => {
                   <span>${(item.price * item.quantity).toFixed(2)}</span>
                 </li>
               ))}
+              <li className="flex justify-between border-t pt-4 mt-4">
+                <span>Subtotal ({cart?.totalQuantity} items)</span>
+                <span>${subtotal.toFixed(2)}</span>
+              </li>
+              <li className="flex justify-between">
+                <span>Shipping</span>
+                <span>${shipping.toFixed(2)}</span>
+              </li>
+              <li className="flex justify-between">
+                <span>VAT</span>
+                <span>${tax.toFixed(2)}</span>
+              </li>
+                <span className='text-xs text-gray-300'> A processing fee of 2.9% + $1.30 applies to each order (charged by our payment processor)</span>
               <li className="flex justify-between font-semibold border-t pt-4 mt-4 text-lg">
-                <span>Total ({cart?.totalQuantity} items)</span>
-                <span>${parseFloat(cart?.totalPrice || 0).toFixed(2)}</span>
+                <span>Grand Total</span>
+                <span>${grandTotal.toFixed(2)}</span>
               </li>
             </ul>
           </div>
