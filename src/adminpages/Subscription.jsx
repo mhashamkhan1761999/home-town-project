@@ -9,7 +9,7 @@ import { useModalHistory } from "../hooks/useModalHistory";
 import { useSelector } from "react-redux";
 
 const stripePromise = loadStripe(
-  "pk_live_51REvJXJie2PUnhtx7uy53YLEKNxXqSqb6Fa8BdN2KGsoK7CzmfURna8ekI7q72P6dg5OocNOf243wpTsODrTqtUQ00Fds6auka"
+  "pk_test_51REvJgR0EqcqzPLH5CL2723m2l8hkmEjNQ6Qkm3b3EJEVziLUIJsTOg2ehrSdsXqMEKwi6OaFaivlZpX9N3rg6Eu00GZHqnM7X"
 );
 
 const Subscription = () => {
