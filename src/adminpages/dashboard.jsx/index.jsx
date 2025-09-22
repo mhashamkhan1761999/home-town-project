@@ -320,7 +320,7 @@ const Dashboard = () => {
 
       <tbody className="text-xs sm:text-sm text-gray-600">
         {dashboardStats?.services?.length > 0 ? (
-          dashboardStats.services.map((service) => (
+          [...dashboardStats.services].reverse().map((service) => (
             <tr key={service.id} className="hover:bg-[rgba(255,255,255,0.05)]">
               {/* # of Products */}
               <td className="px-2 sm:px-4 py-4 border-b border-[#323232]">
