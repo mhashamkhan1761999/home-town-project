@@ -435,7 +435,7 @@ const MasterLayout = () => {
                         {/* Header Options */}
                         <div className="border-t border-[#323232] pt-4 mb-6">
                             <NavLink
-                                to="/"
+                                to={`/store-front/${profileSlug}`}
                                 className="bg-[#d4bc6d] h-[40px] w-full inline-flex items-center justify-center rounded-full uppercase text-black text-sm font-semibold mb-4"
                                 onClick={() => setIsMobileMenuOpen(false)}
                             >
