@@ -599,12 +599,12 @@ const ExploreAthletes = () => {
                                     <h4 className="text-4xl font-bold bg-[linear-gradient(to_right,#d4bc6d,#57430d)] bg-clip-text text-transparent mb-6 capitalize">
                                         {item.title}
                                     </h4>
-                                    <button
+                                    {/* <button
                                         className="bg-[#D4BC6D] text-black text-lg font-semibold py-5 px-14 rounded-full shadow-lg transition-colors duration-300 ease-in-out hover:text-black hover:bg-[#D4BC6D]"
                                         type="button"
                                     >
                                         View
-                                    </button>
+                                    </button> */}
                                 </div>
                             </SwiperSlide>
                         ))}
@@ -631,12 +631,12 @@ const ExploreAthletes = () => {
                             <h4 className="text-2xl sm:text-3xl lg:text-[3rem] text-center capitalize font-medium bg-[linear-gradient(to_right,#d4bc6d,#57430d)] bg-clip-text text-transparent mb-4">
                                 {item.title}
                             </h4>
-                            <button
+                            {/* <button
                                 className="bg-[#D4BC6D] text-black text-sm font-medium py-3 px-8 sm:px-10 rounded-full shadow-lg transition-colors duration-300 ease-in-out hover:text-black hover:bg-[#D4BC6D]"
                                 type="button"
                             >
                                 View
-                            </button>
+                            </button> */}
                         </div>
                     ))}
                 </div>
