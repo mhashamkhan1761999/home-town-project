@@ -202,31 +202,113 @@ const MasterLayout = () => {
 
         <div className="grow overflow-hidden">
           <div className="w-full p-4 flex items-center">
-            {/* Mobile: Small logo + hamburger */}
+            {/* Mobile: Small logo + chatbot + hamburger */}
             <div className="flex md:hidden items-center justify-between w-full">
               <img
                 src="/hometown-logo.svg"
                 alt="Header"
                 className="w-42 h-auto"
               />
-              <button
-                className="p-2 text-white hover:text-[#D4BC6D]"
-                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              >
-                <svg
-                  className="w-6 h-6"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
+              
+              <div className="flex items-center gap-3">
+                {/* Mobile Notifications */}
+                    <div className="relative group">
+                      <button className="p-2 rounded-full hover:bg-gray-100 focus:outline-none">
+                        {/* Bell Icon (Lucide or Heroicons or Font Awesome) */}
+                        <svg
+                          className="w-6 h-6 text-gray-600"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth={2}
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            d="M15 17h5l-1.405-1.405C18.79 14.79 18 13.42 18 12V9a6 6 0 10-12 0v3c0 1.42-.79 2.79-1.595 3.595L3 17h5m7 0a3 3 0 01-6 0m6 0H9"
+                          />
+                        </svg>
+                        {/* Notification Dot */}
+                        <span className="absolute top-1 right-1 block w-2 h-2 bg-red-500 rounded-full animate-ping" />
+                        <span className="absolute top-1 right-1 block w-2 h-2 bg-red-500 rounded-full" />
+                      </button>
+                      {/* Dropdown */}
+                      <div className="hidden group-hover:block absolute right-0 mt-2 w-64 bg-white border border-gray-200 rounded-lg shadow-lg z-10">
+                        <div className="p-4 font-semibold border-b">
+                          Notifications
+                        </div>
+                        <ul className="max-h-60 overflow-y-auto">
+                          <li className="px-4 py-2 hover:bg-gray-50 cursor-pointer text-sm">
+                            No Notification Founds
+                          </li>
+                          {/* <li className="px-4 py-2 hover:bg-gray-50 cursor-pointer text-sm">
+                                                    📩 You received a new message
+                                                </li>
+                                                <li className="px-4 py-2 hover:bg-gray-50 cursor-pointer text-sm">
+                                                    🚀 Your campaign is now live!
+                                                </li> */}
+                        </ul>
+                        {/* <div className="p-2 text-center border-t text-sm text-blue-600 hover:underline cursor-pointer">
+                                                View All
+                                            </div> */}
+                      </div>
+                    </div>
+
+                {/* Mobile Chatbot */}
+                <div
+                  className="relative w-10 h-10 cursor-pointer group"
+                  onClick={() => {
+                    if (window.zE) {
+                      window.zE("messenger", "open");
+                    } else {
+                      console.error("Zendesk not loaded yet");
+                    }
+                  }}
                 >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M4 6h16M4 12h16M4 18h16"
+                  {/* Outer animated gradient ring */}
+                  <div className="absolute inset-0 rounded-full p-[2px] bg-gradient-to-r from-pink-500 via-purple-500 to-pink-500 animate-spin-slow">
+                    <div className="w-full h-full rounded-full bg-black"></div>
+                  </div>
+
+                  {/* Avatar Image */}
+                  <img
+                    src="/alek-nil.jpg"
+                    onError={(e) => (e.target.src = "/default-avatar.png")}
+                    alt="Agent Avatar"
+                    className="absolute inset-[2px] w-[calc(100%-4px)] h-[calc(100%-4px)] object-cover object-center rounded-full border border-gray-700"
                   />
-                </svg>
-              </button>
+
+                  {/* Notification Badge */}
+                  <div className="absolute -top-1 -right-1 flex items-center justify-center w-4 h-4 bg-red-500 text-white text-[8px] font-bold rounded-full">
+                    1
+                  </div>
+
+                  {/* Chat Icon */}
+                  <div className="absolute -bottom-1 -right-1 flex items-center justify-center w-5 h-5 bg-[#D4BC6D] rounded-full border-2 border-black">
+                    <MessageCircle className="w-3 h-3 text-black" />
+                  </div>
+                </div>
+
+                {/* Hamburger Menu */}
+                <button
+                  className="p-2 text-white hover:text-[#D4BC6D]"
+                  onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                >
+                  <svg
+                    className="w-6 h-6"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M4 6h16M4 12h16M4 18h16"
+                    />
+                  </svg>
+                </button>
+              </div>
             </div>
 
             {/* Desktop: Full header */}
@@ -460,62 +542,6 @@ const MasterLayout = () => {
                     className="h-full bg-[#D4BC6D] rounded-full"
                     style={{ width: `${user?.badge_level?.percentage || 0}%` }}
                   />
-                </div>
-              </div>
-            </div>
-
-            {/* Notifications */}
-            <div className="bg-white/10 rounded-lg p-3 mb-4">
-              <div className="flex items-center gap-3 text-white">
-                <svg
-                  className="w-5 h-5"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M15 17h5l-1.405-1.405C18.79 14.79 18 13.42 18 12V9a6 6 0 10-12 0v3c0 1.42-.79 2.79-1.595 3.595L3 17h5m7 0a3 3 0 01-6 0m6 0H9"
-                  />
-                </svg>
-                <span className="font-semibold">Notifications</span>
-                <span className="ml-auto bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
-                  3
-                </span>
-              </div>
-            </div>
-
-            {/* Chatbot */}
-            <div
-              className="bg-white/10 rounded-lg p-3 mb-4 cursor-pointer hover:bg-white/20 transition"
-              onClick={() => {
-                if (window.zE) {
-                  window.zE("messenger", "open");
-                } else {
-                  console.error("Zendesk not loaded yet");
-                }
-              }}
-            >
-              <div className="flex items-center justify-between text-white w-full">
-                <div className="flex items-center gap-3">
-                  <div className="relative w-8 h-8">
-                    <img
-                      src="/alek-nil.jpg"
-                      onError={(e) => (e.target.src = "/default-avatar.png")}
-                      alt="Agent Avatar"
-                      className="w-full h-full object-cover object-center rounded-full border border-gray-700"
-                    />
-                    <div className="absolute -top-1 -right-1 flex items-center justify-center w-4 h-4 bg-red-500 text-white text-[8px] font-bold rounded-full">
-                      1
-                    </div>
-                  </div>
-                  <span className="font-semibold">Chat Now</span>
-                </div>
-                {/* Chat Icon on the right */}
-                <div className="flex items-center justify-center w-8 h-8 bg-[#D4BC6D] rounded-full">
-                  <MessageCircle className="w-5 h-5 text-black" />
                 </div>
               </div>
             </div>
