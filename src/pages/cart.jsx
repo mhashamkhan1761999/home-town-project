@@ -2,6 +2,7 @@ import React from 'react'
 import { useDispatch, useSelector } from 'react-redux';
 import { addToCart, clearCart, removeFromCart } from '../redux/slices/cartSlice';
 import { Link } from 'react-router-dom';
+import ShippingMarquee from '../components/ShippingMarquee';
 
 
 function CartItem({ item }) {
@@ -81,6 +82,9 @@ const Cart = () => {
 
     return (
         <>
+            {/* Shipping Promotion Marquee */}
+            <ShippingMarquee />
+            
             <section className="py-[100px] md:py-[120px] lg:py-[142px] bg-black px-4">
                 <div className="max-w-screen-2xl mx-auto px-4">
                     <div className="flex gap-10 items-center justify-center">
