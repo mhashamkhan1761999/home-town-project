@@ -76,8 +76,8 @@ const ExploreAthletes = () => {
         // Apply category filter
         if (selectedFilter !== 'All') {
             if (selectedFilter === 'Furious 5') {
-                // Show top 5 athletes
-                filtered = filtered.slice(0, 5);
+                // Use the same data source as "This Month's Furious 5" section
+                filtered = Array.isArray(furiousAthletesData) ? furiousAthletesData : [];
             } else if (selectedFilter === 'Trending') {
                 // Show trending athletes
                 filtered = filtered.filter(athlete => athlete?.isTrending);
@@ -86,16 +86,24 @@ const ExploreAthletes = () => {
                     filtered = athletesData.slice(10, 15);
                 }
             } else {
-                // Filter by athlete level/tier
-                filtered = filtered.filter(athlete => 
-                    (athlete?.level_of_athlete || '').toLowerCase() === selectedFilter.toLowerCase() ||
-                    (athlete?.tier || '').toLowerCase() === selectedFilter.toLowerCase()
-                );
+                // Filter by badge level (Bronze, Silver, Gold, Diamond, Emerald, Royal)
+                const badgeLevels = ['Bronze', 'Silver', 'Gold', 'Diamond', 'Emerald', 'Royal'];
+                if (badgeLevels.includes(selectedFilter)) {
+                    filtered = filtered.filter(athlete => 
+                        athlete?.badge_level?.name === selectedFilter
+                    );
+                } else {
+                    // Fallback to level_of_athlete or tier for other filters
+                    filtered = filtered.filter(athlete => 
+                        (athlete?.level_of_athlete || '').toLowerCase() === selectedFilter.toLowerCase() ||
+                        (athlete?.tier || '').toLowerCase() === selectedFilter.toLowerCase()
+                    );
+                }
             }
         }
 
         return filtered;
-    }, [athletesData, searchTerm, selectedFilter]);
+    }, [athletesData, searchTerm, selectedFilter, furiousAthletesData]);
 
     // Map filtered data to carousel format
     const mapAthleteData = (athletes) => {
