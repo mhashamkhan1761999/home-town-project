@@ -112,106 +112,29 @@ const StoreFront = () => {
       id: 1,
       name: "Hair, Skin & Nails Gummies",
       price: 25.00,
-      category: "Health",
+      category: { name: "Health" },
       image: "/shirt.svg",
       isNewRelease: true,
       isBestSeller: false,
       created_at: new Date('2024-01-15'),
-    },
-    {
-      id: 2,
-      name: "Raglan Sleeve T-Shirt",
-      price: 25.00,
-      category: "Clothing",
-      image: "/shirt.svg",
-      isNewRelease: true,
-      isBestSeller: true,
-      created_at: new Date('2024-01-20'),
-    },
-    {
-      id: 3,
-      name: "Heavyweight Oversized Tee",
-      price: 25.00,
-      category: "Clothing",
-      image: "/shirt.svg",
-      isNewRelease: false,
-      isBestSeller: true,
-      created_at: new Date('2023-12-10'),
-    },
-    {
-      id: 4,
-      name: "Botanical Hair Growth Serum",
-      price: 25.00,
-      category: "Health",
-      image: "/shirt.svg",
-      isNewRelease: false,
-      isBestSeller: true,
-      created_at: new Date('2023-11-15'),
-    },
-    {
-      id: 5,
-      name: "Oversized Regular Tee",
-      price: 25.00,
-      category: "Clothing",
-      image: "/shirt.svg",
-      isNewRelease: true,
-      isBestSeller: false,
-      created_at: new Date('2024-01-25'),
-    },
-    {
-      id: 6,
-      name: "Premium Coffee Blend",
-      price: 25.00,
-      category: "Coffee",
-      image: "/shirt.svg",
-      isNewRelease: false,
-      isBestSeller: true,
-      created_at: new Date('2023-10-20'),
-    },
-    {
-      id: 7,
-      name: "Protein Powder",
-      price: 25.00,
-      category: "Supplements",
-      image: "/shirt.svg",
-      isNewRelease: true,
-      isBestSeller: false,
-      created_at: new Date('2024-01-30'),
-    },
-    {
-      id: 8,
-      name: "Training Hoodie",
-      price: 25.00,
-      category: "Clothing",
-      image: "/shirt.svg",
-      isNewRelease: false,
-      isBestSeller: true,
-      created_at: new Date('2023-09-15'),
-    },
-    {
-      id: 9,
-      name: "Sports Water Bottle",
-      price: 25.00,
-      category: "Accessories",
-      image: "/shirt.svg",
-      isNewRelease: true,
-      isBestSeller: false,
-      created_at: new Date('2024-02-01'),
-    },
-    {
-      id: 10,
-      name: "Athletic Shorts",
-      price: 25.00,
-      category: "Clothing",
-      image: "/shirt.svg",
-      isNewRelease: false,
-      isBestSeller: false,
-      created_at: new Date('2023-08-10'),
     }
   ];
 
   // Use products from API if available, otherwise use mock data
   const allProducts = products && products.length > 0 ? products : mockProducts;
+
+  // Extract unique categories from products
+  const availableCategories = useMemo(() => {
+    const categories = new Set();
+    allProducts.forEach(product => {
+      // Handle both API format (product.category.name) and mock format (product.category)
+      const categoryName = product.category?.name || product.category;
+      if (categoryName) {
+        categories.add(categoryName);
+      }
+    });
+    return Array.from(categories).sort();
+  }, [allProducts]);
 
   // Filter products for Featured section
   const filteredProducts = useMemo(() => {
@@ -239,14 +162,13 @@ const StoreFront = () => {
   const filteredVaultProducts = useMemo(() => {
     if (activeVaultFilter === 'all') {
       return allProducts;
-    } else if (activeVaultFilter === 'card-deals') {
-      return allProducts.filter(product => product.category === 'Cards' || product.name.toLowerCase().includes('card'));
-    } else if (activeVaultFilter === 'supplement') {
-      return allProducts.filter(product => product.category === 'Supplements' || product.category === 'Health');
-    } else if (activeVaultFilter === 'ebook') {
-      return allProducts.filter(product => product.category === 'E-Books' || product.name.toLowerCase().includes('book'));
+    } else {
+      // Filter by the selected category
+      return allProducts.filter(product => {
+        const categoryName = product.category?.name || product.category;
+        return categoryName === activeVaultFilter;
+      });
     }
-    return allProducts;
   }, [allProducts, activeVaultFilter]);
   
   // Get the appropriate background image
@@ -477,7 +399,7 @@ const StoreFront = () => {
                 : "ATHLETE VAULT"}
             </h1>
             <div className="mb-[7.188rem]">
-              <div className="flex justify-center space-x-5 mb-[81px]">
+              <div className="flex justify-center space-x-5 mb-[81px] flex-wrap gap-y-3">
                 <button
                   className={`${
                     activeVaultFilter === 'all' 
@@ -489,39 +411,20 @@ const StoreFront = () => {
                 >
                   All
                 </button>
-                <button
-                  className={`${
-                    activeVaultFilter === 'card-deals' 
-                      ? 'bg-[#D4BC6D] text-black' 
-                      : 'bg-gray-800 text-[#D4BC6D]'
-                  } text-sm font-medium py-3 px-8 rounded-full shadow-lg transition-colors hover:bg-[#C4AC5D] hover:text-black`}
-                  type="button"
-                  onClick={() => setActiveVaultFilter('card-deals')}
-                >
-                  Card Deals
-                </button>
-                <button
-                  className={`${
-                    activeVaultFilter === 'supplement' 
-                      ? 'bg-[#D4BC6D] text-black' 
-                      : 'bg-gray-800 text-[#D4BC6D]'
-                  } text-sm font-medium py-3 px-8 rounded-full shadow-lg transition-colors hover:bg-[#C4AC5D] hover:text-black`}
-                  type="button"
-                  onClick={() => setActiveVaultFilter('supplement')}
-                >
-                  Supplement Company
-                </button>
-                <button
-                  className={`${
-                    activeVaultFilter === 'ebook' 
-                      ? 'bg-[#D4BC6D] text-black' 
-                      : 'bg-gray-800 text-[#D4BC6D]'
-                  } text-sm font-medium py-3 px-8 rounded-full shadow-lg transition-colors hover:bg-[#C4AC5D] hover:text-black`}
-                  type="button"
-                  onClick={() => setActiveVaultFilter('ebook')}
-                >
-                  E Book
-                </button>
+                {availableCategories.map((category) => (
+                  <button
+                    key={category}
+                    className={`${
+                      activeVaultFilter === category 
+                        ? 'bg-[#D4BC6D] text-black' 
+                        : 'bg-gray-800 text-[#D4BC6D]'
+                    } text-sm font-medium py-3 px-8 rounded-full shadow-lg transition-colors hover:bg-[#C4AC5D] hover:text-black`}
+                    type="button"
+                    onClick={() => setActiveVaultFilter(category)}
+                  >
+                    {category}
+                  </button>
+                ))}
               </div>
             </div>
 
