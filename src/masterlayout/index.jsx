@@ -336,12 +336,49 @@ const MasterLayout = () => {
                                 </NavLink>
                             </div>
                             <div className="text-center">
+                                <span className="text-gray-400 text-sm mb-5" onClick={() => {navigate("/athlete/profile"); setIsMobileMenuOpen(false)}}>Edit Profile</span>
                                 <div className='text-[#D4BC6D] font-bold mb-1'>{user?.badge_level?.name || "Bronze"}</div>
                                 <div className='h-[8px] w-32 bg-[#282828] rounded-full mx-auto'>
                                     <div className="h-full bg-[#D4BC6D] rounded-full" style={{ width: `${user?.badge_level?.percentage || 0}%` }} />
                                 </div>
                             </div>
                         </div>
+
+                                                    {/* Notifications */}
+                            <div className="bg-white/10 rounded-lg p-3 mb-4">
+                                <div className="flex items-center gap-3 text-white">
+                                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405C18.79 14.79 18 13.42 18 12V9a6 6 0 10-12 0v3c0 1.42-.79 2.79-1.595 3.595L3 17h5m7 0a3 3 0 01-6 0m6 0H9" />
+                                    </svg>
+                                    <span className="font-semibold">Notifications</span>
+                                    <span className="ml-auto bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">3</span>
+                                </div>
+                            </div>
+
+                            {/* Chatbot */}
+                            <div className="bg-white/10 rounded-lg p-3 mb-4 cursor-pointer hover:bg-white/20 transition"        
+                             onClick={() => {
+                                if (window.zE) {
+                                    window.zE("webWidget", "open");
+                                } else {
+                                    console.error("Zendesk not loaded yet");
+                                }
+                                }}>
+                                <div className="flex items-center gap-3 text-white">
+                                    <div className="relative w-8 h-8">
+                                        <img
+                                            src="/alek-nil.jpg"
+                                            onError={(e) => (e.target.src = '/default-avatar.png')}
+                                            alt="Agent Avatar"
+                                            className="w-full h-full object-cover object-center rounded-full border border-gray-700"
+                                        />
+                                        <div className="absolute -top-1 -right-1 flex items-center justify-center w-4 h-4 bg-red-500 text-white text-[8px] font-bold rounded-full">
+                                            1
+                                        </div>
+                                    </div>
+                                    <span className="font-semibold">Chat Now</span>
+                                </div>
+                            </div>
 
                         {/* Navigation Links */}
                         <div className="flex flex-col space-y-4 mb-6">
@@ -405,41 +442,6 @@ const MasterLayout = () => {
                                 Visit Your Storefront
                             </NavLink>
 
-                            {/* Notifications */}
-                            <div className="bg-white/10 rounded-lg p-3 mb-4">
-                                <div className="flex items-center gap-3 text-white">
-                                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405C18.79 14.79 18 13.42 18 12V9a6 6 0 10-12 0v3c0 1.42-.79 2.79-1.595 3.595L3 17h5m7 0a3 3 0 01-6 0m6 0H9" />
-                                    </svg>
-                                    <span className="font-semibold">Notifications</span>
-                                    <span className="ml-auto bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">3</span>
-                                </div>
-                            </div>
-
-                            {/* Chatbot */}
-                            <div className="bg-white/10 rounded-lg p-3 mb-4 cursor-pointer hover:bg-white/20 transition"        
-                             onClick={() => {
-                                if (window.zE) {
-                                    window.zE("webWidget", "open");
-                                } else {
-                                    console.error("Zendesk not loaded yet");
-                                }
-                                }}>
-                                <div className="flex items-center gap-3 text-white">
-                                    <div className="relative w-8 h-8">
-                                        <img
-                                            src="/alek-nil.jpg"
-                                            onError={(e) => (e.target.src = '/default-avatar.png')}
-                                            alt="Agent Avatar"
-                                            className="w-full h-full object-cover object-center rounded-full border border-gray-700"
-                                        />
-                                        <div className="absolute -top-1 -right-1 flex items-center justify-center w-4 h-4 bg-red-500 text-white text-[8px] font-bold rounded-full">
-                                            1
-                                        </div>
-                                    </div>
-                                    <span className="font-semibold">Chat Now</span>
-                                </div>
-                            </div>
                         </div>
 
                         {/* Logout */}
