@@ -80,7 +80,7 @@ const MasterLayout = () => {
                                     className="w-full h-full object-cover object-center"
                                 />
                             </NavLink>
-                            <NavLink to="/athlete/profile" className="text-[#6A6A69] z-40 font-bold text-base">Profile</NavLink>
+                            <NavLink to="/athlete/profile" className="text-[#6A6A69] z-40 font-bold text-base">Edit Profile</NavLink>
                         </div>
                         <div className="mb-[2.75rem] mt-[3.125rem]">
                             <img src="/line.svg" alt="line" className="h-[1px] w-full" />
@@ -324,11 +324,16 @@ const MasterLayout = () => {
                         {/* User Profile Section */}
                         <div className="flex flex-col items-center mb-6">
                             <div className="w-16 h-16 rounded-full overflow-hidden border-[2px] border-[#CAB265] mb-3">
-                                <img
+                                <NavLink to="/athlete/profile"
+                                className={({ isActive }) => `${isActive ? 'text-[#CAB265] bg-[#CAB265]/10' : 'text-[#6A6A69]'} font-bold text-base flex items-center gap-3 p-3 rounded-lg`}
+                                onClick={() => setIsMobileMenuOpen(false)}
+                                >
+                                   <img
                                     src={profileImage}
                                     alt="User Profile"
                                     className="w-full h-full object-cover object-center"
                                 />
+                                </NavLink>
                             </div>
                             <div className="text-center">
                                 <div className='text-[#D4BC6D] font-bold mb-1'>{user?.badge_level?.name || "Bronze"}</div>
@@ -357,6 +362,14 @@ const MasterLayout = () => {
                                 Nil Service
                             </NavLink>
                             <NavLink
+                                to="/athlete/my-products"
+                                className={({ isActive }) => `${isActive ? 'text-[#CAB265] bg-[#CAB265]/10' : 'text-[#6A6A69]'} font-bold text-base flex items-center gap-3 p-3 rounded-lg`}
+                                onClick={() => setIsMobileMenuOpen(false)}
+                            >
+                                <Layers size={20} />
+                                My Products
+                            </NavLink>
+                            <NavLink
                                 to="/athlete/subscription"
                                 className={({ isActive }) => `${isActive ? 'text-[#CAB265] bg-[#CAB265]/10' : 'text-[#6A6A69]'} font-bold text-base flex items-center gap-3 p-3 rounded-lg`}
                                 onClick={() => setIsMobileMenuOpen(false)}
@@ -365,28 +378,20 @@ const MasterLayout = () => {
                                 Subscription
                             </NavLink>
                             <NavLink
+                                to="/athlete/my-subscription"
+                                className={({ isActive }) => `${isActive ? 'text-[#CAB265] bg-[#CAB265]/10' : 'text-[#6A6A69]'} font-bold text-base flex items-center gap-3 p-3 rounded-lg`}
+                                onClick={() => setIsMobileMenuOpen(false)}
+                            >
+                                <BadgeDollarSign size={20} />
+                                My Packages
+                            </NavLink>
+                            <NavLink
                                 to="/athlete/settings"
                                 className={({ isActive }) => `${isActive ? 'text-[#CAB265] bg-[#CAB265]/10' : 'text-[#6A6A69]'} font-bold text-base flex items-center gap-3 p-3 rounded-lg`}
                                 onClick={() => setIsMobileMenuOpen(false)}
                             >
                                 <Settings size={20} />
                                 Settings
-                            </NavLink>
-                            <NavLink
-                                to="/athlete/my-subscription"
-                                className={({ isActive }) => `${isActive ? 'text-[#CAB265] bg-[#CAB265]/10' : 'text-[#6A6A69]'} font-bold text-base flex items-center gap-3 p-3 rounded-lg`}
-                                onClick={() => setIsMobileMenuOpen(false)}
-                            >
-                                <BadgeDollarSign size={20} />
-                                My Subscription
-                            </NavLink>
-                            <NavLink
-                                to="/athlete/my-products"
-                                className={({ isActive }) => `${isActive ? 'text-[#CAB265] bg-[#CAB265]/10' : 'text-[#6A6A69]'} font-bold text-base flex items-center gap-3 p-3 rounded-lg`}
-                                onClick={() => setIsMobileMenuOpen(false)}
-                            >
-                                <Layers size={20} />
-                                My Products
                             </NavLink>
                         </div>
 
@@ -412,7 +417,8 @@ const MasterLayout = () => {
                             </div>
 
                             {/* Chatbot */}
-                            <div className="bg-white/10 rounded-lg p-3 mb-4 cursor-pointer hover:bg-white/20 transition"         onClick={() => {
+                            <div className="bg-white/10 rounded-lg p-3 mb-4 cursor-pointer hover:bg-white/20 transition"        
+                             onClick={() => {
                                 if (window.zE) {
                                     window.zE("webWidget", "open");
                                 } else {
