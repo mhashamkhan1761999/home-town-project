@@ -1,13 +1,30 @@
-import React, { useRef } from 'react'
+import React, { useRef, useEffect, useState } from 'react'
 import CarouselSlider from '../components/CarouselSlider'
 import { Link } from 'react-router-dom'
+import axios from 'axios'
+
 
 const Home = () => {
     const videoRef = useRef(null);
+    const [athleteCount, setAthleteCount] = useState(null);
 
     const handlePlay = () => {
         videoRef.current?.play();
     };
+
+      useEffect(() => {
+        const fetchCounts = async () => {
+            try {
+                const res = await axios.get("https://admin.hometownheroagency.com/public/api/get-counts");
+                // ✅ correct path based on API response
+                setAthleteCount(res.data.response.data.total); 
+            } catch (err) {
+                console.error("Error fetching counts:", err);
+            }
+        };
+        fetchCounts();
+    }, []);
+
 
 
     return (
@@ -95,7 +112,7 @@ const Home = () => {
 
                          <div className="rounded-3xl p-6 md:p-12 text-white text-center max-w-3xl mx-auto shadow-lg border space-y-4">
                             <h2 className="text-5xl sm:text-6xl md:text-[100px] lg:text-[130px] font-semibold">
-                                10,023
+                                {athleteCount !== null ? athleteCount.toLocaleString() : "Loading..."}
                             </h2>
 
                             <h4 className="text-2xl sm:text-3xl md:text-4xl lg:text-[52px] font-extrabold bg-gradient-to-r from-[#d4bc6d] to-[#57430d] bg-clip-text text-transparent -mt-4">

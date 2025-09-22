@@ -1,13 +1,18 @@
 import { useMutation } from '@tanstack/react-query';
 import { CalendarClock, CreditCard, Lock, User } from 'lucide-react';
+import { logout } from '../redux/slices/authSlice';
 import React from 'react';
 import toast from 'react-hot-toast';
 import { postRequest } from '../api';
 import Faqs from '../components/Faqs';
 import { useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+
 
 const Settings = () => {
     const dispatch = useDispatch();
+    const navigate = useNavigate(); // ✅ define navigate here
+
     const [activeTab, setActiveTab] = React.useState("tab2");
     
     // Card details state
@@ -24,15 +29,10 @@ const Settings = () => {
         onSuccess: (data) => {
             if (data?.statusCode == 200) {
                 toast.success(data?.message);
-                // Clear storage
                 localStorage.removeItem('token');
                 localStorage.removeItem('athleteUser');
-
-                // Redux logout
-                dispatch(logout());
-
-                // Redirect
                 navigate('/login');
+                dispatch(logout());
             }
         }
     })

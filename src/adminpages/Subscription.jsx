@@ -21,7 +21,8 @@ const Subscription = () => {
     isShow !== false,
     () => setIsShow(false)
   );
-  const { user } = useSelector((state) => state.authenticate?.user);
+  const user = useSelector((state) => state.authenticate?.user);
+  console.log(user);
 
   // Handle modal state restoration from URL
   useEffect(() => {
@@ -158,9 +159,12 @@ const Subscription = () => {
                       <button
                         type="button"
                         className={`bg-[rgba(255,255,255,0.05)] border border-[#828282] text-white font-normal text-xs sm:text-sm px-5 sm:px-6 lg:px-7 py-2 rounded-full w-full sm:w-auto transition-colors
-    disabled:bg-[#828282] disabled:text-[#cccccc] disabled:opacity-60 disabled:cursor-not-allowed`}
+                          disabled:bg-[#828282] disabled:text-[#cccccc] disabled:opacity-60 disabled:cursor-not-allowed`}
                         onClick={() => handleGetStarted(item)}
-                        disabled={!user?.has_active_subscription}
+                        disabled={
+                          item?.type === "free" || 
+                          (item?.type === "monthly" && user?.has_active_subscription)
+                        }
                       >
                         Get Started
                       </button>
