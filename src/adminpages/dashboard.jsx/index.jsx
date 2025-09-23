@@ -101,6 +101,24 @@ const Dashboard = () => {
     return 0; // No tier
   };
 
+  const calculateDaysRemaining = (createdAt) => {
+    if (!createdAt) return 0;
+    
+    const createdDate = new Date(createdAt);
+    const currentDate = new Date();
+    
+    // Calculate the difference in time
+    const timeDifference = currentDate.getTime() - createdDate.getTime();
+    
+    // Convert time difference from milliseconds to days
+    const daysPassed = Math.floor(timeDifference / (1000 * 3600 * 24));
+    
+    // Calculate days remaining (60 days total)
+    const daysRemaining = Math.max(0, 60 - daysPassed);
+    
+    return daysRemaining;
+  };
+
   return (
     <div className="px-1 sm:px-3 lg:px-0">
       <div className="flex flex-col sm:flex-row items-start sm:items-center mb-4 sm:mb-8 gap-2 sm:gap-4">
@@ -296,7 +314,7 @@ const Dashboard = () => {
                         </div>
                     </div> */}
 <div className="w-full overflow-x-auto">
-  <div className="min-w-[300px] sm:min-w-[700px] max-h-[350px] overflow-y-auto">
+  <div className="min-w-[400px] sm:min-w-[800px] max-h-[350px] overflow-y-auto">
     <table className="w-full bg-transparent border-0 rounded-lg shadow-sm">
       <thead>
         <tr className="bg-[rgba(0,0,0,0.02)] text-left text-xs sm:text-sm font-bold text-[#838383]">
@@ -314,6 +332,9 @@ const Dashboard = () => {
           </th>
           <th className="px-2 sm:px-4 py-3 border-b border-[#323232] whitespace-nowrap">
             COMPLETION
+          </th>
+          <th className="px-2 sm:px-4 py-3 border-b border-[#323232] whitespace-nowrap">
+            DAYS REMAINING
           </th>
         </tr>
       </thead>
@@ -372,12 +393,25 @@ const Dashboard = () => {
                   />
                 </div>)}
               </td>
+
+              {/* Days Remaining */}
+              <td className="px-2 sm:px-4 py-4 border-b border-[#323232]">
+                <div className="text-[#D4BC6D] font-bold text-xs sm:text-sm">
+                  {(() => {
+                    const daysRemaining = calculateDaysRemaining(service.created_at);
+                    if (daysRemaining === 0) {
+                      return <span className="text-red-400">Expired</span>;
+                    }
+                    return `${daysRemaining} days`;
+                  })()}
+                </div>
+              </td>
             </tr>
           ))
         ) : (
           <tr>
             <td
-              colSpan={5}
+              colSpan={6}
               className="px-2 sm:px-4 py-6 text-center text-gray-400"
             >
               No services found
