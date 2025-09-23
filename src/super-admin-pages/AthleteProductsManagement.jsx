@@ -215,6 +215,25 @@ const AthleteProductsManagement = () => {
     }
   });
 
+    // Helper function to calculate days remaining
+  const calculateDaysRemaining = (createdAt) => {
+    if (!createdAt) return 0;
+    
+    const createdDate = new Date(createdAt);
+    const currentDate = new Date();
+    
+    // Calculate the difference in time
+    const timeDifference = currentDate.getTime() - createdDate.getTime();
+    
+    // Convert time difference from milliseconds to days
+    const daysPassed = Math.floor(timeDifference / (1000 * 3600 * 24));
+    
+    // Calculate days remaining (60 days total)
+    const daysRemaining = Math.max(0, 60 - daysPassed);
+    
+    return daysRemaining;
+  };
+
   // Use API data if available, otherwise fallback to static data
   const displayProducts = athleteProducts || products;
 
@@ -482,6 +501,9 @@ const AthleteProductsManagement = () => {
                     Status
                   </th>
                   <th className="text-left py-3 sm:py-4 px-3 sm:px-6 text-gray-400 font-medium text-xs sm:text-sm">
+                    Days Remaining
+                  </th>
+                  <th className="text-left py-3 sm:py-4 px-3 sm:px-6 text-gray-400 font-medium text-xs sm:text-sm">
                     Actions
                   </th>
                 </tr>
@@ -517,6 +539,17 @@ const AthleteProductsManagement = () => {
                           </option>
                         ))}
                       </select>
+                    </td>
+                    <td className="py-3 sm:py-4 px-3 sm:px-6">
+                      <div className="text-[#D4BC6D] font-bold text-xs sm:text-sm">
+                        {(() => {
+                          const daysRemaining = calculateDaysRemaining(product.created_at);
+                          if (daysRemaining === 0) {
+                            return <span className="text-red-400">Expired</span>;
+                          }
+                          return `${daysRemaining} days`;
+                        })()}
+                      </div>
                     </td>
                     <td className="py-3 sm:py-4 px-3 sm:px-6">
                       <div className="flex gap-2">
