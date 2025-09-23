@@ -1,5 +1,5 @@
 import { useMutation } from '@tanstack/react-query';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { postRequest } from '../../api';
 import { queryClient } from '../../main';
@@ -10,11 +10,21 @@ import { CardElement, useElements, useStripe } from '@stripe/react-stripe-js';
 
 
 
-const AddSubscriptionModal = ({ onClose, isEdit, mutate }) => {
+const AddSubscriptionModal = ({ onClose, isEdit, mutate, isLoading, isSuccess, isError }) => {
     const stripe = useStripe()
     const elements = useElements()
     const [showSuccessModal, setShowSuccessModal] = useState(false)
     const [isProcessing, setIsProcessing] = useState(false)
+
+    // Watch for mutation state changes
+    React.useEffect(() => {
+        if (isSuccess) {
+            setIsProcessing(false);
+            setShowSuccessModal(true);
+        } else if (isError) {
+            setIsProcessing(false);
+        }
+    }, [isSuccess, isError]);
 
     // Remove the internal purchaseMutation and use the passed mutate function
     const handleSuccess = (data) => {
@@ -113,9 +123,9 @@ const AddSubscriptionModal = ({ onClose, isEdit, mutate }) => {
                             className="bg-[#D4BC6D] text-white py-2 px-4 rounded-full"
                             type='submit'
                             form='timing-form'
-                            disabled={isProcessing}
+                            disabled={isProcessing || isLoading}
                         >
-                            {isProcessing ? 'Processing...' : 'Submit'}
+                            {(isProcessing || isLoading) ? 'Processing...' : 'Submit'}
                         </button>
                     </div>
                 </div>

@@ -7,6 +7,7 @@ import { loadStripe } from "@stripe/stripe-js";
 import { Elements } from "@stripe/react-stripe-js";
 import { useModalHistory } from "../hooks/useModalHistory";
 import { useSelector } from "react-redux";
+import toast from "react-hot-toast";
 
 const stripePromise = loadStripe(
   "pk_test_51REvJgR0EqcqzPLH5CL2723m2l8hkmEjNQ6Qkm3b3EJEVziLUIJsTOg2ehrSdsXqMEKwi6OaFaivlZpX9N3rg6Eu00GZHqnM7X"
@@ -47,7 +48,13 @@ const Subscription = () => {
         toast.success(data?.message);
         setIsShow(false);
         queryClient.invalidateQueries({ queryKey: ["get-packages"] });
+      } else {
+        toast.error(data?.message || "Something went wrong");
       }
+    },
+    onError: (error) => {
+      console.error("Mutation error:", error); // Debug log
+      toast.error(error?.message || "An error occurred while processing subscription");
     },
   });
 
@@ -182,9 +189,13 @@ const Subscription = () => {
             onClose={() => {
               subscriptionModal.closeModal();
               setIsShow(false);
+              mutation.reset(); // Reset mutation state when modal closes
             }}
             isEdit={isShow}
             mutate={mutation.mutate}
+            isLoading={mutation.isPending}
+            isSuccess={mutation.isSuccess}
+            isError={mutation.isError}
           />
         </Elements>
       )}
