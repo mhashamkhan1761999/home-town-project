@@ -256,7 +256,7 @@ const Dashboard = () => {
               </div>
             </div>
           </div>
-          {/* <div className="flex flex-col w-full gap-2 sm:gap-3 lg:gap-6">
+          <div className="flex flex-col w-full gap-2 sm:gap-3 lg:gap-6">
             <div className="">
               <p className="font-bold text-xs sm:text-sm lg:text-xl text-[#838383]">
                 Total Storefront Revenue
@@ -273,7 +273,7 @@ const Dashboard = () => {
                 Total Sales
               </p>
               <h1 className="text-lg sm:text-xl lg:text-[4.563rem] font-extrabold bg-[linear-gradient(to_right,#d4bc6d,#57430d)] bg-clip-text text-transparent leading-[1]">
-                ${parseFloat(dashboardStats?.total_sale || dashboardStats.total_revunue || "0").toFixed(2)}
+                ${parseFloat(dashboardStats?.total_sale || dashboardStats?.total_revunue || "0").toFixed(2)}
               </h1>
             </div>
             <div className="">
@@ -298,7 +298,7 @@ const Dashboard = () => {
             </div>
             <div className="text-center">
             </div>
-          </div> */}
+          </div>
         </div>
         <div className="w-full lg:flex-1 min-w-0">
           <div className="w-full card-gradient border-[1.5px] py-2 sm:py-4 lg:py-8 px-1.5 sm:px-3 lg:px-6 rounded-3xl overflow-hidden">
