@@ -36,6 +36,7 @@ import LoginPage from './pages/LoginPage.jsx'
 import MySubscription from './adminpages/MySubscription.jsx'
 import ForntDetail from './pages/ForntDetail.jsx'
 import MyProducts from './adminpages/MyProducts.jsx'
+import Orders from './adminpages/Orders.jsx'
 import Bundles from './adminpages/Bundles.jsx'
 import SuperAdminLayout from './super-admin-layout/index.jsx'
 import SuperAdminHome from './super-admin-pages/index.jsx'
@@ -83,6 +84,7 @@ const AllRoutes = () => {
           <Route path='dashboard' element={<PrivateRoute><Dashboard /></PrivateRoute>} />
           <Route path='nil-service' element={<NilService />} />
           <Route path='my-products' element={<MyProducts />} />
+          <Route path='orders' element={<Orders />} />
           <Route path='profile' element={<Profile />} />
           <Route path='subscription' element={<Subscription />} />
           <Route path='bundles' element={<Bundles />} />

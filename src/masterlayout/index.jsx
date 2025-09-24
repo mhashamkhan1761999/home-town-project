@@ -10,6 +10,7 @@ import {
   LogOut,
   MessageCircle,
   Settings,
+  ShoppingCart,
   User,
 } from "lucide-react";
 import AdminModal from "../components/AdminModal.jsx";
@@ -142,6 +143,17 @@ const MasterLayout = () => {
             >
               <Layers size={18} />
               My Products
+            </NavLink>
+            <NavLink
+              to="/athlete/orders"
+              className={({ isActive }) =>
+                isActive
+                  ? "text-[#CAB265] font-bold text-base flex flex-col items-center gap-2"
+                  : "text-[#6A6A69] font-bold text-base flex items-center gap-2 flex-col"
+              }
+            >
+              <ShoppingCart size={18} />
+              Orders
             </NavLink>
             {/* <NavLink to="/athlete/graphic"
                             className={({ isActive }) => isActive ? 'text-[#CAB265] font-bold text-base flex flex-col items-center gap-2' : 'text-[#6A6A69] font-bold text-base flex items-center gap-2 flex-col'}>
@@ -589,6 +601,20 @@ const MasterLayout = () => {
               >
                 <Layers size={20} />
                 My Products
+              </NavLink>
+              <NavLink
+                to="/athlete/orders"
+                className={({ isActive }) =>
+                  `${
+                    isActive
+                      ? "text-[#CAB265] bg-[#CAB265]/10"
+                      : "text-[#6A6A69]"
+                  } font-bold text-base flex items-center gap-3 p-3 rounded-lg`
+                }
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                <ShoppingCart size={20} />
+                Orders
               </NavLink>
               <NavLink
                 to="/athlete/subscription"

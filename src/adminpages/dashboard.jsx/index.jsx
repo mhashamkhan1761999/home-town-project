@@ -1,7 +1,8 @@
-import { EllipsisVertical, EyeIcon, Trash } from "lucide-react";
+import { EllipsisVertical, EyeIcon, Trash, Package, ShoppingCart, ArrowRight } from "lucide-react";
 import React, { useState } from "react";
 import LeafLetMap from "./LeafLetMap";
 import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import {
   Mutation,
   mutationOptions,
@@ -13,6 +14,7 @@ import toast from "react-hot-toast";
 
 const Dashboard = () => {
   const user = useSelector((state) => state.authenticate.user);
+  const navigate = useNavigate();
   // console.log("Authenticated user from Redux:", user);
   // console.log(user.total_sale); // "0"
 
@@ -52,6 +54,92 @@ const Dashboard = () => {
     },
   });
   // console.log(dashboardStats);
+
+  // Hardcoded recent orders for the athlete (5 most recent)
+  const orders = [
+    {
+      id: 'ORD-005',
+      full_name: 'Alex Brown',
+      email: 'alex.brown@example.com',
+      total_price: 199.98,
+      status: 'Pending',
+      items: [
+        { 
+          product: { 
+            name: 'Training Equipment', 
+            category: { name: 'Equipment' }
+          }, 
+          qty: 2 
+        }
+      ]
+    },
+    {
+      id: 'ORD-004',
+      full_name: 'Sarah Wilson',
+      email: 'sarah.wilson@example.com',
+      total_price: 89.99,
+      status: 'Return Request',
+      items: [
+        { 
+          product: { 
+            name: 'Sports Accessories Set', 
+            category: { name: 'Accessories' }
+          }, 
+          qty: 1 
+        }
+      ]
+    },
+    {
+      id: 'ORD-003',
+      full_name: 'Mike Johnson',
+      email: 'mike.johnson@example.com',
+      total_price: 449.97,
+      status: 'Sent',
+      items: [
+        { 
+          product: { 
+            name: 'Premium Jersey', 
+            category: { name: 'Clothing' }
+          }, 
+          qty: 3 
+        }
+      ]
+    },
+    {
+      id: 'ORD-002',
+      full_name: 'Jane Smith',
+      email: 'jane.smith@example.com',
+      total_price: 159.99,
+      status: 'Sent',
+      items: [
+        { 
+          product: { 
+            name: 'Training Shoes', 
+            category: { name: 'Footwear' }
+          }, 
+          qty: 1 
+        }
+      ]
+    },
+    {
+      id: 'ORD-001',
+      full_name: 'John Doe',
+      email: 'john.doe@example.com',
+      total_price: 299.99,
+      status: 'Pending',
+      items: [
+        { 
+          product: { 
+            name: 'Athletic Jersey', 
+            category: { name: 'Clothing' }
+          }, 
+          qty: 2 
+        }
+      ]
+    }
+  ];
+
+  const isOrdersLoading = false;
 
   const data = [
     {
@@ -423,6 +511,104 @@ const Dashboard = () => {
   </div>
 </div>
 
+        </div>
+      </div>
+
+      {/* Recent Orders Section */}
+      <div className="w-full card-gradient border-[1.5px] py-2 sm:py-4 lg:py-8 px-1.5 sm:px-3 lg:px-6 rounded-3xl overflow-hidden mt-3 sm:mt-4">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4">
+          <div>
+            <h2 className="text-lg sm:text-xl font-bold text-white mb-1">Recent Orders</h2>
+            <p className="text-xs sm:text-sm text-[#838383]">Your latest customer orders</p>
+          </div>
+          <button
+            onClick={() => navigate('/athlete/orders')}
+            className="bg-[#D4BC6D] hover:bg-[#c2a851] text-black px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold flex items-center gap-2 transition-colors mt-2 sm:mt-0"
+          >
+            View All Orders
+            <ArrowRight className="w-4 h-4" />
+          </button>
+        </div>
+
+        <div className="w-full overflow-x-auto">
+          <div className="min-w-[600px]">
+            {isOrdersLoading ? (
+              <div className="flex items-center justify-center py-8">
+                <div className="text-[#838383]">Loading orders...</div>
+              </div>
+            ) : orders?.length > 0 ? (
+              <div className="space-y-3">
+                {orders.map((order) => {
+                  const athleteItems = order.items || [];
+                  const athleteTotal = parseFloat(order.total_price || 0);
+                  
+                  return (
+                    <div key={order.id} className="bg-[rgba(255,255,255,0.02)] rounded-lg p-3 sm:p-4 hover:bg-[rgba(255,255,255,0.05)] transition-colors">
+                      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+                        <div className="flex items-center gap-3 flex-1">
+                          <div className="bg-[#D4BC6D] p-2 rounded-lg">
+                            <ShoppingCart className="w-4 h-4 text-black" />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-4">
+                              <h3 className="text-sm font-bold text-[#D4BC6D] truncate">
+                                Order #{order.id}
+                              </h3>
+                              <span className={`px-2 py-1 rounded-full text-xs font-medium border inline-block w-fit ${
+                                order.status === 'Pending' ? 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30' :
+                                order.status === 'Sent' ? 'bg-green-500/20 text-green-400 border-green-500/30' :
+                                'bg-red-500/20 text-red-400 border-red-500/30'
+                              }`}>
+                                {order.status}
+                              </span>
+                            </div>
+                            <div className="text-xs text-[#838383] mt-1">
+                              <span className="font-semibold text-white">{order.full_name}</span> • {athleteItems.length} items
+                            </div>
+                          </div>
+                        </div>
+                        
+                        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-4">
+                          <div className="text-right">
+                            <div className="text-sm font-bold text-[#D4BC6D]">
+                              ${athleteTotal.toFixed(2)}
+                            </div>
+                            <div className="text-xs text-green-400">
+                              Profit: ${(athleteTotal * 0.3).toFixed(2)}
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <div className="bg-[#1a1a1a] p-2 rounded-lg">
+                              <Package className="w-3 h-3 text-[#838383]" />
+                            </div>
+                            <div className="text-xs text-[#838383]">
+                              {athleteItems.find(item => item?.product?.category)?.product?.category?.name || 'N/A'}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      
+                      {/* Show product names on mobile */}
+                      <div className="mt-2 sm:hidden">
+                        <div className="text-xs text-[#838383]">
+                          Products: {athleteItems.slice(0, 2).map(item => item.product?.name).join(', ')}
+                          {athleteItems.length > 2 && ` +${athleteItems.length - 2} more`}
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            ) : (
+              <div className="text-center py-8">
+                <div className="bg-[#1a1a1a] w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-3">
+                  <ShoppingCart className="w-8 h-8 text-[#838383]" />
+                </div>
+                <p className="text-[#838383] text-sm">No orders yet</p>
+                <p className="text-[#838383] text-xs mt-1">Your customer orders will appear here</p>
+              </div>
+            )}
+          </div>
         </div>
       </div>
 
