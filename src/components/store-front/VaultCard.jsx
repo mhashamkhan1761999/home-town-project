@@ -109,13 +109,21 @@ const VaultCard = ({ id, name, description, price, image, images, rating, subTit
                         </p>
                     </div>
                     <div className="text-center mt-4">
-                        <button
+                        {/* <button
                             className={`bg-[url('/button.svg')] bg-bottom bg-cover bg-no-repeat text-white font-bold uppercase tracking-widest px-10 py-2 [text-shadow:0_0_2px_white] ${isInCart ? 'cursor-not-allowed' : 'cursor-pointer'}`}
                             onClick={handleAddToCart}
                         >
                             {isInCart ? 'Already in Cart' : 'Add to Cart'}
 
+                        </button> */}
+                        <button
+                            className={`bg-[url('/button.svg')] bg-bottom bg-cover bg-no-repeat text-white font-bold uppercase tracking-widest px-10 py-2 [text-shadow:0_0_2px_white] ${isInCart ? 'cursor-not-allowed' : 'cursor-pointer'}`}
+                            onClick={()=>navigate(`/product/${id}`)}
+                        >
+                            Select
+
                         </button>
+                        
                     </div>
                 </div>
             </div>
