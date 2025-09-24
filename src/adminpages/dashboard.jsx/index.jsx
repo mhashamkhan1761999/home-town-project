@@ -338,7 +338,7 @@ const Dashboard = () => {
                 Total Sales
               </p>
               <h1 className="text-lg sm:text-xl lg:text-[4.563rem] font-extrabold bg-[linear-gradient(to_right,#d4bc6d,#57430d)] bg-clip-text text-transparent leading-[1]">
-                ${parseFloat(user?.total_sale || "0").toFixed(2)}
+                ${parseFloat(dashboardStats?.total_sale || dashboardStats.total_revunue || "0").toFixed(2)}
               </h1>
             </div>
             <div className="">
