@@ -391,41 +391,41 @@ const BundleDetailsModal = ({ bundle, isOpen, onClose, onUpdate, isUpdating }) =
     const [isEditing, setIsEditing] = useState(false);
 
     // Initialize editing data when modal opens
-    React.useEffect(() => {
-        if (bundle?.content) {
-            // Handle both old format (array of strings) and new format (array of objects)
-            const formattedData = bundle.content.map(item => {
-                if (typeof item === 'string') {
-                    // Old format: convert string to object
-                    return { content: item, image: null };
-                } else if (typeof item === 'object' && item !== null) {
-                    // New format: ensure both properties exist
-                    return { 
-                        content: item.content || '', 
-                        image: item.image || null 
-                    };
-                }
-                return { content: '', image: null };
-            });
-            setEditingData(formattedData);
-        } else {
-            // Initialize with empty data based on graphics count
-            const graphicCount = parseInt(bundle.package?.graphic) || 1;
-            setEditingData(new Array(graphicCount).fill({ content: '', image: null }));
-        }
-    }, [bundle]);
+    // React.useEffect(() => {
+    //     if (bundle?.content) {
+    //         // Handle both old format (array of strings) and new format (array of objects)
+    //         const formattedData = bundle.content.map(item => {
+    //             if (typeof item === 'string') {
+    //                 // Old format: convert string to object
+    //                 return { content: item, image: null };
+    //             } else if (typeof item === 'object' && item !== null) {
+    //                 // New format: ensure both properties exist
+    //                 return { 
+    //                     content: item.content || '', 
+    //                     image: item.image || null 
+    //                 };
+    //             }
+    //             return { content: '', image: null };
+    //         });
+    //         setEditingData(formattedData);
+    //     } else {
+    //         // Initialize with empty data based on graphics count
+    //         const graphicCount = parseInt(bundle.package?.graphic) || 1;
+    //         setEditingData(new Array(graphicCount).fill({ content: '', image: null }));
+    //     }
+    // }, [bundle]);
 
-    const handleContentChange = (index, field, value) => {
-        const newData = [...editingData];
-        newData[index] = { ...newData[index], [field]: value };
-        setEditingData(newData);
-    };
+    // const handleContentChange = (index, field, value) => {
+    //     const newData = [...editingData];
+    //     newData[index] = { ...newData[index], [field]: value };
+    //     setEditingData(newData);
+    // };
 
-    const handleImageChange = (index, file) => {
-        const newData = [...editingData];
-        newData[index] = { ...newData[index], image: file };
-        setEditingData(newData);
-    };
+    // const handleImageChange = (index, file) => {
+    //     const newData = [...editingData];
+    //     newData[index] = { ...newData[index], image: file };
+    //     setEditingData(newData);
+    // };
 
     const handleSaveChanges = () => {
         // Check if there are any new files being uploaded

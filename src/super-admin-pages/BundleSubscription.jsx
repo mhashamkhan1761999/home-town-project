@@ -200,9 +200,9 @@ const BundleSubscription = () => {
                     <th className="px-6 py-4 text-left text-sm font-semibold text-[#D4AF37] uppercase tracking-wider">
                       Price
                     </th>
-                    <th className="px-6 py-4 text-left text-sm font-semibold text-[#D4AF37] uppercase tracking-wider">
+                    {/* <th className="px-6 py-4 text-left text-sm font-semibold text-[#D4AF37] uppercase tracking-wider">
                       Content Status
-                    </th>
+                    </th> */}
                     <th className="px-6 py-4 text-left text-sm font-semibold text-[#D4AF37] uppercase tracking-wider">
                       Actions
                     </th>
@@ -251,7 +251,7 @@ const BundleSubscription = () => {
                           ${subscription.package?.price || '0'}
                         </span>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
+                      {/* <td className="px-6 py-4 whitespace-nowrap">
                         <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
                           subscription.content && subscription.content.some(item => item !== null)
                             ? 'bg-green-100 text-green-800'
@@ -262,7 +262,7 @@ const BundleSubscription = () => {
                             : 'Pending'
                           }
                         </span>
-                      </td>
+                      </td> */}
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                         <button
                           onClick={() => fetchSubscriptionDetails(subscription.id)}
@@ -323,7 +323,7 @@ const BundleSubscription = () => {
                       <span className="text-sm text-gray-400">Purchase Date:</span>
                       <span className="text-sm text-white">{formatDate(subscription.created_at)}</span>
                     </div>
-                    <div className="flex justify-between">
+                    {/* <div className="flex justify-between">
                       <span className="text-sm text-gray-400">Status:</span>
                       <span className={`text-sm ${
                         subscription.content && subscription.content.some(item => item !== null)
@@ -335,7 +335,7 @@ const BundleSubscription = () => {
                           : 'Pending'
                         }
                       </span>
-                    </div>
+                    </div> */}
                   </div>
                 </div>
               ))}
@@ -480,7 +480,7 @@ const BundleSubscription = () => {
               </div>
 
               {/* Content Information */}
-              <div>
+              {/* <div>
                 <h4 className="text-lg font-semibold text-white mb-4 flex items-center">
                   <Filter className="w-5 h-5 mr-2 text-[#D4AF37]" />
                   Content Details
@@ -523,7 +523,7 @@ const BundleSubscription = () => {
                     </div>
                   )}
                 </div>
-              </div>
+              </div> */}
 
               {/* Additional Details */}
               <div>
