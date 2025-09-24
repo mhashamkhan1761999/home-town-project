@@ -342,7 +342,7 @@ const MasterLayout = () => {
                   <div className="h-[10px] w-[150px] bg-[#282828] rounded-full">
                     <div
                       className="h-full bg-[#D4BC6D] rounded-full"
-                      style={{ width: "10%" }}
+                      style={{ width: `${user?.badge_level?.percentage || 0}%` }}
                     />
                   </div>
                 </div>
