@@ -84,7 +84,7 @@ const SuperAdminDashboard = () => {
                     <div>
                         <p className="text-[#838383] text-xs sm:text-sm font-medium mb-1">Total Sales</p>
                         <h3 className="text-xl sm:text-2xl font-bold text-white">
-                            ${data?.total_sale}
+                            ${data?.total_sale.toFixed(2)}
                         </h3>
                     </div>
                 </div>
