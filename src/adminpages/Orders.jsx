@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { Eye, Package, Search, Filter } from 'lucide-react';
+import { useQuery } from '@tanstack/react-query';
+import { getRequest } from '../api';
 
 const Orders = () => {
   const user = useSelector((state) => state.authenticate.user);
@@ -9,147 +11,38 @@ const Orders = () => {
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [isViewModalOpen, setIsViewModalOpen] = useState(false);
 
-  // Hardcoded orders data for current athlete
-  const orders = [
-    {
-      id: 'ORD-001',
-      full_name: 'John Doe',
-      email: 'john.doe@example.com',
-      address: '123 Main Street',
-      city: 'New York',
-      postal_code: '10001',
-      country: 'United States',
-      total_price: 299.99,
-      status: 'Pending',
-      items: [
-        { 
-          id: 1, 
-          product: { 
-            name: 'Athletic Jersey', 
-            category: { name: 'Clothing' },
-            athlete: { id: user?.id, name: user?.athlete_name }
-          }, 
-          price: 89.99, 
-          qty: 2 
-        },
-        { 
-          id: 2, 
-          product: { 
-            name: 'Sports Cap', 
-            category: { name: 'Accessories' },
-            athlete: { id: user?.id, name: user?.athlete_name }
-          }, 
-          price: 29.99, 
-          qty: 1 
-        }
-      ]
+  // Fetch orders from API
+  const {
+    data: orders,
+    isLoading,
+    error
+  } = useQuery({
+    queryKey: ['athlete-orders'],
+    queryFn: () => getRequest('/get-orders'),
+    onSuccess: (data) => {
+      console.log('Orders API response:', data);
     },
-    {
-      id: 'ORD-002',
-      full_name: 'Jane Smith',
-      email: 'jane.smith@example.com',
-      address: '456 Oak Avenue',
-      city: 'Los Angeles',
-      postal_code: '90210',
-      country: 'United States',
-      total_price: 159.99,
-      status: 'Sent',
-      items: [
-        { 
-          id: 1, 
-          product: { 
-            name: 'Training Shoes', 
-            category: { name: 'Footwear' },
-            athlete: { id: user?.id, name: user?.athlete_name }
-          }, 
-          price: 159.99, 
-          qty: 1 
-        }
-      ]
+    onError: (error) => {
+      console.error('Error fetching orders:', error);
     },
-    {
-      id: 'ORD-003',
-      full_name: 'Mike Johnson',
-      email: 'mike.johnson@example.com',
-      address: '789 Pine Road',
-      city: 'Chicago',
-      postal_code: '60601',
-      country: 'United States',
-      total_price: 449.97,
-      status: 'Sent',
-      items: [
-        { 
-          id: 1, 
-          product: { 
-            name: 'Premium Jersey', 
-            category: { name: 'Clothing' },
-            athlete: { id: user?.id, name: user?.athlete_name }
-          }, 
-          price: 149.99, 
-          qty: 3 
-        }
-      ]
-    },
-    {
-      id: 'ORD-004',
-      full_name: 'Sarah Wilson',
-      email: 'sarah.wilson@example.com',
-      address: '321 Elm Street',
-      city: 'Miami',
-      postal_code: '33101',
-      country: 'United States',
-      total_price: 89.99,
-      status: 'Return Request',
-      items: [
-        { 
-          id: 1, 
-          product: { 
-            name: 'Sports Accessories Set', 
-            category: { name: 'Accessories' },
-            athlete: { id: user?.id, name: user?.athlete_name }
-          }, 
-          price: 89.99, 
-          qty: 1 
-        }
-      ]
-    },
-    {
-      id: 'ORD-005',
-      full_name: 'Alex Brown',
-      email: 'alex.brown@example.com',
-      address: '654 Maple Drive',
-      city: 'Seattle',
-      postal_code: '98101',
-      country: 'United States',
-      total_price: 199.98,
-      status: 'Pending',
-      items: [
-        { 
-          id: 1, 
-          product: { 
-            name: 'Training Equipment', 
-            category: { name: 'Equipment' },
-            athlete: { id: user?.id, name: user?.athlete_name }
-          }, 
-          price: 99.99, 
-          qty: 2 
-        }
-      ]
-    }
-  ];
-
-  const isLoading = false;
+  });
 
   const statusTypes = ['Pending', 'Sent', 'Return Request'];
   const filterOptions = ['All', ...statusTypes];
 
-  // Filter orders based on search term and status
+  // Filter orders based on search term and status - only show orders with current athlete's products
   const filteredOrders = orders?.filter(order => {
+    // First check if this order contains products from the current athlete
+    const hasAthleteProducts = order?.items?.some(item => item?.product?.athlete?.id === user?.id);
+    if (!hasAthleteProducts) return false;
+    
     const matchesSearch = order?.full_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          order?.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          order?.id?.toString().includes(searchTerm);
     
-    const matchesStatus = selectedStatus === 'All' || order?.status === selectedStatus;
+    const matchesStatus = selectedStatus === 'All' || 
+                         order?.status?.toLowerCase() === selectedStatus.toLowerCase() ||
+                         order?.status === selectedStatus;
     
     return matchesSearch && matchesStatus;
   }) || [];
@@ -160,27 +53,41 @@ const Orders = () => {
   };
 
   const getStatusColor = (status) => {
-    switch (status) {
-      case 'Pending':
+    const statusLower = status?.toLowerCase();
+    switch (statusLower) {
+      case 'pending':
         return 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30';
-      case 'Sent':
+      case 'sent':
         return 'bg-green-500/20 text-green-400 border-green-500/30';
-      case 'Return Request':
+      case 'return request':
         return 'bg-red-500/20 text-red-400 border-red-500/30';
       default:
         return 'bg-gray-500/20 text-gray-400 border-gray-500/30';
     }
   };
 
-  const calculateProfit = (totalPrice) => {
-    // Hardcoded profit calculation (30% of total price for now)
-    return (parseFloat(totalPrice) * 0.3).toFixed(2);
+
+
+  const formatStatus = (status) => {
+    if (!status) return '';
+    // Capitalize first letter and handle multi-word statuses
+    return status.split(' ').map(word => 
+      word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
+    ).join(' ');
   };
 
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
         <div className="text-[#D4BC6D] text-lg">Loading orders...</div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="text-red-400 text-lg">Error loading orders. Please try again.</div>
       </div>
     );
   }
@@ -257,9 +164,6 @@ const Orders = () => {
                     TOTAL PRICE
                   </th>
                   <th className="px-4 py-4 border-b border-[#323232] whitespace-nowrap">
-                    PROFIT
-                  </th>
-                  <th className="px-4 py-4 border-b border-[#323232] whitespace-nowrap">
                     STATUS
                   </th>
                   <th className="px-4 py-4 border-b border-[#323232] whitespace-nowrap">
@@ -318,14 +222,8 @@ const Orders = () => {
                       </td>
 
                       <td className="px-4 py-4 border-b border-[#323232]">
-                        <div className="text-green-400 font-bold text-xs sm:text-sm">
-                          ${calculateProfit(order.total_price || 0)}
-                        </div>
-                      </td>
-
-                      <td className="px-4 py-4 border-b border-[#323232]">
                         <span className={`px-3 py-1 rounded-full text-xs font-medium border ${getStatusColor(order.status)}`}>
-                          {order.status}
+                          {formatStatus(order.status)}
                         </span>
                       </td>
 
@@ -342,7 +240,7 @@ const Orders = () => {
                   ))
                 ) : (
                   <tr>
-                    <td colSpan={8} className="px-4 py-8 text-center text-gray-400">
+                    <td colSpan={7} className="px-4 py-8 text-center text-gray-400">
                       {searchTerm || selectedStatus !== 'All' ? 'No orders found matching your criteria' : 'No orders yet'}
                     </td>
                   </tr>
@@ -369,6 +267,12 @@ const Orders = () => {
 // View Order Modal Component
 const ViewOrderModal = ({ isOpen, onClose, order, currentAthleteId }) => {
   if (!isOpen) return null;
+
+  // Helper function to format status for display
+  const formatStatus = (status) => {
+    if (!status) return 'Unknown';
+    return status.charAt(0).toUpperCase() + status.slice(1).toLowerCase();
+  };
 
   // Filter items to show only those belonging to current athlete
   const athleteItems = order.items?.filter(item => item?.product?.athlete?.id === currentAthleteId) || [];
@@ -399,11 +303,11 @@ const ViewOrderModal = ({ isOpen, onClose, order, currentAthleteId }) => {
             <div>
               <h3 className="text-sm font-semibold text-[#838383] mb-2">Status</h3>
               <span className={`px-3 py-1 rounded-full text-xs font-medium border ${
-                order.status === 'Pending' ? 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30' :
-                order.status === 'Sent' ? 'bg-green-500/20 text-green-400 border-green-500/30' :
+                order.status?.toLowerCase() === 'pending' ? 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30' :
+                order.status?.toLowerCase() === 'sent' ? 'bg-green-500/20 text-green-400 border-green-500/30' :
                 'bg-red-500/20 text-red-400 border-red-500/30'
               }`}>
-                {order.status}
+                {formatStatus(order.status)}
               </span>
             </div>
           </div>
@@ -448,13 +352,9 @@ const ViewOrderModal = ({ isOpen, onClose, order, currentAthleteId }) => {
 
           {/* Summary */}
           <div className="border-t border-[#323232] pt-4">
-            <div className="flex justify-between items-center mb-2">
-              <span className="text-[#838383]">Your Items Total:</span>
-              <span className="text-[#D4BC6D] font-bold">${athleteTotal.toFixed(2)}</span>
-            </div>
             <div className="flex justify-between items-center">
-              <span className="text-[#838383]">Your Estimated Profit:</span>
-              <span className="text-green-400 font-bold">${(athleteTotal * 0.3).toFixed(2)}</span>
+              <span className="text-[#838383]">Your Items Total:</span>
+              <span className="text-[#D4BC6D] font-bold">${parseFloat(order?.total_price || 0).toFixed(2)}</span>
             </div>
           </div>
         </div>

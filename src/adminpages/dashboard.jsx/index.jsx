@@ -55,91 +55,26 @@ const Dashboard = () => {
   });
   // console.log(dashboardStats);
 
-  // Hardcoded recent orders for the athlete (5 most recent)
-  const orders = [
-    {
-      id: 'ORD-005',
-      full_name: 'Alex Brown',
-      email: 'alex.brown@example.com',
-      total_price: 199.98,
-      status: 'Pending',
-      items: [
-        { 
-          product: { 
-            name: 'Training Equipment', 
-            category: { name: 'Equipment' }
-          }, 
-          qty: 2 
-        }
-      ]
+  // Fetch recent orders from API
+  const {
+    data: allOrders,
+    isLoading: isOrdersLoading,
+    error: ordersError,
+  } = useQuery({
+    queryKey: ["dashboard-orders"],
+    queryFn: () => getRequest("/get-orders"),
+    onSuccess: (data) => {
+      console.log("Dashboard orders API response:", data);
     },
-    {
-      id: 'ORD-004',
-      full_name: 'Sarah Wilson',
-      email: 'sarah.wilson@example.com',
-      total_price: 89.99,
-      status: 'Return Request',
-      items: [
-        { 
-          product: { 
-            name: 'Sports Accessories Set', 
-            category: { name: 'Accessories' }
-          }, 
-          qty: 1 
-        }
-      ]
+    onError: (error) => {
+      console.error("Error fetching dashboard orders:", error);
     },
-    {
-      id: 'ORD-003',
-      full_name: 'Mike Johnson',
-      email: 'mike.johnson@example.com',
-      total_price: 449.97,
-      status: 'Sent',
-      items: [
-        { 
-          product: { 
-            name: 'Premium Jersey', 
-            category: { name: 'Clothing' }
-          }, 
-          qty: 3 
-        }
-      ]
-    },
-    {
-      id: 'ORD-002',
-      full_name: 'Jane Smith',
-      email: 'jane.smith@example.com',
-      total_price: 159.99,
-      status: 'Sent',
-      items: [
-        { 
-          product: { 
-            name: 'Training Shoes', 
-            category: { name: 'Footwear' }
-          }, 
-          qty: 1 
-        }
-      ]
-    },
-    {
-      id: 'ORD-001',
-      full_name: 'John Doe',
-      email: 'john.doe@example.com',
-      total_price: 299.99,
-      status: 'Pending',
-      items: [
-        { 
-          product: { 
-            name: 'Athletic Jersey', 
-            category: { name: 'Clothing' }
-          }, 
-          qty: 2 
-        }
-      ]
-    }
-  ];
+  });
 
-  const isOrdersLoading = false;
+  // Filter orders to show only those with current athlete's products and get recent 5
+  const orders = allOrders?.filter(order => 
+    order?.items?.some(item => item?.product?.athlete?.id === user?.id)
+  )?.slice(0, 5) || [];
 
   const data = [
     {
@@ -321,7 +256,7 @@ const Dashboard = () => {
               </div>
             </div>
           </div>
-          <div className="flex flex-col w-full gap-2 sm:gap-3 lg:gap-6">
+          {/* <div className="flex flex-col w-full gap-2 sm:gap-3 lg:gap-6">
             <div className="">
               <p className="font-bold text-xs sm:text-sm lg:text-xl text-[#838383]">
                 Total Storefront Revenue
@@ -362,11 +297,8 @@ const Dashboard = () => {
               </h1>
             </div>
             <div className="text-center">
-              {/* <button className='py-3.5 px-11 bg-[#57430D] text-sm font-bold text-white rounded-2xl' type='button'>
-                                View More
-                            </button> */}
             </div>
-          </div>
+          </div> */}
         </div>
         <div className="w-full lg:flex-1 min-w-0">
           <div className="w-full card-gradient border-[1.5px] py-2 sm:py-4 lg:py-8 px-1.5 sm:px-3 lg:px-6 rounded-3xl overflow-hidden">
@@ -597,14 +529,6 @@ const Dashboard = () => {
                         </div>
                         
                         <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-4">
-                          <div className="text-right">
-                            <div className="text-sm font-bold text-[#D4BC6D]">
-                              ${athleteTotal.toFixed(2)}
-                            </div>
-                            <div className="text-xs text-green-400">
-                              Profit: ${(athleteTotal * 0.3).toFixed(2)}
-                            </div>
-                          </div>
                           <div className="flex items-center gap-2">
                             <div className="bg-[#1a1a1a] p-2 rounded-lg">
                               <Package className="w-3 h-3 text-[#838383]" />
