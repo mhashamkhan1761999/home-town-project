@@ -189,6 +189,29 @@ const Dashboard = () => {
     return 0; // No tier
   };
 
+  // Function to calculate cumulative badge percentages
+  const getCumulativeBadgePercentage = (levelName, currentBadgeLevel, currentPercentage) => {
+    const levels = ["Bronze", "Silver", "Gold", "Emerald", "Diamond", "Royal"];
+    const currentLevelIndex = levels.indexOf(currentBadgeLevel?.name);
+    const targetLevelIndex = levels.indexOf(levelName);
+    
+    // If no current badge level found, return 0
+    if (currentLevelIndex === -1) return 0;
+    
+    // If target level is before current level, it should be 100% filled
+    if (targetLevelIndex < currentLevelIndex) {
+      return 100;
+    }
+    
+    // If target level is the current level, return the actual percentage
+    if (targetLevelIndex === currentLevelIndex) {
+      return currentPercentage || 0;
+    }
+    
+    // If target level is after current level, it should be 0% filled
+    return 0;
+  };
+
   const calculateDaysRemaining = (createdAt) => {
     if (!createdAt) return 0;
     
@@ -212,29 +235,34 @@ const Dashboard = () => {
       <div className="flex flex-col sm:flex-row items-start sm:items-center mb-4 sm:mb-8 gap-2 sm:gap-4">
         <div className="grow w-full sm:w-auto">
           <div className="h-[35px] sm:h-[50px] w-full bg-[#282828] rounded-full relative z-[1]">
-            <div className="h-full rounded-full absolute left-0 z-[2] w-full flex">
-              {["Bronze", "Silver", "Gold", "Emerald", "Diamond", "Royal"].map(
-                (level, idx) => {
-                  const isCurrent = athleteData?.badge_level?.name === level;
-                  const percent = isCurrent
-                    ? athleteData?.badge_level?.percentage || 0
-                    : 0;
-                  return (
-                    <div
-                      key={level}
-                      style={{
-                        width: "16.6667%", // 100/6
-                        background: isCurrent
-                          ? `linear-gradient(to right, #D4BC6D ${percent}%, transparent ${percent}%`
-                          : "transparent",
-                        transition: "background 0.3s",
-                      }}
-                      className="h-full rounded-full"
-                    />
-                  );
-                }
-              )}
-            </div>
+            {/* Continuous progress bar */}
+            <div 
+              className={`h-full bg-[#D4BC6D] absolute left-0 z-[2] transition-all duration-300 ${(() => {
+                const levels = ["Bronze", "Silver", "Gold", "Emerald", "Diamond", "Royal"];
+                const currentLevelIndex = levels.indexOf(athleteData?.badge_level?.name);
+                const currentPercentage = athleteData?.badge_level?.percentage || 0;
+                
+                // Check if we're at Royal level with 100% completion
+                const isFullyCompleted = currentLevelIndex === levels.length - 1 && currentPercentage === 100;
+                
+                return isFullyCompleted ? 'rounded-full' : 'rounded-l-full';
+              })()}`}
+              style={{
+                width: `${(() => {
+                  const levels = ["Bronze", "Silver", "Gold", "Emerald", "Diamond", "Royal"];
+                  const currentLevelIndex = levels.indexOf(athleteData?.badge_level?.name);
+                  const currentPercentage = athleteData?.badge_level?.percentage || 0;
+                  
+                  if (currentLevelIndex === -1) return 0;
+                  
+                  // Calculate the total width: (completed levels * 16.6667%) + (current level percentage * 16.6667% / 100)
+                  const completedLevelsWidth = currentLevelIndex * 16.6667;
+                  const currentLevelWidth = (currentPercentage / 100) * 16.6667;
+                  
+                  return Math.min(completedLevelsWidth + currentLevelWidth, 100);
+                })()}%`
+              }}
+            />
             <div className="h-full w-full grid grid-cols-6 items-center overflow-hidden relative z-[2] text-center">
               {["Bronze", "Silver", "Gold", "Emerald", "Diamond", "Royal"].map(
                 (level) => (
@@ -302,7 +330,7 @@ const Dashboard = () => {
                 {console.log(dashboardStats)}
                 {isDashboardLoading
                   ? "Loading..."
-                  : `$${dashboardStats?.total_revenue ?? "0"}`}
+                  : `$${dashboardStats?.total_revunue ?? "0"}`}
               </h1>
             </div>
             <div className="">
