@@ -1,9 +1,10 @@
 import React from 'react';
 import 'swiper/css';
+import 'swiper/css/pagination';
 import { Swiper, SwiperSlide } from 'swiper/react';
 
 
-import { EffectCoverflow } from 'swiper/modules';
+import { EffectCoverflow, Pagination } from 'swiper/modules';
 
 const MerchendiseSlider = ({ data }) => {
     // console.log(data) 
@@ -25,8 +26,13 @@ const MerchendiseSlider = ({ data }) => {
                     slideShadows: false,
                 }}
                 spaceBetween={41}
-                modules={[EffectCoverflow]}
-                className="swiper-container"
+                pagination={{
+                    clickable: true,
+                    bulletClass: 'swiper-pagination-bullet merchandise-bullet',
+                    bulletActiveClass: 'swiper-pagination-bullet-active merchandise-bullet-active',
+                }}
+                modules={[EffectCoverflow, Pagination]}
+                className="swiper-container merchandise-swiper"
             >
                 {data?.map((props, index) => (
                     <SwiperSlide key={index} className="group">
@@ -93,3 +99,39 @@ const Card = ({ id, name, image, images = [], description, price }) => {
         </div>
     );
 };
+
+// Add custom styles for pagination
+const styles = `
+.merchandise-swiper .swiper-pagination {
+    position: relative !important;
+    margin-top: 30px !important;
+    text-align: center !important;
+}
+
+.merchandise-bullet {
+    width: 12px !important;
+    height: 12px !important;
+    background: rgba(212, 188, 109, 0.3) !important;
+    border-radius: 50% !important;
+    margin: 0 6px !important;
+    cursor: pointer !important;
+    transition: all 0.3s ease !important;
+}
+
+.merchandise-bullet-active {
+    background: #D4BC6D !important;
+    transform: scale(1.2) !important;
+}
+
+.merchandise-bullet:hover {
+    background: rgba(212, 188, 109, 0.6) !important;
+}
+`;
+
+// Inject styles into the head
+if (typeof document !== 'undefined') {
+    const styleSheet = document.createElement('style');
+    styleSheet.type = 'text/css';
+    styleSheet.innerText = styles;
+    document.head.appendChild(styleSheet);
+}
