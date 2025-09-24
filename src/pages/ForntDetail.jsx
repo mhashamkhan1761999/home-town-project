@@ -17,6 +17,7 @@ const ForntDetail = () => {
     });
 
     const [active, setActive] = React.useState(null);
+    const [showSizeChart, setShowSizeChart] = React.useState(false);
 
     const handleAddToCart = (data) => {
         const { id, name, description, price, color } = data;
@@ -89,15 +90,15 @@ const ForntDetail = () => {
         <>
             <div className="max-w-6xl mx-auto px-4 py-10 grid grid-cols-1 md:grid-cols-2 gap-10 items-start">
                 {/* Left: Product Image */}
-                <div className="w-full">
-                    <img
-                        src={detail?.images?.length > 0 ? `https://admin.hometownheroagency.com/storage/app/public/${detail?.images?.[0]?.image}` : `/404.avif`}
-                        alt="Product Image"
-                        className="rounded-xl shadow-lg w-full object-cover border border-white/10"
-                    />
-                </div>
-                {/* Right: Product Details */}
-                <div className="space-y-6">
+                        <div className="w-full">
+                            <img
+                                src={detail?.images?.length > 0 ? `https://admin.hometownheroagency.com/storage/app/public/${detail?.images?.[0]?.image}` : `/404.avif`}
+                                alt="Product Image"
+                                className="rounded-xl shadow-lg w-full object-cover border border-white/10"
+                            />
+                        </div>
+                        {/* Right: Product Details */}
+                        <div className="space-y-6">
                     {/* Title */}
                     <h1 className="text-3xl font-bold text-[#D4BC6D]">
                         {detail?.name}
@@ -176,7 +177,42 @@ const ForntDetail = () => {
                         {isInCart ? 'Already in Cart' : 'Add to Cart'}
                     </button>
                 </div>
-            </div >
+            </div>
+
+            {/* Size Chart Section */}
+            <div className="max-w-6xl mx-auto px-4 pb-10">
+                <div className="flex justify-start mb-6">
+                    <button
+                        onClick={() => setShowSizeChart(!showSizeChart)}
+                        className="bg-black/50 backdrop-blur-sm rounded-xl px-6 py-3 border border-white/10 font-medium transition-all duration-300 text-white hover:text-[#D4BC6D] hover:border-[#D4BC6D]/50"
+                    >
+                        {showSizeChart ? 'Hide Size Chart' : 'Show Size Chart'}
+                    </button>
+                </div>
+                
+                {showSizeChart && (
+                    <div className="flex justify-center">
+                        <div className="w-full max-w-4xl">
+                            <h2 className="text-2xl font-bold text-[#D4BC6D] mb-6 text-center">Size Chart</h2>
+                            {detail?.images?.length > 1 && detail?.images?.[1]?.image ? (
+                                <img
+                                    src={`https://admin.hometownheroagency.com/storage/app/public/${detail?.images?.[1]?.image}`}
+                                    alt="Size Chart"
+                                    className="rounded-xl shadow-lg w-full object-contain border border-white/10 bg-white/5"
+                                />
+                            ) : (
+                                <div className="bg-black/30 border border-white/10 rounded-xl p-8 text-center">
+                                   <img
+                                    src={"/size.png"}
+                                    alt="Size Chart"
+                                    className="rounded-xl shadow-lg w-full object-contain border border-white/10 bg-white/5"
+                                />
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                )}
+            </div>
 
         </>
     )
