@@ -18,6 +18,7 @@ const ForntDetail = () => {
 
     const [active, setActive] = React.useState(null);
     const [showSizeChart, setShowSizeChart] = React.useState(false);
+    const [showWarnings, setShowWarnings] = React.useState(false);
 
     const handleAddToCart = (data) => {
         const { id, name, description, price, color } = data;
@@ -179,14 +180,20 @@ const ForntDetail = () => {
                 </div>
             </div>
 
-            {/* Size Chart Section */}
+            {/* Size Chart and Warnings Section */}
             <div className="max-w-6xl mx-auto px-4 pb-10">
-                <div className="flex justify-start mb-6">
+                <div className="flex justify-start gap-4 mb-6">
                     <button
                         onClick={() => setShowSizeChart(!showSizeChart)}
                         className="bg-black/50 backdrop-blur-sm rounded-xl px-6 py-3 border border-white/10 font-medium transition-all duration-300 text-white hover:text-[#D4BC6D] hover:border-[#D4BC6D]/50"
                     >
                         {showSizeChart ? 'Hide Size Chart' : 'Show Size Chart'}
+                    </button>
+                    <button
+                        onClick={() => setShowWarnings(!showWarnings)}
+                        className="bg-black/50 backdrop-blur-sm rounded-xl px-6 py-3 border border-white/10 font-medium transition-all duration-300 text-white hover:text-[#D4BC6D] hover:border-[#D4BC6D]/50"
+                    >
+                        {showWarnings ? 'Hide Warnings' : 'Show Warnings'}
                     </button>
                 </div>
                 
@@ -207,6 +214,48 @@ const ForntDetail = () => {
                                     alt="Size Chart"
                                     className="rounded-xl shadow-lg w-full object-contain border border-white/10 bg-white/5"
                                 />
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                )}
+                
+                {showWarnings && (
+                    <div className="flex justify-center mt-8">
+                        <div className="w-full max-w-4xl">
+                            <h2 className="text-2xl font-bold text-[#D4BC6D] mb-6 text-center">Product Warnings</h2>
+                            {detail?.warning ? (
+                                <div className="bg-red-900/20 border border-red-500/30 rounded-xl p-6">
+                                    <div className="flex items-start gap-3">
+                                        <div className="text-red-400 mt-1">
+                                            <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                                <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                                            </svg>
+                                        </div>
+                                        <div className="text-white text-sm leading-relaxed">
+                                            {detail.warning}
+                                        </div>
+                                    </div>
+                                </div>
+                            ) : (
+                                <div className="bg-yellow-900/20 border border-yellow-500/30 rounded-xl p-6">
+                                    <div className="flex items-start gap-3">
+                                        <div className="text-yellow-400 mt-1">
+                                            <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                                <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                                            </svg>
+                                        </div>
+                                        <div className="text-white text-sm leading-relaxed">
+                                            <strong>General Safety Warnings:</strong>
+                                            <ul className="mt-2 space-y-1 list-disc list-inside">
+                                                <li>Please follow washing instructions carefully</li>
+                                                <li>Keep away from direct heat sources</li>
+                                                <li>Check product size before use</li>
+                                                <li>Not suitable for children under 3 years</li>
+                                                <li>May contain small parts - choking hazard</li>
+                                            </ul>
+                                        </div>
+                                    </div>
                                 </div>
                             )}
                         </div>
