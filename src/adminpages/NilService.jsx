@@ -832,6 +832,7 @@ const ItemModal = ({ item, onClose, onSuccesActive }) => {
       name: i?.colorName || i?.label || 'Unknown',
       code: i?.value
     }))));
+    console.log("placemnent", values?.placement)
     formData.append("concept_id", conceptId || '');
     formData.append("placement", values?.placement || '');
     if (image) formData.append("image", image);
@@ -1001,7 +1002,7 @@ const ItemModal = ({ item, onClose, onSuccesActive }) => {
                 Graphic placement instructions
               </label>
               <textarea
-                {...register('graphicPlacement', { required: 'Please specify placement' })}
+                {...register('placement', { required: 'Please specify placement' })}
                 placeholder="E.g. Front center, back side, left shoulder..."
                 className="w-full p-3 border border-[#4B4C46] rounded-lg bg-transparent text-sm text-gray-300 focus:border-[#D4BC6D] outline-none"
                 rows="3"
