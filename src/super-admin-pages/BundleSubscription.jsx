@@ -480,50 +480,67 @@ const BundleSubscription = () => {
               </div>
 
               {/* Content Information */}
-              {/* <div>
-                <h4 className="text-lg font-semibold text-white mb-4 flex items-center">
-                  <Filter className="w-5 h-5 mr-2 text-[#D4AF37]" />
-                  Content Details
-                </h4>
-                <div className="bg-[#0a0a0a] border border-[#D4AF37]/10 rounded-lg p-6">
-                  {selectedSubscription.content && selectedSubscription.content.length > 0 ? (
-                    <div className="space-y-4">
-                      <div className="flex items-center justify-between">
-                        <p className="text-sm text-gray-400">Submitted Content:</p>
-                        <span className="text-sm text-green-400 font-medium">
-                          {selectedSubscription.content.filter(item => item !== null).length} / {selectedSubscription.content.length} items
-                        </span>
-                      </div>
-                      <div className="space-y-3">
-                        {selectedSubscription.content.map((item, index) => (
-                          <div key={index} className={`bg-[#1a1a1a] border rounded-lg p-4 ${
-                            item ? 'border-green-500/20' : 'border-gray-500/20'
-                          }`}>
-                            <div className="flex items-center justify-between mb-2">
-                              <span className="text-sm text-gray-400">Content #{index + 1}</span>
-                              <span className={`text-xs px-2 py-1 rounded-full ${
-                                item ? 'bg-green-500/20 text-green-400' : 'bg-gray-500/20 text-gray-400'
-                              }`}>
-                                {item ? 'Submitted' : 'Pending'}
-                              </span>
-                            </div>
-                            {item ? (
-                              <p className="text-white bg-[#0a0a0a] p-3 rounded border border-[#D4AF37]/10">{item}</p>
-                            ) : (
-                              <p className="text-gray-500 italic">No content submitted</p>
-                            )}
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="text-center py-8">
-                      <Package className="w-12 h-12 text-gray-400 mx-auto mb-3" />
-                      <p className="text-gray-400">No content submitted yet</p>
-                    </div>
-                  )}
-                </div>
-              </div> */}
+              <div>
+  <h4 className="text-lg font-semibold text-white mb-4 flex items-center">
+    <Filter className="w-5 h-5 mr-2 text-[#D4AF37]" />
+    Content Details
+  </h4>
+  <div className="bg-[#0a0a0a] border border-[#D4AF37]/10 rounded-lg p-6">
+    {selectedSubscription.content && selectedSubscription.content.length > 0 ? (
+      selectedSubscription.content.map((item, index) => (
+        <div
+          key={index}
+          className={`bg-[#1a1a1a] border rounded-lg p-4 ${
+            item ? 'border-green-500/20' : 'border-gray-500/20'
+          }`}
+        >
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-sm text-gray-400">Content #{index + 1}</span>
+            <span
+              className={`text-xs px-2 py-1 rounded-full ${
+                item ? 'bg-green-500/20 text-green-400' : 'bg-gray-500/20 text-gray-400'
+              }`}
+            >
+              {item ? 'Submitted' : 'Pending'}
+            </span>
+          </div>
+
+          {item ? (
+            <div className="space-y-3">
+              {/* Text */}
+              {item.text ? (
+                <p className="text-white bg-[#0a0a0a] p-3 rounded border border-[#D4AF37]/10">
+                  {item.text}
+                </p>
+              ) : (
+                <p className="text-gray-500 italic">No text submitted</p>
+              )}
+
+              {/* Image */}
+              {item.image ? (
+                <img
+                  src={`https://admin.hometownheroagency.com/storage/app/public/${item.image}`}
+                  alt={`Content ${index + 1}`}
+                  className="rounded border border-[#D4AF37]/10 max-h-48 object-contain"
+                />
+              ) : (
+                <p className="text-gray-500 italic">No image submitted</p>
+              )}
+            </div>
+          ) : (
+            <p className="text-gray-500 italic">No content submitted</p>
+          )}
+        </div>
+      ))
+    ) : (
+      <div className="text-center py-8">
+        <Package className="w-12 h-12 text-gray-400 mx-auto mb-3" />
+        <p className="text-gray-400">No content submitted yet</p>
+      </div>
+    )}
+  </div>
+</div>
+
 
               {/* Additional Details */}
               <div>
