@@ -1096,10 +1096,16 @@ const EditProductModal = ({ product, onClose, categories }) => {
   }
   const [selectedColors, setSelectedColors] = useState(
     product.colors
-      ? parseColors(product.colors).map((color) => ({
-          label: color,
-          value: color,
-        }))
+      ? parseColors(product.colors).map((color) => {
+          // Handle both string and object formats
+          if (typeof color === 'string') {
+            return { label: color, value: color };
+          } else if (typeof color === 'object' && color.name) {
+            return { label: color.name, value: color.name };
+          } else {
+            return { label: 'Unknown Color', value: 'unknown' };
+          }
+        })
       : []
   );
   const [image, setImage] = useState(null);
@@ -1741,20 +1747,30 @@ const ViewProductModal = ({ product, onClose }) => {
                 <div className="bg-[#282828] rounded-lg p-4">
                   <h4 className="text-[#D4BC6D] font-semibold mb-4">Available Colors</h4>
                   <div className="flex flex-wrap gap-3">
-                    {colors.map((color, index) => (
-                      <div
-                        key={index}
-                        className="flex items-center gap-3 bg-[#1a1a1a] px-4 py-3 rounded-lg border border-[#4B4C46]"
-                      >
-                        <span
-                          className="w-6 h-6 rounded-full border-2 border-gray-400"
-                          style={{ backgroundColor: color.code || '#cccccc' }}
-                        ></span>
-                        <span className="text-white text-sm font-medium">
-                          {color.name || 'Unknown Color'}
-                        </span>
-                      </div>
-                    ))}
+                    {colors.map((color, index) => {
+                      // Ensure color is an object and extract safe values
+                      const colorObj = typeof color === 'object' ? color : {};
+                      const colorName = typeof colorObj.name === 'string' ? colorObj.name : (typeof color === 'string' ? color : 'Unknown Color');
+                      const colorCode = typeof colorObj.code === 'string' ? colorObj.code : '#cccccc';
+                      
+                      // Create unique key based on color properties or fallback to index
+                      const uniqueKey = `${colorName}-${colorCode}-${index}`;
+                      
+                      return (
+                        <div
+                          key={uniqueKey}
+                          className="flex items-center gap-3 bg-[#1a1a1a] px-4 py-3 rounded-lg border border-[#4B4C46]"
+                        >
+                          <span
+                            className="w-6 h-6 rounded-full border-2 border-gray-400"
+                            style={{ backgroundColor: colorCode }}
+                          ></span>
+                          <span className="text-white text-sm font-medium">
+                            {colorName}
+                          </span>
+                        </div>
+                      );
+                    })}
                   </div>
                 </div>
               ) : null;
