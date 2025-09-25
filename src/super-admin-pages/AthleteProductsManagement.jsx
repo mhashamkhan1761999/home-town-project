@@ -855,7 +855,7 @@ const ProductViewModal = ({
             </div>
 
             {/* Size Chart Section */}
-            <div className="bg-[#1a1a1a] border border-[#4B4C46] rounded-lg p-4 sm:p-6">
+            {/* <div className="bg-[#1a1a1a] border border-[#4B4C46] rounded-lg p-4 sm:p-6">
               <div className="flex justify-between items-center mb-4">
                 <h3 className="text-lg font-bold text-white">Size Chart</h3>
                 <label className="cursor-pointer">
@@ -899,7 +899,7 @@ const ProductViewModal = ({
                   </div>
                 ))}
 
-                {/* Add Size Chart Placeholder */}
+                
                 <label className="cursor-pointer">
                   <input
                     type="file"
@@ -922,7 +922,7 @@ const ProductViewModal = ({
                   <strong>Note:</strong> Upload size chart images to help customers choose the right size. Recommended format: Clear, high-resolution charts.
                 </p>
               </div>
-            </div>
+            </div> */}
 
             {/* Warnings Section */}
             <div className="bg-[#1a1a1a] border border-[#4B4C46] rounded-lg p-4 sm:p-6">

@@ -19,6 +19,7 @@ const ForntDetail = () => {
     const [active, setActive] = React.useState(null);
     const [showSizeChart, setShowSizeChart] = React.useState(false);
     const [showWarnings, setShowWarnings] = React.useState(false);
+    const [showMaterial, setShowMaterial] = React.useState(false);
 
     const handleAddToCart = (data) => {
         const { id, name, description, price, color } = data;
@@ -180,14 +181,20 @@ const ForntDetail = () => {
                 </div>
             </div>
 
-            {/* Size Chart and Warnings Section */}
+            {/* Size Chart, Material, and Warnings Section */}
             <div className="max-w-6xl mx-auto px-4 pb-10">
-                <div className="flex justify-start gap-4 mb-6">
+                <div className="flex justify-start gap-4 mb-6 flex-wrap">
                     <button
                         onClick={() => setShowSizeChart(!showSizeChart)}
                         className="bg-black/50 backdrop-blur-sm rounded-xl px-6 py-3 border border-white/10 font-medium transition-all duration-300 text-white hover:text-[#D4BC6D] hover:border-[#D4BC6D]/50"
                     >
                         {showSizeChart ? 'Hide Size Chart' : 'Show Size Chart'}
+                    </button>
+                    <button
+                        onClick={() => setShowMaterial(!showMaterial)}
+                        className="bg-black/50 backdrop-blur-sm rounded-xl px-6 py-3 border border-white/10 font-medium transition-all duration-300 text-white hover:text-[#D4BC6D] hover:border-[#D4BC6D]/50"
+                    >
+                        {showMaterial ? 'Hide Material' : 'Show Material'}
                     </button>
                     <button
                         onClick={() => setShowWarnings(!showWarnings)}
@@ -201,9 +208,9 @@ const ForntDetail = () => {
                     <div className="flex justify-center">
                         <div className="w-full max-w-4xl">
                             <h2 className="text-2xl font-bold text-[#D4BC6D] mb-6 text-center">Size Chart</h2>
-                            {detail?.images?.length > 1 && detail?.images?.[1]?.image ? (
+                            {detail?.product_type?.size_chart ? (
                                 <img
-                                    src={`https://admin.hometownheroagency.com/storage/app/public/${detail?.images?.[1]?.image}`}
+                                    src={`https://admin.hometownheroagency.com/storage/app/public/${detail?.product_type?.size_chart}`}
                                     alt="Size Chart"
                                     className="rounded-xl shadow-lg w-full object-contain border border-white/10 bg-white/5"
                                 />
@@ -216,6 +223,47 @@ const ForntDetail = () => {
                                 />
                                 </div>
                             )}
+                        </div>
+                    </div>
+                )}
+                
+                {showMaterial && (
+                    <div className="flex justify-center mt-8">
+                        <div className="w-full max-w-4xl">
+                            <h2 className="text-2xl font-bold text-[#D4BC6D] mb-6 text-center">Material & Care Instructions</h2>
+                            <div className="bg-black/30 border border-white/10 rounded-xl p-6">
+                                {detail?.product_type?.material ? (
+                                    <div className="text-white text-sm leading-relaxed">
+                                        <div className="flex items-start gap-3">
+                                            <div className="text-[#D4BC6D] mt-1">
+                                                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                                    <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+                                                </svg>
+                                            </div>
+                                            <div>
+                                                <strong className="text-[#D4BC6D]">Material & Care:</strong>
+                                                <div className="mt-2 whitespace-pre-line">
+                                                    {detail.product_type.material}
+                                                </div>
+                                                {detail?.product_type?.weight && (
+                                                    <div className="mt-3">
+                                                        <strong className="text-[#D4BC6D]">Weight:</strong> {detail.product_type.weight}
+                                                    </div>
+                                                )}
+                                            </div>
+                                        </div>
+                                    </div>
+                                ) : (
+                                    <div className="text-white text-sm leading-relaxed text-center">
+                                        <div className="text-[#D4BC6D] mb-2">
+                                            <svg className="w-8 h-8 mx-auto" fill="currentColor" viewBox="0 0 20 20">
+                                                <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+                                            </svg>
+                                        </div>
+                                        <p>Material information is not available for this product.</p>
+                                    </div>
+                                )}
+                            </div>
                         </div>
                     </div>
                 )}
