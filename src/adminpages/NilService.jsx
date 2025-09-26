@@ -968,7 +968,8 @@ const ItemModal = ({ item, onClose, onSuccesActive }) => {
           {/* Price */}
           <div className="mb-8">
             <label className="text-base font-semibold text-[#D4BC6D] mb-3 inline-block">
-              Price (Minimum: ${25})
+              {console.log(item, "item")}
+              Price (Minimum: {item?.min_price})
             </label>
             <div className="flex items-center bg-[rgba(217,217,217,0.03)] border-b border-[#4B4C46] rounded-t-lg">
               <div className="p-4">
@@ -982,10 +983,10 @@ const ItemModal = ({ item, onClose, onSuccesActive }) => {
                   min={25}
                   {...register('price', {
                     required: 'Price is required',
-                    min: { value: 25, message: `Minimum price is ${25}` }
+                    min: { value: item?.min_price, message: `Minimum price is ${item?.min_price}` }
                   })}
-                  placeholder={`Enter price (min ${25})`}
-                  defaultValue={25}
+                  placeholder={`${item?.min_price}`}
+                  defaultValue={item?.min_price}
                   className="w-full h-full border-0 outline-0 text-[#6B6B6B] text-sm bg-transparent"
                 />
               </div>
