@@ -1,10 +1,11 @@
 import React from 'react';
 import 'swiper/css';
 import 'swiper/css/pagination';
+import 'swiper/css/navigation';
 import { Swiper, SwiperSlide } from 'swiper/react';
 
 
-import { EffectCoverflow, Pagination } from 'swiper/modules';
+import { EffectCoverflow, Pagination, Navigation } from 'swiper/modules';
 import VaultCard from './VaultCard';
 
 const AthletesVaultSlider = ({ data }) => {
@@ -31,7 +32,11 @@ const AthletesVaultSlider = ({ data }) => {
                     bulletClass: 'swiper-pagination-bullet vault-bullet',
                     bulletActiveClass: 'swiper-pagination-bullet-active vault-bullet-active',
                 }}
-                modules={[EffectCoverflow, Pagination]}
+                navigation={{
+                    prevEl: '.vault-nav-prev',
+                    nextEl: '.vault-nav-next',
+                }}
+                modules={[EffectCoverflow, Pagination, Navigation]}
                 // breakpoints={{
                 //     640: {
                 //         slidesPerView: 2,
@@ -82,6 +87,17 @@ const vaultStyles = `
 
 .vault-bullet:hover {
     background: rgba(212, 188, 109, 0.6) !important;
+}
+
+.vault-nav-prev,
+.vault-nav-next {
+    user-select: none;
+}
+
+.vault-nav-prev.swiper-button-disabled,
+.vault-nav-next.swiper-button-disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
 }
 `;
 

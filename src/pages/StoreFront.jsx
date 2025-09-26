@@ -347,7 +347,19 @@ const StoreFront = () => {
         </div>
       ) : (
         <>
-          <section className="py-24">
+          <section className="py-24 relative">
+            {/* Merchandise Navigation Arrows */}
+            <div className="merchandise-nav-prev absolute left-4 top-[65%] transform -translate-y-1/2 z-30 bg-[#D4BC6D] hover:bg-[#C4AC5D] rounded-full p-3 cursor-pointer transition-colors shadow-lg">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M15 18L9 12L15 6" stroke="black" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+            </div>
+            <div className="merchandise-nav-next absolute right-4 top-[65%] transform -translate-y-1/2 z-30 bg-[#D4BC6D] hover:bg-[#C4AC5D] rounded-full p-3 cursor-pointer transition-colors shadow-lg">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M9 18L15 12L9 6" stroke="black" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+            </div>
+            
             <h1 className="text-[6.875rem] mb-[7.188rem] text-center uppercase font-bold bg-[linear-gradient(to_right,#d4bc6d,#57430d)] bg-clip-text text-transparent ">
               {/* {slug
                 ? `${
@@ -397,7 +409,19 @@ const StoreFront = () => {
             <MerchendiseSlider data={filteredProducts} />
           </section>
 
-          <section className="py-24 bg-black">
+          <section className="py-24 bg-black relative">
+            {/* Vault Navigation Arrows */}
+            <div className="vault-nav-prev absolute left-4 top-[65%] transform -translate-y-1/2 z-30 bg-[#D4BC6D] hover:bg-[#C4AC5D] rounded-full p-3 cursor-pointer transition-colors shadow-lg">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M15 18L9 12L15 6" stroke="black" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+            </div>
+            <div className="vault-nav-next absolute right-4 top-[65%] transform -translate-y-1/2 z-30 bg-[#D4BC6D] hover:bg-[#C4AC5D] rounded-full p-3 cursor-pointer transition-colors shadow-lg">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M9 18L15 12L9 6" stroke="black" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+            </div>
+            
             <h1 className="text-[6.875rem] mb-[7.188rem] text-center uppercase font-bold bg-[linear-gradient(to_right,#d4bc6d,#57430d)] bg-clip-text text-transparent ">
               {slug
                 ? `${

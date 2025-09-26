@@ -1,10 +1,11 @@
 import React from 'react';
 import 'swiper/css';
 import 'swiper/css/pagination';
+import 'swiper/css/navigation';
 import { Swiper, SwiperSlide } from 'swiper/react';
 
 
-import { EffectCoverflow, Pagination } from 'swiper/modules';
+import { EffectCoverflow, Pagination, Navigation } from 'swiper/modules';
 
 const MerchendiseSlider = ({ data }) => {
     // console.log(data) 
@@ -31,7 +32,11 @@ const MerchendiseSlider = ({ data }) => {
                     bulletClass: 'swiper-pagination-bullet merchandise-bullet',
                     bulletActiveClass: 'swiper-pagination-bullet-active merchandise-bullet-active',
                 }}
-                modules={[EffectCoverflow, Pagination]}
+                navigation={{
+                    prevEl: '.merchandise-nav-prev',
+                    nextEl: '.merchandise-nav-next',
+                }}
+                modules={[EffectCoverflow, Pagination, Navigation]}
                 className="swiper-container merchandise-swiper"
             >
                 {data?.map((props, index) => (
