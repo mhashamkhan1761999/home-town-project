@@ -185,19 +185,23 @@ const ForntDetail = () => {
             <div className="max-w-6xl mx-auto px-4 pb-10">
                 <div className="flex justify-start gap-4 mb-6 flex-wrap">
                     <button
-                        onClick={() => setShowSizeChart(!showSizeChart)}
+                        onClick={() => {
+                            setShowSizeChart(!showSizeChart);
+                            setShowMaterial(false);
+                            setShowWarnings(false);
+                        }}
                         className="bg-black/50 backdrop-blur-sm rounded-xl px-6 py-3 border border-white/10 font-medium transition-all duration-300 text-white hover:text-[#D4BC6D] hover:border-[#D4BC6D]/50"
                     >
                         {showSizeChart ? 'Hide Size Chart' : 'Show Size Chart'}
                     </button>
                     <button
-                        onClick={() => setShowMaterial(!showMaterial)}
+                        onClick={() => {setShowMaterial(!showMaterial); setShowSizeChart(false); setShowWarnings(false);}}
                         className="bg-black/50 backdrop-blur-sm rounded-xl px-6 py-3 border border-white/10 font-medium transition-all duration-300 text-white hover:text-[#D4BC6D] hover:border-[#D4BC6D]/50"
                     >
                         {showMaterial ? 'Hide Material' : 'Show Material'}
                     </button>
                     <button
-                        onClick={() => setShowWarnings(!showWarnings)}
+                        onClick={() => {setShowWarnings(!showWarnings); setShowMaterial(false); setShowSizeChart(false);}}
                         className="bg-black/50 backdrop-blur-sm rounded-xl px-6 py-3 border border-white/10 font-medium transition-all duration-300 text-white hover:text-[#D4BC6D] hover:border-[#D4BC6D]/50"
                     >
                         {showWarnings ? 'Hide Warnings' : 'Show Warnings'}
