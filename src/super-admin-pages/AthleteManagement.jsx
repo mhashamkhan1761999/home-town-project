@@ -370,7 +370,16 @@ const AthleteManagement = () => {
                 </thead>
                 <tbody className="divide-y divide-[#4B4C46]">
                   {filteredAthletes?.map((athlete) => (
-                    <tr key={athlete.id} className="hover:bg-[#1a1a1a] transition-colors">
+                    <tr key={athlete.id} 
+                        className={`hover:bg-[#1a1a1a] transition-colors ${
+                          athlete?.close_account && athlete.close_account.trim() !== '' 
+                            ? 'opacity-50 grayscale bg-gray-800/30' 
+                            : ''
+                        }`}
+                        title={athlete?.close_account && athlete.close_account.trim() !== '' 
+                          ? `Account closed: ${athlete.close_account}` 
+                          : ''
+                        }>
                       <td className="px-3 sm:px-6 py-4 whitespace-nowrap">
                         <div className="flex items-center">
                           <div className="h-10 w-10 rounded-full overflow-hidden border-2 border-[#D4BC6D]">
@@ -390,8 +399,15 @@ const AthleteManagement = () => {
                             />
                           </div>
                           <div className="ml-4 flex items-center gap-2">
-                            <div className="text-xs sm:text-sm font-medium text-white">
-                              {athlete?.athlete_name}
+                            <div className="flex items-center gap-2">
+                              <div className="text-xs sm:text-sm font-medium text-white">
+                                {athlete?.athlete_name}
+                              </div>
+                              {athlete?.close_account && athlete.close_account.trim() !== '' && (
+                                <span className="inline-flex px-1.5 py-0.5 text-xs font-medium rounded bg-red-600 text-white">
+                                  CLOSED
+                                </span>
+                              )}
                             </div>
                             {athlete?.badge_level?.image && (
                               <img
@@ -507,7 +523,16 @@ const AthleteManagement = () => {
         {/* Athletes Cards - Mobile */}
         <div className="lg:hidden space-y-3 p-3">
           {filteredAthletes?.map((athlete) => (
-            <div key={athlete.id} className="bg-[#282828] border border-[#4B4C46] rounded-lg p-4">
+            <div key={athlete.id} 
+                 className={`bg-[#282828] border border-[#4B4C46] rounded-lg p-4 ${
+                   athlete?.close_account && athlete.close_account.trim() !== '' 
+                     ? 'opacity-50 grayscale bg-gray-800/30' 
+                     : ''
+                 }`}
+                 title={athlete?.close_account && athlete.close_account.trim() !== '' 
+                   ? `Account closed: ${athlete.close_account}` 
+                   : ''
+                 }>
               {/* Athlete Info Row */}
               <div className="flex items-center space-x-3 mb-3">
                 <div className="h-12 w-12 rounded-full overflow-hidden border-2 border-[#D4BC6D]">
@@ -531,6 +556,11 @@ const AthleteManagement = () => {
                     <p className="text-sm font-medium text-white truncate">
                       {athlete?.athlete_name}
                     </p>
+                    {athlete?.close_account && athlete.close_account.trim() !== '' && (
+                      <span className="inline-flex px-1.5 py-0.5 text-xs font-medium rounded bg-red-600 text-white">
+                        CLOSED
+                      </span>
+                    )}
                     {athlete?.badge_level?.image && (
                       <img
                         src={athlete.badge_level.image}
@@ -706,7 +736,14 @@ const ViewAthleteModal = ({ isOpen, onClose, athlete }) => {
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[9999] p-2 sm:p-4">
       <div className="bg-[#282828] border border-[#4B4C46] rounded-lg p-3 sm:p-4 lg:p-6 w-full max-w-4xl mx-2 sm:mx-4 max-h-[95vh] sm:max-h-[90vh] overflow-y-auto">
         <div className="flex justify-between items-center mb-4 sm:mb-6">
-          <h2 className="text-lg sm:text-xl lg:text-2xl font-bold text-[#D4BC6D]">Athlete Profile</h2>
+          <div className="flex items-center gap-3">
+            <h2 className="text-lg sm:text-xl lg:text-2xl font-bold text-[#D4BC6D]">Athlete Profile</h2>
+            {athlete?.close_account && athlete.close_account.trim() !== '' && (
+              <span className="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-red-600 text-white">
+                ACCOUNT CLOSED
+              </span>
+            )}
+          </div>
           <button
             onClick={onClose}
             className="text-gray-400 hover:text-white transition-colors"
@@ -798,6 +835,26 @@ const ViewAthleteModal = ({ isOpen, onClose, athlete }) => {
                 <label className="block text-sm font-medium text-gray-400 mb-1">Account Creation</label>
                 <p className="text-white">{athlete?.created_at ? new Date(athlete.created_at).toLocaleDateString() : 'Not available'}</p>
               </div>
+
+              {/* Account Closed Field - only show if account is closed */}
+              {athlete?.close_account && athlete.close_account.trim() !== '' && (
+                <div>
+                  <label className="block text-sm font-medium text-red-400 mb-1">Account Closed</label>
+                  <div className="bg-red-900/20 border border-red-500/30 rounded-lg p-3">
+                    <span className="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-red-600 text-white mb-2">
+                      Account Terminated
+                    </span>
+                    <p className="text-red-300 text-sm">
+                      <span className="font-medium">Reason:</span> {athlete.close_account}
+                    </p>
+                    {athlete?.updated_at && (
+                      <p className="text-red-400 text-xs mt-1">
+                        Closed on: {new Date(athlete.updated_at).toLocaleDateString()}
+                      </p>
+                    )}
+                  </div>
+                </div>
+              )}
             </div>
           </div>
 
