@@ -14,6 +14,8 @@ const Settings = () => {
     const navigate = useNavigate(); // ✅ define navigate here
 
     const [activeTab, setActiveTab] = React.useState("tab2");
+    const [showConfirmationModal, setShowConfirmationModal] = React.useState(false);
+    const [accountCloseReason, setAccountCloseReason] = React.useState('');
     
     // Card details state
     const [cardDetails, setCardDetails] = React.useState({
@@ -51,8 +53,23 @@ const Settings = () => {
         }
     })
 
-    const handleCloseAccount = (reason) => {
-        mutation.mutate({ close_account: reason });
+    const handleSubmitCloseAccount = (reason) => {
+        if (!reason || reason.trim() === '') {
+            toast.error('Please provide a reason for closing your account');
+            return;
+        }
+        setAccountCloseReason(reason);
+        setShowConfirmationModal(true);
+    }
+
+    const handleConfirmCloseAccount = () => {
+        mutation.mutate({ close_account: accountCloseReason });
+        setShowConfirmationModal(false);
+    }
+
+    const handleCancelCloseAccount = () => {
+        setShowConfirmationModal(false);
+        setActiveTab("tab4");
     }
 
     // Format card number with spaces (4-4-4-4 format)
@@ -399,9 +416,19 @@ const Settings = () => {
                     </p>
                     <div className='mb-7'>
                         <textarea
-                            className='w-full h-32 p-3 text-white bg-gray-800 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-[#D4BC6D]'
-                            placeholder='Please share your reason for closing your account'
+                            className={`w-full h-32 p-3 text-white bg-gray-800 border rounded-md focus:outline-none focus:ring-2 transition-colors ${
+                                accountCloseReason && accountCloseReason.trim() !== '' 
+                                    ? 'border-gray-600 focus:ring-[#D4BC6D]' 
+                                    : 'border-red-500 focus:ring-red-400'
+                            }`}
+                            placeholder='Please share your reason for closing your account *'
+                            value={accountCloseReason}
+                            onChange={(e) => setAccountCloseReason(e.target.value)}
+                            required={true}
                         ></textarea>
+                        {(!accountCloseReason || accountCloseReason.trim() === '') && (
+                            <p className='text-red-400 text-xs mt-1'>* Reason is required to proceed</p>
+                        )}
                     </div>
                     <h2 className='text-[#D4BC6D] font-black text-lg mb-2.5'>
                         Important Information
@@ -419,20 +446,18 @@ const Settings = () => {
                     <p className='text-white font-medium text-sm mb-7'>
                         This action is permanent and cannot be undone. If you’re sure you’d like to proceed, we’ll begin the account closure process right away.
                     </p>
-                    <div className="flex gap-7">
+                    <div className="flex">
                         <button
-                            className={`bg-[#D4BC6D] py-3.5 px-12 text-sm font-bold rounded-full text-white`}
+                            className={`py-3.5 px-12 text-sm font-bold rounded-full text-white transition-colors ${
+                                accountCloseReason && accountCloseReason.trim() !== '' 
+                                    ? 'bg-[#D4BC6D] hover:bg-[#c5ad5e] cursor-pointer' 
+                                    : 'bg-gray-600 cursor-not-allowed opacity-50'
+                            }`}
                             type='button'
-                            onClick={() => handleCloseAccount(document?.querySelector('textarea')?.value)}
+                            onClick={() => handleSubmitCloseAccount(accountCloseReason)}
+                            disabled={!accountCloseReason || accountCloseReason.trim() === ''}
                         >
-                            Yes
-                        </button>
-                        <button
-                            className={`border border-[#D4BC6D] py-3.5 px-12 text-sm font-bold rounded-full text-white`}
-                            type='button'
-                            onClick={() => setActiveTab("tab2")}
-                        >
-                            No
+                            Submit
                         </button>
                     </div>
 
@@ -489,6 +514,37 @@ const Settings = () => {
 
                 </div>
             </div>
+
+            {/* Confirmation Modal */}
+            {showConfirmationModal && (
+                <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
+                    <div className="bg-gray-900 border border-gray-600 rounded-2xl p-8 w-full max-w-lg mx-4">
+                        <h3 className="text-2xl font-bold text-[#D4BC6D] mb-4">
+                            Confirm Account Deletion
+                        </h3>
+                        <p className="text-white font-medium text-base mb-6">
+                            Are you sure you want to delete your account? This action is permanent and cannot be undone.
+                        </p>
+                        <div className="flex gap-4 justify-end">
+                            <button
+                                className="border border-[#D4BC6D] py-3 px-8 text-sm font-bold rounded-full text-white hover:bg-[#D4BC6D] hover:text-black transition-colors"
+                                type="button"
+                                onClick={handleCancelCloseAccount}
+                            >
+                                No
+                            </button>
+                            <button
+                                className="bg-red-600 py-3 px-8 text-sm font-bold rounded-full text-white hover:bg-red-700 transition-colors"
+                                type="button"
+                                onClick={handleConfirmCloseAccount}
+                                disabled={mutation.isLoading}
+                            >
+                                {mutation.isLoading ? 'Deleting...' : 'Yes'}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </>
     )
 }
