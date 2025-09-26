@@ -14,7 +14,10 @@ const ExploreAthletes = () => {
     const [selectedFilter, setSelectedFilter] = useState('All');
     const [showSeeMore, setShowSeeMore] = useState(false);
     const [currentPage, setCurrentPage] = useState(1);
-    const itemsPerPage = 10;
+    const [selectedTier, setSelectedTier] = useState('');
+    const [showTierAthletes, setShowTierAthletes] = useState(false);
+    const [tierCurrentPage, setTierCurrentPage] = useState(1);
+    const itemsPerPage = 4;
 
     // Fetch athletes data
     const { data: athletesData, isLoading: isAthletesLoading, error: athletesError } = useQuery({
@@ -218,6 +221,57 @@ const ExploreAthletes = () => {
         setTimeout(() => {
             document.getElementById('see-more-section')?.scrollIntoView({ behavior: 'smooth' });
         }, 100);
+    };
+
+    // Handle tier button click
+    const handleTierClick = (tier) => {
+        setSelectedTier(tier);
+        setShowTierAthletes(true);
+        setTierCurrentPage(1);
+        // Hide other sections
+        setShowSeeMore(false);
+        setTimeout(() => {
+            document.getElementById('tier-athletes-section')?.scrollIntoView({ behavior: 'smooth' });
+        }, 100);
+    };
+
+    // Get athletes filtered by tier
+    const getTierAthletes = useMemo(() => {
+        if (!selectedTier || !Array.isArray(athletesData)) return [];
+        
+        return athletesData.filter(athlete => {
+            // Check badge_level.name first (primary tier field)
+            const badgeLevel = athlete?.badge_level?.name || '';
+            if (badgeLevel === selectedTier) {
+                return true;
+            }
+            
+            // Fallback to other tier fields
+            const athleteTier = athlete?.tier?.toLowerCase() || '';
+            const levelOfAthlete = athlete?.level_of_athlete?.toLowerCase() || '';
+            const selectedTierLower = selectedTier.toLowerCase();
+            
+            return athleteTier === selectedTierLower || levelOfAthlete === selectedTierLower;
+        });
+    }, [athletesData, selectedTier]);
+
+    // Map tier athletes to display format
+    const tierAthletesForDisplay = useMemo(() => {
+        return mapAthleteData(getTierAthletes);
+    }, [getTierAthletes]);
+
+    // Pagination for tier athletes
+    const tierTotalPages = Math.ceil(tierAthletesForDisplay.length / itemsPerPage);
+    const paginatedTierAthletes = useMemo(() => {
+        const startIndex = (tierCurrentPage - 1) * itemsPerPage;
+        const endIndex = startIndex + itemsPerPage;
+        return tierAthletesForDisplay.slice(startIndex, endIndex);
+    }, [tierAthletesForDisplay, tierCurrentPage, itemsPerPage]);
+
+    // Handle tier page change
+    const handleTierPageChange = (page) => {
+        setTierCurrentPage(page);
+        document.getElementById('tier-athletes-section')?.scrollIntoView({ behavior: 'smooth' });
     };
 
     return (
@@ -599,12 +653,13 @@ const ExploreAthletes = () => {
                                     <h4 className="text-4xl font-bold bg-[linear-gradient(to_right,#d4bc6d,#57430d)] bg-clip-text text-transparent mb-6 capitalize">
                                         {item.title}
                                     </h4>
-                                    {/* <button
+                                    <button
                                         className="bg-[#D4BC6D] text-black text-lg font-semibold py-5 px-14 rounded-full shadow-lg transition-colors duration-300 ease-in-out hover:text-black hover:bg-[#D4BC6D]"
                                         type="button"
+                                        onClick={() => handleTierClick(item.title)}
                                     >
                                         View
-                                    </button> */}
+                                    </button>
                                 </div>
                             </SwiperSlide>
                         ))}
@@ -631,16 +686,229 @@ const ExploreAthletes = () => {
                             <h4 className="text-2xl sm:text-3xl lg:text-[3rem] text-center capitalize font-medium bg-[linear-gradient(to_right,#d4bc6d,#57430d)] bg-clip-text text-transparent mb-4">
                                 {item.title}
                             </h4>
-                            {/* <button
+                            <button
                                 className="bg-[#D4BC6D] text-black text-sm font-medium py-3 px-8 sm:px-10 rounded-full shadow-lg transition-colors duration-300 ease-in-out hover:text-black hover:bg-[#D4BC6D]"
                                 type="button"
+                                onClick={() => handleTierClick(item.title)}
                             >
                                 View
-                            </button> */}
+                            </button>
                         </div>
                     ))}
                 </div>
             </section>
+
+            {/* Tier Athletes Section */}
+            {showTierAthletes && selectedTier && (
+                <section id="tier-athletes-section" className="py-10 bg-black px-4 sm:px-6">
+                    <div className="max-w-7xl mx-auto">
+                        <div className="flex flex-col sm:flex-row justify-between items-center mb-12">
+                            <h1 className="text-3xl sm:text-4xl lg:text-[4rem] text-center sm:text-left capitalize font-medium bg-[linear-gradient(to_right,#d4bc6d,#57430d)] bg-clip-text text-transparent mb-4 sm:mb-0 leading-normal">
+                                {selectedTier} Athletes
+                            </h1>
+                            <button
+                                onClick={() => setShowTierAthletes(false)}
+                                className="text-gray-400 hover:text-white transition-colors text-sm flex items-center gap-2"
+                            >
+                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                                </svg>
+                                Hide
+                            </button>
+                        </div>
+
+                        {/* Athletes Cards Grid */}
+                        {isAthletesLoading ? (
+                            <div className="text-center text-white py-8">
+                                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#D4BC6D] mx-auto mb-4"></div>
+                                <p>Loading {selectedTier} athletes...</p>
+                            </div>
+                        ) : paginatedTierAthletes.length > 0 ? (
+                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-6 mb-12">
+                                {paginatedTierAthletes.map((athlete, index) => (
+                                    <div
+                                        key={athlete.id || index}
+                                        onClick={athlete.onCardClick}
+                                        className="bg-gradient-to-br from-gray-900 to-black border border-gray-700 rounded-2xl p-6 hover:border-[#D4BC6D] transition-all duration-300 cursor-pointer group hover:scale-105 transform"
+                                    >
+                                        {/* Athlete Image */}
+                                        {console.log(athlete?.image)}
+                                        <div className="relative mb-4 overflow-hidden rounded-xl">
+                                            <img
+                                                src={athlete.image}
+                                                alt={athlete.name}
+                                                className="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-300"
+                                                onError={(e) => {
+                                                    e.target.src = '/question-mark.jpeg';
+                                                }}
+                                            />
+                                            {athlete.isTrending && (
+                                                <div className="absolute top-3 right-3 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full">
+                                                    Trending
+                                                </div>
+                                            )}
+                                            {/* Tier Badge */}
+                                            <div className={`absolute top-3 left-3 text-white text-xs font-bold px-2 py-1 rounded-full ${
+                                                selectedTier.toLowerCase() === 'bronze' ? 'bg-amber-600' :
+                                                selectedTier.toLowerCase() === 'silver' ? 'bg-gray-400' :
+                                                selectedTier.toLowerCase() === 'gold' ? 'bg-yellow-500' :
+                                                selectedTier.toLowerCase() === 'diamond' ? 'bg-blue-400' :
+                                                selectedTier.toLowerCase() === 'emerald' ? 'bg-green-500' :
+                                                selectedTier.toLowerCase() === 'royal' ? 'bg-purple-600' : 'bg-gray-600'
+                                            }`}>
+                                                {selectedTier}
+                                            </div>
+                                        </div>
+
+                                        {/* Athlete Info */}
+                                        <div className="space-y-2">
+                                            <h3 className="text-white font-bold text-lg group-hover:text-[#D4BC6D] transition-colors line-clamp-1">
+                                                {athlete.name || 'Athlete Name'}
+                                            </h3>
+                                            
+                                            {athlete.subTitle && (
+                                                <p className="text-gray-400 text-sm">
+                                                    {athlete.subTitle}
+                                                </p>
+                                            )}
+
+                                            {(athlete.team || athlete.school) && (
+                                                <p className="text-gray-500 text-xs">
+                                                    {athlete.team && athlete.school 
+                                                        ? `${athlete.team} • ${athlete.school}`
+                                                        : athlete.team || athlete.school
+                                                    }
+                                                </p>
+                                            )}
+
+                                            {(athlete.city || athlete.country) && (
+                                                <p className="text-gray-500 text-xs flex items-center gap-1">
+                                                    <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                                                        <path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" />
+                                                    </svg>
+                                                    {athlete.city && athlete.country 
+                                                        ? `${athlete.city}, ${athlete.country}`
+                                                        : athlete.city || athlete.country
+                                                    }
+                                                </p>
+                                            )}
+
+                                            {athlete.rating > 0 && (
+                                                <div className="flex items-center gap-1 mt-2">
+                                                    <div className="flex">
+                                                        {[...Array(5)].map((_, i) => (
+                                                            <svg
+                                                                key={i}
+                                                                className={`w-4 h-4 ${i < athlete.rating ? 'text-[#D4BC6D]' : 'text-gray-600'}`}
+                                                                fill="currentColor"
+                                                                viewBox="0 0 20 20"
+                                                            >
+                                                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                                                            </svg>
+                                                        ))}
+                                                    </div>
+                                                    <span className="text-gray-400 text-xs ml-1">
+                                                        ({athlete.rating})
+                                                    </span>
+                                                </div>
+                                            )}
+                                        </div>
+
+                                        {/* Click to view indicator */}
+                                        <div className="mt-4 pt-4 border-t border-gray-700">
+                                            <p className="text-[#D4BC6D] text-xs font-medium group-hover:text-white transition-colors">
+                                                Click to view store →
+                                            </p>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        ) : (
+                            <div className="text-center text-white py-8">
+                                <p className="text-lg">No {selectedTier} athletes found.</p>
+                                <p className="text-gray-400 text-sm mt-2">Check back later as more athletes join this tier.</p>
+                            </div>
+                        )}
+
+                        {/* Pagination */}
+                        {tierTotalPages > 1 && (
+                            <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+                                {/* Page Info */}
+                                <div className="text-gray-400 text-sm">
+                                    Showing {((tierCurrentPage - 1) * itemsPerPage) + 1} to {Math.min(tierCurrentPage * itemsPerPage, tierAthletesForDisplay.length)} of {tierAthletesForDisplay.length} {selectedTier} athletes
+                                </div>
+
+                                {/* Pagination Controls */}
+                                <div className="flex items-center space-x-2">
+                                    {/* Previous Button */}
+                                    <button
+                                        onClick={() => handleTierPageChange(tierCurrentPage - 1)}
+                                        disabled={tierCurrentPage === 1}
+                                        className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                                            tierCurrentPage === 1
+                                                ? 'bg-gray-800 text-gray-500 cursor-not-allowed'
+                                                : 'bg-gray-700 text-white hover:bg-[#D4BC6D] hover:text-black'
+                                        }`}
+                                    >
+                                        Previous
+                                    </button>
+
+                                    {/* Page Numbers */}
+                                    <div className="flex space-x-1">
+                                        {[...Array(tierTotalPages)].map((_, index) => {
+                                            const page = index + 1;
+                                            const isCurrentPage = page === tierCurrentPage;
+                                            
+                                            if (
+                                                page === 1 ||
+                                                page === tierTotalPages ||
+                                                (page >= tierCurrentPage - 1 && page <= tierCurrentPage + 1)
+                                            ) {
+                                                return (
+                                                    <button
+                                                        key={page}
+                                                        onClick={() => handleTierPageChange(page)}
+                                                        className={`px-3 py-2 rounded-lg text-sm font-medium transition-all ${
+                                                            isCurrentPage
+                                                                ? 'bg-[#D4BC6D] text-black'
+                                                                : 'bg-gray-700 text-white hover:bg-gray-600'
+                                                        }`}
+                                                    >
+                                                        {page}
+                                                    </button>
+                                                );
+                                            } else if (
+                                                page === tierCurrentPage - 2 ||
+                                                page === tierCurrentPage + 2
+                                            ) {
+                                                return (
+                                                    <span key={page} className="px-2 py-2 text-gray-500">
+                                                        ...
+                                                    </span>
+                                                );
+                                            }
+                                            return null;
+                                        })}
+                                    </div>
+
+                                    {/* Next Button */}
+                                    <button
+                                        onClick={() => handleTierPageChange(tierCurrentPage + 1)}
+                                        disabled={tierCurrentPage === tierTotalPages}
+                                        className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                                            tierCurrentPage === tierTotalPages
+                                                ? 'bg-gray-800 text-gray-500 cursor-not-allowed'
+                                                : 'bg-gray-700 text-white hover:bg-[#D4BC6D] hover:text-black'
+                                        }`}
+                                    >
+                                        Next
+                                    </button>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                </section>
+            )}
 
         </>
     )
