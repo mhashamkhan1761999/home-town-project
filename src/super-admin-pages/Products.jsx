@@ -655,7 +655,7 @@ const AddProductModal = ({ onClose, categories }) => {
 
     // Handle product icon file upload
     if (data.product_icon && data.product_icon[0]) {
-      formData.append("product_icon", data.product_icon[0]);
+      formData.append("icon", data.product_icon[0]);
     }
 
     // Handle size chart file upload
@@ -757,15 +757,15 @@ const AddProductModal = ({ onClose, categories }) => {
               Sub Category
             </label>
             <select
-              {...register("sub_category")}
+              {...register("sub_category_id")}
               className="w-full p-3 bg-[#282828] border border-[#4B4C46] rounded-lg text-white focus:border-[#D4BC6D] outline-none"
             >
               <option value="">Select Sub Category</option>
-              <option value="t-shirt">T-shirt</option>
-              <option value="shirts">Shirts</option>
-              <option value="pants">Pants</option>
-              <option value="shoes">Shoes</option>
-              <option value="accessories">Accessories</option>
+              <option value="t-shirt">{1}</option>
+              <option value="shirts">{2}</option>
+              <option value="pants">{3}</option>
+              <option value="shoes">{4}</option>
+              <option value="accessories">{5}</option>
             </select>
           </div>
 
@@ -937,7 +937,7 @@ const AddProductModal = ({ onClose, categories }) => {
               <input
                 type="file"
                 accept="image/*"
-                {...register("product_icon")}
+                {...register("icon")}
                 className="w-full p-3 bg-[#282828] border border-[#4B4C46] rounded-lg text-white focus:border-[#D4BC6D] outline-none"
               />
             </div>
@@ -991,7 +991,7 @@ const AddProductModal = ({ onClose, categories }) => {
               <input
                 type="number"
                 step="0.01"
-                {...register("profit_share_usa")}
+                {...register("profit_usa")}
                 className="w-full p-3 bg-[#282828] border border-[#4B4C46] rounded-lg text-white focus:border-[#D4BC6D] outline-none"
                 placeholder="0.00"
               />
@@ -1004,7 +1004,7 @@ const AddProductModal = ({ onClose, categories }) => {
               <input
                 type="number"
                 step="0.01"
-                {...register("profit_share_international")}
+                {...register("profit_international")}
                 className="w-full p-3 bg-[#282828] border border-[#4B4C46] rounded-lg text-white focus:border-[#D4BC6D] outline-none"
                 placeholder="0.00"
               />
@@ -1071,8 +1071,16 @@ const EditProductModal = ({ product, onClose, categories }) => {
       name: product.name,
       description: product.description,
       price: product.price,
+      min_price: product.min_price,
       stock: product.stock,
-      category_id: product.category?.id,
+      weight: product.weight,
+      size: product.size,
+      material: product.material,
+      profit_usa: product.profit_usa,
+      profit_international: product.profit_international,
+      platform: product.platform,
+      category_id: product.category?.id || product.category_id,
+      sub_category_id: product.sub_category_id,
     },
   });
 
@@ -1109,6 +1117,8 @@ const EditProductModal = ({ product, onClose, categories }) => {
       : []
   );
   const [image, setImage] = useState(null);
+  const [icon, setIcon] = useState(null);
+  const [sizeChart, setSizeChart] = useState(null);
 
   const mutation = useMutation({
     mutationFn: (data) =>
@@ -1125,7 +1135,7 @@ const EditProductModal = ({ product, onClose, categories }) => {
   const onSubmit = (data) => {
     const formData = new FormData();
     Object.keys(data).forEach((key) => {
-      if (key !== "colors") {
+      if (key !== "colors" && key !== "icon" && key !== "size_chart") {
         formData.append(key, data[key]);
       }
     });
@@ -1141,22 +1151,55 @@ const EditProductModal = ({ product, onClose, categories }) => {
       formData.append("image", image);
     }
 
+    // Handle product icon file upload
+    if (icon) {
+      formData.append("icon", icon);
+    }
+
+    // Handle size chart file upload
+    if (sizeChart) {
+      formData.append("size_chart", sizeChart);
+    }
+
     mutation.mutate(formData);
   };
 
   const colorOptions = [
-    { label: "Red", value: "red", color: "#FF0000" },
-    { label: "Blue", value: "blue", color: "#0000FF" },
-    { label: "Green", value: "green", color: "#008000" },
     { label: "Black", value: "black", color: "#000000" },
+    { label: "Black Beauty", value: "black beauty", color: "#1C1C1C" },
     { label: "White", value: "white", color: "#FFFFFF" },
+    { label: "Light Gray", value: "light gray", color: "#D3D3D3" },
+    { label: "Dark Gray", value: "dark gray", color: "#A9A9A9" },
+    { label: "Pirate Gray", value: "pirate gray", color: "#828282" },
+    { label: "Stone Gray", value: "stone gray", color: "#8B8C89" },
+    { label: "Oat Gray", value: "oat gray", color: "#CCC5B9" },
+    { label: "Carbon Gray", value: "carbon gray", color: "#545454" },
+    { label: "Sand", value: "sand", color: "#C2B280" },
+    { label: "Sand Color", value: "sand color", color: "#C2B280" },
+    { label: "Milk Tea", value: "milk tea", color: "#DDB892" },
+    { label: "Light Apricot", value: "light apricot", color: "#FDD5B1" },
+    { label: "Honey Peach", value: "honey peach", color: "#FFB97B" },
     { label: "Yellow", value: "yellow", color: "#FFFF00" },
+    { label: "Brown", value: "brown", color: "#8B4513" },
+    { label: "Gray Camel", value: "gray camel", color: "#C1B6A4" },
+    { label: "Dark Red", value: "dark red", color: "#8B0000" },
+    { label: "Watermelon Red", value: "watermelon red", color: "#FC6C85" },
     { label: "Purple", value: "purple", color: "#800080" },
+    { label: "Purple Haze", value: "purple haze", color: "#9F00C5" },
+    { label: "Blue", value: "blue", color: "#0000FF" },
+    { label: "Dark Blue", value: "dark blue", color: "#000080" },
+    { label: "Navy", value: "navy", color: "#000080" },
+    { label: "Colorful Blue", value: "colorful blue", color: "#3A75C4" },
+    { label: "Dark Green", value: "dark green", color: "#006400" },
+    { label: "Blackish Green", value: "blackish green", color: "#1C352D" },
+    { label: "Gray Green", value: "gray green", color: "#A8B2A1" },
+    // legacy and fallback colors
+    { label: "Red", value: "red", color: "#FF0000" },
+    { label: "Green", value: "green", color: "#008000" },
     { label: "Orange", value: "orange", color: "#FFA500" },
     { label: "Pink", value: "pink", color: "#FFC0CB" },
     { label: "Gray", value: "gray", color: "#808080" },
     { label: "Brown", value: "brown", color: "#A52A2A" },
-    { label: "Navy", value: "navy", color: "#000080" },
   ];
 
   return (
@@ -1165,18 +1208,82 @@ const EditProductModal = ({ product, onClose, categories }) => {
         <h3 className="text-2xl font-bold text-[#D4BC6D] mb-6">Edit Product</h3>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-          {/* Product Name */}
+          {/* Product Name and Category */}
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-white font-medium mb-2">
+                Product Name *
+              </label>
+              <input
+                {...register("name", { required: "Product name is required" })}
+                className="w-full p-3 bg-[#282828] border border-[#4B4C46] rounded-lg text-white focus:border-[#D4BC6D] outline-none"
+                placeholder="Enter product name"
+              />
+              {errors.name && (
+                <p className="text-red-500 text-sm mt-1">{errors.name.message}</p>
+              )}
+            </div>
+            
+            <div>
+              <label className="block text-white font-medium mb-2">
+                Category *
+              </label>
+              <select
+                {...register("category_id", { required: "Category is required" })}
+                className="w-full p-3 bg-[#282828] border border-[#4B4C46] rounded-lg text-white focus:border-[#D4BC6D] outline-none"
+              >
+                <option value="">Select Category</option>
+                {categories?.map((category) => (
+                  <option key={category.id} value={category.id}>
+                    {category.name}
+                  </option>
+                ))}
+              </select>
+              {errors.category_id && (
+                <p className="text-red-500 text-sm mt-1">
+                  {errors.category_id.message}
+                </p>
+              )}
+            </div>
+          </div>
+
+          {/* Sub Category */}
           <div>
             <label className="block text-white font-medium mb-2">
-              Product Name
+              Sub Category
+            </label>
+            <select
+              {...register("sub_category_id")}
+              className="w-full p-3 bg-[#282828] border border-[#4B4C46] rounded-lg text-white focus:border-[#D4BC6D] outline-none"
+            >
+              <option value="">Select Sub Category</option>
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+              <option value="4">4</option>
+              <option value="5">5</option>
+            </select>
+          </div>
+
+          {/* Min Price */}
+          <div>
+            <label className="block text-white font-medium mb-2">
+              Min Price *
             </label>
             <input
-              {...register("name", { required: "Product name is required" })}
+              type="number"
+              step="0.01"
+              {...register("min_price", {
+                required: "Min price is required",
+                min: 0,
+              })}
               className="w-full p-3 bg-[#282828] border border-[#4B4C46] rounded-lg text-white focus:border-[#D4BC6D] outline-none"
-              placeholder="Enter product name"
+              placeholder="0.00"
             />
-            {errors.name && (
-              <p className="text-red-500 text-sm mt-1">{errors.name.message}</p>
+            {errors.min_price && (
+              <p className="text-red-500 text-sm mt-1">
+                {errors.min_price.message}
+              </p>
             )}
           </div>
 
@@ -1235,6 +1342,7 @@ const EditProductModal = ({ product, onClose, categories }) => {
             </div>
           </div>
 
+          {/* Weight */}
           <div>
             <label className="block text-white font-medium mb-2">Weight</label>
             <input
@@ -1244,29 +1352,6 @@ const EditProductModal = ({ product, onClose, categories }) => {
             />
           </div>
 
-          {/* Category */}
-          <div>
-            <label className="block text-white font-medium mb-2">
-              Category
-            </label>
-            <select
-              {...register("category_id", { required: "Category is required" })}
-              className="w-full p-3 bg-[#282828] border border-[#4B4C46] rounded-lg text-white focus:border-[#D4BC6D] outline-none"
-            >
-              <option value="">Select Category</option>
-              {categories?.map((category) => (
-                <option key={category.id} value={category.id}>
-                  {category.name}
-                </option>
-              ))}
-            </select>
-            {errors.category_id && (
-              <p className="text-red-500 text-sm mt-1">
-                {errors.category_id.message}
-              </p>
-            )}
-          </div>
-
           {/* Colors */}
           <div>
             <label className="block text-white font-medium mb-2">
@@ -1274,79 +1359,7 @@ const EditProductModal = ({ product, onClose, categories }) => {
             </label>
             <Select
               isMulti
-              options={[
-                { label: "Black", value: "black", color: "#000000" },
-                {
-                  label: "Black Beauty",
-                  value: "black beauty",
-                  color: "#1C1C1C",
-                },
-                { label: "White", value: "white", color: "#FFFFFF" },
-                { label: "Light Gray", value: "light gray", color: "#D3D3D3" },
-                { label: "Dark Gray", value: "dark gray", color: "#A9A9A9" },
-                {
-                  label: "Pirate Gray",
-                  value: "pirate gray",
-                  color: "#828282",
-                },
-                { label: "Stone Gray", value: "stone gray", color: "#8B8C89" },
-                { label: "Oat Gray", value: "oat gray", color: "#CCC5B9" },
-                {
-                  label: "Carbon Gray",
-                  value: "carbon gray",
-                  color: "#545454",
-                },
-                { label: "Sand", value: "sand", color: "#C2B280" },
-                { label: "Sand Color", value: "sand color", color: "#C2B280" },
-                { label: "Milk Tea", value: "milk tea", color: "#DDB892" },
-                {
-                  label: "Light Apricot",
-                  value: "light apricot",
-                  color: "#FDD5B1",
-                },
-                {
-                  label: "Honey Peach",
-                  value: "honey peach",
-                  color: "#FFB97B",
-                },
-                { label: "Yellow", value: "yellow", color: "#FFFF00" },
-                { label: "Brown", value: "brown", color: "#8B4513" },
-                { label: "Gray Camel", value: "gray camel", color: "#C1B6A4" },
-                { label: "Dark Red", value: "dark red", color: "#8B0000" },
-                {
-                  label: "Watermelon Red",
-                  value: "watermelon red",
-                  color: "#FC6C85",
-                },
-                { label: "Purple", value: "purple", color: "#800080" },
-                {
-                  label: "Purple Haze",
-                  value: "purple haze",
-                  color: "#9F00C5",
-                },
-                { label: "Blue", value: "blue", color: "#0000FF" },
-                { label: "Dark Blue", value: "dark blue", color: "#000080" },
-                { label: "Navy", value: "navy", color: "#000080" },
-                {
-                  label: "Colorful Blue",
-                  value: "colorful blue",
-                  color: "#3A75C4",
-                },
-                { label: "Dark Green", value: "dark green", color: "#006400" },
-                {
-                  label: "Blackish Green",
-                  value: "blackish green",
-                  color: "#1C352D",
-                },
-                { label: "Gray Green", value: "gray green", color: "#A8B2A1" },
-                // legacy and fallback colors
-                { label: "Red", value: "red", color: "#FF0000" },
-                { label: "Green", value: "green", color: "#008000" },
-                { label: "Orange", value: "orange", color: "#FFA500" },
-                { label: "Pink", value: "pink", color: "#FFC0CB" },
-                { label: "Gray", value: "gray", color: "#808080" },
-                { label: "Brown", value: "brown", color: "#A52A2A" },
-              ].map((opt) => ({
+              options={colorOptions.map((opt) => ({
                 ...opt,
                 label: (
                   <div className="flex items-center gap-2">
@@ -1389,21 +1402,151 @@ const EditProductModal = ({ product, onClose, categories }) => {
             />
           </div>
 
-          {/* Current Image Preview */}
-          {product.image && (
+          {/* Product Icon and Product Size Chart */}
+          <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="block text-white font-medium mb-2">
-                Current Image
+                Product Icon
               </label>
-              <div className="w-32 h-32 bg-[#282828] rounded-lg overflow-hidden">
-                <img
-                  src={`https://admin.hometownheroagency.com/storage/app/public/${product.image}`}
-                  alt={product.name}
-                  className="w-full h-full object-cover"
-                />
-              </div>
+              <input
+                type="file"
+                accept="image/*"
+                onChange={(e) => setIcon(e.target.files[0])}
+                className="w-full p-3 bg-[#282828] border border-[#4B4C46] rounded-lg text-white focus:border-[#D4BC6D] outline-none"
+              />
             </div>
-          )}
+            
+            <div>
+              <label className="block text-white font-medium mb-2">
+                Product Size Chart
+              </label>
+              <input
+                type="file"
+                accept="image/*"
+                onChange={(e) => setSizeChart(e.target.files[0])}
+                className="w-full p-3 bg-[#282828] border border-[#4B4C46] rounded-lg text-white focus:border-[#D4BC6D] outline-none"
+              />
+            </div>
+          </div>
+
+          {/* Size and Material */}
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-white font-medium mb-2">
+                Size
+              </label>
+              <textarea
+                {...register("size")}
+                rows="3"
+                className="w-full p-3 bg-[#282828] border border-[#4B4C46] rounded-lg text-white focus:border-[#D4BC6D] outline-none"
+                placeholder="Enter available sizes"
+              />
+            </div>
+            
+            <div>
+              <label className="block text-white font-medium mb-2">
+                Material
+              </label>
+              <textarea
+                {...register("material")}
+                rows="3"
+                className="w-full p-3 bg-[#282828] border border-[#4B4C46] rounded-lg text-white focus:border-[#D4BC6D] outline-none"
+                placeholder="Enter material details"
+              />
+            </div>
+          </div>
+
+          {/* Profit Share USA and International */}
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-white font-medium mb-2">
+                Profit Share USA
+              </label>
+              <input
+                type="number"
+                step="0.01"
+                {...register("profit_usa")}
+                className="w-full p-3 bg-[#282828] border border-[#4B4C46] rounded-lg text-white focus:border-[#D4BC6D] outline-none"
+                placeholder="0.00"
+              />
+            </div>
+            
+            <div>
+              <label className="block text-white font-medium mb-2">
+                Profit Share International
+              </label>
+              <input
+                type="number"
+                step="0.01"
+                {...register("profit_international")}
+                className="w-full p-3 bg-[#282828] border border-[#4B4C46] rounded-lg text-white focus:border-[#D4BC6D] outline-none"
+                placeholder="0.00"
+              />
+            </div>
+          </div>
+
+          {/* Platform */}
+          <div>
+            <label className="block text-white font-medium mb-2">
+              Platform
+            </label>
+            <input
+              {...register("platform")}
+              className="w-full p-3 bg-[#282828] border border-[#4B4C46] rounded-lg text-white focus:border-[#D4BC6D] outline-none"
+              placeholder="Enter platform details"
+            />
+          </div>
+
+          {/* Current Images Preview */}
+          <div className="grid grid-cols-3 gap-4">
+            {/* Current Product Image */}
+            {product.image && (
+              <div>
+                <label className="block text-white font-medium mb-2">
+                  Current Product Image
+                </label>
+                <div className="w-32 h-32 bg-[#282828] rounded-lg overflow-hidden">
+                  <img
+                    src={`https://admin.hometownheroagency.com/storage/app/public/${product.image}`}
+                    alt={product.name}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+              </div>
+            )}
+
+            {/* Current Product Icon */}
+            {product.icon && (
+              <div>
+                <label className="block text-white font-medium mb-2">
+                  Current Product Icon
+                </label>
+                <div className="w-32 h-32 bg-[#282828] rounded-lg overflow-hidden">
+                  <img
+                    src={`https://admin.hometownheroagency.com/storage/app/public/${product.icon}`}
+                    alt={`${product.name} icon`}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+              </div>
+            )}
+
+            {/* Current Size Chart */}
+            {product.size_chart && (
+              <div>
+                <label className="block text-white font-medium mb-2">
+                  Current Size Chart
+                </label>
+                <div className="w-32 h-32 bg-[#282828] rounded-lg overflow-hidden">
+                  <img
+                    src={`https://admin.hometownheroagency.com/storage/app/public/${product.size_chart}`}
+                    alt={`${product.name} size chart`}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+              </div>
+            )}
+          </div>
 
           {/* New Image Upload */}
           <div>

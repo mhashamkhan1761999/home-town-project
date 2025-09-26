@@ -26,6 +26,7 @@ const MasterLayout = () => {
   const [isShow2, setIsShow2] = React.useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false);
 
+  console.log(user, "user")
   const profileImage = user?.profile_picture_url
     ? user.profile_picture_url
     : "/default.jpg";
