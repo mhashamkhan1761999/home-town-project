@@ -5,6 +5,13 @@ import { useQuery } from "@tanstack/react-query";
 import { getRequest } from "../api";
 import { useParams } from "react-router-dom";
 
+// Utility function to resolve escaped URLs
+const resolveUrl = (url) => {
+  if (!url || typeof url !== 'string') return url;
+  // Replace escaped forward slashes with regular forward slashes
+  return url.replace(/\\\//g, '/');
+};
+
 const StoreFront = () => {
   const { slug } = useParams();
   
@@ -175,10 +182,10 @@ const StoreFront = () => {
   const getBackgroundImage = () => {
     // First priority: athlete's cover photo
     if (athlete?.cover_photo_url) {
-      return athlete.cover_photo_url;
+      return resolveUrl(athlete.cover_photo_url);
     }
     if (athlete?.cover_photo) {
-      return athlete.cover_photo;
+      return resolveUrl(athlete.cover_photo);
     }
     
     // Second priority: sport-based image
@@ -208,8 +215,8 @@ const StoreFront = () => {
                 alt="athlete"
                 className="w-24 h-24 sm:w-32 sm:h-32 md:w-40 md:h-40 lg:w-48 lg:h-48 xl:w-60 xl:h-60 rounded-full border-4 border-[#D4BC6D] object-cover shadow-xl"
                 src={
-                  athlete?.profile_picture_url ||
-                  athlete?.profile_picture ||
+                  resolveUrl(athlete?.profile_picture_url) ||
+                  resolveUrl(athlete?.profile_picture) ||
                   "/default.jpg"
                 }
               />
