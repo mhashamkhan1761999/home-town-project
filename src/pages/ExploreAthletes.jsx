@@ -109,10 +109,11 @@ const ExploreAthletes = () => {
     }, [athletesData, searchTerm, selectedFilter, furiousAthletesData]);
 
     // Map filtered data to carousel format
-    const mapAthleteData = (athletes) => {
+    const mapAthleteData = (athletes, defaultImage = '/logo1.png') => {
+        console.log('Mapping athlete data:', athletes);
         return athletes.map((athlete) => {
-            const name = athlete?.store || athlete?.store_name || athlete?.email || '';
-            const image = athlete?.profile_picture_url || athlete?.profile_picture || '/question-mark.jpeg';
+            const name = athlete?.athlete_name || athlete?.store || athlete?.store_name || athlete?.email || '';
+            const image = athlete?.profile_picture_url || athlete?.profile_picture || defaultImage;
             const subTitle = athlete?.sport || athlete?.level_of_athlete || athlete?.role || '';
             const team = athlete?.team_name || '';
             const school = athlete?.school_name || '';
@@ -155,40 +156,53 @@ const ExploreAthletes = () => {
         });
     };
 
-    // Map API data to carousel format (Furious 5)
-    const furious5 = Array.isArray(furiousAthletesData)
-        ? mapAthleteData(furiousAthletesData.slice(0, 5))
-        : [
-            { name: '', image: '/question-mark.jpeg', about: 'Athlete details coming soon.', onCardClick: () => {} },
-            { name: '', image: '/question-mark.jpeg', about: 'Athlete details coming soon.', onCardClick: () => {} },
-            { name: '', image: '/question-mark.jpeg', about: 'Athlete details coming soon.', onCardClick: () => {} },
-            { name: '', image: '/question-mark.jpeg', about: 'Athlete details coming soon.', onCardClick: () => {} },
-            { name: '', image: '/question-mark.jpeg', about: 'Athlete details coming soon.', onCardClick: () => {} },
-        ];
+    // Map API data to carousel format (Furious 5) - use question-mark.jpeg as default
+    const furious5 = Array.isArray(furiousAthletesData) && furiousAthletesData.length > 0
+        ? mapAthleteData(furiousAthletesData.slice(0, 5), '/question-mark.jpeg')
+        : [];
+        
+    // Check if we should show TOP TALENT section
+    const shouldShowTopTalent = furious5.length > 0;
 
-    // Map API data to carousel format (Trending Athletes)
-    const trendingAthletes = Array.isArray(athletesData)
-        ? mapAthleteData(athletesData.slice(10, 15))
-        : [
-            { name: '', image: '/question-mark.jpeg', about: 'Athlete details coming soon.', isTrending: true, onCardClick: () => {} },
-            { name: '', image: '/question-mark.jpeg', about: 'Athlete details coming soon.', isTrending: true, onCardClick: () => {} },
-            { name: '', image: '/question-mark.jpeg', about: 'Athlete details coming soon.', isTrending: true, onCardClick: () => {} },
-            { name: '', image: '/question-mark.jpeg', about: 'Athlete details coming soon.', isTrending: true, onCardClick: () => {} },
-            { name: '', image: '/question-mark.jpeg', about: 'Athlete details coming soon.', isTrending: true, onCardClick: () => {} },
-        ];
+    // Map API data to carousel format (Trending Athletes) - always show exactly 5 athletes
+    const trendingAthletes = useMemo(() => {
+        if (!Array.isArray(athletesData) || athletesData.length === 0) {
+            return [];
+        }
+        
+        // Get athletes with badge_amount > 0, sorted by badge_amount (descending)
+        const athletesWithBadges = [...athletesData]
+            .filter(athlete => athlete?.badge_amount && athlete.badge_amount > 0)
+            .sort((a, b) => (b.badge_amount || 0) - (a.badge_amount || 0));
+            
+        // Get IDs of athletes with badges to avoid duplicates
+        const badgeAthleteIds = athletesWithBadges.map(athlete => athlete?.id);
+        
+        // Get remaining athletes (without badges or not already selected), sorted by creation date
+        const remainingAthletes = [...athletesData]
+            .filter(athlete => !badgeAthleteIds.includes(athlete?.id))
+            .sort((a, b) => {
+                // Sort by creation date (most recent first)
+                const dateA = new Date(a?.created_at || a?.createdAt || 0);
+                const dateB = new Date(b?.created_at || b?.createdAt || 0);
+                return dateB - dateA;
+            });
+        
+        // Combine: badge athletes + recent athletes to make exactly 5
+        const combinedAthletes = [
+            ...athletesWithBadges,
+            ...remainingAthletes
+        ].slice(0, 5);
+            
+        return mapAthleteData(combinedAthletes, '/question-mark.jpeg');
+    }, [athletesData]);
+    
+    // Check if we should show Trending Athletes section (only hide if no athletes exist at all)
+    const shouldShowTrending = Array.isArray(athletesData) && athletesData.length > 0;
+    const trendingAthletesToShow = trendingAthletes;
 
-    // Trending Athletes fallback if API returns none
-    const trendingFallback = [
-        { name: '', image: '/question-mark.jpeg', about: 'Athlete details coming soon.', isTrending: true, onCardClick: () => {} },
-        { name: '', image: '/question-mark.jpeg', about: 'Athlete details coming soon.', isTrending: true, onCardClick: () => {} },
-        { name: '', image: '/question-mark.jpeg', about: 'Athlete details coming soon.', isTrending: true, onCardClick: () => {} },
-        { name: '', image: '/question-mark.jpeg', about: 'Athlete details coming soon.', isTrending: true, onCardClick: () => {} },
-        { name: '', image: '/question-mark.jpeg', about: 'Athlete details coming soon.', isTrending: true, onCardClick: () => {} },
-    ];
-    const trendingAthletesToShow = trendingAthletes && trendingAthletes.length > 0 ? trendingAthletes : trendingFallback;
-
-    // Filtered results for display
-    const filteredResults = mapAthleteData(filteredAthletes);
+    // Filtered results for display (use logo1.png as default for badge system)
+    const filteredResults = mapAthleteData(filteredAthletes, '/logo1.png');
 
     // Get all athletes for "See More" section (excluding those in Furious 5 and Trending)
     const allAthletesForSeeMore = useMemo(() => {
@@ -196,7 +210,7 @@ const ExploreAthletes = () => {
         
         // Skip first 5 (Furious 5) and next 5 (Trending) = start from index 15
         const remainingAthletes = athletesData.slice(15);
-        return mapAthleteData(remainingAthletes);
+        return mapAthleteData(remainingAthletes, '/logo1.png');
     }, [athletesData]);
 
     // Pagination logic for "See More" section
@@ -282,7 +296,7 @@ const ExploreAthletes = () => {
                 </h1>
 
                 {/* Filter Buttons */}
-                <div className="w-full overflow-x-auto mb-10">
+                {/* <div className="w-full overflow-x-auto mb-10">
                     <div className="flex space-x-3 min-w-max md:justify-center">
                         {[
                             'All', 'Furious 5', 'Royal', 'Emerald', 'Diamond', 'Gold', 'Silver', 'Bronze', 'Trending'
@@ -298,13 +312,13 @@ const ExploreAthletes = () => {
                             </button>
                         ))}
                     </div>
-                </div>
+                </div> */}
 
                 {/* Filter & Search Row */}
                 <div className="w-full max-w-4xl px-2">
                     <div className="flex flex-col sm:flex-row items-center gap-4">
                         {/* Filters Button */}
-                        <button
+                        {/* <button
                             className="flex-shrink-0 w-full sm:w-auto flex items-center justify-center gap-x-2.5 px-5 py-3 rounded-full bg-[#2d2d2d] text-[#D4BC6D] font-semibold text-sm hover:bg-[#3a3a3a] transition"
                             type="button"
                         >
@@ -319,7 +333,7 @@ const ExploreAthletes = () => {
                                 <path d="M2 16H19" stroke="currentColor" strokeLinecap="round" strokeWidth="3" />
                             </svg>
                             <span>Filters</span>
-                        </button>
+                        </button> */}
 
                         {/* Search Input */}
                         <div className="relative w-full">
@@ -377,33 +391,40 @@ const ExploreAthletes = () => {
             )}
 
 
-            <section className='py-8 bg-black px-4 sm:px-6'>
-                <h1 className='text-4xl sm:text-5xl lg:text-[6.875rem] text-center capitalize font-bold bg-[linear-gradient(to_right,#d4bc6d,#57430d)] bg-clip-text text-transparent mb-6'>
-                    this month’s furious 5
-                </h1>
+            {/* Only show TOP TALENT section if we have furious athletes */}
+            {shouldShowTopTalent && (
+                <section className='py-8 bg-black px-4 sm:px-6'>
+                    <h1 className='text-4xl sm:text-5xl lg:text-[6.875rem] text-center capitalize font-bold bg-[linear-gradient(to_right,#d4bc6d,#57430d)] bg-clip-text text-transparent mb-6'>
+                        TOP TALENT
+                    </h1>
 
-                {/* Carousel Slider */}
-                {isFuriousLoading ? (
-                    <div className="flex justify-center items-center py-16">
-                        <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-[#d4bc6d]"></div>
-                    </div>
-                ) : (
+                    {/* Carousel Slider */}
+                    {isFuriousLoading ? (
+                        <div className="flex justify-center items-center py-16">
+                            <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-[#d4bc6d]"></div>
+                        </div>
+                    ) : (
+                        <CarouselSlider2
+                            data={furious5}
+                        />
+                    )}
+                </section>
+            )}
+
+
+
+            {/* Only show Trending Athletes section if we have athletes with badge_amount */}
+            {shouldShowTrending && (
+                <section className="py-8 bg-black px-4 sm:px-6">
+                    <h1 className="text-3xl sm:text-4xl lg:text-[5rem] text-center capitalize font-medium bg-[linear-gradient(to_right,#d4bc6d,#57430d)] bg-clip-text text-transparent mb-8 leading-normal">
+                        Trending Athletes
+                    </h1>
+
                     <CarouselSlider2
-                        data={furious5}
+                        data={trendingAthletesToShow}
                     />
-                )}
-            </section>
-
-
-
-            <section className="py-8 bg-black px-4 sm:px-6">
-                <h1 className="text-3xl sm:text-4xl lg:text-[5rem] text-center capitalize font-medium bg-[linear-gradient(to_right,#d4bc6d,#57430d)] bg-clip-text text-transparent mb-8 leading-normal">
-                    Trending Athletes
-                </h1>
-
-                <CarouselSlider2
-                    data={trendingAthletesToShow}
-                />
+                </section>
+            )}
 
                 {/* See More Button */}
                 {/* {!showSeeMore && allAthletesForSeeMore.length > 0 && (
@@ -420,7 +441,6 @@ const ExploreAthletes = () => {
                         </p>
                     </div>
                 )} */}
-            </section>
 
             {/* See More Athletes Section */}
             {showSeeMore && (
@@ -453,12 +473,21 @@ const ExploreAthletes = () => {
                                     <div
                                         key={athlete.id || index}
                                         onClick={athlete.onCardClick}
-                                        className="bg-gradient-to-br from-gray-900 to-black border border-gray-700 rounded-2xl p-6 hover:border-[#D4BC6D] transition-all duration-300 cursor-pointer group hover:scale-105 transform"
+                                        className="relative bg-cover bg-center bg-no-repeat border border-gray-700 rounded-2xl p-6 hover:border-[#D4BC6D] transition-all duration-300 cursor-pointer group hover:scale-105 transform overflow-hidden"
+                                        style={{backgroundImage: 'url(/bg-2.jpeg)'}}
                                     >
-                                        {/* Athlete Image */}
+                                        <div className="absolute inset-0 bg-black/40 rounded-2xl"></div>
+                                        <div className="relative z-10">
+                                        
+                                        {/* Athlete Name */}
+                                        <h3 className="text-white font-bold text-lg mb-4 text-center drop-shadow-lg">
+                                            {athlete.name || 'Athlete Name'}
+                                        </h3>
+
+                                        {/* Image Section */}
                                         <div className="relative mb-4 overflow-hidden rounded-xl">
                                             <img
-                                                src={athlete.image}
+                                                src={athlete.image || '/question-mark.jpeg'}
                                                 alt={athlete.name}
                                                 className="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-300"
                                                 onError={(e) => {
@@ -472,65 +501,18 @@ const ExploreAthletes = () => {
                                             )}
                                         </div>
 
-                                        {/* Athlete Info */}
-                                        <div className="space-y-2">
-                                            <h3 className="text-white font-bold text-lg group-hover:text-[#D4BC6D] transition-colors line-clamp-1">
-                                                {athlete.name || 'Athlete Name'}
-                                            </h3>
-                                            
-                                            {athlete.subTitle && (
-                                                <p className="text-gray-400 text-sm">
-                                                    {athlete.subTitle}
-                                                </p>
-                                            )}
-
-                                            {(athlete.team || athlete.school) && (
-                                                <p className="text-gray-500 text-xs">
-                                                    {athlete.team && athlete.school 
-                                                        ? `${athlete.team} • ${athlete.school}`
-                                                        : athlete.team || athlete.school
-                                                    }
-                                                </p>
-                                            )}
-
-                                            {(athlete.city || athlete.country) && (
-                                                <p className="text-gray-500 text-xs flex items-center gap-1">
-                                                    <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-                                                        <path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" />
-                                                    </svg>
-                                                    {athlete.city && athlete.country 
-                                                        ? `${athlete.city}, ${athlete.country}`
-                                                        : athlete.city || athlete.country
-                                                    }
-                                                </p>
-                                            )}
-
-                                            {athlete.rating > 0 && (
-                                                <div className="flex items-center gap-1 mt-2">
-                                                    <div className="flex">
-                                                        {[...Array(5)].map((_, i) => (
-                                                            <svg
-                                                                key={i}
-                                                                className={`w-4 h-4 ${i < athlete.rating ? 'text-[#D4BC6D]' : 'text-gray-600'}`}
-                                                                fill="currentColor"
-                                                                viewBox="0 0 20 20"
-                                                            >
-                                                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                                                            </svg>
-                                                        ))}
-                                                    </div>
-                                                    <span className="text-gray-400 text-xs ml-1">
-                                                        ({athlete.rating})
-                                                    </span>
-                                                </div>
-                                            )}
+                                        {/* Visit Store Front Button */}
+                                        <div className="flex justify-center">
+                                            <button 
+                                                className="bg-gradient-to-r from-[#D4BC6D] to-[#F4D03F] text-black font-bold py-3 px-6 rounded-full hover:from-[#F4D03F] hover:to-[#D4BC6D] transition-all duration-300 transform hover:scale-105 shadow-lg"
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    if (athlete.onCardClick) athlete.onCardClick();
+                                                }}
+                                            >
+                                                Visit Store Front
+                                            </button>
                                         </div>
-
-                                        {/* Click to view indicator */}
-                                        <div className="mt-4 pt-4 border-t border-gray-700">
-                                            <p className="text-[#D4BC6D] text-xs font-medium group-hover:text-white transition-colors">
-                                                Click to view store →
-                                            </p>
                                         </div>
                                     </div>
                                 ))}
@@ -729,17 +711,25 @@ const ExploreAthletes = () => {
                                     <div
                                         key={athlete.id || index}
                                         onClick={athlete.onCardClick}
-                                        className="bg-gradient-to-br from-gray-900 to-black border border-gray-700 rounded-2xl p-6 hover:border-[#D4BC6D] transition-all duration-300 cursor-pointer group hover:scale-105 transform"
+                                        className="relative bg-cover bg-center bg-no-repeat border border-gray-700 rounded-2xl p-6 hover:border-[#D4BC6D] transition-all duration-300 cursor-pointer group hover:scale-105 transform overflow-hidden"
+                                        style={{backgroundImage: 'url(/bg-2.jpeg)'}}
                                     >
-                                        {/* Athlete Image */}
-                                        {console.log(athlete?.image)}
+                                        <div className="absolute inset-0 bg-black/40 rounded-2xl"></div>
+                                        <div className="relative z-10">
+                                        
+                                        {/* Athlete Name */}
+                                        <h3 className="text-white font-bold text-lg mb-4 text-center drop-shadow-lg">
+                                            {athlete.name || 'Athlete Name'}
+                                        </h3>
+
+                                        {/* Image Section */}
                                         <div className="relative mb-4 overflow-hidden rounded-xl">
                                             <img
-                                                src={athlete.image}
+                                                src={athlete.image || '/logo1-bgremove.png'}
                                                 alt={athlete.name}
                                                 className="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-300"
                                                 onError={(e) => {
-                                                    e.target.src = '/question-mark.jpeg';
+                                                    e.target.src = '/logo1-bgremove.png';
                                                 }}
                                             />
                                             {athlete.isTrending && (
@@ -760,65 +750,18 @@ const ExploreAthletes = () => {
                                             </div>
                                         </div>
 
-                                        {/* Athlete Info */}
-                                        <div className="space-y-2">
-                                            <h3 className="text-white font-bold text-lg group-hover:text-[#D4BC6D] transition-colors line-clamp-1">
-                                                {athlete.name || 'Athlete Name'}
-                                            </h3>
-                                            
-                                            {athlete.subTitle && (
-                                                <p className="text-gray-400 text-sm">
-                                                    {athlete.subTitle}
-                                                </p>
-                                            )}
-
-                                            {(athlete.team || athlete.school) && (
-                                                <p className="text-gray-500 text-xs">
-                                                    {athlete.team && athlete.school 
-                                                        ? `${athlete.team} • ${athlete.school}`
-                                                        : athlete.team || athlete.school
-                                                    }
-                                                </p>
-                                            )}
-
-                                            {(athlete.city || athlete.country) && (
-                                                <p className="text-gray-500 text-xs flex items-center gap-1">
-                                                    <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-                                                        <path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" />
-                                                    </svg>
-                                                    {athlete.city && athlete.country 
-                                                        ? `${athlete.city}, ${athlete.country}`
-                                                        : athlete.city || athlete.country
-                                                    }
-                                                </p>
-                                            )}
-
-                                            {athlete.rating > 0 && (
-                                                <div className="flex items-center gap-1 mt-2">
-                                                    <div className="flex">
-                                                        {[...Array(5)].map((_, i) => (
-                                                            <svg
-                                                                key={i}
-                                                                className={`w-4 h-4 ${i < athlete.rating ? 'text-[#D4BC6D]' : 'text-gray-600'}`}
-                                                                fill="currentColor"
-                                                                viewBox="0 0 20 20"
-                                                            >
-                                                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                                                            </svg>
-                                                        ))}
-                                                    </div>
-                                                    <span className="text-gray-400 text-xs ml-1">
-                                                        ({athlete.rating})
-                                                    </span>
-                                                </div>
-                                            )}
+                                        {/* Visit Store Front Button */}
+                                        <div className="flex justify-center">
+                                            <button 
+                                                className="bg-gradient-to-r from-[#D4BC6D] to-[#F4D03F] text-black font-bold py-3 px-6 rounded-full hover:from-[#F4D03F] hover:to-[#D4BC6D] transition-all duration-300 transform hover:scale-105 shadow-lg"
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    if (athlete.onCardClick) athlete.onCardClick();
+                                                }}
+                                            >
+                                                Visit Store Front
+                                            </button>
                                         </div>
-
-                                        {/* Click to view indicator */}
-                                        <div className="mt-4 pt-4 border-t border-gray-700">
-                                            <p className="text-[#D4BC6D] text-xs font-medium group-hover:text-white transition-colors">
-                                                Click to view store →
-                                            </p>
                                         </div>
                                     </div>
                                 ))}

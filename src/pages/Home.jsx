@@ -333,38 +333,38 @@ const Home = () => {
             </section>
 
             {/* first section */}
-            <section className="bg-black min-h-screen flex flex-col items-center justify-center p-4 md:p-8">
+            {/* <section className="bg-black min-h-screen flex flex-col items-center justify-center p-4 md:p-8">
                 <CarouselSlider data={
                     [
                         {
                             name: "Coming Soon",
                             image: "/question-mark.jpeg",
-                            // rating: 5,
-                            // subTitle: "Seller",
+                            rating: 5,
+                            subTitle: "Seller",
                         },
                         {
                             name: "Coming Soon",
                             image: "/question-mark.jpeg",
-                            // rating: 5,
-                            // subTitle: "Seller",
+                            rating: 5,
+                            subTitle: "Seller",
                         },
                         {
                             name: "Coming Soon",
                             image: "/question-mark.jpeg",
-                            // rating: 5,
-                            // subTitle: "Seller",
+                            rating: 5,
+                            subTitle: "Seller",
                         },
                         {
                             name: "Coming Soon",
                             image: "/question-mark.jpeg",
-                            // rating: 5,
-                            // subTitle: "Seller",
+                            rating: 5,
+                            subTitle: "Seller",
                         },
                         {
                             name: "Coming Soon",
                             image: "/question-mark.jpeg",
-                            // rating: 5,
-                            // subTitle: "Seller",
+                            rating: 5,
+                            subTitle: "Seller",
                         },
                     ]
                 } />
@@ -377,20 +377,20 @@ const Home = () => {
                     The Furious 5 spotlights the top five earning athletes on our platform each month—those driving the highest NIL earnings share and setting the standard for success. Securing a spot isn’t just about recognition; it’s about proving you’re among the best and unlocking exclusive perks, elevated visibility, and a platform-wide spotlight on your brand. The Furious 5 rotates monthly, so who will rise, who will fall, and who will make it to the top? The race to the Furious 5 is on.
                 </p>
 
-                {/* <p className="text-base sm:text-lg md:text-xl text-center font-medium text-[#adadad] max-w-[95%] md:max-w-[1200px] mx-auto pb-8 md:pb-10">
+                <p className="text-base sm:text-lg md:text-xl text-center font-medium text-[#adadad] max-w-[95%] md:max-w-[1200px] mx-auto pb-8 md:pb-10">
                     Our top 5 earning athletes, leading in NIL. Members gain exclusive access to brand partnerships, priority NIL opportunities, and elevated exposure across the
                     <br className="hidden sm:block" />
                     platform. Our team reviews earnings monthly to ensure the top performers hold their place among the Furious 5.
-                </p> */}
+                </p>
 
-                {/* <h4 className="text-[1.8rem] sm:text-[2.5rem] md:text-[3.25rem] font-extrabold text-center bg-[linear-gradient(to_right,#d4bc6d,#57430d)] bg-clip-text text-transparent">
+                <h4 className="text-[1.8rem] sm:text-[2.5rem] md:text-[3.25rem] font-extrabold text-center bg-[linear-gradient(to_right,#d4bc6d,#57430d)] bg-clip-text text-transparent">
                     Athletes Partnered With
-                </h4> */}
+                </h4>
 
-                {/* <h2 className="text-[3.5rem] sm:text-[5rem] md:text-[8rem] font-semibold text-white text-center mb-8 sm:mb-12 mt-[-10px] sm:mt-[-30px]">
+                <h2 className="text-[3.5rem] sm:text-[5rem] md:text-[8rem] font-semibold text-white text-center mb-8 sm:mb-12 mt-[-10px] sm:mt-[-30px]">
                     10,023
-                </h2> */}
-            </section>
+                </h2>
+            </section> */}
 
 
 

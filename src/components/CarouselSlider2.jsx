@@ -144,6 +144,9 @@ const Card = ({
       onCardClick();
     }
   };
+        if(!image){
+          image="/question-mark.png"
+        }
 
   return (
     <div
