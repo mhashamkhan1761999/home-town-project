@@ -225,7 +225,7 @@ const Dashboard = () => {
       <div className="flex flex-col lg:flex-row gap-2 sm:gap-4 mb-3 sm:mb-4">
         <div className="w-full lg:w-[27.313rem] card-gradient border-[1.5px] py-2 sm:py-4 lg:py-8 px-1.5 sm:px-3 lg:px-6 rounded-3xl overflow-hidden">
           <div className="">
-            <div className="flex justify-end items-center mb-2">
+            {/* <div className="flex justify-end items-center mb-2">
               <div className="card-gradient border border-gray-600 rounded-full">
                 <select
                   className="bg-transparent text-white p-1 sm:p-1.5 lg:p-3 outline-none text-xs sm:text-sm font-bold cursor-pointer"
@@ -254,12 +254,12 @@ const Dashboard = () => {
                   </option>
                 </select>
               </div>
-            </div>
+            </div> */}
           </div>
           <div className="flex flex-col w-full gap-2 sm:gap-3 lg:gap-6">
             <div className="">
               <p className="font-bold text-xs sm:text-sm lg:text-xl text-[#838383]">
-                Total Storefront Revenue
+                Total Storefront Profit
               </p>
               <h1 className="text-lg sm:text-xl lg:text-[4.563rem] font-extrabold bg-[linear-gradient(to_right,#d4bc6d,#57430d)] bg-clip-text text-transparent leading-[1]">
                 {console.log(dashboardStats)}
@@ -268,14 +268,14 @@ const Dashboard = () => {
                   : `$${dashboardStats?.total_revunue ?? "0"}`}
               </h1>
             </div>
-            <div className="">
+            {/* <div className="">
               <p className="font-bold text-xs sm:text-sm lg:text-xl text-[#838383]">
                 Total Sales
               </p>
               <h1 className="text-lg sm:text-xl lg:text-[4.563rem] font-extrabold bg-[linear-gradient(to_right,#d4bc6d,#57430d)] bg-clip-text text-transparent leading-[1]">
                 ${parseFloat(dashboardStats?.total_sale || dashboardStats?.total_revunue || "0").toFixed(2)}
               </h1>
-            </div>
+            </div> */}
             <div className="">
               <p className="font-bold text-xs sm:text-sm lg:text-xl text-[#838383]">
                 Total Cashouts
@@ -286,7 +286,7 @@ const Dashboard = () => {
                   : `$${dashboardStats?.total_cashout ?? "0"}`}
               </h1>
             </div>
-            <div className="">
+            {/* <div className="">
               <p className="font-bold text-xs sm:text-sm lg:text-xl text-[#838383]">
                 Storefront Views
               </p>
@@ -295,7 +295,7 @@ const Dashboard = () => {
                   ? "Loading..."
                   : `${dashboardStats?.total_views ?? "0"}`}
               </h1>
-            </div>
+            </div> */}
             <div className="text-center">
             </div>
           </div>
@@ -570,6 +570,7 @@ const Dashboard = () => {
           isOpen={isCashOutModalOpen}
           onClose={() => setIsCashOutModalOpen(false)}
           user={user}
+          dashboardStats={dashboardStats}
         />
       )}
     </div>
@@ -577,10 +578,9 @@ const Dashboard = () => {
 };
 
 // Cash Out Modal Component
-const CashOutModal = ({ isOpen, onClose, user }) => {
+const CashOutModal = ({ isOpen, onClose, user , dashboardStats }) => {
   // Convert user.total_sale to number for the cashout amount
-  const totalSaleAmount = parseFloat(user?.total_sale);
-
+  const totalSaleAmount = parseFloat(dashboardStats?.total_revunue - dashboardStats?.total_cashout);
   const cashOutMutation = useMutation({
     mutationFn: (data) => postRequest("/store-cashout", data),
     onSuccess: (response) => {
@@ -604,8 +604,8 @@ const CashOutModal = ({ isOpen, onClose, user }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (totalSaleAmount <= 0) {
-      toast.error("No funds available for withdrawal");
+    if (totalSaleAmount < 5) {
+      toast.error("Minimum store revenue has to be $5 to cashout");
       return;
     }
 
@@ -657,7 +657,10 @@ const CashOutModal = ({ isOpen, onClose, user }) => {
               </div>
             </div>
             <p className="text-xs text-gray-400 mt-2">
-              A  2.9% + 30¢ fee will be deducted by our cashout processor.
+              A 2.9% + $1.30 fee will be deducted out of our cashout processor
+            </p>
+            <p className="text-xs text-gray-400 mt-2">
+              minimum store revenue has to be $5 to cashout
             </p>
           </div>
 
@@ -677,7 +680,7 @@ const CashOutModal = ({ isOpen, onClose, user }) => {
             >
               {cashOutMutation.isPending
                 ? "Processing..."
-                : `Request Cash Out $${totalSaleAmount.toFixed(2)}`}
+                : `Request Cash Out`}
             </button>
           </div>
         </form>

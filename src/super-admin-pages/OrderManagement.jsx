@@ -321,7 +321,7 @@ const OrderManagement = () => {
                       </td>
                       <td className="px-3 sm:px-6 py-4 whitespace-nowrap">
                         <div className="text-xs sm:text-sm font-medium text-white">
-                          {order?.items[0].product.athlete?.store_name || 'N/A'}
+                          {order?.items?.[0]?.product?.athlete?.store_name || 'N/A'}
                         </div>
                       </td>
                       <td className="px-3 sm:px-6 py-4 whitespace-nowrap">
@@ -413,7 +413,7 @@ const OrderManagement = () => {
                 </div>
                 
                 <div className="space-y-1 mb-3 text-xs text-gray-300">
-                  <div><span className="text-gray-400">Shop:</span> {order?.items[0].product.athlete?.store_name || 'N/A'}</div>
+                  <div><span className="text-gray-400">Shop:</span> {order?.items?.[0]?.product?.athlete?.store_name || 'N/A'}</div>
                   <div><span className="text-gray-400">Category:</span> {order?.items?.[0]?.product?.category?.name || 'N/A'}</div>
                   <div><span className="text-gray-400">Athlete:</span> {order?.items?.[0]?.product?.athlete?.athlete_name || order?.items?.[0]?.product?.athlete?.store_name || 'N/A'}</div>
                 </div>
