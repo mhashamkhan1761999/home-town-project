@@ -426,6 +426,150 @@ const ExploreAthletes = () => {
                 </section>
             )}
 
+            {/* All Athletes Section */}
+            {Array.isArray(athletesData) && athletesData.length > 0 && (
+                <section className="py-12 bg-black px-4 sm:px-6">
+                    <div className="max-w-7xl mx-auto">
+                        <h1 className="text-3xl sm:text-4xl lg:text-[4rem] text-center capitalize font-medium bg-[linear-gradient(to_right,#d4bc6d,#57430d)] bg-clip-text text-transparent mb-12 leading-normal">
+                            All Athletes
+                        </h1>
+
+                        {/* Athletes Cards Grid */}
+                        {isAthletesLoading ? (
+                            <div className="text-center text-white py-8">
+                                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#D4BC6D] mx-auto mb-4"></div>
+                                <p>Loading athletes...</p>
+                            </div>
+                        ) : allAthletesForSeeMore.length > 0 ? (
+                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 mb-12">
+                                {allAthletesForSeeMore.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage).map((athlete, index) => (
+                                    <div
+                                        key={athlete.id || index}
+                                        onClick={athlete.onCardClick}
+                                        className="relative bg-cover bg-center bg-no-repeat border border-gray-700 rounded-2xl p-8 hover:border-[#D4BC6D] transition-all duration-300 cursor-pointer group hover:scale-105 transform overflow-hidden h-96 sm:h-80 md:h-96 lg:h-[420px]"
+                                        style={{backgroundImage: 'url(/bg-2.jpeg)'}}
+                                    >
+                                        <div className="absolute inset-0 bg-black/40 rounded-2xl"></div>
+                                        <div className="relative z-10">
+                                        
+                                        {/* Athlete Name */}
+                                        <h3 className="text-white font-bold text-xl sm:text-lg md:text-xl lg:text-2xl mb-6 text-center drop-shadow-lg">
+                                            {athlete.name || 'Athlete Name'}
+                                        </h3>
+
+                                        {/* Image Section */}
+                                        <div className="relative mb-6 overflow-hidden rounded-xl">
+                                            <img
+                                                src={athlete.image || '/logo1.png'}
+                                                alt={athlete.name}
+                                                className="w-full h-56 sm:h-48 md:h-56 lg:h-64 object-cover group-hover:scale-110 transition-transform duration-300"
+                                                onError={(e) => {
+                                                    e.target.src = '/logo1.png';
+                                                }}
+                                            />
+                                        </div>
+
+                                        {/* Visit Store Front Button */}
+                                        <div className="flex justify-center">
+                                            <button 
+                                                className="bg-gradient-to-r from-[#D4BC6D] to-[#F4D03F] text-black font-bold py-4 px-8 text-lg sm:py-3 sm:px-6 sm:text-base rounded-full hover:from-[#F4D03F] hover:to-[#D4BC6D] transition-all duration-300 transform hover:scale-105 shadow-lg"
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    if (athlete.onCardClick) athlete.onCardClick();
+                                                }}
+                                            >
+                                                Visit Store Front
+                                            </button>
+                                        </div>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        ) : (
+                            <div className="text-center text-white py-8">
+                                <p className="text-lg">No athletes available.</p>
+                            </div>
+                        )}
+
+                        {/* Pagination */}
+                        {Math.ceil(allAthletesForSeeMore.length / itemsPerPage) > 1 && (
+                            <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+                                {/* Page Info */}
+                                <div className="text-gray-400 text-sm">
+                                    Showing {((currentPage - 1) * itemsPerPage) + 1} to {Math.min(currentPage * itemsPerPage, allAthletesForSeeMore.length)} of {allAthletesForSeeMore.length} athletes
+                                </div>
+
+                                {/* Pagination Controls */}
+                                <div className="flex items-center space-x-2">
+                                    {/* Previous Button */}
+                                    <button
+                                        onClick={() => handlePageChange(currentPage - 1)}
+                                        disabled={currentPage === 1}
+                                        className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                                            currentPage === 1
+                                                ? 'bg-gray-800 text-gray-500 cursor-not-allowed'
+                                                : 'bg-gray-700 text-white hover:bg-[#D4BC6D] hover:text-black'
+                                        }`}
+                                    >
+                                        Previous
+                                    </button>
+
+                                    {/* Page Numbers */}
+                                    <div className="flex space-x-1">
+                                        {[...Array(Math.ceil(allAthletesForSeeMore.length / itemsPerPage))].map((_, index) => {
+                                            const pageNumber = index + 1;
+                                            const isCurrentPage = pageNumber === currentPage;
+                                            const showPage = 
+                                                pageNumber === 1 ||
+                                                pageNumber === Math.ceil(allAthletesForSeeMore.length / itemsPerPage) ||
+                                                (pageNumber >= currentPage - 1 && pageNumber <= currentPage + 1);
+                                            
+                                            if (!showPage) {
+                                                if (pageNumber === currentPage - 2 || pageNumber === currentPage + 2) {
+                                                    return (
+                                                        <span key={pageNumber} className="px-2 text-gray-500">
+                                                            ...
+                                                        </span>
+                                                    );
+                                                }
+                                                return null;
+                                            }
+                                            
+                                            return (
+                                                <button
+                                                    key={pageNumber}
+                                                    onClick={() => handlePageChange(pageNumber)}
+                                                    className={`px-3 py-1 rounded text-sm font-medium transition-all ${
+                                                        isCurrentPage
+                                                            ? 'bg-[#D4BC6D] text-black'
+                                                            : 'bg-gray-700 text-white hover:bg-[#D4BC6D] hover:text-black'
+                                                    }`}
+                                                >
+                                                    {pageNumber}
+                                                </button>
+                                            );
+                                        })}
+                                    </div>
+
+                                    {/* Next Button */}
+                                    <button
+                                        onClick={() => handlePageChange(currentPage + 1)}
+                                        disabled={currentPage === Math.ceil(allAthletesForSeeMore.length / itemsPerPage)}
+                                        className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                                            currentPage === Math.ceil(allAthletesForSeeMore.length / itemsPerPage)
+                                                ? 'bg-gray-800 text-gray-500 cursor-not-allowed'
+                                                : 'bg-gray-700 text-white hover:bg-[#D4BC6D] hover:text-black'
+                                        }`}
+                                    >
+                                        Next
+                                    </button>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                </section>
+            )}
+
                 {/* See More Button */}
                 {/* {!showSeeMore && allAthletesForSeeMore.length > 0 && (
                     <div className="text-center mt-12 mb-8">
@@ -468,28 +612,28 @@ const ExploreAthletes = () => {
                                 <p>Loading athletes...</p>
                             </div>
                         ) : paginatedAthletes.length > 0 ? (
-                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-6 mb-12">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 mb-12">
                                 {paginatedAthletes.map((athlete, index) => (
                                     <div
                                         key={athlete.id || index}
                                         onClick={athlete.onCardClick}
-                                        className="relative bg-cover bg-center bg-no-repeat border border-gray-700 rounded-2xl p-6 hover:border-[#D4BC6D] transition-all duration-300 cursor-pointer group hover:scale-105 transform overflow-hidden"
+                                        className="relative bg-cover bg-center bg-no-repeat border border-gray-700 rounded-2xl p-8 hover:border-[#D4BC6D] transition-all duration-300 cursor-pointer group hover:scale-105 transform overflow-hidden h-96 sm:h-80 md:h-96 lg:h-[420px]"
                                         style={{backgroundImage: 'url(/bg-2.jpeg)'}}
                                     >
                                         <div className="absolute inset-0 bg-black/40 rounded-2xl"></div>
                                         <div className="relative z-10">
                                         
                                         {/* Athlete Name */}
-                                        <h3 className="text-white font-bold text-lg mb-4 text-center drop-shadow-lg">
+                                        <h3 className="text-white font-bold text-xl sm:text-lg md:text-xl lg:text-2xl mb-6 text-center drop-shadow-lg">
                                             {athlete.name || 'Athlete Name'}
                                         </h3>
 
                                         {/* Image Section */}
-                                        <div className="relative mb-4 overflow-hidden rounded-xl">
+                                        <div className="relative mb-6 overflow-hidden rounded-xl">
                                             <img
                                                 src={athlete.image || '/question-mark.jpeg'}
                                                 alt={athlete.name}
-                                                className="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-300"
+                                                className="w-full h-56 sm:h-48 md:h-56 lg:h-64 object-cover group-hover:scale-110 transition-transform duration-300"
                                                 onError={(e) => {
                                                     e.target.src = '/question-mark.jpeg';
                                                 }}
@@ -504,7 +648,7 @@ const ExploreAthletes = () => {
                                         {/* Visit Store Front Button */}
                                         <div className="flex justify-center">
                                             <button 
-                                                className="bg-gradient-to-r from-[#D4BC6D] to-[#F4D03F] text-black font-bold py-3 px-6 rounded-full hover:from-[#F4D03F] hover:to-[#D4BC6D] transition-all duration-300 transform hover:scale-105 shadow-lg"
+                                                className="bg-gradient-to-r from-[#D4BC6D] to-[#F4D03F] text-black font-bold py-4 px-8 text-lg sm:py-3 sm:px-6 sm:text-base rounded-full hover:from-[#F4D03F] hover:to-[#D4BC6D] transition-all duration-300 transform hover:scale-105 shadow-lg"
                                                 onClick={(e) => {
                                                     e.stopPropagation();
                                                     if (athlete.onCardClick) athlete.onCardClick();
@@ -706,28 +850,28 @@ const ExploreAthletes = () => {
                                 <p>Loading {selectedTier} athletes...</p>
                             </div>
                         ) : paginatedTierAthletes.length > 0 ? (
-                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-6 mb-12">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 mb-12">
                                 {paginatedTierAthletes.map((athlete, index) => (
                                     <div
                                         key={athlete.id || index}
                                         onClick={athlete.onCardClick}
-                                        className="relative bg-cover bg-center bg-no-repeat border border-gray-700 rounded-2xl p-6 hover:border-[#D4BC6D] transition-all duration-300 cursor-pointer group hover:scale-105 transform overflow-hidden"
+                                        className="relative bg-cover bg-center bg-no-repeat border border-gray-700 rounded-2xl p-8 hover:border-[#D4BC6D] transition-all duration-300 cursor-pointer group hover:scale-105 transform overflow-hidden h-96 sm:h-80 md:h-96 lg:h-[420px]"
                                         style={{backgroundImage: 'url(/bg-2.jpeg)'}}
                                     >
                                         <div className="absolute inset-0 bg-black/40 rounded-2xl"></div>
                                         <div className="relative z-10">
                                         
                                         {/* Athlete Name */}
-                                        <h3 className="text-white font-bold text-lg mb-4 text-center drop-shadow-lg">
+                                        <h3 className="text-white font-bold text-xl sm:text-lg md:text-xl lg:text-2xl mb-6 text-center drop-shadow-lg">
                                             {athlete.name || 'Athlete Name'}
                                         </h3>
 
                                         {/* Image Section */}
-                                        <div className="relative mb-4 overflow-hidden rounded-xl">
+                                        <div className="relative mb-6 overflow-hidden rounded-xl">
                                             <img
                                                 src={athlete.image || '/logo1-bgremove.png'}
                                                 alt={athlete.name}
-                                                className="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-300"
+                                                className="w-full h-56 sm:h-48 md:h-56 lg:h-64 object-cover group-hover:scale-110 transition-transform duration-300"
                                                 onError={(e) => {
                                                     e.target.src = '/logo1-bgremove.png';
                                                 }}
@@ -753,7 +897,7 @@ const ExploreAthletes = () => {
                                         {/* Visit Store Front Button */}
                                         <div className="flex justify-center">
                                             <button 
-                                                className="bg-gradient-to-r from-[#D4BC6D] to-[#F4D03F] text-black font-bold py-3 px-6 rounded-full hover:from-[#F4D03F] hover:to-[#D4BC6D] transition-all duration-300 transform hover:scale-105 shadow-lg"
+                                                className="bg-gradient-to-r from-[#D4BC6D] to-[#F4D03F] text-black font-bold py-4 px-8 text-lg sm:py-3 sm:px-6 sm:text-base rounded-full hover:from-[#F4D03F] hover:to-[#D4BC6D] transition-all duration-300 transform hover:scale-105 shadow-lg"
                                                 onClick={(e) => {
                                                     e.stopPropagation();
                                                     if (athlete.onCardClick) athlete.onCardClick();
