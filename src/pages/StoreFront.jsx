@@ -114,18 +114,7 @@ const StoreFront = () => {
   const isLoading = slug ? isAthleteLoading || isProductsLoading : false;
   
   // Create mock products data for demonstration when no products are available
-  const mockProducts = [
-    {
-      id: 1,
-      name: "Hair, Skin & Nails Gummies",
-      price: 25.00,
-      category: { name: "Health" },
-      image: "/shirt.svg",
-      isNewRelease: true,
-      isBestSeller: false,
-      created_at: new Date('2024-01-15'),
-    }
-  ];
+  const mockProducts = [];
 
   // Use products from API if available, otherwise use mock data
   const allProducts = products && products.length > 0 ? products : mockProducts;

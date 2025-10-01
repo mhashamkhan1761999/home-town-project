@@ -40,6 +40,12 @@ const Subscription = () => {
     queryFn: () => getRequest("/packages"), // Fetch function
   });
 
+  // Fetch user's current subscriptions to check if they have the $10 plan
+  const { data: userSubscriptions, isLoading: subscriptionsLoading } = useQuery({
+    queryKey: ["my-subscriptions"],
+    queryFn: () => getRequest("/my-subscriptions"),
+  });
+
   const mutation = useMutation({
     mutationKey: ["add-subscription"],
     mutationFn: (form) => postRequest("/subscriptions", form),
@@ -70,6 +76,19 @@ const Subscription = () => {
         return "bg-gray-400";
     }
   };
+
+  // Function to check if user has active subscription for a specific price point
+  const hasActivePlanWithPrice = (price) => {
+    if (!userSubscriptions || !Array.isArray(userSubscriptions)) return false;
+    
+    return userSubscriptions.some(subscription => 
+      subscription?.package?.price == price && 
+      subscription?.package?.is_active == 1
+    );
+  };
+
+  // Check if user has the $10 plan specifically
+  const hasActive10DollarPlan = hasActivePlanWithPrice(10);
 
   const handleGetStarted = (item) => {
     if (item?.type == "free") {
@@ -169,11 +188,15 @@ const Subscription = () => {
                           disabled:bg-[#828282] disabled:text-[#cccccc] disabled:opacity-60 disabled:cursor-not-allowed`}
                         onClick={() => handleGetStarted(item)}
                         disabled={
-                          item?.type === "free" || 
-                          (item?.type === "monthly" && user?.has_active_subscription)
+                          subscriptionsLoading || // Disable while loading subscriptions
+                          item?.price == 0 || // Always disable free ($0) plan
+                          (item?.price == 10 && hasActive10DollarPlan) // Disable $10 plan if user already has it
                         }
                       >
-                        Get Started
+                        {subscriptionsLoading ? "Loading..." : 
+                         item?.price == 0 ? "Get Started" :
+                         (item?.price == 10 && hasActive10DollarPlan) ? "Already Subscribed" : 
+                         "Get Started"}
                       </button>
                     </div>
                   )
