@@ -17,6 +17,10 @@ const SuperAdminDashboard = () => {
     });
 
     // console.log("SuperAdminDashboard data", data);
+    console.log("SuperAdminDashboard data", data);
+
+    // Extract the actual data from the API response
+    const apiData = data || {};
 
     // State for filter periods
     const [salesTimeFilter, setSalesTimeFilter] = useState('1week');
@@ -28,26 +32,35 @@ const SuperAdminDashboard = () => {
         salesGrowth: 12.5
     };
 
-    const topProducts = [
-        // { name: "Cotton T-Shirt", sales: 125, revenue: "$3,247.50" },
-        // { name: "Hoodie", sales: 89, revenue: "$4,092.11" },
-        // { name: "Baseball Cap", sales: 76, revenue: "$1,519.24" },
-        // { name: "Jersey", sales: 54, revenue: "$3,563.46" },
-        // { name: "Sweatpants", sales: 43, revenue: "$1,547.57" }
-    ];
+    const topProducts = apiData?.top_products || [];
 
-    // Hardcoded sales data for chart
+    // Transform API data for chart display with robust number parsing and validation
+    const parseApiValue = (value) => {
+        if (value === null || value === undefined || value === '') return 0;
+        const parsed = Number(value);
+        return isNaN(parsed) || parsed < 0 ? 0 : parsed;
+    };
+    
     const salesData = [
-        { day: 'Mon', sales: 12000, label: 'Aug 12' },
-        { day: 'Tue', sales: 19000, label: 'Aug 13' },
-        { day: 'Wed', sales: 15000, label: 'Aug 14' },
-        { day: 'Thu', sales: 23000, label: 'Aug 15' },
-        { day: 'Fri', sales: 28000, label: 'Aug 16' },
-        { day: 'Sat', sales: 35000, label: 'Aug 17' },
-        { day: 'Sun', sales: 31000, label: 'Aug 18' }
+        { day: 'Mon', sales: parseApiValue(apiData?.days?.monday) },
+        { day: 'Tue', sales: parseApiValue(apiData?.days?.tuesday) },
+        { day: 'Wed', sales: parseApiValue(apiData?.days?.wednesday) },
+        { day: 'Thu', sales: parseApiValue(apiData?.days?.thursday) },
+        { day: 'Fri', sales: parseApiValue(apiData?.days?.friday) },
+        { day: 'Sat', sales: parseApiValue(apiData?.days?.saturday) },
+        { day: 'Sun', sales: parseApiValue(apiData?.days?.sunday) }
     ];
+    console.log("Raw API Data - days:", apiData?.days);
+    console.log("Processed salesData:", salesData);
 
-    const maxSales = Math.max(...salesData.map(d => d.sales));
+    // Calculate max sales for proportional scaling
+    const allSalesValues = salesData.map(d => d.sales).filter(val => !isNaN(val) && val >= 0);
+    const maxSales = allSalesValues.length > 0 ? Math.max(...allSalesValues) : 1;
+    const minSales = allSalesValues.length > 0 ? Math.min(...allSalesValues) : 0;
+    
+    // Use maxSales for proportional calculation
+    const finalMaxSales = maxSales > 0 ? maxSales : 1;
+    console.log("Chart calculations - maxSales:", finalMaxSales, "minSales:", minSales, "allSalesValues:", allSalesValues);
 
     const timeFilterOptions = [
         { value: '1week', label: '1 Week' },
@@ -78,13 +91,13 @@ const SuperAdminDashboard = () => {
                             <DollarSign className="w-5 h-5 sm:w-6 sm:h-6 text-[#D4BC6D]" />
                         </div>
                         <span className="text-green-400 text-xs sm:text-sm font-semibold bg-green-400/10 px-2 py-1 rounded-full">
-                            +{data?.total_sale_percentage.toLocaleString()}%
+                            +{apiData?.total_sale_percentage?.toLocaleString() || 0}%
                         </span>
                     </div>
                     <div>
                         <p className="text-[#838383] text-xs sm:text-sm font-medium mb-1">Total Sales</p>
                         <h3 className="text-xl sm:text-2xl font-bold text-white">
-                            ${data?.total_sale.toFixed(2)}
+                            ${apiData?.total_sale?.toFixed(2) || '0.00'}
                         </h3>
                     </div>
                 </div>
@@ -99,7 +112,7 @@ const SuperAdminDashboard = () => {
                     <div>
                         <p className="text-[#838383] text-xs sm:text-sm font-medium mb-1">Total Orders</p>
                         <h3 className="text-xl sm:text-2xl font-bold text-white">
-                            {data?.total_orders.toLocaleString()}
+                            {apiData?.total_orders?.toLocaleString() || '0'}
                         </h3>
                     </div>
                 </div>
@@ -114,7 +127,7 @@ const SuperAdminDashboard = () => {
                     <div>
                         <p className="text-[#838383] text-xs sm:text-sm font-medium mb-1">Total Customers</p>
                         <h3 className="text-xl sm:text-2xl font-bold text-white">
-                            {data?.total_customers.toLocaleString()}
+                            {apiData?.total_customers?.toLocaleString() || '0'}
                         </h3>
                     </div>
                 </div>
@@ -129,7 +142,7 @@ const SuperAdminDashboard = () => {
                     <div>
                         <p className="text-[#838383] text-xs sm:text-sm font-medium mb-1">Total Products</p>
                         <h3 className="text-xl sm:text-2xl font-bold text-white">
-                            {data?.total_products.toLocaleString() || '89'}
+                            {apiData?.total_products?.toLocaleString() || '0'}
                         </h3>
                     </div>
                 </div>
@@ -141,7 +154,7 @@ const SuperAdminDashboard = () => {
                 <div className="card-gradient border-[1.5px] border-[#4B4C46] p-4 sm:p-6 rounded-2xl">
                     <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-3">
                         <h3 className="text-white font-bold text-lg">Sales Over Time</h3>
-                        <select
+                        {/* <select
                             className="bg-[#282828] text-white p-2 rounded-lg text-sm border border-[#4B4C46] focus:outline-none focus:border-[#D4BC6D]"
                             value={salesTimeFilter}
                             onChange={(e) => setSalesTimeFilter(e.target.value)}
@@ -151,34 +164,63 @@ const SuperAdminDashboard = () => {
                                     {option.label}
                                 </option>
                             ))}
-                        </select>
+                        </select> */}
                     </div>
                     <div className="h-48 sm:h-64 bg-[#1a1a1a] rounded-lg p-3 sm:p-4">
-                        <div className="h-full flex items-end justify-between gap-2 sm:gap-3">
-                            {salesData.map((datas, index) => (
-                                <div key={index} className="flex-1 flex flex-col items-center group relative">
-                                    {/* Bar */}
-                                    {data?.days?.[`${days?.[`${index}`]}`]}
-                                    <div
-                                        className="w-full bg-gradient-to-t from-[#D4BC6D] to-[#b89f4e] rounded-t-lg transition-all duration-300 hover:opacity-80 relative"
-                                        style={{
-                                            height: `${(data?.days?.[`${days?.[`${index}`]}`] / maxSales) * 100}%`,
-                                            minHeight: `${Math.min((data?.days?.[`${days?.[`${index}`]}`] / maxSales) * 100, 90)}px`
-                                        }}
-                                    >
-                                        {/* Tooltip */}
-                                        <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-black text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap z-10">
-                                            ${datas.sales.toLocaleString()}
+                        <div className="h-full flex items-end justify-between gap-2 sm:gap-3 relative">
+                            {salesData.map((dayData, index) => {
+                                const salesValue = dayData.sales;
+                                
+                                // Calculate height percentage with direct proportional scaling
+                                let heightPercentage = 0;
+                                
+                                if (salesValue > 0 && finalMaxSales > 0) {
+                                    // Simple proportional calculation: (value / max) * 100
+                                    heightPercentage = (salesValue / finalMaxSales) * 100;
+                                    
+                                    // Ensure minimum visibility for very small values
+                                    if (heightPercentage < 5) {
+                                        heightPercentage = 5;
+                                    }
+                                } else {
+                                    heightPercentage = 0;
+                                }
+                                
+                                console.log(`${dayData.day}: sales=$${salesValue}, heightPercentage=${heightPercentage}%`);
+                                
+                                return (
+                                    <div key={index} className="flex-1 flex flex-col justify-end items-center group relative h-full">
+                                        {/* Bar Container */}
+                                        <div 
+                                            className="w-full flex flex-col justify-end items-center relative"
+                                            style={{ height: '100%' }}
+                                        >
+                                            {/* Actual Bar */}
+                                            <div
+                                                className={`w-full rounded-t-lg transition-all duration-300 hover:opacity-80 relative ${
+                                                    salesValue > 0 
+                                                        ? 'bg-gradient-to-t from-[#D4BC6D] to-[#b89f4e]' 
+                                                        : 'bg-gray-600'
+                                                }`}
+                                                style={{
+                                                    height: salesValue > 0 ? `${heightPercentage}%` : '2px',
+                                                    minHeight: salesValue > 0 ? '8px' : '2px'
+                                                }}>
+
+                                                {/* Tooltip */}
+                                                <div className="absolute -top-10 left-1/2 transform -translate-x-1/2 bg-black text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap z-10">
+                                                    ${salesValue.toLocaleString()}
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        {/* Day label */}
+                                        <div className="mt-2 text-center">
+                                            <div className="text-white text-xs sm:text-sm font-medium">{dayData.day}</div>
                                         </div>
                                     </div>
-
-                                    {/* Day label */}
-                                    <div className="mt-2 text-center">
-                                        <div className="text-white text-xs sm:text-sm font-medium">{datas.day}</div>
-                                        <div className="text-[#838383] text-xs hidden sm:block">{datas.label}</div>
-                                    </div>
-                                </div>
-                            ))}
+                                );
+                            })}
                         </div>
                     </div>
                 </div>
@@ -187,7 +229,7 @@ const SuperAdminDashboard = () => {
                 <div className="card-gradient border-[1.5px] border-[#4B4C46] p-4 sm:p-6 rounded-2xl">
                     <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-3">
                         <h3 className="text-white font-bold text-lg">Top Selling Products</h3>
-                        <select
+                        {/* <select
                             className="bg-[#282828] text-white p-2 rounded-lg text-sm border border-[#4B4C46] focus:outline-none focus:border-[#D4BC6D]"
                             value={productsTimeFilter}
                             onChange={(e) => setProductsTimeFilter(e.target.value)}
@@ -197,23 +239,22 @@ const SuperAdminDashboard = () => {
                                     {option.label}
                                 </option>
                             ))}
-                        </select>
+                        </select> */}
                     </div>
                     <div className="space-y-3 sm:space-y-4 max-h-80 overflow-y-auto">
                         {topProducts?.length > 0 ? (
                             <>
                                 {topProducts.map((product, index) => (
-                                    <div key={index} className="flex items-center justify-between p-3 bg-[#1a1a1a] rounded-lg hover:bg-[#2a2a2a] transition-colors">
+                                    <div key={product.product_id || index} className="flex items-center justify-between p-3 bg-[#1a1a1a] rounded-lg hover:bg-[#2a2a2a] transition-colors">
                                         <div className="flex items-center space-x-3">
                                             <div className="w-8 h-8 sm:w-10 sm:h-10 bg-[#D4BC6D] rounded-lg flex items-center justify-center text-black font-bold text-sm">
                                                 {index + 1}
                                             </div>
                                             <div className="min-w-0 flex-1">
                                                 <p className="text-white font-medium text-sm sm:text-base truncate">{product.name}</p>
-                                                <p className="text-[#838383] text-xs sm:text-sm">{product.sales} sales</p>
+                                                <p className="text-[#838383] text-xs sm:text-sm">{product.total_sold} sales</p>
                                             </div>
                                         </div>
-                                        <p className="text-[#D4BC6D] font-bold text-sm sm:text-base ml-2">{product.revenue}</p>
                                     </div>
                                 ))}
                             </>
