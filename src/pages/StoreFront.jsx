@@ -224,53 +224,7 @@ const StoreFront = () => {
           </div>
         )}
 
-        {/* Left content positioned absolutely */}
-        <div className="absolute bottom-20 left-5 max-w-md md:max-w-lg lg:max-w-xl">
-          <div className="bg-[rgba(255, 255, 255,0.1)] bg-white rounded-xl border border-[#D4BC6D] p-8 space-y-6">
-            <div className="flex items-center space-x-6">
-              <div className="h-20 w-20">
-                <img
-                  src={athlete?.badge_level?.image}
-                  alt="star"
-                  className="w-full h-full object-contain"
-                />
-              </div>
-              <p className="text-3xl font-bold text-[#D4BC6D]">
-                {isLoading
-                  ? "Loading..."
-                  : athlete?.store || athlete?.store_name || "----"}
-              </p>
-            </div>
-
-            <div>
-              <p className="text-xl font-medium text-[#D4BC6D] mb-4">
-                Athlete Details
-              </p>
-              <div>
-                <h3 className="text-2xl font-semibold text-[#D4BC6D] mb-3">
-                  {athlete?.store || athlete?.store_name}
-                </h3>
-                <p className="text-lg text-[#D4BC6D] mb-3">
-                  {athlete?.sport || athlete?.level_of_athlete}
-                </p>
-                {athlete?.team_name && (
-                  <p className="text-lg text-[#D4BC6D] mb-2">
-                    Team: {athlete.team_name}
-                  </p>
-                )}
-                {athlete?.school_name && (
-                  <p className="text-lg text-[#D4BC6D] mb-2">
-                    School: {athlete.school_name}
-                  </p>
-                )}
-                {(athlete?.city || athlete?.country) && (
-                  <p className="text-lg text-[#D4BC6D]">
-                    City: {athlete?.city ? athlete.city + ", " : ""}
-                    {athlete?.country}
-                  </p>
-                )}
-              </div>
-            </div>
+        {/* Removed athlete details card - moved to Featured section */}
 
             {/* <div className="inline-flex items-center gap-4 bg-white/10 backdrop-blur-sm rounded-full border border-[#D4BC6D] p-3">
               <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center">
@@ -330,15 +284,7 @@ const StoreFront = () => {
                 </span>
               )}
             </div> */}
-            {athlete?.description && (
-              <div>
-                <p className="font-medium text-white text-lg">
-                  Description: {athlete?.description}
-                </p>
-              </div>
-            )}
-          </div>
-        </div>
+
       </section>
 
       {isLoading ? (
@@ -348,6 +294,118 @@ const StoreFront = () => {
       ) : (
         <>
           <section className="py-24 relative">
+            {/* Athlete Details Card - Positioned on Right Side */}
+            {slug && athlete && (
+              <div className="absolute top-8 right-4 md:right-8 max-w-xs md:max-w-sm z-20 hidden md:block">
+                <div className="bg-black/70 backdrop-blur-md rounded-2xl border border-[#D4BC6D] p-6 space-y-4 shadow-2xl">
+                  <div className="mb-4">
+                    <h3 className="text-xl font-bold text-[#D4BC6D] mb-1">
+                      {athlete?.store || athlete?.store_name || "----"}
+                    </h3>
+                    <p className="text-sm text-gray-300">
+                      {athlete?.sport}
+                    </p>
+                  </div>
+
+                  <div className="space-y-3 text-sm">
+                    {athlete?.athlete_name && (
+                      <div>
+                        <span className="text-[#D4BC6D] font-medium">Name: </span>
+                        <span className="text-white">{athlete.athlete_name}</span>
+                      </div>
+                    )}
+                    {athlete?.level_of_athlete && (
+                      <div>
+                        <span className="text-[#D4BC6D] font-medium">Level: </span>
+                        <span className="text-white">{athlete.level_of_athlete}</span>
+                      </div>
+                    )}
+                    {athlete?.team_name && (
+                      <div>
+                        <span className="text-[#D4BC6D] font-medium">Team: </span>
+                        <span className="text-white">{athlete.team_name}</span>
+                      </div>
+                    )}
+                    {athlete?.jersey && (
+                      <div>
+                        <span className="text-[#D4BC6D] font-medium">Jersey #: </span>
+                        <span className="text-white">{athlete.jersey}</span>
+                      </div>
+                    )}
+                    {athlete?.hometown && (
+                      <div>
+                        <span className="text-[#D4BC6D] font-medium">Hometown: </span>
+                        <span className="text-white">{athlete.hometown}</span>
+                      </div>
+                    )}
+                    {athlete?.team_email && (
+                      <div>
+                        <span className="text-[#D4BC6D] font-medium">Team Email: </span>
+                        <span className="text-white text-xs">{athlete.team_email}</span>
+                      </div>
+                    )}
+                    {athlete?.quote && (
+                      <div>
+                        <span className="text-[#D4BC6D] font-medium">Quote: </span>
+                        <span className="text-white italic">"{athlete.quote}"</span>
+                      </div>
+                    )}
+                    {athlete?.description && (
+                      <div>
+                        <span className="text-[#D4BC6D] font-medium">About: </span>
+                        <span className="text-white">{athlete.description}</span>
+                      </div>
+                    )}
+                    {athlete?.bio && (
+                      <div>
+                        <span className="text-[#D4BC6D] font-medium">Bio: </span>
+                        <span className="text-white">{athlete.bio}</span>
+                      </div>
+                    )}
+                    {athlete?.social_media_reach && (
+                      <div>
+                        <span className="text-[#D4BC6D] font-medium">Social Reach: </span>
+                        <span className="text-white">{athlete.social_media_reach}</span>
+                      </div>
+                    )}
+                    
+                    {/* Social Media Links */}
+                    <div className="pt-3 border-t border-[#D4BC6D]/30">
+                      <p className="text-[#D4BC6D] font-medium mb-2">Follow Me:</p>
+                      <div className="flex flex-wrap gap-2">
+                        <a href={athlete?.instagram || "https://instagram.com"} target="_blank" rel="noopener noreferrer" 
+                           className="text-xs bg-[#D4BC6D] text-black px-2 py-1 rounded hover:bg-[#C4AC5D] transition-colors">
+                          Instagram
+                        </a>
+                        <a href={athlete?.tiktok || "https://tiktok.com"} target="_blank" rel="noopener noreferrer" 
+                           className="text-xs bg-[#D4BC6D] text-black px-2 py-1 rounded hover:bg-[#C4AC5D] transition-colors">
+                          TikTok
+                        </a>
+                        <a href={athlete?.twitter || "https://twitter.com"} target="_blank" rel="noopener noreferrer" 
+                           className="text-xs bg-[#D4BC6D] text-black px-2 py-1 rounded hover:bg-[#C4AC5D] transition-colors">
+                          Twitter
+                        </a>
+                        <a href={athlete?.youtube || "https://youtube.com"} target="_blank" rel="noopener noreferrer" 
+                           className="text-xs bg-[#D4BC6D] text-black px-2 py-1 rounded hover:bg-[#C4AC5D] transition-colors">
+                          YouTube
+                        </a>
+                        <a href={athlete?.twitch || "https://twitch.tv"} target="_blank" rel="noopener noreferrer" 
+                           className="text-xs bg-[#D4BC6D] text-black px-2 py-1 rounded hover:bg-[#C4AC5D] transition-colors">
+                          Twitch
+                        </a>
+                        {athlete?.other && (
+                          <a href={athlete.other} target="_blank" rel="noopener noreferrer" 
+                             className="text-xs bg-[#D4BC6D] text-black px-2 py-1 rounded hover:bg-[#C4AC5D] transition-colors">
+                            Other
+                          </a>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+            
             {/* Merchandise Navigation Arrows */}
             <div className="merchandise-nav-prev absolute left-4 top-[65%] transform -translate-y-1/2 z-30 bg-[#D4BC6D] hover:bg-[#C4AC5D] rounded-full p-3 cursor-pointer transition-colors shadow-lg">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -368,6 +426,105 @@ const StoreFront = () => {
                 : "MERCHANDISE"} */}
                 Featured
             </h1>
+            
+            {/* Mobile Athlete Details Card */}
+            {slug && athlete && (
+              <div className="block md:hidden mx-4 mb-8">
+                <div className="bg-black/70 backdrop-blur-md rounded-2xl border border-[#D4BC6D] p-4 space-y-3 shadow-2xl">
+                  <div className="mb-3">
+                    <h3 className="text-lg font-bold text-[#D4BC6D]">
+                      {athlete?.store || athlete?.store_name || "----"}
+                    </h3>
+                    <p className="text-xs text-gray-300">
+                      {athlete?.sport}
+                    </p>
+                  </div>
+
+                  <div className="grid grid-cols-1 gap-2 text-xs">
+                    {athlete?.athlete_name && (
+                      <div>
+                        <span className="text-[#D4BC6D] font-medium">Name: </span>
+                        <span className="text-white">{athlete.athlete_name}</span>
+                      </div>
+                    )}
+                    {athlete?.level_of_athlete && (
+                      <div>
+                        <span className="text-[#D4BC6D] font-medium">Level: </span>
+                        <span className="text-white">{athlete.level_of_athlete}</span>
+                      </div>
+                    )}
+                    {athlete?.team_name && (
+                      <div>
+                        <span className="text-[#D4BC6D] font-medium">Team: </span>
+                        <span className="text-white">{athlete.team_name}</span>
+                      </div>
+                    )}
+                    {athlete?.jersey && (
+                      <div>
+                        <span className="text-[#D4BC6D] font-medium">Jersey #: </span>
+                        <span className="text-white">{athlete.jersey}</span>
+                      </div>
+                    )}
+                    {athlete?.hometown && (
+                      <div>
+                        <span className="text-[#D4BC6D] font-medium">Hometown: </span>
+                        <span className="text-white">{athlete.hometown}</span>
+                      </div>
+                    )}
+                    {athlete?.quote && (
+                      <div>
+                        <span className="text-[#D4BC6D] font-medium">Quote: </span>
+                        <span className="text-white italic">"{athlete.quote}"</span>
+                      </div>
+                    )}
+                    {athlete?.bio && (
+                      <div>
+                        <span className="text-[#D4BC6D] font-medium">Bio: </span>
+                        <span className="text-white">{athlete.bio}</span>
+                      </div>
+                    )}
+                    {athlete?.social_media_reach && (
+                      <div>
+                        <span className="text-[#D4BC6D] font-medium">Social Reach: </span>
+                        <span className="text-white">{athlete.social_media_reach}</span>
+                      </div>
+                    )}
+                  </div>
+                  
+                  {/* Social Media Links - Mobile */}
+                  <div className="pt-2 border-t border-[#D4BC6D]/30">
+                    <div className="flex flex-wrap gap-1">
+                      <a href={athlete?.instagram || "https://instagram.com"} target="_blank" rel="noopener noreferrer" 
+                         className="text-xs bg-[#D4BC6D] text-black px-2 py-1 rounded hover:bg-[#C4AC5D] transition-colors">
+                        IG
+                      </a>
+                      <a href={athlete?.tiktok || "https://tiktok.com"} target="_blank" rel="noopener noreferrer" 
+                         className="text-xs bg-[#D4BC6D] text-black px-2 py-1 rounded hover:bg-[#C4AC5D] transition-colors">
+                        TT
+                      </a>
+                      <a href={athlete?.twitter || "https://twitter.com"} target="_blank" rel="noopener noreferrer" 
+                         className="text-xs bg-[#D4BC6D] text-black px-2 py-1 rounded hover:bg-[#C4AC5D] transition-colors">
+                        X
+                      </a>
+                      <a href={athlete?.youtube || "https://youtube.com"} target="_blank" rel="noopener noreferrer" 
+                         className="text-xs bg-[#D4BC6D] text-black px-2 py-1 rounded hover:bg-[#C4AC5D] transition-colors">
+                        YT
+                      </a>
+                      <a href={athlete?.twitch || "https://twitch.tv"} target="_blank" rel="noopener noreferrer" 
+                         className="text-xs bg-[#D4BC6D] text-black px-2 py-1 rounded hover:bg-[#C4AC5D] transition-colors">
+                        TW
+                      </a>
+                      {athlete?.other && (
+                        <a href={athlete.other} target="_blank" rel="noopener noreferrer" 
+                           className="text-xs bg-[#D4BC6D] text-black px-2 py-1 rounded hover:bg-[#C4AC5D] transition-colors">
+                          Other
+                        </a>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
             <div className="mb-[7.188rem]">
               <div className="flex justify-center space-x-5 mb-[81px]">
                 <button
