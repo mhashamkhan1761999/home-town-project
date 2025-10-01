@@ -441,38 +441,41 @@ const ExploreAthletes = () => {
                                 <p>Loading athletes...</p>
                             </div>
                         ) : allAthletesForSeeMore.length > 0 ? (
-                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 mb-12">
+                            <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 sm:gap-8 mb-12">
                                 {allAthletesForSeeMore.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage).map((athlete, index) => (
                                     <div
                                         key={athlete.id || index}
                                         onClick={athlete.onCardClick}
-                                        className="relative bg-cover bg-center bg-no-repeat border border-gray-700 rounded-2xl p-8 hover:border-[#D4BC6D] transition-all duration-300 cursor-pointer group hover:scale-105 transform overflow-hidden h-96 sm:h-80 md:h-96 lg:h-[420px]"
+                                        className="relative bg-cover bg-center bg-no-repeat border border-gray-700 rounded-2xl hover:border-[#D4BC6D] transition-all duration-300 cursor-pointer group hover:scale-105 transform overflow-hidden aspect-[4/5]"
                                         style={{backgroundImage: 'url(/bg-2.jpeg)'}}
                                     >
-                                        <div className="absolute inset-0 bg-black/40 rounded-2xl"></div>
-                                        <div className="relative z-10">
+                                        <div className="absolute inset-0 bg-black/60 rounded-2xl"></div>
                                         
-                                        {/* Athlete Name */}
-                                        <h3 className="text-white font-bold text-xl sm:text-lg md:text-xl lg:text-2xl mb-6 text-center drop-shadow-lg">
-                                            {athlete.name || 'Athlete Name'}
-                                        </h3>
-
-                                        {/* Image Section */}
-                                        <div className="relative mb-6 overflow-hidden rounded-xl">
-                                            <img
-                                                src={athlete.image || '/logo1.png'}
-                                                alt={athlete.name}
-                                                className="w-full h-56 sm:h-48 md:h-56 lg:h-64 object-cover group-hover:scale-110 transition-transform duration-300"
-                                                onError={(e) => {
-                                                    e.target.src = '/logo1.png';
-                                                }}
-                                            />
+                                        {/* Athlete Name - Overlayed at top */}
+                                        <div className="absolute top-6 left-4 right-4 z-20">
+                                            <h3 className="text-white font-bold text-sm sm:text-base lg:text-lg text-center drop-shadow-lg line-clamp-2 bg-black/30 rounded-lg px-2 py-2">
+                                                {athlete.name || 'Athlete Name'}
+                                            </h3>
                                         </div>
 
-                                        {/* Visit Store Front Button */}
-                                        <div className="flex justify-center">
+                                        {/* Square Image Section - Centered */}
+                                        <div className="absolute inset-0 flex items-center justify-center pt-16 pb-16">
+                                            <div className="relative w-28 h-28 sm:w-36 sm:h-36 lg:w-44 lg:h-44 overflow-hidden rounded-xl border-2 border-white/20">
+                                                <img
+                                                    src={athlete.image || '/logo1.png'}
+                                                    alt={athlete.name}
+                                                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                                                    onError={(e) => {
+                                                        e.target.src = '/logo1.png';
+                                                    }}
+                                                />
+                                            </div>
+                                        </div>
+
+                                        {/* Visit Store Front Button - Overlayed at bottom */}
+                                        <div className="absolute bottom-6 left-4 right-4 z-20">
                                             <button 
-                                                className="bg-gradient-to-r from-[#D4BC6D] to-[#F4D03F] text-black font-bold py-4 px-8 text-lg sm:py-3 sm:px-6 sm:text-base rounded-full hover:from-[#F4D03F] hover:to-[#D4BC6D] transition-all duration-300 transform hover:scale-105 shadow-lg"
+                                                className="w-full bg-gradient-to-r cursor-pointer from-[#D4BC6D] to-[#F4D03F] text-black font-bold py-2 px-3 text-xs sm:py-3 sm:px-4 sm:text-sm rounded-full hover:from-[#F4D03F] hover:to-[#D4BC6D] transition-all duration-300 transform hover:scale-105 shadow-lg"
                                                 onClick={(e) => {
                                                     e.stopPropagation();
                                                     if (athlete.onCardClick) athlete.onCardClick();
@@ -480,7 +483,6 @@ const ExploreAthletes = () => {
                                             >
                                                 Visit Store Front
                                             </button>
-                                        </div>
                                         </div>
                                     </div>
                                 ))}
@@ -612,43 +614,48 @@ const ExploreAthletes = () => {
                                 <p>Loading athletes...</p>
                             </div>
                         ) : paginatedAthletes.length > 0 ? (
-                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 mb-12">
+                            <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 sm:gap-8 mb-12">
                                 {paginatedAthletes.map((athlete, index) => (
                                     <div
                                         key={athlete.id || index}
                                         onClick={athlete.onCardClick}
-                                        className="relative bg-cover bg-center bg-no-repeat border border-gray-700 rounded-2xl p-8 hover:border-[#D4BC6D] transition-all duration-300 cursor-pointer group hover:scale-105 transform overflow-hidden h-96 sm:h-80 md:h-96 lg:h-[420px]"
+                                        className="relative bg-cover bg-center bg-no-repeat border border-gray-700 rounded-2xl hover:border-[#D4BC6D] transition-all duration-300 cursor-pointer group hover:scale-105 transform overflow-hidden aspect-[4/5]"
                                         style={{backgroundImage: 'url(/bg-2.jpeg)'}}
                                     >
-                                        <div className="absolute inset-0 bg-black/40 rounded-2xl"></div>
-                                        <div className="relative z-10">
+                                        <div className="absolute inset-0 bg-black/60 rounded-2xl"></div>
                                         
-                                        {/* Athlete Name */}
-                                        <h3 className="text-white font-bold text-xl sm:text-lg md:text-xl lg:text-2xl mb-6 text-center drop-shadow-lg">
-                                            {athlete.name || 'Athlete Name'}
-                                        </h3>
-
-                                        {/* Image Section */}
-                                        <div className="relative mb-6 overflow-hidden rounded-xl">
-                                            <img
-                                                src={athlete.image || '/question-mark.jpeg'}
-                                                alt={athlete.name}
-                                                className="w-full h-56 sm:h-48 md:h-56 lg:h-64 object-cover group-hover:scale-110 transition-transform duration-300"
-                                                onError={(e) => {
-                                                    e.target.src = '/question-mark.jpeg';
-                                                }}
-                                            />
-                                            {athlete.isTrending && (
-                                                <div className="absolute top-3 right-3 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full">
-                                                    Trending
-                                                </div>
-                                            )}
+                                        {/* Trending Badge */}
+                                        {athlete.isTrending && (
+                                            <div className="absolute top-2 right-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full z-30">
+                                                Trending
+                                            </div>
+                                        )}
+                                        
+                                        {/* Athlete Name - Overlayed at top */}
+                                        <div className="absolute top-6 left-4 right-4 z-20">
+                                            <h3 className="text-white font-bold text-sm sm:text-base lg:text-lg text-center drop-shadow-lg line-clamp-2 bg-black/30 rounded-lg px-2 py-2">
+                                                {athlete.name || 'Athlete Name'}
+                                            </h3>
                                         </div>
 
-                                        {/* Visit Store Front Button */}
-                                        <div className="flex justify-center">
+                                        {/* Square Image Section - Centered */}
+                                        <div className="absolute inset-0 flex items-center justify-center pt-16 pb-16">
+                                            <div className="relative w-28 h-28 sm:w-36 sm:h-36 lg:w-44 lg:h-44 overflow-hidden rounded-xl border-2 border-white/20">
+                                                <img
+                                                    src={athlete.image || '/question-mark.jpeg'}
+                                                    alt={athlete.name}
+                                                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                                                    onError={(e) => {
+                                                        e.target.src = '/question-mark.jpeg';
+                                                    }}
+                                                />
+                                            </div>
+                                        </div>
+
+                                        {/* Visit Store Front Button - Overlayed at bottom */}
+                                        <div className="absolute bottom-6 left-4 right-4 z-20">
                                             <button 
-                                                className="bg-gradient-to-r from-[#D4BC6D] to-[#F4D03F] text-black font-bold py-4 px-8 text-lg sm:py-3 sm:px-6 sm:text-base rounded-full hover:from-[#F4D03F] hover:to-[#D4BC6D] transition-all duration-300 transform hover:scale-105 shadow-lg"
+                                                className="w-full bg-gradient-to-r from-[#D4BC6D] to-[#F4D03F] text-black font-bold py-2 px-3 text-xs sm:py-3 sm:px-4 sm:text-sm rounded-full hover:from-[#F4D03F] hover:to-[#D4BC6D] transition-all duration-300 transform hover:scale-105 shadow-lg"
                                                 onClick={(e) => {
                                                     e.stopPropagation();
                                                     if (athlete.onCardClick) athlete.onCardClick();
@@ -656,7 +663,6 @@ const ExploreAthletes = () => {
                                             >
                                                 Visit Store Front
                                             </button>
-                                        </div>
                                         </div>
                                     </div>
                                 ))}
@@ -850,54 +856,60 @@ const ExploreAthletes = () => {
                                 <p>Loading {selectedTier} athletes...</p>
                             </div>
                         ) : paginatedTierAthletes.length > 0 ? (
-                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 mb-12">
+                            <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 sm:gap-8 mb-12">
                                 {paginatedTierAthletes.map((athlete, index) => (
                                     <div
                                         key={athlete.id || index}
                                         onClick={athlete.onCardClick}
-                                        className="relative bg-cover bg-center bg-no-repeat border border-gray-700 rounded-2xl p-8 hover:border-[#D4BC6D] transition-all duration-300 cursor-pointer group hover:scale-105 transform overflow-hidden h-96 sm:h-80 md:h-96 lg:h-[420px]"
+                                        className="relative bg-cover bg-center bg-no-repeat border border-gray-700 rounded-2xl hover:border-[#D4BC6D] transition-all duration-300 cursor-pointer group hover:scale-105 transform overflow-hidden aspect-[4/5]"
                                         style={{backgroundImage: 'url(/bg-2.jpeg)'}}
                                     >
-                                        <div className="absolute inset-0 bg-black/40 rounded-2xl"></div>
-                                        <div className="relative z-10">
+                                        <div className="absolute inset-0 bg-black/60 rounded-2xl"></div>
                                         
-                                        {/* Athlete Name */}
-                                        <h3 className="text-white font-bold text-xl sm:text-lg md:text-xl lg:text-2xl mb-6 text-center drop-shadow-lg">
-                                            {athlete.name || 'Athlete Name'}
-                                        </h3>
+                                        {/* Tier Badge */}
+                                        <div className={`absolute top-2 left-2 text-white text-xs font-bold px-2 py-1 rounded-full z-30 ${
+                                            selectedTier.toLowerCase() === 'bronze' ? 'bg-amber-600' :
+                                            selectedTier.toLowerCase() === 'silver' ? 'bg-gray-400' :
+                                            selectedTier.toLowerCase() === 'gold' ? 'bg-yellow-500' :
+                                            selectedTier.toLowerCase() === 'diamond' ? 'bg-blue-400' :
+                                            selectedTier.toLowerCase() === 'emerald' ? 'bg-green-500' :
+                                            selectedTier.toLowerCase() === 'royal' ? 'bg-purple-600' : 'bg-gray-600'
+                                        }`}>
+                                            {selectedTier}
+                                        </div>
+                                        
+                                        {/* Trending Badge */}
+                                        {athlete.isTrending && (
+                                            <div className="absolute top-2 right-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full z-30">
+                                                Trending
+                                            </div>
+                                        )}
+                                        
+                                        {/* Athlete Name - Overlayed at top */}
+                                        <div className="absolute top-14 left-4 right-4 z-20">
+                                            <h3 className="text-white font-bold text-sm sm:text-base lg:text-lg text-center drop-shadow-lg line-clamp-2 bg-black/30 rounded-lg px-2 py-2">
+                                                {athlete.name || 'Athlete Name'}
+                                            </h3>
+                                        </div>
 
-                                        {/* Image Section */}
-                                        <div className="relative mb-6 overflow-hidden rounded-xl">
-                                            <img
-                                                src={athlete.image || '/logo1-bgremove.png'}
-                                                alt={athlete.name}
-                                                className="w-full h-56 sm:h-48 md:h-56 lg:h-64 object-cover group-hover:scale-110 transition-transform duration-300"
-                                                onError={(e) => {
-                                                    e.target.src = '/logo1-bgremove.png';
-                                                }}
-                                            />
-                                            {athlete.isTrending && (
-                                                <div className="absolute top-3 right-3 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full">
-                                                    Trending
-                                                </div>
-                                            )}
-                                            {/* Tier Badge */}
-                                            <div className={`absolute top-3 left-3 text-white text-xs font-bold px-2 py-1 rounded-full ${
-                                                selectedTier.toLowerCase() === 'bronze' ? 'bg-amber-600' :
-                                                selectedTier.toLowerCase() === 'silver' ? 'bg-gray-400' :
-                                                selectedTier.toLowerCase() === 'gold' ? 'bg-yellow-500' :
-                                                selectedTier.toLowerCase() === 'diamond' ? 'bg-blue-400' :
-                                                selectedTier.toLowerCase() === 'emerald' ? 'bg-green-500' :
-                                                selectedTier.toLowerCase() === 'royal' ? 'bg-purple-600' : 'bg-gray-600'
-                                            }`}>
-                                                {selectedTier}
+                                        {/* Square Image Section - Centered */}
+                                        <div className="absolute inset-0 flex items-center justify-center pt-16 pb-16">
+                                            <div className="relative w-28 h-28 sm:w-36 sm:h-36 lg:w-44 lg:h-44 overflow-hidden rounded-xl border-2 border-white/20">
+                                                <img
+                                                    src={athlete.image || '/logo1-bgremove.png'}
+                                                    alt={athlete.name}
+                                                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                                                    onError={(e) => {
+                                                        e.target.src = '/logo1-bgremove.png';
+                                                    }}
+                                                />
                                             </div>
                                         </div>
 
-                                        {/* Visit Store Front Button */}
-                                        <div className="flex justify-center">
+                                        {/* Visit Store Front Button - Overlayed at bottom */}
+                                        <div className="absolute bottom-6 left-4 right-4 z-20">
                                             <button 
-                                                className="bg-gradient-to-r from-[#D4BC6D] to-[#F4D03F] text-black font-bold py-4 px-8 text-lg sm:py-3 sm:px-6 sm:text-base rounded-full hover:from-[#F4D03F] hover:to-[#D4BC6D] transition-all duration-300 transform hover:scale-105 shadow-lg"
+                                                className="w-full bg-gradient-to-r from-[#D4BC6D] to-[#F4D03F] text-black font-bold py-2 px-3 text-xs sm:py-3 sm:px-4 sm:text-sm rounded-full hover:from-[#F4D03F] hover:to-[#D4BC6D] transition-all duration-300 transform hover:scale-105 shadow-lg"
                                                 onClick={(e) => {
                                                     e.stopPropagation();
                                                     if (athlete.onCardClick) athlete.onCardClick();
@@ -905,7 +917,6 @@ const ExploreAthletes = () => {
                                             >
                                                 Visit Store Front
                                             </button>
-                                        </div>
                                         </div>
                                     </div>
                                 ))}
