@@ -13,6 +13,19 @@ const MySubscription = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedBundle, setSelectedBundle] = useState(null);
 
+    // Function to parse points string into individual features
+    const parsePackagePoints = (pointsString) => {
+        if (!pointsString) return [];
+        
+        // Split by bullet points and filter out empty strings
+        const points = pointsString
+            .split('•')
+            .map(point => point.trim())
+            .filter(point => point.length > 0);
+        
+        return points;
+    };
+
     const { data, isLoading, error } = useQuery({
         queryKey: ['my-packages'], // Unique key for caching
         queryFn: () => getRequest('/my-subscriptions'), // Fetch function
@@ -59,6 +72,25 @@ const MySubscription = () => {
         setIsModalOpen(true);
     };
 
+    // Function to filter subscriptions based on type priority
+    const getFilteredSubscriptions = (subscriptions) => {
+        if (!subscriptions || !Array.isArray(subscriptions)) return [];
+        
+        // Filter only active subscriptions first
+        const activeSubscriptions = subscriptions.filter(item => item?.package?.is_active == 1);
+        
+        // Check if there are any monthly subscriptions
+        const monthlySubscriptions = activeSubscriptions.filter(item => item?.package?.type === 'monthly');
+        
+        // If there are monthly subscriptions, show only monthly ones
+        if (monthlySubscriptions.length > 0) {
+            return monthlySubscriptions;
+        }
+        
+        // Otherwise, show all active subscriptions (including free ones)
+        return activeSubscriptions;
+    };
+
     // console.log('My Subscription Data:', data);
     // console.log('My Bundles Data:', bundlesData);
     // console.log('Bundles Loading:', bundlesLoading);
@@ -73,8 +105,7 @@ const MySubscription = () => {
                         <h3 className='text-white font-bold text-lg sm:text-xl lg:text-2xl mb-6'>
                             Active Subscriptions
                         </h3>
-                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 w-full">{data?.map((item) => (
-                            item?.package?.is_active == 1 && (
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 w-full">{getFilteredSubscriptions(data)?.map((item) => (
                                 <div key={item?.id} className="relative px-4 sm:px-6 lg:px-8 pt-12 sm:pt-14 lg:pt-16 pb-6 sm:pb-8 lg:pb-10 card-gradient !border-[1.5px] rounded-3xl w-full min-w-0">
                                     <div className={`absolute top-3 sm:top-4 lg:top-5 right-4 sm:right-0 sm:-translate-x-1/2 text-white text-sm sm:text-base capitalize font-semibold px-3 sm:px-4 py-1 rounded-full shadow-md ${getColor(item?.type)}`}>
                                         {item?.package?.type}
@@ -89,118 +120,29 @@ const MySubscription = () => {
                                         <img src="/line2.svg" alt="line" className='w-full mb-6 sm:mb-8 lg:mb-11' />
                                     </div>
                                     <div className="flex gap-3 sm:gap-4 lg:gap-5 flex-col">
-                                        <div className="flex gap-3 sm:gap-4 lg:gap-5 items-center">
-                                            <div className="">
-                                                <svg
-                                                    width={'1.2rem'}
-                                                    height={'1.2rem'}
-                                                    className="sm:w-[1.5rem] sm:h-[1.5rem] lg:w-[1.813rem] lg:h-[1.813rem]"
-                                                    viewBox="0 0 29 29"
-                                                    fill="none"
-                                                    xmlns="http://www.w3.org/2000/svg"
-                                                >
-                                                    <rect width={29} height={29} rx={10} fill="#D4BC6D" />
-                                                    <path
-                                                        d="M17.8594 12.5156C18.0312 12.6875 18.1172 12.8958 18.1172 13.1406C18.1172 13.3854 18.0312 13.5964 17.8594 13.7734L14.7188 16.9141C14.5417 17.0859 14.3307 17.1719 14.0859 17.1719C13.8411 17.1719 13.6328 17.0859 13.4609 16.9141C13.2839 16.7422 13.1953 16.5326 13.1953 16.2852C13.1953 16.0378 13.2839 15.8281 13.4609 15.6562L16.6016 12.5156C16.7734 12.3385 16.9831 12.25 17.2305 12.25C17.4779 12.25 17.6875 12.3385 17.8594 12.5156ZM14.7188 16.9141C14.5417 17.0859 14.3307 17.1719 14.0859 17.1719C13.8411 17.1719 13.6328 17.0859 13.4609 16.9141L11.5703 15.0312C11.3984 14.8542 11.3125 14.6432 11.3125 14.3984C11.3125 14.1536 11.3984 13.9453 11.5703 13.7734C11.7474 13.5964 11.9583 13.5078 12.2031 13.5078C12.4479 13.5078 12.6562 13.5964 12.8281 13.7734L14.7188 15.6562C14.8906 15.8281 14.9766 16.0378 14.9766 16.2852C14.9766 16.5326 14.8906 16.7422 14.7188 16.9141Z"
-                                                        fill="white"
-                                                    />
-                                                </svg>
-
+                                        {parsePackagePoints(item?.package?.points).map((point, index) => (
+                                            <div key={index} className="flex gap-3 sm:gap-4 lg:gap-5 items-center">
+                                                <div className="">
+                                                    <svg
+                                                        width={'1.2rem'}
+                                                        height={'1.2rem'}
+                                                        className="sm:w-[1.5rem] sm:h-[1.5rem] lg:w-[1.813rem] lg:h-[1.813rem]"
+                                                        viewBox="0 0 29 29"
+                                                        fill="none"
+                                                        xmlns="http://www.w3.org/2000/svg"
+                                                    >
+                                                        <rect width={29} height={29} rx={10} fill="#D4BC6D" />
+                                                        <path
+                                                            d="M17.8594 12.5156C18.0312 12.6875 18.1172 12.8958 18.1172 13.1406C18.1172 13.3854 18.0312 13.5964 17.8594 13.7734L14.7188 16.9141C14.5417 17.0859 14.3307 17.1719 14.0859 17.1719C13.8411 17.1719 13.6328 17.0859 13.4609 16.9141C13.2839 16.7422 13.1953 16.5326 13.1953 16.2852C13.1953 16.0378 13.2839 15.8281 13.4609 15.6562L16.6016 12.5156C16.7734 12.3385 16.9831 12.25 17.2305 12.25C17.4779 12.25 17.6875 12.3385 17.8594 12.5156ZM14.7188 16.9141C14.5417 17.0859 14.3307 17.1719 14.0859 17.1719C13.8411 17.1719 13.6328 17.0859 13.4609 16.9141L11.5703 15.0312C11.3984 14.8542 11.3125 14.6432 11.3125 14.3984C11.3125 14.1536 11.3984 13.9453 11.5703 13.7734C11.7474 13.5964 11.9583 13.5078 12.2031 13.5078C12.4479 13.5078 12.6562 13.5964 12.8281 13.7734L14.7188 15.6562C14.8906 15.8281 14.9766 16.0378 14.9766 16.2852C14.9766 16.5326 14.8906 16.7422 14.7188 16.9141Z"
+                                                            fill="white"
+                                                        />
+                                                    </svg>
+                                                </div>
+                                                <p className='text-white font-normal text-xs sm:text-sm'>
+                                                    {point}
+                                                </p>
                                             </div>
-                                            <p className='text-white font-normal text-xs sm:text-sm'>
-                                                30+ Features
-                                            </p>
-                                        </div>
-                                        <div className="flex gap-3 sm:gap-4 lg:gap-5 items-center">
-                                            <div className="">
-                                                <svg
-                                                    width={'1.2rem'}
-                                                    height={'1.2rem'}
-                                                    className="sm:w-[1.5rem] sm:h-[1.5rem] lg:w-[1.813rem] lg:h-[1.813rem]"
-                                                    viewBox="0 0 29 29"
-                                                    fill="none"
-                                                    xmlns="http://www.w3.org/2000/svg"
-                                                >
-                                                    <rect width={29} height={29} rx={10} fill="#D4BC6D" />
-                                                    <path
-                                                        d="M17.8594 12.5156C18.0312 12.6875 18.1172 12.8958 18.1172 13.1406C18.1172 13.3854 18.0312 13.5964 17.8594 13.7734L14.7188 16.9141C14.5417 17.0859 14.3307 17.1719 14.0859 17.1719C13.8411 17.1719 13.6328 17.0859 13.4609 16.9141C13.2839 16.7422 13.1953 16.5326 13.1953 16.2852C13.1953 16.0378 13.2839 15.8281 13.4609 15.6562L16.6016 12.5156C16.7734 12.3385 16.9831 12.25 17.2305 12.25C17.4779 12.25 17.6875 12.3385 17.8594 12.5156ZM14.7188 16.9141C14.5417 17.0859 14.3307 17.1719 14.0859 17.1719C13.8411 17.1719 13.6328 17.0859 13.4609 16.9141L11.5703 15.0312C11.3984 14.8542 11.3125 14.6432 11.3125 14.3984C11.3125 14.1536 11.3984 13.9453 11.5703 13.7734C11.7474 13.5964 11.9583 13.5078 12.2031 13.5078C12.4479 13.5078 12.6562 13.5964 12.8281 13.7734L14.7188 15.6562C14.8906 15.8281 14.9766 16.0378 14.9766 16.2852C14.9766 16.5326 14.8906 16.7422 14.7188 16.9141Z"
-                                                        fill="white"
-                                                    />
-                                                </svg>
-
-                                            </div>
-                                            <p className='text-white font-normal text-xs sm:text-sm'>
-                                                Priority Support
-                                            </p>
-                                        </div>
-                                        <div className="flex gap-3 sm:gap-4 lg:gap-5 items-center">
-                                            <div className="">
-                                                <svg
-                                                    width={'1.2rem'}
-                                                    height={'1.2rem'}
-                                                    className="sm:w-[1.5rem] sm:h-[1.5rem] lg:w-[1.813rem] lg:h-[1.813rem]"
-                                                    viewBox="0 0 29 29"
-                                                    fill="none"
-                                                    xmlns="http://www.w3.org/2000/svg"
-                                                >
-                                                    <rect width={29} height={29} rx={10} fill="#D4BC6D" />
-                                                    <path
-                                                        d="M17.8594 12.5156C18.0312 12.6875 18.1172 12.8958 18.1172 13.1406C18.1172 13.3854 18.0312 13.5964 17.8594 13.7734L14.7188 16.9141C14.5417 17.0859 14.3307 17.1719 14.0859 17.1719C13.8411 17.1719 13.6328 17.0859 13.4609 16.9141C13.2839 16.7422 13.1953 16.5326 13.1953 16.2852C13.1953 16.0378 13.2839 15.8281 13.4609 15.6562L16.6016 12.5156C16.7734 12.3385 16.9831 12.25 17.2305 12.25C17.4779 12.25 17.6875 12.3385 17.8594 12.5156ZM14.7188 16.9141C14.5417 17.0859 14.3307 17.1719 14.0859 17.1719C13.8411 17.1719 13.6328 17.0859 13.4609 16.9141L11.5703 15.0312C11.3984 14.8542 11.3125 14.6432 11.3125 14.3984C11.3125 14.1536 11.3984 13.9453 11.5703 13.7734C11.7474 13.5964 11.9583 13.5078 12.2031 13.5078C12.4479 13.5078 12.6562 13.5964 12.8281 13.7734L14.7188 15.6562C14.8906 15.8281 14.9766 16.0378 14.9766 16.2852C14.9766 16.5326 14.8906 16.7422 14.7188 16.9141Z"
-                                                        fill="white"
-                                                    />
-                                                </svg>
-
-                                            </div>
-                                            <p className='text-white font-normal text-xs sm:text-sm'>
-                                                4 Team Members
-                                            </p>
-                                        </div>
-                                        <div className="flex gap-3 sm:gap-4 lg:gap-5 items-center">
-                                            <div className="">
-                                                <svg
-                                                    width={'1.2rem'}
-                                                    height={'1.2rem'}
-                                                    className="sm:w-[1.5rem] sm:h-[1.5rem] lg:w-[1.813rem] lg:h-[1.813rem]"
-                                                    viewBox="0 0 29 29"
-                                                    fill="none"
-                                                    xmlns="http://www.w3.org/2000/svg"
-                                                >
-                                                    <rect width={29} height={29} rx={10} fill="#373737" />
-                                                    <path
-                                                        d="M17.8594 12.5156C18.0312 12.6875 18.1172 12.8958 18.1172 13.1406C18.1172 13.3854 18.0312 13.5964 17.8594 13.7734L14.7188 16.9141C14.5417 17.0859 14.3307 17.1719 14.0859 17.1719C13.8411 17.1719 13.6328 17.0859 13.4609 16.9141C13.2839 16.7422 13.1953 16.5326 13.1953 16.2852C13.1953 16.0378 13.2839 15.8281 13.4609 15.6562L16.6016 12.5156C16.7734 12.3385 16.9831 12.25 17.2305 12.25C17.4779 12.25 17.6875 12.3385 17.8594 12.5156ZM14.7188 16.9141C14.5417 17.0859 14.3307 17.1719 14.0859 17.1719C13.8411 17.1719 13.6328 17.0859 13.4609 16.9141L11.5703 15.0312C11.3984 14.8542 11.3125 14.6432 11.3125 14.3984C11.3125 14.1536 11.3984 13.9453 11.5703 13.7734C11.7474 13.5964 11.9583 13.5078 12.2031 13.5078C12.4479 13.5078 12.6562 13.5964 12.8281 13.7734L14.7188 15.6562C14.8906 15.8281 14.9766 16.0378 14.9766 16.2852C14.9766 16.5326 14.8906 16.7422 14.7188 16.9141Z"
-                                                        fill="#9E9E9E"
-                                                    />
-                                                </svg>
-
-
-                                            </div>
-                                            <p className='text-white font-normal text-xs sm:text-sm'>
-                                                Premium Features
-                                            </p>
-                                        </div>
-                                        <div className="flex gap-3 sm:gap-4 lg:gap-5 items-center">
-                                            <div className="">
-                                                <svg
-                                                    width={'1.2rem'}
-                                                    height={'1.2rem'}
-                                                    className="sm:w-[1.5rem] sm:h-[1.5rem] lg:w-[1.813rem] lg:h-[1.813rem]"
-                                                    viewBox="0 0 29 29"
-                                                    fill="none"
-                                                    xmlns="http://www.w3.org/2000/svg"
-                                                >
-                                                    <rect width={29} height={29} rx={10} fill="#373737" />
-                                                    <path
-                                                        d="M17.8594 12.5156C18.0312 12.6875 18.1172 12.8958 18.1172 13.1406C18.1172 13.3854 18.0312 13.5964 17.8594 13.7734L14.7188 16.9141C14.5417 17.0859 14.3307 17.1719 14.0859 17.1719C13.8411 17.1719 13.6328 17.0859 13.4609 16.9141C13.2839 16.7422 13.1953 16.5326 13.1953 16.2852C13.1953 16.0378 13.2839 15.8281 13.4609 15.6562L16.6016 12.5156C16.7734 12.3385 16.9831 12.25 17.2305 12.25C17.4779 12.25 17.6875 12.3385 17.8594 12.5156ZM14.7188 16.9141C14.5417 17.0859 14.3307 17.1719 14.0859 17.1719C13.8411 17.1719 13.6328 17.0859 13.4609 16.9141L11.5703 15.0312C11.3984 14.8542 11.3125 14.6432 11.3125 14.3984C11.3125 14.1536 11.3984 13.9453 11.5703 13.7734C11.7474 13.5964 11.9583 13.5078 12.2031 13.5078C12.4479 13.5078 12.6562 13.5964 12.8281 13.7734L14.7188 15.6562C14.8906 15.8281 14.9766 16.0378 14.9766 16.2852C14.9766 16.5326 14.8906 16.7422 14.7188 16.9141Z"
-                                                        fill="#9E9E9E"
-                                                    />
-                                                </svg>
-
-
-                                            </div>
-                                            <p className='text-white font-normal text-xs sm:text-sm'>
-                                                Data Insights
-                                            </p>
-                                        </div>
+                                        ))}
                                     </div>
                                     <div className="my-6 sm:my-7 lg:my-9">
                                         <p className='text-2xl sm:text-3xl lg:text-5xl font-medium text-white mb-2'>
@@ -218,8 +160,7 @@ const MySubscription = () => {
                                             Get Started
                                         </button> */}
                                 </div>
-                            )
-                        ))}
+                            ))}
                         </div>
                     </div>
 
