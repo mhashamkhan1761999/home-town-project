@@ -67,15 +67,11 @@ const MySubscription = () => {
     return (
         <>
             <div className="card-gradient !border-[1.5px] p-3 sm:p-6 rounded-3xl">
-                <h2 className='text-white font-bold text-xl sm:text-2xl lg:text-3xl mb-8 sm:mb-12 lg:mb-16'>
-                    My Subscriptions
-                </h2>
-
                 <div className="w-full">
                     {/* Existing Subscriptions Section */}
                     <div className="mb-12 sm:mb-16 lg:mb-24">
                         <h3 className='text-white font-bold text-lg sm:text-xl lg:text-2xl mb-6'>
-                            My Subscriptions
+                            Active Subscriptions
                         </h3>
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 w-full">{data?.map((item) => (
                             item?.package?.is_active == 1 && (

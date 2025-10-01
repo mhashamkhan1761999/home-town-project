@@ -1,6 +1,6 @@
 import { EllipsisVertical, EyeIcon, Trash, Package, ShoppingCart, ArrowRight } from "lucide-react";
 import React, { useState } from "react";
-import LeafLetMap from "./LeafLetMap";
+// import LeafLetMap from "./LeafLetMap"; // Temporarily commented out
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import {
@@ -222,8 +222,8 @@ const Dashboard = () => {
           </button>
         </div>
       </div>
-      <div className="flex flex-col lg:flex-row gap-2 sm:gap-4 mb-3 sm:mb-4">
-        <div className="w-full lg:w-[27.313rem] card-gradient border-[1.5px] py-2 sm:py-4 lg:py-8 px-1.5 sm:px-3 lg:px-6 rounded-3xl overflow-hidden">
+      <div className="flex flex-col gap-2 sm:gap-4 mb-3 sm:mb-4">
+        <div className="w-full card-gradient border-[1.5px] py-3 sm:py-4 lg:py-6 px-1.5 sm:px-3 lg:px-6 rounded-3xl overflow-hidden">
           <div className="">
             {/* <div className="flex justify-end items-center mb-2">
               <div className="card-gradient border border-gray-600 rounded-full">
@@ -256,7 +256,7 @@ const Dashboard = () => {
               </div>
             </div> */}
           </div>
-          <div className="flex flex-col w-full gap-2 sm:gap-3 lg:gap-6">
+          <div className="flex flex-col w-full gap-3 sm:gap-4 lg:gap-6">
             <div className="">
               <p className="font-bold text-xs sm:text-sm lg:text-xl text-[#838383]">
                 Total Storefront Profit
@@ -286,11 +286,11 @@ const Dashboard = () => {
                   : `$${dashboardStats?.total_cashout ?? "0"}`}
               </h1>
             </div>
-            {/* <div className="">
+            {/* <div className="flex-1">
               <p className="font-bold text-xs sm:text-sm lg:text-xl text-[#838383]">
                 Storefront Views
               </p>
-              <h1 className="text-lg sm:text-xl lg:text-[4.563rem] font-extrabold bg-[linear-gradient(to_right,#d4bc6d,#57430d)] bg-clip-text text-transparent leading-[1]">
+              <h1 className="text-lg sm:text-xl lg:text-[3rem] xl:text-[4rem] font-extrabold bg-[linear-gradient(to_right,#d4bc6d,#57430d)] bg-clip-text text-transparent leading-[1]">
                 {isDashboardLoading
                   ? "Loading..."
                   : `${dashboardStats?.total_views ?? "0"}`}
@@ -300,7 +300,8 @@ const Dashboard = () => {
             </div>
           </div>
         </div>
-        <div className="w-full lg:flex-1 min-w-0">
+        {/* MAP SECTION - TEMPORARILY COMMENTED OUT */}
+        {/* <div className="w-full lg:flex-1 min-w-0">
           <div className="w-full card-gradient border-[1.5px] py-2 sm:py-4 lg:py-8 px-1.5 sm:px-3 lg:px-6 rounded-3xl overflow-hidden">
             <div className="">
               <div className="flex justify-end items-center mb-2">
@@ -338,14 +339,14 @@ const Dashboard = () => {
               <div className="relative z-[1] w-full min-w-0 overflow-hidden">
                 <LeafLetMap />
               </div>
-              {/* <div className="absolute left-0 bottom-2">
+              <div className="absolute left-0 bottom-2">
                                 <button className='py-3.5 px-11 bg-[#57430D] text-sm font-bold text-white rounded-2xl' type='button'>
                                     View More
                                 </button>
-                            </div> */}
+                            </div>
             </div>
           </div>
-        </div>
+        </div> */}
       </div>
       <div className="w-full card-gradient border-[1.5px] py-2 sm:py-4 lg:py-8 px-1.5 sm:px-3 lg:px-6 rounded-3xl overflow-hidden">
         <div className="">
@@ -367,13 +368,13 @@ const Dashboard = () => {
       <thead>
         <tr className="bg-[rgba(0,0,0,0.02)] text-left text-xs sm:text-sm font-bold text-[#838383]">
           <th className="px-2 sm:px-4 py-3 border-b border-[#323232] whitespace-nowrap">
-            # of Products
+            # OF PRODUCTS
           </th>
           <th className="px-2 sm:px-4 py-3 border-b border-[#323232] whitespace-nowrap">
-            Service Launch
+            SERVICE LAUNCH
           </th>
           <th className="px-2 sm:px-4 py-3 border-b border-[#323232] whitespace-nowrap">
-            Total Item Sold
+            TOTAL ITEM SOLD
           </th>
           <th className="px-2 sm:px-4 py-3 border-b border-[#323232] whitespace-nowrap">
             TOTAL PROFITS
