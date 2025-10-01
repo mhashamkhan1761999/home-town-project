@@ -44,8 +44,8 @@ const Signup4 = ({ next, setData, goBack }) => {
                             </div>
                             <div className="grow">
                                 <input
-                                    {...register('team_name', { required: 'Full Name is required' })}
-                                    type="text" placeholder='Enter your full name' required className='h-full w-full border-0 outline-0 text-[#6B6B6B]' />
+                                    {...register('team_name', { required: 'Team Name is required' })}
+                                    type="text" placeholder='Enter team name' required className='h-full w-full border-0 outline-0 text-[#6B6B6B]' />
                             </div>
                         </div>
                         {errors?.team_name && <p className="text-red-500 text-sm">{errors?.team_name?.message}</p>}
@@ -77,7 +77,7 @@ const Signup4 = ({ next, setData, goBack }) => {
                     </div>
                     <div className="mb-12">
                         <label className='text-lg font-semibold text-[#D4BC6D] mb-5 inline-block'>
-                            Phone Number  <span className='text-[#666666]'>(Optional)</span>
+                            Enter team phone number  <span className='text-[#666666]'>(Optional)</span>
                         </label>
                         <div className="flex rounded-t-lg bg-[rgba(217,217,217,0.03)] border-b border-[#4B4C46]">
                             <div className="p-4 invisible">
@@ -96,7 +96,7 @@ const Signup4 = ({ next, setData, goBack }) => {
                             <div className="grow">
                                 <input
                                     {...register('team_email_2')}
-                                    type="text" placeholder='Enter your phone no' className='h-full w-full border-0 outline-0 text-[#6B6B6B]' />
+                                    type="text" placeholder='Enter your team phone number' className='h-full w-full border-0 outline-0 text-[#6B6B6B]' />
                             </div>
                         </div>
                     </div>
@@ -125,7 +125,7 @@ const Signup4 = ({ next, setData, goBack }) => {
                             <div className="grow">
                                 <input
                                     {...register('director_info')}
-                                    type="text" placeholder='Enter your full name' className='h-full w-full border-0 outline-0 text-[#6B6B6B]' />
+                                    type="text" placeholder="Enter director's full name" className='h-full w-full border-0 outline-0 text-[#6B6B6B]' />
                             </div>
                         </div>
                     </div>
@@ -148,13 +148,13 @@ const Signup4 = ({ next, setData, goBack }) => {
                                 </svg>
                             </div>
                             <div className="grow">
-                                <input type="text" placeholder='Enter your full email' className='h-full w-full border-0 outline-0 text-[#6B6B6B]' />
+                                <input type="text" placeholder="Enter director's email" className='h-full w-full border-0 outline-0 text-[#6B6B6B]' />
                             </div>
                         </div>
                     </div>
                     <div className="mb-12">
                         <label className='text-lg font-semibold text-[#D4BC6D] mb-5 inline-block'>
-                            Phone Number  <span className='text-[#666666]'>(Optional)</span>
+                            Enter Director's Phone Number  <span className='text-[#666666]'>(Optional)</span>
                         </label>
                         <div className="flex rounded-t-lg bg-[rgba(217,217,217,0.03)] border-b border-[#4B4C46]">
                             <div className="p-4 invisible">
@@ -171,7 +171,7 @@ const Signup4 = ({ next, setData, goBack }) => {
                                 </svg>
                             </div>
                             <div className="grow">
-                                <input type="text" placeholder='Enter your phone no' className='h-full w-full border-0 outline-0 text-[#6B6B6B]' />
+                                <input type="text" placeholder="Enter director's phone number" className='h-full w-full border-0 outline-0 text-[#6B6B6B]' />
                             </div>
                         </div>
                     </div>
@@ -199,7 +199,7 @@ const Signup4 = ({ next, setData, goBack }) => {
                             <div className="grow">
                                 <input
                                     {...register('director_info')}
-                                    type="text" placeholder='Enter your full name' className='h-full w-full border-0 outline-0 text-[#6B6B6B]' />
+                                    type="text" placeholder="Enter coach's full name" className='h-full w-full border-0 outline-0 text-[#6B6B6B]' />
                             </div>
                         </div>
                     </div>
@@ -222,7 +222,7 @@ const Signup4 = ({ next, setData, goBack }) => {
                                 </svg>
                             </div>
                             <div className="grow">
-                                <input type="text" placeholder='Enter your full email' className='h-full w-full border-0 outline-0 text-[#6B6B6B]' />
+                                <input type="text" placeholder="Enter coach's email" className='h-full w-full border-0 outline-0 text-[#6B6B6B]' />
                             </div>
                         </div>
                     </div>
@@ -245,7 +245,7 @@ const Signup4 = ({ next, setData, goBack }) => {
                                 </svg>
                             </div>
                             <div className="grow">
-                                <input type="text" placeholder='Enter your phone no' className='h-full w-full border-0 outline-0 text-[#6B6B6B]' />
+                                <input type="text" placeholder="Enter coach's phone number" className='h-full w-full border-0 outline-0 text-[#6B6B6B]' />
                             </div>
                         </div>
                     </div>
