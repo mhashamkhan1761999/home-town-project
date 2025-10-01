@@ -496,23 +496,23 @@ const StoreFront = () => {
                     <div className="flex flex-wrap gap-1">
                       <a href={athlete?.instagram || "https://instagram.com"} target="_blank" rel="noopener noreferrer" 
                          className="text-xs bg-[#D4BC6D] text-black px-2 py-1 rounded hover:bg-[#C4AC5D] transition-colors">
-                        IG
+                        Insta
                       </a>
                       <a href={athlete?.tiktok || "https://tiktok.com"} target="_blank" rel="noopener noreferrer" 
                          className="text-xs bg-[#D4BC6D] text-black px-2 py-1 rounded hover:bg-[#C4AC5D] transition-colors">
-                        TT
+                        Tiktok
                       </a>
                       <a href={athlete?.twitter || "https://twitter.com"} target="_blank" rel="noopener noreferrer" 
                          className="text-xs bg-[#D4BC6D] text-black px-2 py-1 rounded hover:bg-[#C4AC5D] transition-colors">
-                        X
+                        Twitter
                       </a>
                       <a href={athlete?.youtube || "https://youtube.com"} target="_blank" rel="noopener noreferrer" 
                          className="text-xs bg-[#D4BC6D] text-black px-2 py-1 rounded hover:bg-[#C4AC5D] transition-colors">
-                        YT
+                        YouTube
                       </a>
                       <a href={athlete?.twitch || "https://twitch.tv"} target="_blank" rel="noopener noreferrer" 
                          className="text-xs bg-[#D4BC6D] text-black px-2 py-1 rounded hover:bg-[#C4AC5D] transition-colors">
-                        TW
+                        Twitch
                       </a>
                       {athlete?.other && (
                         <a href={athlete.other} target="_blank" rel="noopener noreferrer" 
