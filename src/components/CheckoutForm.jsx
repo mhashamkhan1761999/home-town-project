@@ -7,6 +7,9 @@ import { postRequest } from '../api'
 import { useMutation } from '@tanstack/react-query'
 import { useNavigate } from 'react-router-dom'
 import { clearCart } from '../redux/slices/cartSlice'
+import { getNames } from 'country-list'
+
+const countries = getNames();
 
 const CheckoutForm = () => {
   const stripe = useStripe()
@@ -54,6 +57,11 @@ const CheckoutForm = () => {
         code: val?.color || '#000000'
       }
     }))) || [];
+
+    // Handle USA special case for country
+    if (data.country && (data.country.toLowerCase().includes('united states') || data.country.toLowerCase().includes('usa') || data.country === 'United States of America')) {
+      data.country = 'USA';
+    }
 
     // Add shipping and tax to the order data
     data['shipping'] = shipping;
@@ -136,13 +144,16 @@ const CheckoutForm = () => {
             </div>
             <div>
               <label className="block text-sm font-medium mb-1">Country</label>
-              <input
-                type="text"
-                placeholder="Country"
+              <select
                 className="w-full border border-gray-600 bg-black text-white p-3 rounded focus:outline-none focus:ring-2 focus:ring-[#D4BC6D]"
                 required
                 {...register('country', { required: true })}
-              />
+              >
+                <option value="">Select your country</option>
+                {countries.map((country, index) => (
+                  <option key={index} value={country}>{country}</option>
+                ))}
+              </select>
             </div>
           </form>
         </div>
