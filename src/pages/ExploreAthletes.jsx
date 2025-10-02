@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from 'react'
 import CarouselSlider2 from '../components/CarouselSlider2'
+import CarouselSliderNoFlip from '../components/CarouselSliderNoFlip'
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Pagination } from 'swiper/modules';
 import 'swiper/css';
@@ -156,9 +157,9 @@ const ExploreAthletes = () => {
         });
     };
 
-    // Map API data to carousel format (Furious 5) - use question-mark.jpeg as default
+    // Map API data to carousel format (Furious 5) - use coming-soon.png as default
     const furious5 = Array.isArray(furiousAthletesData) && furiousAthletesData.length > 0
-        ? mapAthleteData(furiousAthletesData.slice(0, 5), '/question-mark.jpeg')
+        ? mapAthleteData(furiousAthletesData.slice(0, 5), '/coming-soon.png')
         : [];
         
     // Check if we should show TOP TALENT section
@@ -193,16 +194,16 @@ const ExploreAthletes = () => {
             ...athletesWithBadges,
             ...remainingAthletes
         ].slice(0, 5);
-            
-        return mapAthleteData(combinedAthletes, '/question-mark.jpeg');
+
+        return mapAthleteData(combinedAthletes, '/coming-soon.png');
     }, [athletesData]);
     
     // Check if we should show Trending Athletes section (only hide if no athletes exist at all)
     const shouldShowTrending = Array.isArray(athletesData) && athletesData.length > 0;
     const trendingAthletesToShow = trendingAthletes;
 
-    // Filtered results for display (use logo1.png as default for badge system)
-    const filteredResults = mapAthleteData(filteredAthletes, '/logo1.png');
+    // Filtered results for display (use coming-soon.png as default for badge system)
+    const filteredResults = mapAthleteData(filteredAthletes, '/coming-soon.png');
 
     // Get all athletes for "See More" section (excluding those in Furious 5 and Trending)
     const allAthletesForSeeMore = useMemo(() => {
@@ -372,7 +373,7 @@ const ExploreAthletes = () => {
                     {isAthletesLoading ? (
                         <div className="text-center text-white py-8">Loading athletes...</div>
                     ) : filteredResults.length > 0 ? (
-                        <CarouselSlider2 data={filteredResults} />
+                        <CarouselSliderNoFlip data={filteredResults} />
                     ) : (
                         <div className="text-center text-white py-8">
                             <p className="text-lg">No athletes found matching your criteria.</p>
@@ -404,7 +405,7 @@ const ExploreAthletes = () => {
                             <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-[#d4bc6d]"></div>
                         </div>
                     ) : (
-                        <CarouselSlider2
+                        <CarouselSliderNoFlip
                             data={furious5}
                         />
                     )}
@@ -420,7 +421,7 @@ const ExploreAthletes = () => {
                         Trending Athletes
                     </h1>
 
-                    <CarouselSlider2
+                    <CarouselSliderNoFlip
                         data={trendingAthletesToShow}
                     />
                 </section>
@@ -642,11 +643,11 @@ const ExploreAthletes = () => {
                                         <div className="absolute inset-0 flex items-center justify-center pt-16 pb-16">
                                             <div className="relative w-28 h-28 sm:w-36 sm:h-36 lg:w-44 lg:h-44 overflow-hidden rounded-xl border-2 border-white/20">
                                                 <img
-                                                    src={athlete.image || '/question-mark.jpeg'}
+                                                    src={athlete.image || '/logo1.png'}
                                                     alt={athlete.name}
                                                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
                                                     onError={(e) => {
-                                                        e.target.src = '/question-mark.jpeg';
+                                                        e.target.src = '/logo1.png';
                                                     }}
                                                 />
                                             </div>

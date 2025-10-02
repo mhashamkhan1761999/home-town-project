@@ -588,9 +588,7 @@ const CashOutModal = ({ isOpen, onClose, user , dashboardStats }) => {
       // console.log("Cash out request successful:", response);
       toast.success(
         response?.message ||
-          `Cash out request for $${totalSaleAmount.toFixed(
-            2
-          )} has been submitted successfully!`
+          `Cash out request for $${totalSaleAmount} has been submitted successfully!`
       );
       onClose();
     },
@@ -653,7 +651,7 @@ const CashOutModal = ({ isOpen, onClose, user , dashboardStats }) => {
                   $
                 </span>
                 <span className="font-bold text-[#D4BC6D]">
-                  {totalSaleAmount.toFixed(2)}
+                  {totalSaleAmount}
                 </span>
               </div>
             </div>
