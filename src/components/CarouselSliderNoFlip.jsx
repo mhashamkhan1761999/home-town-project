@@ -79,7 +79,7 @@ const Card = ({
         >
           {/* Athlete Name - Overlayed at top */}
           <div className="absolute top-4 left-4 right-4 z-20">
-            <h3 className="text-white font-bold font-sans text-lg sm:text-xl text-center drop-shadow-lg line-clamp-2 bg-black/50 backdrop-blur-sm rounded-lg px-3 py-2">
+            <h3 className="text-white font-bold font-sans text-lg sm:text-4xl text-center drop-shadow-lg line-clamp-2 bg-black/50 backdrop-blur-sm rounded-lg px-3 py-2">
               {name.toUpperCase() || 'ATHLETE NAME'}
             </h3>
           </div>
