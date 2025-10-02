@@ -157,7 +157,7 @@ const ExploreAthletes = () => {
         });
     };
 
-    // Map API data to carousel format (Furious 5) - use coming-soon.png as default
+    // Map API data to carousel format (Furious 5) - use logo1.png as default
     const furious5 = Array.isArray(furiousAthletesData) && furiousAthletesData.length > 0
         ? mapAthleteData(furiousAthletesData.slice(0, 5), '/coming-soon.png')
         : [];
@@ -165,54 +165,40 @@ const ExploreAthletes = () => {
     // Check if we should show TOP TALENT section
     const shouldShowTopTalent = furious5.length > 0;
 
-    // Map API data to carousel format (Trending Athletes) - always show exactly 5 athletes
+    // Map API data to carousel format (Trending Athletes) - only show athletes with badge amounts
     const trendingAthletes = useMemo(() => {
         if (!Array.isArray(athletesData) || athletesData.length === 0) {
             return [];
         }
         
-        // Get athletes with badge_amount > 0, sorted by badge_amount (descending)
+        // Get only athletes with badge_amount > 0, sorted by badge_amount (descending)
         const athletesWithBadges = [...athletesData]
             .filter(athlete => athlete?.badge_amount && athlete.badge_amount > 0)
             .sort((a, b) => (b.badge_amount || 0) - (a.badge_amount || 0));
             
-        // Get IDs of athletes with badges to avoid duplicates
-        const badgeAthleteIds = athletesWithBadges.map(athlete => athlete?.id);
-        
-        // Get remaining athletes (without badges or not already selected), sorted by creation date
-        const remainingAthletes = [...athletesData]
-            .filter(athlete => !badgeAthleteIds.includes(athlete?.id))
-            .sort((a, b) => {
-                // Sort by creation date (most recent first)
-                const dateA = new Date(a?.created_at || a?.createdAt || 0);
-                const dateB = new Date(b?.created_at || b?.createdAt || 0);
-                return dateB - dateA;
-            });
-        
-        // Combine: badge athletes + recent athletes to make exactly 5
-        const combinedAthletes = [
-            ...athletesWithBadges,
-            ...remainingAthletes
-        ].slice(0, 5);
-
-        return mapAthleteData(combinedAthletes, '/coming-soon.png');
+        return mapAthleteData(athletesWithBadges, '/coming-soon.png');
     }, [athletesData]);
     
-    // Check if we should show Trending Athletes section (only hide if no athletes exist at all)
-    const shouldShowTrending = Array.isArray(athletesData) && athletesData.length > 0;
+    // Check if we should show Trending Athletes section (only show if there are actual trending athletes)
+    const shouldShowTrending = trendingAthletes.length > 0;
     const trendingAthletesToShow = trendingAthletes;
 
-    // Filtered results for display (use coming-soon.png as default for badge system)
-    const filteredResults = mapAthleteData(filteredAthletes, '/coming-soon.png');
+    // Filtered results for display (use logo1.png as default for badge system)
+    const filteredResults = mapAthleteData(filteredAthletes, '/logo1.png');
 
     // Get all athletes for "See More" section (excluding those in Furious 5 and Trending)
     const allAthletesForSeeMore = useMemo(() => {
         if (!Array.isArray(athletesData)) return [];
         
-        // Skip first 5 (Furious 5) and next 5 (Trending) = start from index 15
-        const remainingAthletes = athletesData.slice(15);
+        // Get IDs of athletes already shown in Furious 5 and Trending sections
+        const furiousAthleteIds = Array.isArray(furiousAthletesData) ? furiousAthletesData.slice(0, 5).map(athlete => athlete?.id).filter(Boolean) : [];
+        const trendingAthleteIds = trendingAthletes.map(athlete => athlete?.id).filter(Boolean);
+        const excludedIds = [...furiousAthleteIds, ...trendingAthleteIds];
+        
+        // Filter out athletes that are already shown in other sections
+        const remainingAthletes = athletesData.filter(athlete => !excludedIds.includes(athlete?.id));
         return mapAthleteData(remainingAthletes, '/logo1.png');
-    }, [athletesData]);
+    }, [athletesData, furiousAthletesData, trendingAthletes]);
 
     // Pagination logic for "See More" section
     const totalPages = Math.ceil(allAthletesForSeeMore.length / itemsPerPage);
