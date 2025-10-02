@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { CardElement, useStripe, useElements } from '@stripe/react-stripe-js'
 import { useForm } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux'
@@ -17,6 +17,7 @@ const CheckoutForm = () => {
   const navigate = useNavigate()
   const dispatch = useDispatch()
   const cart = useSelector(state => state.cart);
+  const [isLoading, setIsLoading] = useState(false);
 
   const {
     register,
@@ -37,17 +38,26 @@ const CheckoutForm = () => {
     mutationKey: ['add-place-order'],
     mutationFn: (form) => postRequest('/order-place', form),
     onSuccess: (data) => {
+      setIsLoading(false);
       if (data?.statusCode == 200) {
         toast?.success(data?.message);
         navigate('/thank-you')
         dispatch(clearCart())
       }
+    },
+    onError: (error) => {
+      setIsLoading(false);
+      toast?.error(error?.message || 'Payment failed. Please try again.');
     }
   })
 
 
 
   const onSubmit = async (data) => {
+    if (isLoading) return; // Prevent double submission
+    
+    setIsLoading(true);
+    
     data['items'] = cart?.items?.map((val => ({ 
       product_id: val?.id, 
       quantity: val?.quantity, 
@@ -67,18 +77,20 @@ const CheckoutForm = () => {
     data['shipping'] = shipping;
     data['tax'] = tax;
 
-    if (!stripe || !elements) return
+    if (!stripe || !elements) {
+      setIsLoading(false);
+      return;
+    }
 
     const card = elements.getElement(CardElement)
     const { error, token } = await stripe.createToken(card)
 
     if (error) {
-      // console.error(error)
+      setIsLoading(false);
       toast?.error(error.message);
     } else {
       data['stripe_token'] = token?.id
       mutation.mutate(data)
-
     }
   }
 
@@ -216,11 +228,16 @@ const CheckoutForm = () => {
             </div>
             <button
               type="submit"
-              className={`w-full bg-[#D4BC6D] text-black py-3 px-6 rounded font-semibold hover:opacity-90 transition ${stripe ? '!cursor-pointer' : '!cursor-not-allowed'}`}
-              // form='billing-form'
-              disabled={!stripe}
+              className={`w-full bg-[#D4BC6D] text-black py-3 px-6 rounded font-semibold hover:opacity-90 transition flex items-center justify-center gap-2 ${(!stripe || isLoading) ? '!cursor-not-allowed opacity-70' : '!cursor-pointer'}`}
+              disabled={!stripe || isLoading}
             >
-              Pay Now
+              {isLoading && (
+                <svg className="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+              )}
+              {isLoading ? 'Processing...' : 'Pay Now'}
             </button>
           </div>
         </div>
