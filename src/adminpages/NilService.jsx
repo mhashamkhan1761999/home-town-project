@@ -1236,7 +1236,7 @@ const ItemModal2 = ({ item = null, onClose, onSuccesActive, categoryId }) => {
                   { id: "merch", label: "Merch Collage", example: "/2.jpeg" },
                   { id: "favorite", label: "Favorite Picture", example: "/1.jpeg" },
                   { id: "logo", label: "Logo", example: "/3.jpeg" },
-                  { id: "other?", label: "Other?", example: "/question-mark.jpeg" },
+                  { id: "other", label: "Other", example: "/question-mark.jpeg" },
                 ].map(({ id, label, example }) => {
                   const isSelected = watch("selectedCategory") === id;
                   return (
