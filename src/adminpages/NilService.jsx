@@ -980,7 +980,7 @@ const ItemModal = ({ item, onClose, onSuccesActive }) => {
               <div className="flex-grow">
                 <input
                   type="number"
-                  min={25}
+                  min={item?.min_price || 25}
                   {...register('price', {
                     required: 'Price is required',
                     min: { value: item?.min_price, message: `Minimum price is ${item?.min_price}` }

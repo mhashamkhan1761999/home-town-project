@@ -4,7 +4,6 @@ import { getRequest, postRequest, deleteRequest, putRequest } from "../api";
 import { Plus, Search, Edit, Trash, Eye, Filter, Package } from "lucide-react";
 import { queryClient } from "../main";
 import { useForm } from "react-hook-form";
-import Select from "react-select";
 import { useModalHistory } from "../hooks/useModalHistory";
 
 function stripHtml(html) {
@@ -427,7 +426,7 @@ const SuperAdminProducts = () => {
             >
               <div className="flex items-start gap-4">
                 {/* Product Image */}
-                <div className="w-16 h-16 bg-[#adacac] rounded-lg overflow-hidden flex-shrink-0">
+               <div className="w-16 h-16 bg-[#adacac] rounded-lg overflow-hidden flex-shrink-0">
                   {(product.icon || product.image) ? (
                     <img
                       src={
@@ -450,7 +449,7 @@ const SuperAdminProducts = () => {
                   >
                     <Package size={24} />
                   </div>
-                </div>
+                </div> 
 
                 {/* Product Info */}
                 <div className="flex-1 min-w-0">
@@ -617,9 +616,32 @@ const AddProductModal = ({ onClose, categories }) => {
     handleSubmit,
     formState: { errors },
     setValue,
+    watch,
   } = useForm();
-  const [selectedColors, setSelectedColors] = useState([]);
+  const [colors, setColors] = useState([{ name: '', code: '' }]);
   const [image, setImage] = useState(null);
+  const [selectedCategoryId, setSelectedCategoryId] = useState('');
+
+  // Watch for category changes
+  const watchedCategoryId = watch('category_id');
+
+  // Fetch subcategories based on selected category
+  const { data: subCategories, isLoading: isLoadingSubCategories } = useQuery({
+    queryKey: ["subcategories", watchedCategoryId || selectedCategoryId],
+    queryFn: () => getRequest(`/sub-categories?id=${watchedCategoryId || selectedCategoryId}`),
+    enabled: !!(watchedCategoryId || selectedCategoryId),
+    onError: (error) => {
+      console.log("Subcategories not available", error);
+    },
+  });
+
+  // Update selected category when form changes
+  useEffect(() => {
+    if (watchedCategoryId !== selectedCategoryId) {
+      setSelectedCategoryId(watchedCategoryId);
+      setValue('sub_category_id', ''); // Reset subcategory when category changes
+    }
+  }, [watchedCategoryId, selectedCategoryId, setValue]);
 
   const mutation = useMutation({
     mutationFn: (data) => postRequest("/admin/products", data, true),
@@ -634,75 +656,63 @@ const AddProductModal = ({ onClose, categories }) => {
     },
   });
 
+  const addColor = () => {
+    setColors([...colors, { name: '', code: '' }]);
+  };
+
+  const removeColor = (index) => {
+    if (colors.length > 1) {
+      setColors(colors.filter((_, i) => i !== index));
+    }
+  };
+
+  const updateColor = (index, field, value) => {
+    const updatedColors = colors.map((color, i) => 
+      i === index ? { ...color, [field]: value } : color
+    );
+    setColors(updatedColors);
+  };
+
   const onSubmit = (data) => {
     const formData = new FormData();
-    Object.keys(data).forEach((key) => {
-      if (key !== "colors" && key !== "product_icon" && key !== "size_chart") {
-        formData.append(key, data[key]);
+    
+    // Add basic fields
+    formData.append('name', data.name);
+    formData.append('category_id', data.category_id);
+    formData.append('sub_category_id', data.sub_category_id || '');
+    formData.append('min_price', data.min_price);
+    formData.append('price', data.price || '');
+    formData.append('size', data.size || '');
+    formData.append('material', data.material || '');
+    formData.append('weight', data.weight || '');
+    formData.append('profit_usa', data.profit_usa || '');
+    formData.append('profit_international', data.profit_international || '');
+    formData.append('platform', data.platform || '');
+    formData.append('description', data.description);
+
+    // Add colors data in the required format
+    colors.forEach((color, index) => {
+      if (color.name && color.code) {
+        formData.append(`colors_data[${index}][name]`, color.name);
+        formData.append(`colors_data[${index}][code]`, color.code);
       }
     });
 
-    if (selectedColors.length > 0) {
-      formData.append(
-        "colors",
-        JSON.stringify(selectedColors.map((c) => c.value))
-      );
-    }
-
+    // Handle file uploads
     if (image) {
       formData.append("image", image);
     }
 
-    // Handle product icon file upload
-    if (data.product_icon && data.product_icon[0]) {
-      formData.append("icon", data.product_icon[0]);
+    if (data.icon && data.icon[0]) {
+      formData.append("icon", data.icon[0]);
     }
 
-    // Handle size chart file upload
     if (data.size_chart && data.size_chart[0]) {
       formData.append("size_chart", data.size_chart[0]);
     }
 
     mutation.mutate(formData);
   };
-
-  const colorOptions = [
-    { label: "Black", value: "black", color: "#000000" },
-    { label: "Black Beauty", value: "black beauty", color: "#1C1C1C" },
-    { label: "White", value: "white", color: "#FFFFFF" },
-    { label: "Light Gray", value: "light gray", color: "#D3D3D3" },
-    { label: "Dark Gray", value: "dark gray", color: "#A9A9A9" },
-    { label: "Pirate Gray", value: "pirate gray", color: "#828282" },
-    { label: "Stone Gray", value: "stone gray", color: "#8B8C89" },
-    { label: "Oat Gray", value: "oat gray", color: "#CCC5B9" },
-    { label: "Carbon Gray", value: "carbon gray", color: "#545454" },
-    { label: "Sand", value: "sand", color: "#C2B280" },
-    { label: "Sand Color", value: "sand color", color: "#C2B280" },
-    { label: "Milk Tea", value: "milk tea", color: "#DDB892" },
-    { label: "Light Apricot", value: "light apricot", color: "#FDD5B1" },
-    { label: "Honey Peach", value: "honey peach", color: "#FFB97B" },
-    { label: "Yellow", value: "yellow", color: "#FFFF00" },
-    { label: "Brown", value: "brown", color: "#8B4513" },
-    { label: "Gray Camel", value: "gray camel", color: "#C1B6A4" },
-    { label: "Dark Red", value: "dark red", color: "#8B0000" },
-    { label: "Watermelon Red", value: "watermelon red", color: "#FC6C85" },
-    { label: "Purple", value: "purple", color: "#800080" },
-    { label: "Purple Haze", value: "purple haze", color: "#9F00C5" },
-    { label: "Blue", value: "blue", color: "#0000FF" },
-    { label: "Dark Blue", value: "dark blue", color: "#000080" },
-    { label: "Navy", value: "navy", color: "#000080" },
-    { label: "Colorful Blue", value: "colorful blue", color: "#3A75C4" },
-    { label: "Dark Green", value: "dark green", color: "#006400" },
-    { label: "Blackish Green", value: "blackish green", color: "#1C352D" },
-    { label: "Gray Green", value: "gray green", color: "#A8B2A1" },
-    // legacy and fallback colors
-    { label: "Red", value: "red", color: "#FF0000" },
-    { label: "Green", value: "green", color: "#008000" },
-    { label: "Orange", value: "orange", color: "#FFA500" },
-    { label: "Pink", value: "pink", color: "#FFC0CB" },
-    { label: "Gray", value: "gray", color: "#808080" },
-    { label: "Brown", value: "brown", color: "#A52A2A" },
-  ];
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
@@ -759,13 +769,21 @@ const AddProductModal = ({ onClose, categories }) => {
             <select
               {...register("sub_category_id")}
               className="w-full p-3 bg-[#282828] border border-[#4B4C46] rounded-lg text-white focus:border-[#D4BC6D] outline-none"
+              disabled={!watchedCategoryId || isLoadingSubCategories}
             >
-              <option value="">Select Sub Category</option>
-              <option value="t-shirt">{1}</option>
-              <option value="shirts">{2}</option>
-              <option value="pants">{3}</option>
-              <option value="shoes">{4}</option>
-              <option value="accessories">{5}</option>
+              <option value="">
+                {!watchedCategoryId 
+                  ? "Select Category First" 
+                  : isLoadingSubCategories 
+                    ? "Loading subcategories..." 
+                    : "Select Sub Category"
+                }
+              </option>
+              {!isLoadingSubCategories && subCategories?.map((subCategory) => (
+                <option key={subCategory.id} value={subCategory.id}>
+                  {subCategory.name}
+                </option>
+              ))}
             </select>
           </div>
 
@@ -858,7 +876,7 @@ const AddProductModal = ({ onClose, categories }) => {
           </div>
 
           {/* Category */}
-          <div>
+          {/* <div>
             <select
               {...register("category_id", { required: "Category is required" })}
               className="w-full p-3 bg-[#282828] border border-[#4B4C46] rounded-lg text-white focus:border-[#D4BC6D] outline-none"
@@ -875,56 +893,68 @@ const AddProductModal = ({ onClose, categories }) => {
                 {errors.category_id.message}
               </p>
             )}
-          </div>
+          </div> */}
 
           {/* Colors */}
           <div>
             <label className="block text-white font-medium mb-2">
-              Available Colors
+              Colors
             </label>
-            <Select
-              isMulti
-              options={colorOptions.map((opt) => ({
-                ...opt,
-                label: (
-                  <div className="flex items-center gap-2">
-                    <span
-                      className="w-4 h-4 rounded-full border border-gray-300"
-                      style={{ backgroundColor: opt.color }}
-                    ></span>
-                    {opt.label}
+            <div className="space-y-3">
+              {colors.map((color, index) => (
+                <div key={index} className="grid grid-cols-2 gap-3 items-end">
+                  <div>
+                    <label className="block text-[#838383] text-sm mb-1">
+                      Color Name
+                    </label>
+                    <input
+                      type="text"
+                      value={color.name}
+                      onChange={(e) => updateColor(index, 'name', e.target.value)}
+                      className="w-full p-2 bg-[#282828] border border-[#4B4C46] rounded-lg text-white focus:border-[#D4BC6D] outline-none"
+                      placeholder="e.g., Red"
+                    />
                   </div>
-                ),
-              }))}
-              value={selectedColors}
-              onChange={setSelectedColors}
-              className="text-black"
-              styles={{
-                control: (base) => ({
-                  ...base,
-                  background: "#282828",
-                  border: "1px solid #4B4C46",
-                  borderRadius: "0.5rem",
-                }),
-                menu: (base) => ({
-                  ...base,
-                  background: "#282828",
-                }),
-                option: (base, { isFocused }) => ({
-                  ...base,
-                  background: isFocused ? "#4B4C46" : "#282828",
-                  color: "white",
-                }),
-                multiValue: (base) => ({
-                  ...base,
-                  background: "#4B4C46",
-                }),
-                multiValueLabel: (base) => ({
-                  ...base,
-                  color: "#D4BC6D",
-                }),
-              }}
-            />
+                  <div>
+                    <label className="block text-[#838383] text-sm mb-1">
+                      Color Code
+                    </label>
+                    <div className="flex gap-2">
+                      <input
+                        type="text"
+                        value={color.code}
+                        onChange={(e) => updateColor(index, 'code', e.target.value)}
+                        className="flex-1 p-2 bg-[#282828] border border-[#4B4C46] rounded-lg text-white focus:border-[#D4BC6D] outline-none"
+                        placeholder="#FF0000"
+                      />
+                      <input
+                        type="color"
+                        value={color.code || '#000000'}
+                        onChange={(e) => updateColor(index, 'code', e.target.value)}
+                        className="w-10 h-8 border border-[#4B4C46] rounded cursor-pointer"
+                      />
+                      {colors.length > 1 && (
+                        <button
+                          type="button"
+                          onClick={() => removeColor(index)}
+                          className="p-2 text-red-400 hover:text-red-300 transition"
+                          title="Remove color"
+                        >
+                          ✕
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              ))}
+              <button
+                type="button"
+                onClick={addColor}
+                className="w-full p-2 bg-[#4B4C46] text-[#D4BC6D] rounded-lg hover:bg-[#5a5b54] transition border border-[#4B4C46] border-dashed"
+              >
+                + Add Color
+              </button>
+            </div>
           </div>
 
           {/* Additional fields for new requirements */}
@@ -1024,7 +1054,7 @@ const AddProductModal = ({ onClose, categories }) => {
           </div>
 
           {/* Image Upload */}
-          <div>
+          {/* <div>
             <label className="block text-white font-medium mb-2">
               Product Image
             </label>
@@ -1034,7 +1064,7 @@ const AddProductModal = ({ onClose, categories }) => {
               onChange={(e) => setImage(e.target.files[0])}
               className="w-full p-3 bg-[#282828] border border-[#4B4C46] rounded-lg text-white focus:border-[#D4BC6D] outline-none"
             />
-          </div>
+          </div> */}
 
           {/* Buttons */}
           <div className="flex justify-end gap-4 pt-4">
@@ -1066,6 +1096,7 @@ const EditProductModal = ({ product, onClose, categories }) => {
     handleSubmit,
     formState: { errors },
     setValue,
+    watch,
   } = useForm({
     defaultValues: {
       name: product.name,
@@ -1084,41 +1115,80 @@ const EditProductModal = ({ product, onClose, categories }) => {
     },
   });
 
-  // Robust color parsing: handle JSON array or comma-separated string
-  // Robust color parsing: handle array, JSON string, or comma-separated string
-  function parseColors(colors) {
-    if (!colors) return [];
-    if (Array.isArray(colors)) return colors;
-    if (typeof colors === "string") {
-      try {
-        const parsed = JSON.parse(colors);
-        if (Array.isArray(parsed)) return parsed;
-      } catch {
-        return colors
-          .split(",")
-          .map((c) => c.trim())
-          .filter(Boolean);
-      }
-    }
-    return [];
-  }
-  const [selectedColors, setSelectedColors] = useState(
-    product.colors
-      ? parseColors(product.colors).map((color) => {
-          // Handle both string and object formats
-          if (typeof color === 'string') {
-            return { label: color, value: color };
-          } else if (typeof color === 'object' && color.name) {
-            return { label: color.name, value: color.name };
-          } else {
-            return { label: 'Unknown Color', value: 'unknown' };
-          }
-        })
-      : []
-  );
+  const [selectedCategoryId, setSelectedCategoryId] = useState(product.category?.id || product.category_id);
   const [image, setImage] = useState(null);
   const [icon, setIcon] = useState(null);
   const [sizeChart, setSizeChart] = useState(null);
+
+  // Watch for category changes
+  const watchedCategoryId = watch('category_id');
+
+  // Fetch subcategories based on selected category
+  const { data: subCategories, isLoading: isLoadingSubCategories } = useQuery({
+    queryKey: ["subcategories", watchedCategoryId || selectedCategoryId],
+    queryFn: () => getRequest(`/sub-categories?id=${watchedCategoryId || selectedCategoryId}`),
+    enabled: !!(watchedCategoryId || selectedCategoryId),
+    onError: (error) => {
+      console.log("Subcategories not available", error);
+    },
+  });
+
+  // Update selected category when form changes
+  useEffect(() => {
+    if (watchedCategoryId !== selectedCategoryId) {
+      setSelectedCategoryId(watchedCategoryId);
+      setValue('sub_category_id', ''); // Reset subcategory when category changes
+    }
+  }, [watchedCategoryId, selectedCategoryId, setValue]);
+
+  // Parse existing colors from product
+  function parseExistingColors(colorsData) {
+    if (!colorsData) return [{ name: '', code: '' }];
+    
+    // Handle colors_data format (array of objects with name and code)
+    if (Array.isArray(colorsData)) {
+      return colorsData.map(color => ({
+        name: color.name || color.label || color,
+        code: color.code || color.value || '#000000'
+      }));
+    }
+    
+    // Handle old colors format (array of strings)
+    if (typeof colorsData === 'string') {
+      try {
+        const parsed = JSON.parse(colorsData);
+        if (Array.isArray(parsed)) {
+          return parsed.map(color => ({
+            name: typeof color === 'string' ? color : (color.name || color.label || ''),
+            code: typeof color === 'string' ? '#000000' : (color.code || color.value || '#000000')
+          }));
+        }
+      } catch {
+        return colorsData.split(',').map(c => ({ name: c.trim(), code: '#000000' }));
+      }
+    }
+    
+    return [{ name: '', code: '' }];
+  }
+
+  const [colors, setColors] = useState(() => parseExistingColors(product.colors_data || product.colors));
+
+  const addColor = () => {
+    setColors([...colors, { name: '', code: '' }]);
+  };
+
+  const removeColor = (index) => {
+    if (colors.length > 1) {
+      setColors(colors.filter((_, i) => i !== index));
+    }
+  };
+
+  const updateColor = (index, field, value) => {
+    const updatedColors = colors.map((color, i) => 
+      i === index ? { ...color, [field]: value } : color
+    );
+    setColors(updatedColors);
+  };
 
   const mutation = useMutation({
     mutationFn: (data) =>
@@ -1134,73 +1204,48 @@ const EditProductModal = ({ product, onClose, categories }) => {
 
   const onSubmit = (data) => {
     const formData = new FormData();
-    Object.keys(data).forEach((key) => {
-      if (key !== "colors" && key !== "icon" && key !== "size_chart") {
-        formData.append(key, data[key]);
+    
+    // Add basic fields
+    formData.append('name', data.name);
+    formData.append('category_id', data.category_id);
+    formData.append('sub_category_id', data.sub_category_id || '');
+    formData.append('min_price', data.min_price);
+    formData.append('price', data.price || '');
+    formData.append('size', data.size || '');
+    formData.append('material', data.material || '');
+    formData.append('weight', data.weight || '');
+    formData.append('profit_usa', data.profit_usa || '');
+    formData.append('profit_international', data.profit_international || '');
+    formData.append('platform', data.platform || '');
+    formData.append('description', data.description);
+
+    // Add colors data in the required format
+    colors.forEach((color, index) => {
+      if (color.name && color.code) {
+        formData.append(`colors_data[${index}][name]`, color.name);
+        formData.append(`colors_data[${index}][code]`, color.code);
       }
     });
 
-    if (selectedColors.length > 0) {
-      formData.append(
-        "colors",
-        JSON.stringify(selectedColors.map((c) => c.value))
-      );
-    }
-
+    // Handle file uploads
     if (image) {
       formData.append("image", image);
     }
 
-    // Handle product icon file upload
     if (icon) {
       formData.append("icon", icon);
     }
 
-    // Handle size chart file upload
     if (sizeChart) {
       formData.append("size_chart", sizeChart);
     }
 
-    mutation.mutate(formData);
-  };
+    // Add method override for PUT request
+    formData.append('_method', 'PUT');
 
-  const colorOptions = [
-    { label: "Black", value: "black", color: "#000000" },
-    { label: "Black Beauty", value: "black beauty", color: "#1C1C1C" },
-    { label: "White", value: "white", color: "#FFFFFF" },
-    { label: "Light Gray", value: "light gray", color: "#D3D3D3" },
-    { label: "Dark Gray", value: "dark gray", color: "#A9A9A9" },
-    { label: "Pirate Gray", value: "pirate gray", color: "#828282" },
-    { label: "Stone Gray", value: "stone gray", color: "#8B8C89" },
-    { label: "Oat Gray", value: "oat gray", color: "#CCC5B9" },
-    { label: "Carbon Gray", value: "carbon gray", color: "#545454" },
-    { label: "Sand", value: "sand", color: "#C2B280" },
-    { label: "Sand Color", value: "sand color", color: "#C2B280" },
-    { label: "Milk Tea", value: "milk tea", color: "#DDB892" },
-    { label: "Light Apricot", value: "light apricot", color: "#FDD5B1" },
-    { label: "Honey Peach", value: "honey peach", color: "#FFB97B" },
-    { label: "Yellow", value: "yellow", color: "#FFFF00" },
-    { label: "Brown", value: "brown", color: "#8B4513" },
-    { label: "Gray Camel", value: "gray camel", color: "#C1B6A4" },
-    { label: "Dark Red", value: "dark red", color: "#8B0000" },
-    { label: "Watermelon Red", value: "watermelon red", color: "#FC6C85" },
-    { label: "Purple", value: "purple", color: "#800080" },
-    { label: "Purple Haze", value: "purple haze", color: "#9F00C5" },
-    { label: "Blue", value: "blue", color: "#0000FF" },
-    { label: "Dark Blue", value: "dark blue", color: "#000080" },
-    { label: "Navy", value: "navy", color: "#000080" },
-    { label: "Colorful Blue", value: "colorful blue", color: "#3A75C4" },
-    { label: "Dark Green", value: "dark green", color: "#006400" },
-    { label: "Blackish Green", value: "blackish green", color: "#1C352D" },
-    { label: "Gray Green", value: "gray green", color: "#A8B2A1" },
-    // legacy and fallback colors
-    { label: "Red", value: "red", color: "#FF0000" },
-    { label: "Green", value: "green", color: "#008000" },
-    { label: "Orange", value: "orange", color: "#FFA500" },
-    { label: "Pink", value: "pink", color: "#FFC0CB" },
-    { label: "Gray", value: "gray", color: "#808080" },
-    { label: "Brown", value: "brown", color: "#A52A2A" },
-  ];
+    mutation.mutate(formData);
+    console.log(Object.fromEntries(formData.entries()));
+  };
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
@@ -1255,13 +1300,21 @@ const EditProductModal = ({ product, onClose, categories }) => {
             <select
               {...register("sub_category_id")}
               className="w-full p-3 bg-[#282828] border border-[#4B4C46] rounded-lg text-white focus:border-[#D4BC6D] outline-none"
+              disabled={!watchedCategoryId || isLoadingSubCategories}
             >
-              <option value="">Select Sub Category</option>
-              <option value="1">1</option>
-              <option value="2">2</option>
-              <option value="3">3</option>
-              <option value="4">4</option>
-              <option value="5">5</option>
+              <option value="">
+                {!watchedCategoryId 
+                  ? "Select Category First" 
+                  : isLoadingSubCategories 
+                    ? "Loading subcategories..." 
+                    : "Select Sub Category"
+                }
+              </option>
+              {!isLoadingSubCategories && subCategories?.map((subCategory) => (
+                <option key={subCategory.id} value={subCategory.id}>
+                  {subCategory.name}
+                </option>
+              ))}
             </select>
           </div>
 
@@ -1355,51 +1408,63 @@ const EditProductModal = ({ product, onClose, categories }) => {
           {/* Colors */}
           <div>
             <label className="block text-white font-medium mb-2">
-              Available Colors
+              Colors
             </label>
-            <Select
-              isMulti
-              options={colorOptions.map((opt) => ({
-                ...opt,
-                label: (
-                  <div className="flex items-center gap-2">
-                    <span
-                      className="w-4 h-4 rounded-full border border-gray-300"
-                      style={{ backgroundColor: opt.color }}
-                    ></span>
-                    {opt.label}
+            <div className="space-y-3">
+              {colors.map((color, index) => (
+                <div key={index} className="grid grid-cols-2 gap-3 items-end">
+                  <div>
+                    <label className="block text-[#838383] text-sm mb-1">
+                      Color Name
+                    </label>
+                    <input
+                      type="text"
+                      value={color.name}
+                      onChange={(e) => updateColor(index, 'name', e.target.value)}
+                      className="w-full p-2 bg-[#282828] border border-[#4B4C46] rounded-lg text-white focus:border-[#D4BC6D] outline-none"
+                      placeholder="e.g., Red"
+                    />
                   </div>
-                ),
-              }))}
-              value={selectedColors}
-              onChange={setSelectedColors}
-              className="text-black"
-              styles={{
-                control: (base) => ({
-                  ...base,
-                  background: "#282828",
-                  border: "1px solid #4B4C46",
-                  borderRadius: "0.5rem",
-                }),
-                menu: (base) => ({
-                  ...base,
-                  background: "#282828",
-                }),
-                option: (base, { isFocused }) => ({
-                  ...base,
-                  background: isFocused ? "#4B4C46" : "#282828",
-                  color: "white",
-                }),
-                multiValue: (base) => ({
-                  ...base,
-                  background: "#4B4C46",
-                }),
-                multiValueLabel: (base) => ({
-                  ...base,
-                  color: "#D4BC6D",
-                }),
-              }}
-            />
+                  <div>
+                    <label className="block text-[#838383] text-sm mb-1">
+                      Color Code
+                    </label>
+                    <div className="flex gap-2">
+                      <input
+                        type="text"
+                        value={color.code}
+                        onChange={(e) => updateColor(index, 'code', e.target.value)}
+                        className="flex-1 p-2 bg-[#282828] border border-[#4B4C46] rounded-lg text-white focus:border-[#D4BC6D] outline-none"
+                        placeholder="#FF0000"
+                      />
+                      <input
+                        type="color"
+                        value={color.code || '#000000'}
+                        onChange={(e) => updateColor(index, 'code', e.target.value)}
+                        className="w-10 h-8 border border-[#4B4C46] rounded cursor-pointer"
+                      />
+                      {colors.length > 1 && (
+                        <button
+                          type="button"
+                          onClick={() => removeColor(index)}
+                          className="p-2 text-red-400 hover:text-red-300 transition"
+                          title="Remove color"
+                        >
+                          ✕
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              ))}
+              <button
+                type="button"
+                onClick={addColor}
+                className="w-full p-2 bg-[#4B4C46] text-[#D4BC6D] rounded-lg hover:bg-[#5a5b54] transition border border-[#4B4C46] border-dashed"
+              >
+                + Add Color
+              </button>
+            </div>
           </div>
 
           {/* Product Icon and Product Size Chart */}
@@ -1549,7 +1614,7 @@ const EditProductModal = ({ product, onClose, categories }) => {
           </div>
 
           {/* New Image Upload */}
-          <div>
+          {/* <div>
             <label className="block text-white font-medium mb-2">
               {product.image ? "Replace Image" : "Product Image"}
             </label>
@@ -1559,7 +1624,7 @@ const EditProductModal = ({ product, onClose, categories }) => {
               onChange={(e) => setImage(e.target.files[0])}
               className="w-full p-3 bg-[#282828] border border-[#4B4C46] rounded-lg text-white focus:border-[#D4BC6D] outline-none"
             />
-          </div>
+          </div> */}
 
           {/* Buttons */}
           <div className="flex justify-end gap-4 pt-4">
