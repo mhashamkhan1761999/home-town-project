@@ -303,12 +303,12 @@ const StoreFront = () => {
                         <span className="text-white">{athlete.athlete_name}</span>
                       </div>
                     )}
-                    {athlete?.level_of_athlete && (
+                    {/* {athlete?.level_of_athlete && (
                       <div>
                         <span className="text-[#D4BC6D] font-medium">Level: </span>
                         <span className="text-white">{athlete.level_of_athlete}</span>
                       </div>
-                    )}
+                    )} */}
                     {athlete?.team_name && (
                       <div>
                         <span className="text-[#D4BC6D] font-medium">Team: </span>
@@ -327,21 +327,21 @@ const StoreFront = () => {
                         <span className="text-white">{athlete.hometown}</span>
                       </div>
                     )}
-                    {athlete?.team_email && (
+                    {/* {athlete?.team_email && (
                       <div>
                         <span className="text-[#D4BC6D] font-medium">Team Email: </span>
                         <span className="text-white text-xs">{athlete.team_email}</span>
                       </div>
-                    )}
-                    {athlete?.quote && (
+                    )} */}
+                    {/* {athlete?.quote && (
                       <div>
                         <span className="text-[#D4BC6D] font-medium">Quote: </span>
                         <span className="text-white italic">"{athlete.quote}"</span>
                       </div>
-                    )}
+                    )} */}
                     {athlete?.description && (
                       <div>
-                        <span className="text-[#D4BC6D] font-medium">About: </span>
+                        <span className="text-[#D4BC6D] font-medium">Description: </span>
                         <span className="text-white">{athlete.description}</span>
                       </div>
                     )}
@@ -353,7 +353,7 @@ const StoreFront = () => {
                     )}
                     {athlete?.social_media_reach && (
                       <div>
-                        <span className="text-[#D4BC6D] font-medium">Social Reach: </span>
+                        <span className="text-[#D4BC6D] font-medium">Personalized Quote: </span>
                         <span className="text-white">{athlete.social_media_reach}</span>
                       </div>
                     )}
@@ -436,12 +436,12 @@ const StoreFront = () => {
                         <span className="text-white">{athlete.athlete_name}</span>
                       </div>
                     )}
-                    {athlete?.level_of_athlete && (
+                    {/* {athlete?.level_of_athlete && (
                       <div>
                         <span className="text-[#D4BC6D] font-medium">Level: </span>
                         <span className="text-white">{athlete.level_of_athlete}</span>
                       </div>
-                    )}
+                    )} */}
                     {athlete?.team_name && (
                       <div>
                         <span className="text-[#D4BC6D] font-medium">Team: </span>
@@ -460,24 +460,24 @@ const StoreFront = () => {
                         <span className="text-white">{athlete.hometown}</span>
                       </div>
                     )}
-                    {athlete?.quote && (
+                    {athlete?.social_media_reach && (
                       <div>
-                        <span className="text-[#D4BC6D] font-medium">Quote: </span>
-                        <span className="text-white italic">"{athlete.quote}"</span>
+                        <span className="text-[#D4BC6D] font-medium">Personalized Quote: </span>
+                        <span className="text-white italic">"{athlete.social_media_reach}"</span>
                       </div>
                     )}
                     {athlete?.bio && (
                       <div>
-                        <span className="text-[#D4BC6D] font-medium">Bio: </span>
-                        <span className="text-white">{athlete.bio}</span>
+                        <span className="text-[#D4BC6D] font-medium">Description: </span>
+                        <span className="text-white">{athlete.description}</span>
                       </div>
                     )}
-                    {athlete?.social_media_reach && (
+                    {/* {athlete?.social_media_reach && (
                       <div>
                         <span className="text-[#D4BC6D] font-medium">Social Reach: </span>
                         <span className="text-white">{athlete.social_media_reach}</span>
                       </div>
-                    )}
+                    )} */}
                   </div>
                   
                   {/* Social Media Links - Mobile */}
@@ -485,11 +485,11 @@ const StoreFront = () => {
                     <div className="flex flex-wrap gap-1">
                       <a href={athlete?.instagram || "https://instagram.com"} target="_blank" rel="noopener noreferrer" 
                          className="text-xs bg-[#D4BC6D] text-black px-2 py-1 rounded hover:bg-[#C4AC5D] transition-colors">
-                        Insta
+                        Instagram
                       </a>
                       <a href={athlete?.tiktok || "https://tiktok.com"} target="_blank" rel="noopener noreferrer" 
                          className="text-xs bg-[#D4BC6D] text-black px-2 py-1 rounded hover:bg-[#C4AC5D] transition-colors">
-                        Tiktok
+                        TikTok
                       </a>
                       <a href={athlete?.twitter || "https://twitter.com"} target="_blank" rel="noopener noreferrer" 
                          className="text-xs bg-[#D4BC6D] text-black px-2 py-1 rounded hover:bg-[#C4AC5D] transition-colors">

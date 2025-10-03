@@ -26,7 +26,9 @@ const ProfileForm = () => {
     if (profileData) {
       setValue('store_name', profileData.store_name || '');
       setValue('sport', profileData.sport || '');
-      setValue('social_media_reach', profileData.social_media_reach || '');
+      setValue('quote', profileData.social_media_reach || '');
+      setValue('jersey', profileData.jersey || '');
+      setValue('hometown', profileData.hometown || '');
       setValue('bio', profileData.bio || '');
       setValue('description', profileData.description || '');
       setValue('athlete_name', profileData.athlete_name || '');
@@ -75,7 +77,9 @@ const ProfileForm = () => {
     const formData = new FormData();
     formData.append('store_name', formValues.store_name);
     formData.append('sport', formValues.sport);
-    formData.append('social_media_reach', formValues.social_media_reach);
+    formData.append('social_media_reach', formValues.quote);
+    formData.append('jersey', formValues.jersey);
+    formData.append('hometown', formValues.hometown);
     formData.append('bio', formValues.bio);
     formData.append('description', formValues.description);
     formData.append('athlete_name', formValues.athlete_name);
