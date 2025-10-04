@@ -37,15 +37,39 @@ const AdminModal2 = ({ onClose, userAge: passedUserAge }) => {
         mutation.mutate(newData);
     };
 
+    // Helper function to get coordinates from both mouse and touch events
+    const getEventPos = (event) => {
+        const canvas = canvasRef.current;
+        const rect = canvas.getBoundingClientRect();
+        
+        if (event.touches && event.touches[0]) {
+            // Touch event
+            return {
+                x: event.touches[0].clientX - rect.left,
+                y: event.touches[0].clientY - rect.top
+            };
+        } else {
+            // Mouse event
+            return {
+                x: event.nativeEvent.offsetX,
+                y: event.nativeEvent.offsetY
+            };
+        }
+    };
+
     const startDrawing = (event) => {
+        event.preventDefault(); // Prevent scrolling on touch
+        const pos = getEventPos(event);
         contextRef.current.beginPath();
-        contextRef.current.moveTo(event.nativeEvent.offsetX, event.nativeEvent.offsetY);
+        contextRef.current.moveTo(pos.x, pos.y);
         contextRef.current.stroke();
     };
 
     const draw = (event) => {
         if (!isSigned) return;
-        contextRef.current.lineTo(event.nativeEvent.offsetX, event.nativeEvent.offsetY);
+        event.preventDefault(); // Prevent scrolling on touch
+        const pos = getEventPos(event);
+        contextRef.current.lineTo(pos.x, pos.y);
         contextRef.current.stroke();
     };
 
@@ -138,7 +162,10 @@ const AdminModal2 = ({ onClose, userAge: passedUserAge }) => {
                                             onMouseMove={draw}
                                             onMouseUp={stopDrawing}
                                             onMouseOut={stopDrawing}
-                                            style={{ border: "1px solid #000" }}
+                                            onTouchStart={(e) => { setIsSigned(true); startDrawing(e); }}
+                                            onTouchMove={draw}
+                                            onTouchEnd={stopDrawing}
+                                            style={{ border: "1px solid #000", touchAction: "none" }}
                                         />
                                     </div>
                                     <div className="grow">
@@ -176,7 +203,10 @@ const AdminModal2 = ({ onClose, userAge: passedUserAge }) => {
                                             onMouseMove={draw}
                                             onMouseUp={stopDrawing}
                                             onMouseOut={stopDrawing}
-                                            style={{ border: "1px solid #000" }}
+                                            onTouchStart={(e) => { setIsSigned(true); startDrawing(e); }}
+                                            onTouchMove={draw}
+                                            onTouchEnd={stopDrawing}
+                                            style={{ border: "1px solid #000", touchAction: "none" }}
                                         />
                                     </div>
                                     <div className="grow">

@@ -156,13 +156,15 @@ const SuperAdminLayout = () => {
                             Athlete Launch
                         </NavLink>
 
-                        <NavLink to="/admin/manage-cashout"
-                            className={({ isActive }) => isActive ? 'text-[#CAB265] font-bold text-base flex items-center gap-3' : 'text-[#6A6A69] font-bold text-base flex items-center gap-3'}
-                            onClick={() => setIsMobileMenuOpen(false)}
-                        >
-                            <DollarSign size={18} />
-                            Manage Cashout
-                        </NavLink>
+                        {user.role_type === 'SuperAdmin' && (
+                            <NavLink to="/admin/manage-cashout"
+                                className={({ isActive }) => isActive ? 'text-[#CAB265] font-bold text-base flex items-center gap-3' : 'text-[#6A6A69] font-bold text-base flex items-center gap-3'}
+                                onClick={() => setIsMobileMenuOpen(false)}
+                            >
+                                <DollarSign size={18} />
+                                Manage Cashout
+                            </NavLink>
+                        )}
 
                         <NavLink to="/admin/graphic-queries"
                             className={({ isActive }) => isActive ? 'text-[#CAB265] font-bold text-base flex items-center gap-3' : 'text-[#6A6A69] font-bold text-base flex items-center gap-3'}
@@ -257,11 +259,15 @@ const SuperAdminLayout = () => {
                             Athlete Launch
                         </NavLink>
 
-                        <NavLink to="/admin/manage-cashout"
-                            className={({ isActive }) => isActive ? 'text-[#CAB265] font-bold text-base flex flex-col items-center gap-2 text-center' : 'text-[#6A6A69] font-bold text-base flex items-center gap-2 text-center flex-col'}>
-                            <DollarSign size={18} />
-                            Manage Cashout
-                        </NavLink>
+                        {user.role_type === 'SuperAdmin' && (
+                            <NavLink to="/admin/manage-cashout"
+                                className={({ isActive }) => isActive ? 'text-[#CAB265] font-bold text-base flex items-center gap-3' : 'text-[#6A6A69] font-bold text-base flex items-center gap-3'}
+                                onClick={() => setIsMobileMenuOpen(false)}
+                            >
+                                <DollarSign size={18} />
+                                Manage Cashout
+                            </NavLink>
+                        )}
 
                         <NavLink to="/admin/graphic-queries"
                             className={({ isActive }) => isActive ? 'text-[#CAB265] font-bold text-base flex flex-col items-center gap-2 text-center' : 'text-[#6A6A69] font-bold text-base flex items-center gap-2 text-center flex-col'}>
