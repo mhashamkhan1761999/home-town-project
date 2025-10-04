@@ -443,7 +443,7 @@ const ProfileForm = () => {
                 Instagram
               </label>
               <input
-                type="url"
+                type="text"
                 {...register('instagram')}
                 placeholder="https://instagram.com/username"
                 className="w-full border border-[#D4BC6D] bg-black/50 text-white p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#D4BC6D]"
@@ -456,7 +456,7 @@ const ProfileForm = () => {
                 TikTok
               </label>
               <input
-                type="url"
+                type="text"
                 {...register('tiktok')}
                 placeholder="https://tiktok.com/@username"
                 className="w-full border border-[#D4BC6D] bg-black/50 text-white p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#D4BC6D]"
@@ -469,7 +469,7 @@ const ProfileForm = () => {
                 Twitter
               </label>
               <input
-                type="url"
+                type="text"
                 {...register('twitter')}
                 placeholder="https://twitter.com/username"
                 className="w-full border border-[#D4BC6D] bg-black/50 text-white p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#D4BC6D]"
@@ -482,7 +482,7 @@ const ProfileForm = () => {
                 YouTube
               </label>
               <input
-                type="url"
+                type="text"
                 {...register('youtube')}
                 placeholder="https://youtube.com/channel/..."
                 className="w-full border border-[#D4BC6D] bg-black/50 text-white p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#D4BC6D]"
@@ -495,7 +495,7 @@ const ProfileForm = () => {
                 Twitch
               </label>
               <input
-                type="url"
+                type="text"
                 {...register('twitch')}
                 placeholder="https://twitch.tv/username"
                 className="w-full border border-[#D4BC6D] bg-black/50 text-white p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#D4BC6D]"
@@ -508,7 +508,7 @@ const ProfileForm = () => {
                 Other Social Media
               </label>
               <input
-                type="url"
+                type="text"
                 {...register('other')}
                 placeholder="https://other-platform.com/username"
                 className="w-full border border-[#D4BC6D] bg-black/50 text-white p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#D4BC6D]"

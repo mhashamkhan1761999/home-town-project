@@ -110,7 +110,7 @@ const AthletesSignUp = () => {
         {
             id: 5,
             component: (
-                <Signup5 data={allData} onFinish={() => onSubmit(allData)} goBack={() => setActiveStep(prev => prev - 1)} loading={loading} />
+                <Signup5 data={allData} onFinish={(finalData) => onSubmit(finalData)} goBack={() => setActiveStep(prev => prev - 1)} loading={loading} />
             ),
         },
     ];

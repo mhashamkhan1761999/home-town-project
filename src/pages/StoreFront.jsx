@@ -12,6 +12,39 @@ const resolveUrl = (url) => {
   return url.replace(/\\\//g, '/');
 };
 
+// Utility function to build social media URLs
+const buildSocialMediaUrl = (value, platform) => {
+  if (!value) return null;
+  
+  // Check if the value is already a URL (contains protocol)
+  if (value.startsWith('http://') || value.startsWith('https://') || value.startsWith('www.')) {
+    return value;
+  }
+  
+  // Remove @ symbol if present (common in usernames)
+  const username = value.replace(/^@/, '');
+  
+  // Build URL based on platform
+  switch (platform) {
+    case 'instagram':
+      return `https://instagram.com/${username}`;
+    case 'tiktok':
+      return `https://tiktok.com/@${username}`;
+    case 'twitter':
+      return `https://twitter.com/${username}`;
+    case 'youtube':
+      return `https://youtube.com/@${username}`;
+    case 'twitch':
+      return `https://twitch.tv/${username}`;
+    default:
+      // For 'other' or unknown platforms, if it looks like a URL without protocol, add https
+      if (username.includes('.')) {
+        return `https://${username}`;
+      }
+      return value; // Return as-is if we can't determine the format
+  }
+};
+
 const StoreFront = () => {
   const { slug } = useParams();
   
@@ -362,28 +395,38 @@ const StoreFront = () => {
                     <div className="pt-3 border-t border-[#D4BC6D]/30">
                       <p className="text-[#D4BC6D] font-medium mb-2">Follow Me:</p>
                       <div className="flex flex-wrap gap-2">
-                        <a href={athlete?.instagram || "https://instagram.com"} target="_blank" rel="noopener noreferrer" 
-                           className="text-xs bg-[#D4BC6D] text-black px-2 py-1 rounded hover:bg-[#C4AC5D] transition-colors">
-                          Instagram
-                        </a>
-                        <a href={athlete?.tiktok || "https://tiktok.com"} target="_blank" rel="noopener noreferrer" 
-                           className="text-xs bg-[#D4BC6D] text-black px-2 py-1 rounded hover:bg-[#C4AC5D] transition-colors">
-                          TikTok
-                        </a>
-                        <a href={athlete?.twitter || "https://twitter.com"} target="_blank" rel="noopener noreferrer" 
-                           className="text-xs bg-[#D4BC6D] text-black px-2 py-1 rounded hover:bg-[#C4AC5D] transition-colors">
-                          Twitter
-                        </a>
-                        <a href={athlete?.youtube || "https://youtube.com"} target="_blank" rel="noopener noreferrer" 
-                           className="text-xs bg-[#D4BC6D] text-black px-2 py-1 rounded hover:bg-[#C4AC5D] transition-colors">
-                          YouTube
-                        </a>
-                        <a href={athlete?.twitch || "https://twitch.tv"} target="_blank" rel="noopener noreferrer" 
-                           className="text-xs bg-[#D4BC6D] text-black px-2 py-1 rounded hover:bg-[#C4AC5D] transition-colors">
-                          Twitch
-                        </a>
+                        {athlete?.instagram && (
+                          <a href={buildSocialMediaUrl(athlete.instagram, 'instagram')} target="_blank" rel="noopener noreferrer" 
+                             className="text-xs bg-[#D4BC6D] text-black px-2 py-1 rounded hover:bg-[#C4AC5D] transition-colors">
+                            Instagram
+                          </a>
+                        )}
+                        {athlete?.tiktok && (
+                          <a href={buildSocialMediaUrl(athlete.tiktok, 'tiktok')} target="_blank" rel="noopener noreferrer" 
+                             className="text-xs bg-[#D4BC6D] text-black px-2 py-1 rounded hover:bg-[#C4AC5D] transition-colors">
+                            TikTok
+                          </a>
+                        )}
+                        {athlete?.twitter && (
+                          <a href={buildSocialMediaUrl(athlete.twitter, 'twitter')} target="_blank" rel="noopener noreferrer" 
+                             className="text-xs bg-[#D4BC6D] text-black px-2 py-1 rounded hover:bg-[#C4AC5D] transition-colors">
+                            Twitter
+                          </a>
+                        )}
+                        {athlete?.youtube && (
+                          <a href={buildSocialMediaUrl(athlete.youtube, 'youtube')} target="_blank" rel="noopener noreferrer" 
+                             className="text-xs bg-[#D4BC6D] text-black px-2 py-1 rounded hover:bg-[#C4AC5D] transition-colors">
+                            YouTube
+                          </a>
+                        )}
+                        {athlete?.twitch && (
+                          <a href={buildSocialMediaUrl(athlete.twitch, 'twitch')} target="_blank" rel="noopener noreferrer" 
+                             className="text-xs bg-[#D4BC6D] text-black px-2 py-1 rounded hover:bg-[#C4AC5D] transition-colors">
+                            Twitch
+                          </a>
+                        )}
                         {athlete?.other && (
-                          <a href={athlete.other} target="_blank" rel="noopener noreferrer" 
+                          <a href={buildSocialMediaUrl(athlete.other, 'other')} target="_blank" rel="noopener noreferrer" 
                              className="text-xs bg-[#D4BC6D] text-black px-2 py-1 rounded hover:bg-[#C4AC5D] transition-colors">
                             Other
                           </a>
@@ -483,28 +526,38 @@ const StoreFront = () => {
                   {/* Social Media Links - Mobile */}
                   <div className="pt-2 border-t border-[#D4BC6D]/30">
                     <div className="flex flex-wrap gap-1">
-                      <a href={athlete?.instagram || "https://instagram.com"} target="_blank" rel="noopener noreferrer" 
-                         className="text-xs bg-[#D4BC6D] text-black px-2 py-1 rounded hover:bg-[#C4AC5D] transition-colors">
-                        Instagram
-                      </a>
-                      <a href={athlete?.tiktok || "https://tiktok.com"} target="_blank" rel="noopener noreferrer" 
-                         className="text-xs bg-[#D4BC6D] text-black px-2 py-1 rounded hover:bg-[#C4AC5D] transition-colors">
-                        TikTok
-                      </a>
-                      <a href={athlete?.twitter || "https://twitter.com"} target="_blank" rel="noopener noreferrer" 
-                         className="text-xs bg-[#D4BC6D] text-black px-2 py-1 rounded hover:bg-[#C4AC5D] transition-colors">
-                        Twitter
-                      </a>
-                      <a href={athlete?.youtube || "https://youtube.com"} target="_blank" rel="noopener noreferrer" 
-                         className="text-xs bg-[#D4BC6D] text-black px-2 py-1 rounded hover:bg-[#C4AC5D] transition-colors">
-                        YouTube
-                      </a>
-                      <a href={athlete?.twitch || "https://twitch.tv"} target="_blank" rel="noopener noreferrer" 
-                         className="text-xs bg-[#D4BC6D] text-black px-2 py-1 rounded hover:bg-[#C4AC5D] transition-colors">
-                        Twitch
-                      </a>
+                      {athlete?.instagram && (
+                        <a href={buildSocialMediaUrl(athlete.instagram, 'instagram')} target="_blank" rel="noopener noreferrer" 
+                           className="text-xs bg-[#D4BC6D] text-black px-2 py-1 rounded hover:bg-[#C4AC5D] transition-colors">
+                          Instagram
+                        </a>
+                      )}
+                      {athlete?.tiktok && (
+                        <a href={buildSocialMediaUrl(athlete.tiktok, 'tiktok')} target="_blank" rel="noopener noreferrer" 
+                           className="text-xs bg-[#D4BC6D] text-black px-2 py-1 rounded hover:bg-[#C4AC5D] transition-colors">
+                          TikTok
+                        </a>
+                      )}
+                      {athlete?.twitter && (
+                        <a href={buildSocialMediaUrl(athlete.twitter, 'twitter')} target="_blank" rel="noopener noreferrer" 
+                           className="text-xs bg-[#D4BC6D] text-black px-2 py-1 rounded hover:bg-[#C4AC5D] transition-colors">
+                          Twitter
+                        </a>
+                      )}
+                      {athlete?.youtube && (
+                        <a href={buildSocialMediaUrl(athlete.youtube, 'youtube')} target="_blank" rel="noopener noreferrer" 
+                           className="text-xs bg-[#D4BC6D] text-black px-2 py-1 rounded hover:bg-[#C4AC5D] transition-colors">
+                          YouTube
+                        </a>
+                      )}
+                      {athlete?.twitch && (
+                        <a href={buildSocialMediaUrl(athlete.twitch, 'twitch')} target="_blank" rel="noopener noreferrer" 
+                           className="text-xs bg-[#D4BC6D] text-black px-2 py-1 rounded hover:bg-[#C4AC5D] transition-colors">
+                          Twitch
+                        </a>
+                      )}
                       {athlete?.other && (
-                        <a href={athlete.other} target="_blank" rel="noopener noreferrer" 
+                        <a href={buildSocialMediaUrl(athlete.other, 'other')} target="_blank" rel="noopener noreferrer" 
                            className="text-xs bg-[#D4BC6D] text-black px-2 py-1 rounded hover:bg-[#C4AC5D] transition-colors">
                           Other
                         </a>

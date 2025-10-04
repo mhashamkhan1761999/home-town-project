@@ -11,8 +11,9 @@ const Signup5 = ({ onFinish, data, goBack, loading }) => {
     } = useForm();
 
     const onSubmit = (newData) => {
-        const allData = { ...data, newData }
-        // console.log('Form Data:', data);
+        const allData = { ...data, ...newData }
+        console.log('Social Media Data:', newData);
+        console.log('All Combined Data:', allData);
         onFinish(allData)
     };
     return (
@@ -41,7 +42,7 @@ const Signup5 = ({ onFinish, data, goBack, loading }) => {
                                                 {...register("instagram", { required: 'Required Field' })}
                                                 type="text"
                                                 placeholder="Enter your instagram username"
-                                                className="h-full w-full border-0 outline-0 text-[#6B6B6B]"
+                                                className="h-full w-full bg-transparent border-0 outline-0 text-[#6B6B6B] p-4"
                                             />
                                         </div>
                                     </div>
@@ -62,7 +63,7 @@ const Signup5 = ({ onFinish, data, goBack, loading }) => {
                                                 {...register("tiktok")}
                                                 type="text"
                                                 placeholder="Enter your tiktok username"
-                                                className="h-full w-full border-0 outline-0 text-[#6B6B6B]"
+                                                className="h-full w-full bg-transparent border-0 outline-0 text-[#6B6B6B] p-4"
                                             />
                                         </div>
                                     </div>
@@ -85,7 +86,7 @@ const Signup5 = ({ onFinish, data, goBack, loading }) => {
                                                 {...register("twitter")}
                                                 type="text"
                                                 placeholder="Enter your twitter username"
-                                                className="h-full w-full border-0 outline-0 text-[#6B6B6B]"
+                                                className="h-full w-full bg-transparent border-0 outline-0 text-[#6B6B6B] p-4"
                                             />
                                         </div>
                                     </div>
@@ -105,7 +106,7 @@ const Signup5 = ({ onFinish, data, goBack, loading }) => {
                                                 {...register("youtube")}
                                                 type="text"
                                                 placeholder="Enter your YouTube username"
-                                                className="h-full w-full border-0 outline-0 text-[#6B6B6B]"
+                                                className="h-full w-full bg-transparent border-0 outline-0 text-[#6B6B6B] p-4"
                                             />
                                         </div>
                                     </div>
@@ -128,7 +129,7 @@ const Signup5 = ({ onFinish, data, goBack, loading }) => {
                                                 {...register("twitch")}
                                                 type="text"
                                                 placeholder="Enter your twitch username"
-                                                className="h-full w-full border-0 outline-0 text-[#6B6B6B]"
+                                                className="h-full w-full bg-transparent border-0 outline-0 text-[#6B6B6B] p-4"
                                             />
                                         </div>
                                     </div>
@@ -143,14 +144,13 @@ const Signup5 = ({ onFinish, data, goBack, loading }) => {
                                         <div className="p-4">
                                             <MoreHorizontal size={15} color="white" />
                                         </div>
-                                        <div className="grow pe-2.5">
-                                            <select
+                                        <div className="grow">
+                                            <input
                                                 {...register("other")}
-                                                className="h-full w-full border-0 outline-0 text-[#6B6B6B]">
-                                                <option value="">Select other social media</option>
-                                                <option value="level1">Level 1</option>
-                                                <option value="level2">Level 2</option>
-                                            </select>
+                                                type="text"
+                                                placeholder="Enter other social media platform or username"
+                                                className="h-full w-full bg-transparent border-0 outline-0 text-[#6B6B6B] p-4"
+                                            />
                                         </div>
                                     </div>
                                 </div>
