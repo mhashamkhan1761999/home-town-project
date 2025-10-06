@@ -180,7 +180,7 @@ const ProfileForm = () => {
           </div>
         )}
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-1 gap-6">
           {/* Store Name */}
           <div>
             <label className="block text-sm font-medium mb-2 text-[#D4BC6D]">
@@ -194,7 +194,7 @@ const ProfileForm = () => {
           </div>
 
           {/* Sport */}
-          <div>
+          {/* <div>
             <label className="block text-sm font-medium mb-2 text-[#D4BC6D]">
               Sport
             </label>
@@ -203,10 +203,10 @@ const ProfileForm = () => {
               {...register('sport')}
               className="w-full border border-[#D4BC6D] bg-black/50 text-white p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#D4BC6D]"
             />
-          </div>
+          </div> */}
 
           {/* Jersey Number */}
-          <div>
+          {/* <div>
             <label className="block text-sm font-medium mb-2 text-[#D4BC6D]">
               Jersey #
             </label>
@@ -215,10 +215,10 @@ const ProfileForm = () => {
               {...register('jersey')}
               className="w-full border border-[#D4BC6D] bg-black/50 text-white p-3 rounded-lg"
             />
-          </div>
+          </div> */}
 
           {/* Home Town */}
-          <div>
+          {/* <div>
             <label className="block text-sm font-medium mb-2 text-[#D4BC6D]">
               Home Town
             </label>
@@ -227,10 +227,10 @@ const ProfileForm = () => {
               {...register('hometown')}
               className="w-full border border-[#D4BC6D] bg-black/50 text-white p-3 rounded-lg"
             />
-          </div>
+          </div> */}
 
           {/* Personalised Quote */}
-          <div className="md:col-span-2">
+          {/* <div className="md:col-span-2">
             <label className="block text-sm font-medium mb-2 text-[#D4BC6D]">
               Personalised Quote
             </label>
@@ -238,10 +238,10 @@ const ProfileForm = () => {
               {...register('quote')}
               className="w-full border border-[#D4BC6D] bg-black/50 text-white p-3 rounded-lg h-24"
             />
-          </div>
+          </div> */}
 
           {/* Store Description */}
-          <div className="md:col-span-2">
+          {/* <div className="md:col-span-2">
             <label className="block text-sm font-medium mb-2 text-[#D4BC6D]">
               Store Description
             </label>
@@ -249,10 +249,10 @@ const ProfileForm = () => {
               {...register('description')}
               className="w-full border border-[#D4BC6D] bg-black/50 text-white p-3 rounded-lg h-28"
             />
-          </div>
+          </div> */}
 
           {/* Athlete's Name */}
-          <div>
+          {/* <div>
             <label className="block text-sm font-medium mb-2 text-[#D4BC6D]">
               Athlete's Name
             </label>
@@ -261,10 +261,10 @@ const ProfileForm = () => {
               {...register('athlete_name')}
               className="w-full border border-[#D4BC6D] bg-black/50 text-white p-3 rounded-lg"
             />
-          </div>
+          </div> */}
 
           {/* Age */}
-          <div>
+          {/* <div>
             <label className="block text-sm font-medium mb-2 text-[#D4BC6D]">
               Age
             </label>
@@ -273,10 +273,10 @@ const ProfileForm = () => {
               {...register('age')}
               className="w-full border border-[#D4BC6D] bg-black/50 text-white p-3 rounded-lg"
             />
-          </div>
+          </div> */}
 
           {/* Gender */}
-          <div>
+          {/* <div>
             <label className="block text-sm font-medium mb-2 text-[#D4BC6D]">
               Gender
             </label>
@@ -289,10 +289,10 @@ const ProfileForm = () => {
               <option value="female">Female</option>
               <option value="prefer_not_to_say">Prefer not to say</option>
             </select>
-          </div>
+          </div> */}
 
           {/* Country */}
-          <div>
+          {/* <div>
             <label className="block text-sm font-medium mb-2 text-[#D4BC6D]">
               Country
             </label>
@@ -305,10 +305,10 @@ const ProfileForm = () => {
                 <option key={i}>{country}</option>
               ))}
             </select>
-          </div>
+          </div> */}
 
           {/* City */}
-          <div>
+          {/* <div>
             <label className="block text-sm font-medium mb-2 text-[#D4BC6D]">
               City
             </label>
@@ -317,10 +317,10 @@ const ProfileForm = () => {
               {...register('city')}
               className="w-full border border-[#D4BC6D] bg-black/50 text-white p-3 rounded-lg"
             />
-          </div>
+          </div> */}
 
           {/* Level of Athlete */}
-          <div>
+          {/* <div>
             <label className="block text-sm font-medium mb-2 text-[#D4BC6D]">
               Level of Athlete
             </label>
@@ -334,10 +334,10 @@ const ProfileForm = () => {
               <option value="College">College</option>
               <option value="Pro">Pro</option>
             </select>
-          </div>
+          </div> */}
 
           {/* Grade Level */}
-          <div>
+          {/* <div>
             <label className="block text-sm font-medium mb-2 text-[#D4BC6D]">
               Grade Level
             </label>
@@ -346,10 +346,10 @@ const ProfileForm = () => {
               {...register('grade_level')}
               className="w-full border border-[#D4BC6D] bg-black/50 text-white p-3 rounded-lg"
             />
-          </div>
+          </div> */}
 
           {/* Team Name */}
-          <div>
+          {/* <div>
             <label className="block text-sm font-medium mb-2 text-[#D4BC6D]">
               Team Name
             </label>
@@ -358,10 +358,10 @@ const ProfileForm = () => {
               {...register('team_name')}
               className="w-full border border-[#D4BC6D] bg-black/50 text-white p-3 rounded-lg"
             />
-          </div>
+          </div> */}
 
           {/* Team Email */}
-          <div>
+          {/* <div>
             <label className="block text-sm font-medium mb-2 text-[#D4BC6D]">
               Team Email
             </label>
@@ -370,10 +370,10 @@ const ProfileForm = () => {
               {...register('team_email')}
               className="w-full border border-[#D4BC6D] bg-black/50 text-white p-3 rounded-lg"
             />
-          </div>
+          </div> */}
 
           {/* Director Info */}
-          <div>
+          {/* <div>
             <label className="block text-sm font-medium mb-2 text-[#D4BC6D]">
               Director Info
             </label>
@@ -382,10 +382,10 @@ const ProfileForm = () => {
               {...register('director_info')}
               className="w-full border border-[#D4BC6D] bg-black/50 text-white p-3 rounded-lg"
             />
-          </div>
+          </div> */}
 
           {/* Coach Info */}
-          <div>
+          {/* <div>
             <label className="block text-sm font-medium mb-2 text-[#D4BC6D]">
               Coach Info
             </label>
@@ -394,10 +394,10 @@ const ProfileForm = () => {
               {...register('coach_info')}
               className="w-full border border-[#D4BC6D] bg-black/50 text-white p-3 rounded-lg"
             />
-          </div>
+          </div> */}
 
           {/* School Name */}
-          <div>
+          {/* <div>
             <label className="block text-sm font-medium mb-2 text-[#D4BC6D]">
               School Name
             </label>
@@ -406,10 +406,10 @@ const ProfileForm = () => {
               {...register('school_name')}
               className="w-full border border-[#D4BC6D] bg-black/50 text-white p-3 rounded-lg"
             />
-          </div>
+          </div> */}
 
           {/* School Email */}
-          <div>
+          {/* <div>
             <label className="block text-sm font-medium mb-2 text-[#D4BC6D]">
               School Email
             </label>
@@ -418,10 +418,10 @@ const ProfileForm = () => {
               {...register('school_email')}
               className="w-full border border-[#D4BC6D] bg-black/50 text-white p-3 rounded-lg"
             />
-          </div>
+          </div> */}
 
           {/* School Phone */}
-          <div>
+          {/* <div>
             <label className="block text-sm font-medium mb-2 text-[#D4BC6D]">
               School Phone
             </label>
@@ -430,14 +430,13 @@ const ProfileForm = () => {
               {...register('school_phone')}
               className="w-full border border-[#D4BC6D] bg-black/50 text-white p-3 rounded-lg"
             />
-          </div>
+          </div> */}
         </div>
 
         {/* Social Media Section */}
-        <div className="mt-8">
+        {/* <div className="mt-8">
           <h3 className="text-xl font-bold mb-4 text-white">Social Media Links</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* Instagram */}
             <div>
               <label className="block text-sm font-medium mb-2 text-[#D4BC6D]">
                 Instagram
@@ -450,7 +449,6 @@ const ProfileForm = () => {
               />
             </div>
 
-            {/* TikTok */}
             <div>
               <label className="block text-sm font-medium mb-2 text-[#D4BC6D]">
                 TikTok
@@ -463,7 +461,6 @@ const ProfileForm = () => {
               />
             </div>
 
-            {/* Twitter */}
             <div>
               <label className="block text-sm font-medium mb-2 text-[#D4BC6D]">
                 Twitter
@@ -476,7 +473,6 @@ const ProfileForm = () => {
               />
             </div>
 
-            {/* YouTube */}
             <div>
               <label className="block text-sm font-medium mb-2 text-[#D4BC6D]">
                 YouTube
@@ -488,8 +484,6 @@ const ProfileForm = () => {
                 className="w-full border border-[#D4BC6D] bg-black/50 text-white p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#D4BC6D]"
               />
             </div>
-
-            {/* Twitch */}
             <div>
               <label className="block text-sm font-medium mb-2 text-[#D4BC6D]">
                 Twitch
@@ -501,8 +495,6 @@ const ProfileForm = () => {
                 className="w-full border border-[#D4BC6D] bg-black/50 text-white p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#D4BC6D]"
               />
             </div>
-
-            {/* Other Social Media */}
             <div>
               <label className="block text-sm font-medium mb-2 text-[#D4BC6D]">
                 Other Social Media
@@ -515,7 +507,7 @@ const ProfileForm = () => {
               />
             </div>
           </div>
-        </div>
+        </div> */}
 
         {/* Submit Button */}
         <button

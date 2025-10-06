@@ -235,7 +235,7 @@ const StoreFront = () => {
             <div className="flex justify-center">
               <img
                 alt="athlete"
-                className="w-24 h-24 sm:w-32 sm:h-32 md:w-40 md:h-40 lg:w-48 lg:h-48 xl:w-60 xl:h-60 rounded-full border-4 border-[#D4BC6D] object-cover shadow-xl"
+                className="w-48 h-48 sm:w-32 sm:h-32 md:w-40 md:h-40 lg:w-48 lg:h-48 xl:w-60 xl:h-60 rounded-full border-4 border-[#D4BC6D] object-cover shadow-xl"
                 src={
                   resolveUrl(athlete?.profile_picture_url) ||
                   resolveUrl(athlete?.profile_picture) ||
@@ -316,8 +316,7 @@ const StoreFront = () => {
       ) : (
         <>
           <section className="py-24 relative">
-            {/* Athlete Details Card - Positioned on Right Side */}
-            {slug && athlete && (
+            {/* {slug && athlete && (
               <div className="absolute top-8 right-4 md:right-8 max-w-xs md:max-w-sm z-20 hidden md:block">
                 <div className="bg-black/70 backdrop-blur-md rounded-2xl border border-[#D4BC6D] p-6 space-y-4 shadow-2xl">
                   <div className="mb-4">
@@ -336,12 +335,12 @@ const StoreFront = () => {
                         <span className="text-white">{athlete.athlete_name}</span>
                       </div>
                     )}
-                    {/* {athlete?.level_of_athlete && (
+                    {athlete?.level_of_athlete && (
                       <div>
                         <span className="text-[#D4BC6D] font-medium">Level: </span>
                         <span className="text-white">{athlete.level_of_athlete}</span>
                       </div>
-                    )} */}
+                    )}
                     {athlete?.team_name && (
                       <div>
                         <span className="text-[#D4BC6D] font-medium">Team: </span>
@@ -360,18 +359,18 @@ const StoreFront = () => {
                         <span className="text-white">{athlete.hometown}</span>
                       </div>
                     )}
-                    {/* {athlete?.team_email && (
+                    {athlete?.team_email && (
                       <div>
                         <span className="text-[#D4BC6D] font-medium">Team Email: </span>
                         <span className="text-white text-xs">{athlete.team_email}</span>
                       </div>
-                    )} */}
-                    {/* {athlete?.quote && (
+                    )}
+                    {athlete?.quote && (
                       <div>
                         <span className="text-[#D4BC6D] font-medium">Quote: </span>
                         <span className="text-white italic">"{athlete.quote}"</span>
                       </div>
-                    )} */}
+                    )}
                     {athlete?.description && (
                       <div>
                         <span className="text-[#D4BC6D] font-medium">Description: </span>
@@ -391,7 +390,6 @@ const StoreFront = () => {
                       </div>
                     )}
                     
-                    {/* Social Media Links */}
                     <div className="pt-3 border-t border-[#D4BC6D]/30">
                       <p className="text-[#D4BC6D] font-medium mb-2">Follow Me:</p>
                       <div className="flex flex-wrap gap-2">
@@ -436,7 +434,7 @@ const StoreFront = () => {
                   </div>
                 </div>
               </div>
-            )}
+            )}*/}
             
             {/* Merchandise Navigation Arrows */}
             <div className="merchandise-nav-prev absolute left-4 top-[65%] transform -translate-y-1/2 z-30 bg-[#D4BC6D] hover:bg-[#C4AC5D] rounded-full p-3 cursor-pointer transition-colors shadow-lg">
@@ -460,7 +458,7 @@ const StoreFront = () => {
             </h1>
             
             {/* Mobile Athlete Details Card */}
-            {slug && athlete && (
+            {/* {slug && athlete && (
               <div className="block md:hidden mx-4 mb-8">
                 <div className="bg-black/70 backdrop-blur-md rounded-2xl border border-[#D4BC6D] p-4 space-y-3 shadow-2xl">
                   <div className="mb-3">
@@ -479,12 +477,12 @@ const StoreFront = () => {
                         <span className="text-white">{athlete.athlete_name}</span>
                       </div>
                     )}
-                    {/* {athlete?.level_of_athlete && (
+                    {athlete?.level_of_athlete && (
                       <div>
                         <span className="text-[#D4BC6D] font-medium">Level: </span>
                         <span className="text-white">{athlete.level_of_athlete}</span>
                       </div>
-                    )} */}
+                    )}
                     {athlete?.team_name && (
                       <div>
                         <span className="text-[#D4BC6D] font-medium">Team: </span>
@@ -515,15 +513,14 @@ const StoreFront = () => {
                         <span className="text-white">{athlete.description}</span>
                       </div>
                     )}
-                    {/* {athlete?.social_media_reach && (
+                    {athlete?.social_media_reach && (
                       <div>
                         <span className="text-[#D4BC6D] font-medium">Social Reach: </span>
                         <span className="text-white">{athlete.social_media_reach}</span>
                       </div>
-                    )} */}
+                    )}
                   </div>
                   
-                  {/* Social Media Links - Mobile */}
                   <div className="pt-2 border-t border-[#D4BC6D]/30">
                     <div className="flex flex-wrap gap-1">
                       {athlete?.instagram && (
@@ -566,7 +563,7 @@ const StoreFront = () => {
                   </div>
                 </div>
               </div>
-            )}
+            )} */}
             <div className="mb-[7.188rem]">
               <div className="flex justify-center space-x-5 mb-[81px]">
                 <button
