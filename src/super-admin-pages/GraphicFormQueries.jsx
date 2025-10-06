@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { Search, Filter, Eye, Package, Clock, CheckCircle, X, Download } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { getRequest } from '../api';
@@ -49,6 +49,26 @@ const GraphicFormQueries = () => {
             console.error('Error fetching concept queries:', error);
         }
     });
+
+    // Fetch categories with fallback (similar to Products page)
+    const { data: categories, error: categoriesError } = useQuery({
+        queryKey: ["categories"],
+        queryFn: () => getRequest("/categories"),
+        onError: (error) => {
+            console.error('Error fetching categories:', error);
+        },
+    });
+
+    // Create category mapping for proper category name resolution
+    const categoryMap = useMemo(() => {
+        const map = {};
+        if (categories?.length) {
+            categories.forEach(category => {
+                map[category.id] = category.name;
+            });
+        }
+        return map;
+    }, [categories]);
 
     // // Console log the response for debugging
     // React.useEffect(() => {
@@ -544,6 +564,7 @@ const GraphicFormQueries = () => {
                             setSelectedQuery(null);
                         }}
                         query={selectedQuery}
+                        categoryMap={categoryMap}
                     />
                 )}
             </div>
@@ -552,7 +573,7 @@ const GraphicFormQueries = () => {
 };
 
 // View Details Modal Component
-const ViewDetailsModal = ({ isOpen, onClose, query }) => {
+const ViewDetailsModal = ({ isOpen, onClose, query, categoryMap }) => {
     const [selectedImage, setSelectedImage] = useState(null);
 
     if (!isOpen) return null;
@@ -672,8 +693,26 @@ const ViewDetailsModal = ({ isOpen, onClose, query }) => {
 
                                 {query.content && (
                                     <div>
-                                        <p className="text-gray-400 text-sm">Content Type:</p>
+                                        <p className="text-gray-400 text-sm">Content:</p>
                                         <p className="text-[#D4BC6D] font-medium">{query.content}</p>
+                                    </div>
+                                )}
+
+                                {query.selectedCategory && (
+                                    <div>
+                                        <p className="text-gray-400 text-sm">Selected Type:</p>
+                                        <p className="text-[#D4BC6D] font-medium">
+                                            {query.selectedCategory}
+                                        </p>
+                                    </div>
+                                )}
+
+                                {query.category_id && (
+                                    <div>
+                                        <p className="text-gray-400 text-sm">Category:</p>
+                                        <p className="text-[#D4BC6D] font-medium">
+                                            {categoryMap[query.category_id] || 'Unknown Category'}
+                                        </p>
                                     </div>
                                 )}
 

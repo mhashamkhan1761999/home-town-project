@@ -216,7 +216,7 @@ const StoreFront = () => {
     }
     
     // Final fallback
-    return "/basket.svg";
+    return "/cover.jpg";
   };
   return (
     <>
@@ -239,7 +239,7 @@ const StoreFront = () => {
                 src={
                   resolveUrl(athlete?.profile_picture_url) ||
                   resolveUrl(athlete?.profile_picture) ||
-                  "/default.jpg"
+                  "/cover.jpg"
                 }
               />
             </div>

@@ -1115,12 +1115,12 @@ const ViewAthleteModal = ({ isOpen, onClose, athlete }) => {
               </div>
             )}
           </div>
-          {athlete?.social_media_reach && (
+          {/* {athlete?.social_media_reach && (
             <div className="mt-3 sm:mt-4">
               <label className="block text-xs sm:text-sm font-medium text-gray-400 mb-1">Social Media Reach</label>
               <p className="text-white text-sm sm:text-base">{athlete.social_media_reach}</p>
             </div>
-          )}
+          )} */}
           </div>
         )}
 
