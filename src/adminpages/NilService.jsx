@@ -374,7 +374,7 @@ const NilCategory = () => {
               </div>
               <h2 className="text-2xl font-bold text-white mb-4">Card Details Required</h2>
               <p className="text-gray-300 mb-6">
-                Add your card details to launch your NIL service so we can pay you. A $25 fee applies only if you don’t get a sale in 60 days 
+                Add your card details to launch your NIL service so we can pay you. A $25 fee applies only if you don’t get a sale in 60 days.
               </p>
               <div className="flex justify-center space-x-3">
                 <button
