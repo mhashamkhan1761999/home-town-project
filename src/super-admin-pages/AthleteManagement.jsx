@@ -830,8 +830,24 @@ const ViewAthleteModal = ({ isOpen, onClose, athlete }) => {
 
               <div>
                 <label className="block text-sm font-medium text-gray-400 mb-1">Location</label>
-                <p className="text-white">{athlete?.city}, {athlete?.country}</p>
+                <p className="text-white">
+                  {[athlete?.city, athlete?.state, athlete?.country].filter(Boolean).join(', ')}
+                </p>
               </div>
+
+              {athlete?.hometown && (
+                <div>
+                  <label className="block text-sm font-medium text-gray-400 mb-1">Hometown</label>
+                  <p className="text-white">{athlete.hometown}</p>
+                </div>
+              )}
+
+              {athlete?.jersey && (
+                <div>
+                  <label className="block text-sm font-medium text-gray-400 mb-1">Jersey Number</label>
+                  <p className="text-white">#{athlete.jersey}</p>
+                </div>
+              )}
 
               <div>
                 <label className="block text-sm font-medium text-gray-400 mb-1">Referral Code</label>
@@ -946,38 +962,56 @@ const ViewAthleteModal = ({ isOpen, onClose, athlete }) => {
         )}
 
         {/* Team Information */}
-        {(athlete?.team_name || athlete?.team_email || athlete?.team_email_2) && (
+        {(athlete?.team_name || athlete?.team_email || athlete?.team_email_2 || athlete?.director_info || athlete?.coach_info) && (
           <div className="bg-[#1a1a1a] border border-[#4B4C46] rounded-lg p-3 sm:p-6 mb-4 sm:mb-6">
             <h3 className="text-base sm:text-lg font-semibold text-white mb-3 sm:mb-4">Team Information</h3>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-              {athlete?.team_name && (
+            <div className="space-y-4">
+              {/* Team Details */}
+              {(athlete?.team_name || athlete?.team_email || athlete?.team_email_2) && (
                 <div>
-                  <label className="block text-sm font-medium text-gray-400 mb-1">Team Name</label>
-                  <p className="text-white">{athlete.team_name}</p>
+                  <h4 className="text-sm font-semibold text-[#D4BC6D] mb-2">Team Details</h4>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+                    {athlete?.team_name && (
+                      <div>
+                        <label className="block text-sm font-medium text-gray-400 mb-1">Team Name</label>
+                        <p className="text-white">{athlete.team_name}</p>
+                      </div>
+                    )}
+                    {athlete?.team_email && (
+                      <div>
+                        <label className="block text-sm font-medium text-gray-400 mb-1">Team Email</label>
+                        <p className="text-white">{athlete.team_email}</p>
+                      </div>
+                    )}
+                    {athlete?.team_email_2 && (
+                      <div>
+                        <label className="block text-sm font-medium text-gray-400 mb-1">Team Email 2</label>
+                        <p className="text-white">{athlete.team_email_2}</p>
+                      </div>
+                    )}
+                  </div>
                 </div>
               )}
-              {athlete?.team_email && (
-                <div>
-                  <label className="block text-sm font-medium text-gray-400 mb-1">Team Email</label>
-                  <p className="text-white">{athlete.team_email}</p>
-                </div>
-              )}
-              {athlete?.team_email_2 && (
-                <div>
-                  <label className="block text-sm font-medium text-gray-400 mb-1">Team Email 2</label>
-                  <p className="text-white">{athlete.team_email_2}</p>
-                </div>
-              )}
+
+              {/* Athletic Director Information */}
               {athlete?.director_info && (
                 <div>
-                  <label className="block text-sm font-medium text-gray-400 mb-1">Director Info</label>
-                  <p className="text-white">{athlete.director_info}</p>
+                  <h4 className="text-sm font-semibold text-[#D4BC6D] mb-2">Athletic Director Information</h4>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-400 mb-1">Director Info</label>
+                    <p className="text-white">{athlete.director_info}</p>
+                  </div>
                 </div>
               )}
+
+              {/* Coach Information */}
               {athlete?.coach_info && (
                 <div>
-                  <label className="block text-sm font-medium text-gray-400 mb-1">Coach Info</label>
-                  <p className="text-white">{athlete.coach_info}</p>
+                  <h4 className="text-sm font-semibold text-[#D4BC6D] mb-2">Coach Information</h4>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-400 mb-1">Coach Info</label>
+                    <p className="text-white">{athlete.coach_info}</p>
+                  </div>
                 </div>
               )}
             </div>
@@ -1012,9 +1046,10 @@ const ViewAthleteModal = ({ isOpen, onClose, athlete }) => {
         )}
 
         {/* Social Media Information */}
-        <div className="bg-[#1a1a1a] border border-[#4B4C46] rounded-lg p-3 sm:p-6 mb-4 sm:mb-6">
-          <h3 className="text-base sm:text-lg font-semibold text-white mb-3 sm:mb-4">Social Media</h3>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
+        {(athlete?.instagram || athlete?.twitter || athlete?.youtube || athlete?.tiktok || athlete?.twitch || athlete?.other || athlete?.social_media_reach) && (
+          <div className="bg-[#1a1a1a] border border-[#4B4C46] rounded-lg p-3 sm:p-6 mb-4 sm:mb-6">
+            <h3 className="text-base sm:text-lg font-semibold text-white mb-3 sm:mb-4">Social Media</h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
             {athlete?.instagram && (
               <div>
                 <label className="block text-sm font-medium text-gray-400 mb-1">Instagram</label>
@@ -1086,12 +1121,14 @@ const ViewAthleteModal = ({ isOpen, onClose, athlete }) => {
               <p className="text-white text-sm sm:text-base">{athlete.social_media_reach}</p>
             </div>
           )}
-        </div>
+          </div>
+        )}
 
         {/* Additional Information */}
-        <div className="bg-[#1a1a1a] border border-[#4B4C46] rounded-lg p-3 sm:p-6 mb-4 sm:mb-6">
-          <h3 className="text-base sm:text-lg font-semibold text-white mb-3 sm:mb-4">Additional Information</h3>
-          <div className="space-y-3 sm:space-y-4">
+        {(athlete?.bio || athlete?.description || athlete?.furious || athlete?.card !== undefined) && (
+          <div className="bg-[#1a1a1a] border border-[#4B4C46] rounded-lg p-3 sm:p-6 mb-4 sm:mb-6">
+            <h3 className="text-base sm:text-lg font-semibold text-white mb-3 sm:mb-4">Additional Information</h3>
+            <div className="space-y-3 sm:space-y-4">
             {athlete?.bio && (
               <div>
                 <label className="block text-sm font-medium text-gray-400 mb-1">Bio</label>
@@ -1126,12 +1163,13 @@ const ViewAthleteModal = ({ isOpen, onClose, athlete }) => {
                 )}
               </div>
             </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-400 mb-1">Last Updated</label>
-              <p className="text-white">{athlete?.updated_at ? new Date(athlete.updated_at).toLocaleString() : 'Not available'}</p>
+              <div>
+                <label className="block text-sm font-medium text-gray-400 mb-1">Last Updated</label>
+                <p className="text-white">{athlete?.updated_at ? new Date(athlete.updated_at).toLocaleString() : 'Not available'}</p>
+              </div>
             </div>
           </div>
-        </div>
+        )}
 
         <div className="flex justify-end">
           <button
