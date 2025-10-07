@@ -109,12 +109,58 @@ const SuperAdminLayout = () => {
                     
                     <div className="flex flex-col gap-6">
                         {(user?.role_type === 'SuperAdmin' || user?.role_type === 'Admin') && (
+                        <NavLink to="/admin/athletes"
+                            className={({ isActive }) => isActive ? 'text-[#CAB265] font-bold text-base flex items-center gap-3' : 'text-[#6A6A69] font-bold text-base flex items-center gap-3'}
+                            onClick={() => setIsMobileMenuOpen(false)}
+                        >
+                            <Trophy size={18} />
+                            Athlete Signups
+                        </NavLink>
+                        )}
+
+                        <NavLink to="/admin/graphic-queries"
+                            className={({ isActive }) => isActive ? 'text-[#CAB265] font-bold text-base flex items-center gap-3' : 'text-[#6A6A69] font-bold text-base flex items-center gap-3'}
+                            onClick={() => setIsMobileMenuOpen(false)}
+                        >
+                            <Package size={18} />
+                            Graphic Inquiries
+                        </NavLink>
+
+                        {(user?.role_type === 'SuperAdmin' || user?.role_type === 'Admin') && (
+                        <NavLink to="/admin/athlete-products"
+                            className={({ isActive }) => isActive ? 'text-[#CAB265] font-bold text-base flex items-center gap-3' : 'text-[#6A6A69] font-bold text-base flex items-center gap-3'}
+                            onClick={() => setIsMobileMenuOpen(false)}
+                        >
+                            <Package size={18} />
+                            NIL Service Launch
+                        </NavLink>
+                        )}
+
+                        {(user?.role_type === 'SuperAdmin' || user?.role_type === 'Admin') && (
+                        <NavLink to="/admin/orders"
+                            className={({ isActive }) => isActive ? 'text-[#CAB265] font-bold text-base flex items-center gap-3' : 'text-[#6A6A69] font-bold text-base flex items-center gap-3'}
+                            onClick={() => setIsMobileMenuOpen(false)}
+                        >
+                            <ShoppingCart size={18} />
+                            Orders
+                        </NavLink>
+                        )}
+
+                        <NavLink to="/admin/bundle-subscription"
+                            className={({ isActive }) => isActive ? 'text-[#CAB265] font-bold text-base flex items-center gap-3' : 'text-[#6A6A69] font-bold text-base flex items-center gap-3'}
+                            onClick={() => setIsMobileMenuOpen(false)}
+                        >
+                            <CreditCard size={18} />
+                            Purchased Bundles
+                        </NavLink>
+
+                        {(user?.role_type === 'SuperAdmin' || user?.role_type === 'Admin') && (
                         <NavLink to="/admin/dashboard"
                             className={({ isActive }) => isActive ? 'text-[#CAB265] font-bold text-base flex items-center gap-3' : 'text-[#6A6A69] font-bold text-base flex items-center gap-3'}
                             onClick={() => setIsMobileMenuOpen(false)}
                         >
                             <BarChart3 size={18} />
-                            Dashboard
+                            Analytics
                         </NavLink>
                         )}
 
@@ -138,36 +184,6 @@ const SuperAdminLayout = () => {
                         </NavLink>
                         )}
 
-                        {(user?.role_type === 'SuperAdmin' || user?.role_type === 'Admin') && (
-                        <NavLink to="/admin/orders"
-                            className={({ isActive }) => isActive ? 'text-[#CAB265] font-bold text-base flex items-center gap-3' : 'text-[#6A6A69] font-bold text-base flex items-center gap-3'}
-                            onClick={() => setIsMobileMenuOpen(false)}
-                        >
-                            <ShoppingCart size={18} />
-                            Orders
-                        </NavLink>
-                        )}
-
-                        {(user?.role_type === 'SuperAdmin' || user?.role_type === 'Admin') && (
-                        <NavLink to="/admin/athletes"
-                            className={({ isActive }) => isActive ? 'text-[#CAB265] font-bold text-base flex items-center gap-3' : 'text-[#6A6A69] font-bold text-base flex items-center gap-3'}
-                            onClick={() => setIsMobileMenuOpen(false)}
-                        >
-                            <Trophy size={18} />
-                            Athletes
-                        </NavLink>
-                        )}
-
-                        {(user?.role_type === 'SuperAdmin' || user?.role_type === 'Admin') && (
-                        <NavLink to="/admin/athlete-products"
-                            className={({ isActive }) => isActive ? 'text-[#CAB265] font-bold text-base flex items-center gap-3' : 'text-[#6A6A69] font-bold text-base flex items-center gap-3'}
-                            onClick={() => setIsMobileMenuOpen(false)}
-                        >
-                            <Package size={18} />
-                            Athlete Launch
-                        </NavLink>
-                        )}
-
                         {user.role_type === 'SuperAdmin' && (
                             <NavLink to="/admin/manage-cashout"
                                 className={({ isActive }) => isActive ? 'text-[#CAB265] font-bold text-base flex items-center gap-3' : 'text-[#6A6A69] font-bold text-base flex items-center gap-3'}
@@ -177,20 +193,6 @@ const SuperAdminLayout = () => {
                                 Manage Cashout
                             </NavLink>
                         )}
-                        <NavLink to="/admin/graphic-queries"
-                            className={({ isActive }) => isActive ? 'text-[#CAB265] font-bold text-base flex items-center gap-3' : 'text-[#6A6A69] font-bold text-base flex items-center gap-3'}
-                            onClick={() => setIsMobileMenuOpen(false)}
-                        >
-                            <Package size={18} />
-                            Graphic Form Queries
-                        </NavLink>
-                        <NavLink to="/admin/bundle-subscription"
-                            className={({ isActive }) => isActive ? 'text-[#CAB265] font-bold text-base flex items-center gap-3' : 'text-[#6A6A69] font-bold text-base flex items-center gap-3'}
-                            onClick={() => setIsMobileMenuOpen(false)}
-                        >
-                            <CreditCard size={18} />
-                            Bundle Subscription
-                        </NavLink>
                     </div>
                     
                     <div className="mt-8 mb-6">
@@ -234,10 +236,46 @@ const SuperAdminLayout = () => {
                     
                     <div className="flex flex-col items-center justify-center gap-6 pb-4">
                         {(user?.role_type === 'SuperAdmin' || user?.role_type === 'Admin') && (
+                            <NavLink to="/admin/athletes"
+                            className={({ isActive }) => isActive ? 'text-[#CAB265] font-bold text-base flex flex-col items-center gap-2 text-center' : 'text-[#6A6A69] font-bold text-base flex items-center gap-2 text-center flex-col'}>
+                            <Trophy size={18} />
+                            Athlete Signups
+                        </NavLink>
+                        )}
+
+                        <NavLink to="/admin/graphic-queries"
+                            className={({ isActive }) => isActive ? 'text-[#CAB265] font-bold text-base flex flex-col items-center gap-2 text-center' : 'text-[#6A6A69] font-bold text-base flex items-center gap-2 text-center flex-col'}>
+                            <Package size={18} />
+                            Graphic Inquiries
+                        </NavLink>
+
+                        {(user?.role_type === 'SuperAdmin' || user?.role_type === 'Admin') && (
+                        <NavLink to="/admin/athlete-products"
+                            className={({ isActive }) => isActive ? 'text-[#CAB265] font-bold text-base flex flex-col items-center gap-2 text-center' : 'text-[#6A6A69] font-bold text-base flex items-center gap-2 text-center flex-col'}>
+                            <Package size={18} />
+                            NIL Service Launch
+                        </NavLink>
+                        )}
+
+                        {(user?.role_type === 'SuperAdmin' || user?.role_type === 'Admin') && (
+                        <NavLink to="/admin/orders"
+                            className={({ isActive }) => isActive ? 'text-[#CAB265] font-bold text-base flex flex-col items-center gap-2 text-center' : 'text-[#6A6A69] font-bold text-base flex items-center gap-2 text-center flex-col'}>
+                            <ShoppingCart size={18} />
+                            Orders
+                        </NavLink>
+                        )}
+
+                        <NavLink to="/admin/bundle-subscription"
+                            className={({ isActive }) => isActive ? 'text-[#CAB265] font-bold text-base flex flex-col items-center gap-2 text-center' : 'text-[#6A6A69] font-bold text-base flex items-center gap-2 text-center flex-col'}>
+                            <CreditCard size={18} />
+                            Purchased Bundles
+                        </NavLink>
+
+                        {(user?.role_type === 'SuperAdmin' || user?.role_type === 'Admin') && (
                         <NavLink to="/admin/dashboard"
                             className={({ isActive }) => isActive ? 'text-[#CAB265] font-bold text-base flex flex-col items-center gap-2' : 'text-[#6A6A69] font-bold text-base flex items-center gap-2 flex-col'}>
                             <BarChart3 size={18} />
-                            Dashboard
+                            Analytics
                         </NavLink>
                         )}
 
@@ -249,37 +287,13 @@ const SuperAdminLayout = () => {
                         </NavLink>
                         )}
 
-                    {(user?.role_type === 'SuperAdmin' || user?.role_type === 'Admin') && (
+                        {(user?.role_type === 'SuperAdmin' || user?.role_type === 'Admin') && (
                         <NavLink to="/admin/users"
                             className={({ isActive }) => isActive ? 'text-[#CAB265] font-bold text-base flex flex-col items-center gap-2 text-center' : 'text-[#6A6A69] font-bold text-base flex items-center gap-2 text-center flex-col'}>
                             <Users size={18} />
                             Users
                         </NavLink>
                         )}
-
-                    {(user?.role_type === 'SuperAdmin' || user?.role_type === 'Admin') && (
-                        <NavLink to="/admin/orders"
-                            className={({ isActive }) => isActive ? 'text-[#CAB265] font-bold text-base flex flex-col items-center gap-2 text-center' : 'text-[#6A6A69] font-bold text-base flex items-center gap-2 text-center flex-col'}>
-                            <ShoppingCart size={18} />
-                            Orders
-                        </NavLink>
-                        )}
-
-                    {(user?.role_type === 'SuperAdmin' || user?.role_type === 'Admin') && (
-                            <NavLink to="/admin/athletes"
-                            className={({ isActive }) => isActive ? 'text-[#CAB265] font-bold text-base flex flex-col items-center gap-2 text-center' : 'text-[#6A6A69] font-bold text-base flex items-center gap-2 text-center flex-col'}>
-                            <Trophy size={18} />
-                            Athletes
-                        </NavLink>
-                        )}
-
-                    {(user?.role_type === 'SuperAdmin' || user?.role_type === 'Admin') && (
-                        <NavLink to="/admin/athlete-products"
-                            className={({ isActive }) => isActive ? 'text-[#CAB265] font-bold text-base flex flex-col items-center gap-2 text-center' : 'text-[#6A6A69] font-bold text-base flex items-center gap-2 text-center flex-col'}>
-                            <Package size={18} />
-                            Athlete Launch
-                        </NavLink>
-                    )}
 
                         {user?.role_type === 'SuperAdmin' && (
                             <NavLink to="/admin/manage-cashout"
@@ -288,18 +302,6 @@ const SuperAdminLayout = () => {
                                 Manage Cashout
                             </NavLink>
                         )}
-
-                        <NavLink to="/admin/graphic-queries"
-                            className={({ isActive }) => isActive ? 'text-[#CAB265] font-bold text-base flex flex-col items-center gap-2 text-center' : 'text-[#6A6A69] font-bold text-base flex items-center gap-2 text-center flex-col'}>
-                            <Package size={18} />
-                            Graphic Queries
-                        </NavLink>
-
-                        <NavLink to="/admin/bundle-subscription"
-                            className={({ isActive }) => isActive ? 'text-[#CAB265] font-bold text-base flex flex-col items-center gap-2 text-center' : 'text-[#6A6A69] font-bold text-base flex items-center gap-2 text-center flex-col'}>
-                            <CreditCard size={18} />
-                            Bundle Subscription
-                        </NavLink>
                     </div>
                     
                     <div className="mb-[2.75rem] mt-[3.125rem]">

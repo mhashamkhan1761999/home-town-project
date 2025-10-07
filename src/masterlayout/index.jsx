@@ -291,11 +291,6 @@ const MasterLayout = () => {
                     className="absolute inset-[2px] w-[calc(100%-4px)] h-[calc(100%-4px)] object-cover object-center rounded-full border border-gray-700"
                   />
 
-                  {/* Notification Badge */}
-                  <div className="absolute -top-1 -right-1 flex items-center justify-center w-4 h-4 bg-red-500 text-white text-[8px] font-bold rounded-full">
-                    1
-                  </div>
-
                   {/* Chat Icon */}
                   <div className="absolute -bottom-1 -right-1 flex items-center justify-center w-5 h-5 bg-[#D4BC6D] rounded-full border-2 border-black">
                     <MessageCircle className="w-3 h-3 text-black" />
@@ -430,11 +425,6 @@ const MasterLayout = () => {
                     alt="Agent Avatar"
                     className="absolute inset-[3px] w-[calc(100%-6px)] h-[calc(100%-6px)] object-cover object-center rounded-full border border-gray-700 shadow-lg"
                   />
-
-                  {/* Notification Badge */}
-                  <div className="absolute -top-1 -right-1 flex items-center justify-center w-5 h-5 bg-red-500 text-white text-[10px] font-bold rounded-full shadow-md">
-                    1
-                  </div>
 
                   {/* Chat Icon */}
                   <div className="absolute -bottom-1 -right-1 flex items-center justify-center w-8 h-8 bg-[#D4BC6D] rounded-full border-2 border-black shadow-md">

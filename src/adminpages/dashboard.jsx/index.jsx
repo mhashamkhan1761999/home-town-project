@@ -406,9 +406,9 @@ const Dashboard = () => {
                     <div className="text-xs sm:text-sm">
                       {service.category?.name || "Unknown"}
                     </div>
-                    <p className="text-[#838383] font-bold text-xs">
+                    {/* <p className="text-[#838383] font-bold text-xs">
                       {service.content || "No Description"}
-                    </p>
+                    </p> */}
                   </div>
                 </div>
               </td>
