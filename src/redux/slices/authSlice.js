@@ -23,6 +23,18 @@ const authSlice = createSlice({
         saveUser: (state, action) => {
             state.user = { ...action.payload?.user, };
         },
+        refreshUserWithCard: (state, action) => {
+            console.log(action.payload)
+            // Get current user data
+            const currentUser = state.user;
+            // Reset user to null first (to bypass persist)
+            state.user = null;
+            // Then immediately set with updated card data
+            state.user = {
+                ...currentUser,
+                card: action.payload
+            };
+        },
         saveRole: (state, action) => {
             state.user = action.payload;
         },
@@ -38,5 +50,5 @@ const authSlice = createSlice({
     },
 })
 
-export const { logout, saveRole, saveAuthenticated, saveForgotEmail, saveTwoFaEmail, saveTwoFaPass, saveUser } = authSlice.actions
+export const { logout, saveRole, saveAuthenticated, saveForgotEmail, saveTwoFaEmail, saveTwoFaPass, saveUser, refreshUserWithCard } = authSlice.actions
 export default authSlice.reducer

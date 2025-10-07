@@ -1693,26 +1693,6 @@ const DeleteProductModal = ({ product, onClose }) => {
 
 // View Product Modal
 const ViewProductModal = ({ product, onClose }) => {
-  // Fallback categories (same as main component)
-  const fallbackCategories = [
-    { id: 1, name: "Clothing" },
-    { id: 2, name: "Accessories" },
-    { id: 3, name: "Jersey" },
-    { id: 4, name: "Footwear" },
-    { id: 5, name: "Strength Supplements" },
-    { id: 6, name: "Health" },
-    { id: 7, name: "Coffee" },
-  ];
-
-  // Fetch categories data
-  const { data: categories, error: categoriesError } = useQuery({
-    queryKey: ["categories"],
-    queryFn: () => getRequest("/categories"),
-    onError: (error) => {
-      console.log("Backend not available for categories, using fallback data", error);
-    },
-  });
-
   // Fetch sub-categories data
   const { data: subCategories } = useQuery({
     queryKey: ["sub-categories"],
@@ -1721,16 +1701,6 @@ const ViewProductModal = ({ product, onClose }) => {
       console.log("Sub-categories not available");
     },
   });
-
-  // Create category mapping for proper category name resolution
-  const categoryMap = useMemo(() => {
-    const displayCategories = categoriesError ? fallbackCategories : categories || [];
-    if (!displayCategories) return {};
-    return displayCategories.reduce((acc, category) => {
-      acc[category.id] = category;
-      return acc;
-    }, {});
-  }, [categories, categoriesError]);
 
   // Create sub-category mapping
   const subCategoryMap = useMemo(() => {
@@ -1843,11 +1813,7 @@ const ViewProductModal = ({ product, onClose }) => {
               <div className="space-y-3">
                 <div>
                   <label className="text-[#838383] text-sm">Category</label>
-                  <p className="text-white font-medium">
-                    {categoryMap[product?.category_id]?.name || 
-                     product?.category?.name || 
-                     'N/A'}
-                  </p>
+                  <p className="text-white font-medium">{product?.category?.name || 'N/A'}</p>
                 </div>
                 <div>
                   <label className="text-[#838383] text-sm">Category ID</label>

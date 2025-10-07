@@ -1,29 +1,48 @@
 import { useMutation } from '@tanstack/react-query';
 import { CalendarClock, CreditCard, Lock, User } from 'lucide-react';
-import { logout } from '../redux/slices/authSlice';
+import { logout, refreshUserWithCard } from '../redux/slices/authSlice';
 import React from 'react';
 import toast from 'react-hot-toast';
 import { postRequest } from '../api';
 import Faqs from '../components/Faqs';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
 
 const Settings = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate(); // ✅ define navigate here
+    const user = useSelector((state) => state.authenticate.user.card);
+    console.log(user)
 
     const [activeTab, setActiveTab] = React.useState("tab2");
     const [showConfirmationModal, setShowConfirmationModal] = React.useState(false);
     const [accountCloseReason, setAccountCloseReason] = React.useState('');
     
-    // Card details state
+    // Calendar state
+    const [showCalendar, setShowCalendar] = React.useState(false);
+    const [selectedMonth, setSelectedMonth] = React.useState(new Date().getMonth());
+    const [selectedYear, setSelectedYear] = React.useState(new Date().getFullYear());
+    
+    // Card details state - initialize with existing user card data if present
     const [cardDetails, setCardDetails] = React.useState({
-        card: '',
-        expire_date: '',
-        security_code: '',
-        card_holder: ''
+        card: user?.card || '',
+        expire_date: user?.expire_date || '',
+        security_code: user?.security_code || '',
+        card_holder: user?.card_holder || ''
     });
+
+    // Effect to update card details when user data changes
+    React.useEffect(() => {
+        if (user) {
+            setCardDetails({
+                card: user.card || '',
+                expire_date: user.expire_date || '',
+                security_code: user.security_code || '',
+                card_holder: user.card_holder || ''
+            });
+        }
+    }, [user]);
 
     const mutation = useMutation({
         mutationKey: ['close-account'],
@@ -46,6 +65,12 @@ const Settings = () => {
         onSuccess: (data) => {
             if (data?.statusCode === 200) {
                 toast.success(data?.message || 'Card details updated successfully!');
+                // Refresh user state with updated card to bypass persist
+                console.log(data?.response?.data)
+                if (data?.response?.data) {
+                    console.log(data?.cards)
+                    dispatch(refreshUserWithCard(data?.response?.data));
+                }
             }
         },
         onError: (error) => {
@@ -86,8 +111,43 @@ const Settings = () => {
         return formatted;
     };
 
+    // Mask card number for display (show first 4 and last 4, mask middle 8)
+    const maskCardNumber = (cardNumber) => {
+        if (!cardNumber || cardNumber.length < 8) {
+            return cardNumber;
+        }
+        
+        // Remove all spaces and non-digit characters
+        const digitsOnly = cardNumber.replace(/\D/g, '');
+        
+        if (digitsOnly.length < 8) {
+            return formatCardNumber(cardNumber);
+        }
+        
+        // If less than 16 digits, show what we have
+        if (digitsOnly.length < 16) {
+            return formatCardNumber(cardNumber);
+        }
+        
+        // For 16 digit cards, mask middle 8 digits
+        const first4 = digitsOnly.slice(0, 4);
+        const last4 = digitsOnly.slice(-4);
+        
+        return `${first4} **** **** ${last4}`;
+    };
+
     // Handle card number input with formatting
     const handleCardNumberChange = (value) => {
+        // If the input contains asterisks, it means user is trying to edit a masked number
+        // In this case, clear the field so they can enter a new number
+        if (value.includes('*')) {
+            setCardDetails(prev => ({
+                ...prev,
+                card: '' // Clear the field
+            }));
+            return;
+        }
+        
         const formattedValue = formatCardNumber(value);
         
         // Store the raw digits (without spaces) for backend
@@ -135,15 +195,100 @@ const Settings = () => {
         }));
     }
 
+    //---------------------------Expiration Date Logic ----------------------------------------------
+    // Handle expiration date selection from calendar
+    const handleDateSelection = (month, year) => {
+        // Validate that the selected date is not in the past
+        const currentDate = new Date();
+        const currentYear = currentDate.getFullYear();
+        const currentMonth = currentDate.getMonth();
+        
+        if (year < currentYear || (year === currentYear && month < currentMonth)) {
+            toast.error('Please select a future expiration date');
+            return;
+        }
+
+        const formattedDate = `${String(month + 1).padStart(2, '0')}/${String(year).slice(-2)}`;
+        setCardDetails(prev => ({
+            ...prev,
+            expire_date: formattedDate
+        }));
+        setSelectedMonth(month);
+        setSelectedYear(year);
+        setShowCalendar(false);
+    };
+
+    // Initialize selected month/year from existing expire_date
+    React.useEffect(() => {
+        if (cardDetails.expire_date && cardDetails.expire_date.includes('/')) {
+            const [month, year] = cardDetails.expire_date.split('/');
+            setSelectedMonth(parseInt(month) - 1); // month is 0-indexed
+            setSelectedYear(2000 + parseInt(year)); // convert YY to YYYY
+        }
+    }, [cardDetails.expire_date]);
+
+    // Initialize calendar state when user data is loaded
+    React.useEffect(() => {
+        if (user?.expire_date && user.expire_date.includes('/')) {
+            const [month, year] = user.expire_date.split('/');
+            setSelectedMonth(parseInt(month) - 1); // month is 0-indexed
+            setSelectedYear(2000 + parseInt(year)); // convert YY to YYYY
+        }
+    }, [user]);
+
+    // Get display text for expiration date
+    const getExpirationDisplayText = () => {
+        if (cardDetails.expire_date) {
+            return cardDetails.expire_date;
+        }
+        return 'Select Month/Year';
+    };
+
+    // Generate years array (current year + next 20 years)
+    const generateYearsArray = () => {
+        const currentYear = new Date().getFullYear();
+        const years = [];
+        for (let i = 0; i < 21; i++) {
+            years.push(currentYear + i);
+        }
+        return years;
+    };
+
+    // Month names
+    const monthNames = [
+        'January', 'February', 'March', 'April', 'May', 'June',
+        'July', 'August', 'September', 'October', 'November', 'December'
+    ];
+
+    // Close calendar when clicking outside
+    React.useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (showCalendar && !event.target.closest('.calendar-container')) {
+                setShowCalendar(false);
+            }
+        };
+
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, [showCalendar]);
+
+
     // Format date for API (MM/YY format)
     const formatDateForAPI = (dateValue) => {
         if (!dateValue) return '';
+        // If already in MM/YY format, return as is
+        if (dateValue.includes('/') && dateValue.length === 5) {
+            return dateValue;
+        }
+        // Otherwise, convert from Date object
         const date = new Date(dateValue);
         const month = String(date.getMonth() + 1).padStart(2, '0');
         const year = String(date.getFullYear()).slice(-2);
         return `${month}/${year}`;
     }
-
+  //-------------------------------------------------------------------------------------------//
     // Handle card update
     const handleUpdateCard = () => {
         // Validate required fields
@@ -199,7 +344,7 @@ const Settings = () => {
                                 <input 
                                     type="text" 
                                     placeholder='4324 3432 4324 3233' 
-                                    value={formatCardNumber(cardDetails.card)}
+                                    value={maskCardNumber(cardDetails.card)}
                                     onChange={(e) => handleCardNumberChange(e.target.value)}
                                     maxLength="19"
                                     className='h-full w-full border-0 outline-0 text-[#D4BC6D] text-sm sm:text-base px-2 sm:px-0 bg-transparent' 
@@ -225,28 +370,98 @@ const Settings = () => {
                             <label className='text-base sm:text-lg font-semibold text-[#D4BC6D] mb-3 sm:mb-5 inline-block'>
                                 Expiration Date
                             </label>
-                            <div className="flex items-center rounded-t-lg bg-[rgba(217,217,217,0.03)] border-b border-[#4B4C46] h-[3rem] sm:h-[4rem]">
-                                <div className="p-2 sm:p-4">
-                                    <CalendarClock color='#fff' className="w-4 h-4 sm:w-5 sm:h-5" />
+                            <div className="relative calendar-container">
+                                <div className="flex items-center rounded-t-lg bg-[rgba(217,217,217,0.03)] border-b border-[#4B4C46] h-[3rem] sm:h-[4rem] cursor-pointer"
+                                     onClick={() => setShowCalendar(!showCalendar)}>
+                                    <div className="p-2 sm:p-4">
+                                        <CalendarClock color='#fff' className="w-4 h-4 sm:w-5 sm:h-5" />
+                                    </div>
+                                    <div className="grow">
+                                        <div className='h-full w-full border-0 outline-0 text-[#D4BC6D] text-sm sm:text-base px-2 sm:px-0 bg-transparent flex items-center'>
+                                            {getExpirationDisplayText()}
+                                        </div>
+                                    </div>
                                 </div>
-                                <div className="grow">
-                                    <input 
-                                        type="month" 
-                                        value={cardDetails.expire_date}
-                                        onChange={(e) => handleCardInputChange('expire_date', e.target.value)}
-                                        className='h-full w-full border-0 outline-0 text-[#D4BC6D] text-sm sm:text-base px-2 sm:px-0 bg-transparent' 
-                                    />
-                                </div>
-                                {/* <div className="p-1 sm:p-2">
-                                    <button 
-                                        className='bg-[#D4BC6D] py-1.5 sm:py-2 px-4 sm:px-8 text-xs sm:text-sm font-bold text-white rounded-full hover:bg-[#c4ac5d] transition-colors' 
-                                        type='button'
-                                        onClick={handleUpdateCard}
-                                        disabled={updateCardMutation.isPending}
-                                    >
-                                        {updateCardMutation.isPending ? 'Updating...' : 'Update'}
-                                    </button>
-                                </div> */}
+                                
+                                {/* Calendar Dropdown */}
+                                {showCalendar && (
+                                    <div className="absolute top-full left-0 right-0 z-50 bg-[#1a1b17] border border-[#4B4C46] rounded-b-lg p-4 shadow-lg">
+                                        <div className="flex justify-between items-center mb-4">
+                                            <h3 className="text-[#D4BC6D] font-semibold">Select Expiration Date</h3>
+                                            <button 
+                                                onClick={() => setShowCalendar(false)}
+                                                className="text-white hover:text-[#D4BC6D] transition-colors"
+                                            >
+                                                ✕
+                                            </button>
+                                        </div>
+                                        
+                                        {/* Year Selection */}
+                                        <div className="mb-4">
+                                            <label className="block text-sm text-[#D4BC6D] mb-2">Year</label>
+                                            <select 
+                                                value={selectedYear}
+                                                onChange={(e) => setSelectedYear(parseInt(e.target.value))}
+                                                className="w-full p-2 bg-[rgba(217,217,217,0.1)] border border-[#4B4C46] rounded text-[#D4BC6D] focus:outline-none focus:border-[#D4BC6D]"
+                                            >
+                                                {generateYearsArray().map(year => (
+                                                    <option key={year} value={year} className="bg-[#1a1b17]">
+                                                        {year}
+                                                    </option>
+                                                ))}
+                                            </select>
+                                        </div>
+                                        
+                                        {/* Month Selection */}
+                                        <div className="mb-4">
+                                            <label className="block text-sm text-[#D4BC6D] mb-2">Month</label>
+                                            <div className="grid grid-cols-3 gap-2">
+                                                {monthNames.map((month, index) => {
+                                                    const currentDate = new Date();
+                                                    const currentYear = currentDate.getFullYear();
+                                                    const currentMonth = currentDate.getMonth();
+                                                    const isPastDate = selectedYear < currentYear || (selectedYear === currentYear && index < currentMonth);
+                                                    
+                                                    return (
+                                                        <button
+                                                            key={index}
+                                                            onClick={() => setSelectedMonth(index)}
+                                                            disabled={isPastDate}
+                                                            className={`p-2 text-xs sm:text-sm rounded transition-colors ${
+                                                                selectedMonth === index
+                                                                    ? 'bg-[#D4BC6D] text-black font-semibold'
+                                                                    : isPastDate
+                                                                    ? 'bg-[rgba(217,217,217,0.05)] text-[#666] cursor-not-allowed'
+                                                                    : 'bg-[rgba(217,217,217,0.1)] text-[#D4BC6D] hover:bg-[rgba(217,217,217,0.2)]'
+                                                            }`}
+                                                        >
+                                                            {month}
+                                                        </button>
+                                                    );
+                                                })}
+                                            </div>
+                                        </div>
+                                        
+                                        {/* Confirm Button */}
+                                        <div className="flex gap-2">
+                                            <button
+                                                onClick={() => {
+                                                    setCardDetails(prev => ({ ...prev, expire_date: '' }));
+                                                    setShowCalendar(false);
+                                                }}
+                                                className="flex-1 bg-[rgba(217,217,217,0.1)] text-[#D4BC6D] font-semibold py-2 px-4 rounded hover:bg-[rgba(217,217,217,0.2)] transition-colors"
+                                            >
+                                                Clear
+                                            </button>
+                                            <button
+                                                onClick={() => handleDateSelection(selectedMonth, selectedYear)}
+                                                className="flex-1 bg-[#D4BC6D] text-black font-semibold py-2 px-4 rounded hover:bg-[#c4ac5d] transition-colors"
+                                            >
+                                                Confirm
+                                            </button>
+                                        </div>
+                                    </div>
+                                )}
                             </div>
                         </div>
                         <div className="mb-8 sm:mb-12 w-full sm:grow">
@@ -549,4 +764,4 @@ const Settings = () => {
     )
 }
 
-export default Settings
+export default Settings;
