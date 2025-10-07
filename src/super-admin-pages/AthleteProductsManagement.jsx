@@ -624,6 +624,47 @@ const ProductViewModal = ({
   isLoadingDetails, 
   isSaving 
 }) => {
+  // Image carousel state and functions
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  
+  // Get all available images (API images + uploaded images)
+  const allImages = [...(product?.images || []), ...uploadedImages];
+  const totalImages = allImages.length;
+
+  const nextImage = () => {
+    setCurrentImageIndex((prevIndex) => 
+      prevIndex === totalImages - 1 ? 0 : prevIndex + 1
+    );
+  };
+
+  const prevImage = () => {
+    setCurrentImageIndex((prevIndex) => 
+      prevIndex === 0 ? totalImages - 1 : prevIndex - 1
+    );
+  };
+
+  const goToImage = (index) => {
+    setCurrentImageIndex(index);
+  };
+
+  // Reset image index when product changes
+  React.useEffect(() => {
+    setCurrentImageIndex(0);
+  }, [product?.id]);
+
+  // Get current image source
+  const getCurrentImageSrc = () => {
+    if (totalImages === 0) return null;
+    
+    const currentImage = allImages[currentImageIndex];
+    
+    // If it's an API image (has 'image' property)
+    if (currentImage?.image) {
+      return `https://admin.hometownheroagency.com/storage/app/public/${currentImage.image}`;
+    }
+    // If it's an uploaded image (string URL)
+    return currentImage;
+  };
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[9999] p-4">
       <div className="bg-[#282828] border border-[#4B4C46] rounded-lg p-4 sm:p-6 w-full max-w-6xl mx-4 max-h-[90vh] overflow-y-auto">
@@ -802,13 +843,15 @@ const ProductViewModal = ({
                 </label>
               </div>
 
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-                {uploadedImages.map((image, index) => (
-                  <div key={index} className="relative group">
-                    <div className="aspect-square bg-[#4B4C46] rounded-lg overflow-hidden border border-[#6B6C66]">
+              {/* Main Image Carousel */}
+              {totalImages > 0 ? (
+                <div className="relative">
+                  {/* Main Image Display */}
+                  <div className="relative group">
+                    <div className="aspect-video bg-[#4B4C46] rounded-lg overflow-hidden border border-[#6B6C66]">
                       <img
-                        src={image}
-                        alt={`Product image ${index + 1}`}
+                        src={getCurrentImageSrc()}
+                        alt={`Product image ${currentImageIndex + 1}`}
                         className="w-full h-full object-cover"
                         onError={(e) => {
                           // Fallback to placeholder if image fails to load
@@ -820,31 +863,142 @@ const ProductViewModal = ({
                         <Package className="h-8 w-8 text-white opacity-50" />
                       </div>
                     </div>
-                    <button
-                      onClick={() => onRemoveImage(index)}
-                      className="absolute -top-2 -right-2 bg-red-600 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
-                    >
-                      <X className="h-3 w-3" />
-                    </button>
-                  </div>
-                ))}
 
-                {/* Add More Images Placeholder */}
-                <label className="cursor-pointer">
-                  <input
-                    type="file"
-                    multiple
-                    accept="image/*"
-                    onChange={onImageUpload}
-                    className="hidden"
-                  />
-                  <div className="aspect-square border-2 border-dashed border-[#4B4C46] rounded-lg flex flex-col items-center justify-center hover:border-[#D4BC6D] transition-colors group">
-                    <Plus className="h-8 w-8 text-[#4B4C46] group-hover:text-[#D4BC6D] mb-2" />
-                    <span className="text-xs text-[#4B4C46] group-hover:text-[#D4BC6D] text-center">
-                      Add More<br />Images
-                    </span>
+                    {/* Navigation Arrows - Only show if more than 1 image */}
+                    {totalImages > 1 && (
+                      <>
+                        {/* Left Arrow */}
+                        <button
+                          onClick={prevImage}
+                          className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-2 rounded-full transition-all duration-200 opacity-0 group-hover:opacity-100"
+                          aria-label="Previous image"
+                        >
+                          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                          </svg>
+                        </button>
+                        
+                        {/* Right Arrow */}
+                        <button
+                          onClick={nextImage}
+                          className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-2 rounded-full transition-all duration-200 opacity-0 group-hover:opacity-100"
+                          aria-label="Next image"
+                        >
+                          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                          </svg>
+                        </button>
+                      </>
+                    )}
+                    
+                    {/* Image Counter */}
+                    {totalImages > 1 && (
+                      <div className="absolute top-4 right-4 bg-black/50 text-white px-3 py-1 rounded-full text-sm">
+                        {currentImageIndex + 1} / {totalImages}
+                      </div>
+                    )}
                   </div>
-                </label>
+                  
+                  {/* Dot Indicators - Only show if more than 1 image */}
+                  {totalImages > 1 && (
+                    <div className="flex justify-center mt-4 space-x-2">
+                      {allImages.map((_, index) => (
+                        <button
+                          key={index}
+                          onClick={() => goToImage(index)}
+                          className={`w-3 h-3 rounded-full transition-all duration-200 ${
+                            index === currentImageIndex 
+                              ? 'bg-[#D4BC6D] ring-2 ring-[#D4BC6D]/50' 
+                              : 'bg-gray-400 hover:bg-gray-300'
+                          }`}
+                          aria-label={`Go to image ${index + 1}`}
+                        />
+                      ))}
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <div className="aspect-video border-2 border-dashed border-[#4B4C46] rounded-lg flex flex-col items-center justify-center">
+                  <Package className="h-12 w-12 text-[#4B4C46] mb-4" />
+                  <span className="text-[#4B4C46] text-center">
+                    No images available<br />
+                    <span className="text-xs">Upload images to display them here</span>
+                  </span>
+                </div>
+              )}
+
+              {/* Thumbnail Grid for Management */}
+              <div className="mt-6">
+                <h4 className="text-white font-medium mb-3">Image Management</h4>
+                <div className="grid grid-cols-4 sm:grid-cols-6 gap-3">
+                  {/* API Images */}
+                  {(product?.images || []).map((image, index) => (
+                    <div key={`api-${index}`} className="relative group">
+                      <div className="aspect-square bg-[#4B4C46] rounded-lg overflow-hidden border border-[#6B6C66]">
+                        <img
+                          src={`https://admin.hometownheroagency.com/storage/app/public/${image.image}`}
+                          alt={`API image ${index + 1}`}
+                          className="w-full h-full object-cover cursor-pointer"
+                          onClick={() => goToImage(index)}
+                          onError={(e) => {
+                            e.target.style.display = 'none';
+                            e.target.nextSibling.style.display = 'flex';
+                          }}
+                        />
+                        <div className="w-full h-full bg-gradient-to-br from-[#D4BC6D] to-[#57430D] flex items-center justify-center" style={{ display: 'none' }}>
+                          <Package className="h-4 w-4 text-white opacity-50" />
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+
+                  {/* Uploaded Images */}
+                  {uploadedImages.map((image, index) => (
+                    <div key={`upload-${index}`} className="relative group">
+                      <div className="aspect-square bg-[#4B4C46] rounded-lg overflow-hidden border border-[#6B6C66]">
+                        <img
+                          src={image}
+                          alt={`Uploaded image ${index + 1}`}
+                          className="w-full h-full object-cover cursor-pointer"
+                          onClick={() => goToImage((product?.images || []).length + index)}
+                          onError={(e) => {
+                            e.target.style.display = 'none';
+                            e.target.nextSibling.style.display = 'flex';
+                          }}
+                        />
+                        <div className="w-full h-full bg-gradient-to-br from-[#D4BC6D] to-[#57430D] flex items-center justify-center" style={{ display: 'none' }}>
+                          <Package className="h-4 w-4 text-white opacity-50" />
+                        </div>
+                      </div>
+                      <button
+                        onClick={() => onRemoveImage(index)}
+                        className="absolute -top-1 -right-1 bg-red-600 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                      >
+                        <X className="h-2 w-2" />
+                      </button>
+                      <div className="absolute bottom-1 left-1 bg-green-600 text-white text-xs px-1 py-0.5 rounded">
+                        NEW
+                      </div>
+                    </div>
+                  ))}
+
+                  {/* Add More Images Placeholder */}
+                  <label className="cursor-pointer">
+                    <input
+                      type="file"
+                      multiple
+                      accept="image/*"
+                      onChange={onImageUpload}
+                      className="hidden"
+                    />
+                    <div className="aspect-square border-2 border-dashed border-[#4B4C46] rounded-lg flex flex-col items-center justify-center hover:border-[#D4BC6D] transition-colors group">
+                      <Plus className="h-6 w-6 text-[#4B4C46] group-hover:text-[#D4BC6D] mb-1" />
+                      <span className="text-xs text-[#4B4C46] group-hover:text-[#D4BC6D] text-center">
+                        Add<br />More
+                      </span>
+                    </div>
+                  </label>
+                </div>
               </div>
 
               <div className="mt-4 p-3 bg-[#2a2a2a] border border-[#4B4C46] rounded-lg">

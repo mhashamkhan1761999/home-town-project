@@ -20,6 +20,7 @@ const ForntDetail = () => {
     const [showSizeChart, setShowSizeChart] = React.useState(false);
     const [showWarnings, setShowWarnings] = React.useState(false);
     const [showMaterial, setShowMaterial] = React.useState(false);
+    const [currentImageIndex, setCurrentImageIndex] = React.useState(0);
 
     const handleAddToCart = (data) => {
         const { id, name, description, price, color } = data;
@@ -84,6 +85,30 @@ const ForntDetail = () => {
     }, [colors, active]);
     const isInCart = cartItems?.some(item => item.id == detail.id);
 
+    // Image carousel functions
+    const images = detail?.images || [];
+    const totalImages = images.length;
+
+    const nextImage = () => {
+        setCurrentImageIndex((prevIndex) => 
+            prevIndex === totalImages - 1 ? 0 : prevIndex + 1
+        );
+    };
+
+    const prevImage = () => {
+        setCurrentImageIndex((prevIndex) => 
+            prevIndex === 0 ? totalImages - 1 : prevIndex - 1
+        );
+    };
+
+    const goToImage = (index) => {
+        setCurrentImageIndex(index);
+    };
+
+    // Reset image index when product changes
+    React.useEffect(() => {
+        setCurrentImageIndex(0);
+    }, [detail?.id]);
 
     // console.log('Product Details:', isInCart);
 
@@ -91,13 +116,70 @@ const ForntDetail = () => {
     return (
         <>
             <div className="max-w-6xl mx-auto px-4 py-10 grid grid-cols-1 md:grid-cols-2 gap-10 items-start">
-                {/* Left: Product Image */}
+                {/* Left: Product Image Carousel */}
                         <div className="w-full">
-                            <img
-                                src={detail?.images?.length > 0 ? `https://admin.hometownheroagency.com/storage/app/public/${detail?.images?.[0]?.image}` : `/404.avif`}
-                                alt="Product Image"
-                                className="rounded-xl shadow-lg w-full object-cover border border-white/10"
-                            />
+                            <div className="relative">
+                                {/* Main Image */}
+                                <div className="relative group">
+                                    <img
+                                        src={totalImages > 0 ? `https://admin.hometownheroagency.com/storage/app/public/${images[currentImageIndex]?.image}` : `/404.avif`}
+                                        alt={`Product Image ${currentImageIndex + 1}`}
+                                        className="rounded-xl shadow-lg w-full object-cover border border-white/10"
+                                    />
+                                    
+                                    {/* Navigation Arrows - Only show if more than 1 image */}
+                                    {totalImages > 1 && (
+                                        <>
+                                            {/* Left Arrow */}
+                                            <button
+                                                onClick={prevImage}
+                                                className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-2 rounded-full transition-all duration-200 opacity-70"
+                                                aria-label="Previous image"
+                                            >
+                                                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                                                </svg>
+                                            </button>
+                                            
+                                            {/* Right Arrow */}
+                                            <button
+                                                onClick={nextImage}
+                                                className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-2 rounded-full transition-all duration-200 opacity-70"
+                                                aria-label="Next image"
+                                            >
+                                                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                                                </svg>
+                                            </button>
+                                        </>
+                                    )}
+                                    
+                                    {/* Image Counter */}
+                                    {totalImages > 1 && (
+                                        <div className="absolute top-4 right-4 bg-black/50 text-white px-3 py-1 rounded-full text-sm">
+                                            {currentImageIndex + 1} / {totalImages}
+                                        </div>
+                                    )}
+                                </div>
+                                
+                                {/* Dot Indicators - Only show if more than 1 image */}
+                                {totalImages > 1 && (
+                                    <div className="flex justify-center mt-4 space-x-2">
+                                        {images.map((_, index) => (
+                                            <button
+                                                key={index}
+                                                onClick={() => goToImage(index)}
+                                                className={`w-3 h-3 rounded-full transition-all duration-200 ${
+                                                    index === currentImageIndex 
+                                                        ? 'bg-[#D4BC6D] ring-2 ring-[#D4BC6D]/50' 
+                                                        : 'bg-gray-400 hover:bg-gray-300'
+                                                }`}
+                                                aria-label={`Go to image ${index + 1}`}
+                                            />
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
                         </div>
                         {/* Right: Product Details */}
                         <div className="space-y-6">
@@ -184,7 +266,7 @@ const ForntDetail = () => {
             {/* Size Chart, Material, and Warnings Section */}
             <div className="max-w-6xl mx-auto px-4 pb-10">
                 <div className="flex justify-start gap-4 mb-6 flex-wrap">
-                    <button
+                    {detail?.product_type?.size_chart && (<button
                         onClick={() => {
                             setShowSizeChart(!showSizeChart);
                             setShowMaterial(false);
@@ -193,22 +275,23 @@ const ForntDetail = () => {
                         className="bg-black/50 backdrop-blur-sm rounded-xl px-6 py-3 border border-white/10 font-medium transition-all duration-300 text-white hover:text-[#D4BC6D] hover:border-[#D4BC6D]/50"
                     >
                         {showSizeChart ? 'Hide Size Chart' : 'Show Size Chart'}
-                    </button>
-                    <button
+                    </button>)}
+
+                    {detail?.product_type?.material && (<button
                         onClick={() => {setShowMaterial(!showMaterial); setShowSizeChart(false); setShowWarnings(false);}}
                         className="bg-black/50 backdrop-blur-sm rounded-xl px-6 py-3 border border-white/10 font-medium transition-all duration-300 text-white hover:text-[#D4BC6D] hover:border-[#D4BC6D]/50"
                     >
                         {showMaterial ? 'Hide Material' : 'Show Material'}
-                    </button>
-                    <button
+                    </button>)}
+                    {detail?.warning && (<button
                         onClick={() => {setShowWarnings(!showWarnings); setShowMaterial(false); setShowSizeChart(false);}}
                         className="bg-black/50 backdrop-blur-sm rounded-xl px-6 py-3 border border-white/10 font-medium transition-all duration-300 text-white hover:text-[#D4BC6D] hover:border-[#D4BC6D]/50"
                     >
                         {showWarnings ? 'Hide Warnings' : 'Show Warnings'}
-                    </button>
+                    </button>)}
                 </div>
                 
-                {showSizeChart && (
+                {showSizeChart && detail?.product_type?.size_chart && (
                     <div className="flex justify-center">
                         <div className="w-full max-w-4xl">
                             <h2 className="text-2xl font-bold text-[#D4BC6D] mb-6 text-center">Size Chart</h2>
@@ -231,7 +314,7 @@ const ForntDetail = () => {
                     </div>
                 )}
                 
-                {showMaterial && (
+                {showMaterial && detail?.product_type?.material && (
                     <div className="flex justify-center mt-8">
                         <div className="w-full max-w-4xl">
                             <h2 className="text-2xl font-bold text-[#D4BC6D] mb-6 text-center">Material & Care Instructions</h2>
@@ -271,8 +354,8 @@ const ForntDetail = () => {
                         </div>
                     </div>
                 )}
-                
-                {showWarnings && (
+
+                {showWarnings && detail?.warning && (
                     <div className="flex justify-center mt-8">
                         <div className="w-full max-w-4xl">
                             <h2 className="text-2xl font-bold text-[#D4BC6D] mb-6 text-center">Product Warnings</h2>
