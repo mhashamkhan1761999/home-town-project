@@ -211,10 +211,55 @@ const Dashboard = () => {
               )}
             </div>
           </div>
+          
+          {/* Profit Tiers Information - Below the progress bar in normal flow */}
+          <div className="mt-2 w-full">
+            {(() => {
+              // Determine dashboard type - modify this condition based on your needs
+              const isDashboardPro = user?.plan === 'pro' || user?.subscription_type === 'pro' || false;
+              
+              const proTiers = [
+                { tier: "Bronze", range: "$0–$100 sales", profit: "10% Profits" },
+                { tier: "Silver", range: "$101-$250 sales", profit: "15% Profits" },
+                { tier: "Gold", range: "$251–$500 sales", profit: "20% Profits" },
+                { tier: "Emerald", range: "$501–$1,000 sales", profit: "25% Profits" },
+                { tier: "Diamond", range: "$1,001–$2,000 sales", profit: "30% Profits" },
+                { tier: "Royal", range: "$2,001+ sales", profit: "40% Profits" }
+              ];
+              
+              const standardTiers = [
+                { tier: "Bronze", range: "$0 – $100", profit: "5% Profits" },
+                { tier: "Silver", range: "$101 – $250", profit: "8% Profits" },
+                { tier: "Gold", range: "$251 – $500", profit: "12% Profits" },
+                { tier: "Emerald", range: "$501 – $1,000", profit: "15% Profits" },
+                { tier: "Diamond", range: "$1,001 – $2,000", profit: "18% Profits" },
+                { tier: "Royal", range: "$2,001+", profit: "20% Profits" }
+              ];
+              
+              const currentTiers = isDashboardPro ? proTiers : standardTiers;
+              const dashboardType = isDashboardPro ? "Pro Dashboard" : "Standard Dashboard";
+              
+              return (
+                <div className="w-full">
+                  {/* <div className="text-center mb-2">
+                    <h3 className="text-white font-bold text-xs sm:text-sm">{dashboardType}</h3>
+                  </div> */}
+                  <div className="grid grid-cols-6 gap-1 text-white text-center w-full">
+                    {currentTiers.map((tier, index) => (
+                      <div key={index} className="px-0.5">
+                        <div className="text-[8px] sm:text-sm text-gray-300 leading-tight">{tier.range}</div>
+                        <div className="text-[8px] sm:text-sm text-white font-semibold mt-0.5 leading-tight">{tier.profit}</div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              );
+            })()}
+          </div>
         </div>
-        <div className="w-full sm:w-auto flex justify-center sm:justify-end items-center">
+        <div className="w-full sm:w-auto flex justify-center sm:justify-end items-center sm:mb-10">
           <button
-            className={`text-white text-sm sm:text-lg font-medium py-2 sm:py-3 px-4 sm:px-6 rounded-xl bg-[#57430D] hover:bg-[#ab965d] transition duration-300`}
+            className={`text-white text-sm sm:text-lg font-medium py-2 sm:py-4 px-4 sm:px-6 rounded-xl bg-[#57430D] hover:bg-[#ab965d] transition duration-300`}
             type="button"
             onClick={() => setIsCashOutModalOpen(true)}
           >
