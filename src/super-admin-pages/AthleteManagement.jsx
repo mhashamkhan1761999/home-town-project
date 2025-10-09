@@ -656,7 +656,7 @@ const AthleteManagement = () => {
                 {/* Card Status */}
                 <div>
                   <p className="text-xs font-medium text-gray-400 mb-1">Card</p>
-                  <div className="flex items-center justify-center">
+                  <div className="flex">
                     {athlete?.card ? (
                       <div className="flex items-center text-green-500">
                         <CreditCard className="h-3 w-3 mr-1" />
@@ -871,24 +871,58 @@ const ViewAthleteModal = ({ isOpen, onClose, athlete }) => {
         {/* Cover Picture */}
         <div className="relative h-24 sm:h-32 lg:h-48 rounded-lg overflow-hidden mb-4 sm:mb-6">
           <img
-            src={athlete?.cover_photo}
+            src={(() => {
+              let coverUrl = '/athlete-bg.jpg'; // default fallback
+              
+              if (athlete?.cover_photo_url) {
+                // Handle JSON escaped slashes and backslashes
+                coverUrl = athlete.cover_photo_url
+                  .replace(/\\\//g, '/') // Replace \/ with /
+                  .replace(/\\/g, '/');  // Replace \ with /
+              } else if (athlete?.cover_photo) {
+                if (athlete.cover_photo.startsWith('http')) {
+                  coverUrl = athlete.cover_photo.replace(/\\/g, '/');
+                } else {
+                  coverUrl = `https://admin.hometownheroagency.com/storage/app/public/${athlete.cover_photo}`.replace(/\\/g, '/');
+                }
+              }
+              
+              console.log('Cover photo URL:', coverUrl);
+              console.log('Original cover_photo_url:', athlete?.cover_photo_url);
+              return coverUrl;
+            })()}
             alt="Cover"
             className="w-full h-full object-cover"
             onError={(e) => {
-              e.target.src = '/default.jpg';
+              console.log('Cover photo failed to load:', e.target.src);
+              e.target.src = '/athlete-bg.jpg';
+            }}
+            onLoad={(e) => {
+              console.log('Cover photo loaded successfully:', e.target.src);
             }}
           />
           <div className="absolute inset-0 bg-black bg-opacity-40"></div>
           <div className="absolute bottom-2 sm:bottom-4 left-2 sm:left-4 flex items-center">
             <div className="h-12 w-12 sm:h-16 sm:w-16 lg:h-20 lg:w-20 rounded-full overflow-hidden border-2 sm:border-4 border-[#D4BC6D]">
               <img
-                src={
-                  athlete?.profile_picture
-                    ? athlete.profile_picture.startsWith('http')
-                      ? athlete.profile_picture.replace(/\\/g, '/')
-                      : `https://admin.hometownheroagency.com/storage/app/public/${athlete.profile_picture}`.replace(/\\/g, '/')
-                    : '/default.jpg'
-                }
+                src={(() => {
+                  let profileUrl = '/default.jpg'; // default fallback
+                  
+                  if (athlete?.profile_picture_url) {
+                    // Handle JSON escaped slashes and backslashes
+                    profileUrl = athlete.profile_picture_url
+                      .replace(/\\\//g, '/') // Replace \/ with /
+                      .replace(/\\/g, '/');  // Replace \ with /
+                  } else if (athlete?.profile_picture) {
+                    if (athlete.profile_picture.startsWith('http')) {
+                      profileUrl = athlete.profile_picture.replace(/\\/g, '/');
+                    } else {
+                      profileUrl = `https://admin.hometownheroagency.com/storage/app/public/${athlete.profile_picture}`.replace(/\\/g, '/');
+                    }
+                  }
+                  
+                  return profileUrl;
+                })()}
                 alt={athlete?.athlete_name}
                 className="h-full w-full object-cover"
                 onError={(e) => {
