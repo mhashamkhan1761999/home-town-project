@@ -150,10 +150,15 @@ const AthleteManagement = () => {
 
   const numberToStatus = {
     0: 'pending',
-    1: 'standard',
-    2: 'pro',
+    1: 'accepted',
   };
-  const statusTypes = ['Pending', 'Standard', 'Pro'];
+  
+  const statusToNumber = {
+    'pending': 0,
+    'accepted': 1,
+  };
+  
+  const statusTypes = ['Pending', 'Accepted'];
 
   // Filter athletes based on status and search term
   const filteredAthletes = athletes?.filter(athlete => {
@@ -164,7 +169,9 @@ const AthleteManagement = () => {
     } else if (selectedStatus === 'No Card') {
       matchesStatus = !athlete?.card;
     } else {
-      matchesStatus = athlete?.status === selectedStatus.toLowerCase();
+      // Handle both numeric and string status values
+      const athleteStatus = numberToStatus[athlete?.status] || athlete?.status;
+      matchesStatus = athleteStatus === selectedStatus.toLowerCase();
     }
     
     const matchesSearch = searchTerm.trim() === "" || [
@@ -184,15 +191,9 @@ const AthleteManagement = () => {
     setIsViewModalOpen(true);
   };
 
-  const statusToNumber = {
-    pending: 0,
-    standard: 1,
-    pro: 2,
-  };
-
   const handleStatusChange = (athleteId, newStatus) => {
     // Map status to number for backend
-    const statusValue = statusToNumber[newStatus?.toLowerCase()] ?? newStatus?.toLowerCase();
+    const statusValue = statusToNumber[newStatus?.toLowerCase()] ?? statusToNumber[newStatus?.toLowerCase()];
     mutation.mutate({
       id: athleteId,
       data: { status: statusValue }
@@ -225,6 +226,8 @@ const AthleteManagement = () => {
     switch (status) {
       case 'pending':
         return 'bg-yellow-600 text-white';
+      case 'accepted':
+        return 'bg-green-600 text-white';
       case 'standard':
         return 'bg-blue-600 text-white';
       case 'pro':
@@ -277,21 +280,21 @@ const AthleteManagement = () => {
           <div className="bg-[#282828] border border-[#4B4C46] rounded-lg p-3 sm:p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-gray-400 text-xs sm:text-sm">Standard</p>
+                <p className="text-gray-400 text-xs sm:text-sm">Pending</p>
                 <p className="text-lg sm:text-2xl font-bold text-white">
-                  {athletes?.filter(a => a.status == 'standard')?.length}
+                  {athletes?.filter(a => a.status == 0 || a.status == 'pending')?.length}
                 </p>
               </div>
-              <User className="h-6 w-6 sm:h-8 sm:w-8 text-blue-500" />
+              <User className="h-6 w-6 sm:h-8 sm:w-8 text-yellow-500" />
             </div>
           </div>
 
           <div className="bg-[#282828] border border-[#4B4C46] rounded-lg p-3 sm:p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-gray-400 text-xs sm:text-sm">Pro</p>
+                <p className="text-gray-400 text-xs sm:text-sm">Accepted</p>
                 <p className="text-lg sm:text-2xl font-bold text-white">
-                  {athletes?.filter(a => a.status == 'pro')?.length}
+                  {athletes?.filter(a => a.status == 1 || a.status == 'accepted')?.length}
                 </p>
               </div>
               <User className="h-6 w-6 sm:h-8 sm:w-8 text-green-500" />
@@ -429,13 +432,13 @@ const AthleteManagement = () => {
                           {athlete?.instagram && (
                             <div className="flex items-center space-x-1">
                               <Instagram className="h-3 w-3 text-pink-500" />
-                              <span className="text-xs text-gray-600">{athlete.instagram}</span>
+                              <span className="text-xs text-gray-600">{athlete.instagram.slice(0,30)}</span>
                             </div>
                           )}
                           {athlete?.twitter && (
                             <div className="flex items-center space-x-1">
                               <Twitter className="h-3 w-3 text-blue-400" />
-                              <span className="text-xs text-gray-600">{athlete.twitter}</span>
+                              <span className="text-xs text-gray-600">{athlete.twitter.slice(0,30)}</span>
                             </div>
                           )}
                           {athlete?.facebook && (
@@ -707,10 +710,17 @@ const AthleteManagement = () => {
 const ViewAthleteModal = ({ isOpen, onClose, athlete }) => {
   if (!isOpen) return null;
 
+  const numberToStatus = {
+    0: 'pending',
+    1: 'accepted',
+  };
+
   const getStatusColor = (status) => {
     switch (status) {
       case 'pending':
         return 'bg-yellow-600 text-white';
+      case 'accepted':
+        return 'bg-green-600 text-white';
       case 'standard':
         return 'bg-blue-600 text-white';
       case 'pro':
@@ -899,8 +909,8 @@ const ViewAthleteModal = ({ isOpen, onClose, athlete }) => {
 
               <div>
                 <label className="block text-sm font-medium text-gray-400 mb-1">Status</label>
-                <span className={`inline-flex px-3 py-1 text-sm font-semibold rounded-full ${getStatusColor(athlete?.status)}`}>
-                  {athlete?.status === '1' ? 'Active' : athlete?.status === '0' ? 'Inactive' : athlete?.status}
+                <span className={`inline-flex px-3 py-1 text-sm font-semibold rounded-full ${getStatusColor(numberToStatus[athlete?.status] || athlete?.status)}`}>
+                  {numberToStatus[athlete?.status] ? numberToStatus[athlete?.status].charAt(0).toUpperCase() + numberToStatus[athlete?.status].slice(1) : (athlete?.status ? athlete?.status.charAt(0).toUpperCase() + athlete?.status.slice(1) : 'Unknown')}
                 </span>
               </div>
 
@@ -1171,16 +1181,4 @@ const ViewAthleteModal = ({ isOpen, onClose, athlete }) => {
 };
 
 export default AthleteManagement;
-
-const numberToStatus = {
-  0: 'pending',
-  1: 'standard',
-  2: 'pro',
-};
-
-// When fetching athletes, map numeric status to string
-const mapAthleteStatus = athlete => ({
-  ...athlete,
-  status: typeof athlete.status === 'number' ? numberToStatus[athlete.status] || athlete.status : athlete.status
-});
 
