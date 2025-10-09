@@ -148,7 +148,9 @@ const Signup4 = ({ next, setData, goBack }) => {
                                 </svg>
                             </div>
                             <div className="grow">
-                                <input type="text" placeholder="Enter director's email" className='h-full w-full border-0 outline-0 text-[#6B6B6B]' />
+                                <input 
+                                    {...register('director_email')}
+                                    type="text" placeholder="Enter director's email" className='h-full w-full border-0 outline-0 text-[#6B6B6B]' />
                             </div>
                         </div>
                     </div>
@@ -171,7 +173,9 @@ const Signup4 = ({ next, setData, goBack }) => {
                                 </svg>
                             </div>
                             <div className="grow">
-                                <input type="text" placeholder="Enter director's phone number" className='h-full w-full border-0 outline-0 text-[#6B6B6B]' />
+                                <input 
+                                    {...register('director_phone')}
+                                    type="text" placeholder="Enter director's phone number" className='h-full w-full border-0 outline-0 text-[#6B6B6B]' />
                             </div>
                         </div>
                     </div>
@@ -198,7 +202,7 @@ const Signup4 = ({ next, setData, goBack }) => {
                             </div>
                             <div className="grow">
                                 <input
-                                    {...register('director_info')}
+                                    {...register('coach_info')}
                                     type="text" placeholder="Enter coach's full name" className='h-full w-full border-0 outline-0 text-[#6B6B6B]' />
                             </div>
                         </div>
@@ -222,7 +226,9 @@ const Signup4 = ({ next, setData, goBack }) => {
                                 </svg>
                             </div>
                             <div className="grow">
-                                <input type="text" placeholder="Enter coach's email" className='h-full w-full border-0 outline-0 text-[#6B6B6B]' />
+                                <input 
+                                    {...register('coach_email')}
+                                    type="text" placeholder="Enter coach's email" className='h-full w-full border-0 outline-0 text-[#6B6B6B]' />
                             </div>
                         </div>
                     </div>
@@ -245,7 +251,9 @@ const Signup4 = ({ next, setData, goBack }) => {
                                 </svg>
                             </div>
                             <div className="grow">
-                                <input type="text" placeholder="Enter coach's phone number" className='h-full w-full border-0 outline-0 text-[#6B6B6B]' />
+                                <input 
+                                    {...register('coach_phone')}
+                                    type="text" placeholder="Enter coach's phone number" className='h-full w-full border-0 outline-0 text-[#6B6B6B]' />
                             </div>
                         </div>
                     </div>

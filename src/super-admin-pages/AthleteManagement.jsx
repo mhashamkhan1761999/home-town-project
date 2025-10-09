@@ -830,24 +830,8 @@ const ViewAthleteModal = ({ isOpen, onClose, athlete }) => {
 
               <div>
                 <label className="block text-sm font-medium text-gray-400 mb-1">Location</label>
-                <p className="text-white">
-                  {[athlete?.city, athlete?.state, athlete?.country].filter(Boolean).join(', ')}
-                </p>
+                <p className="text-white">{athlete?.city}, {athlete?.state}, {athlete?.country}</p>
               </div>
-
-              {athlete?.hometown && (
-                <div>
-                  <label className="block text-sm font-medium text-gray-400 mb-1">Hometown</label>
-                  <p className="text-white">{athlete.hometown}</p>
-                </div>
-              )}
-
-              {athlete?.jersey && (
-                <div>
-                  <label className="block text-sm font-medium text-gray-400 mb-1">Jersey Number</label>
-                  <p className="text-white">#{athlete.jersey}</p>
-                </div>
-              )}
 
               <div>
                 <label className="block text-sm font-medium text-gray-400 mb-1">Referral Code</label>
@@ -897,7 +881,7 @@ const ViewAthleteModal = ({ isOpen, onClose, athlete }) => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-400 mb-1">Grand Level</label>
+                <label className="block text-sm font-medium text-gray-400 mb-1">Grade Level</label>
                 <p className={`font-bold ${getLevelColor(athlete?.grand_level)}`}>
                   {athlete?.grand_level}
                 </p>
@@ -962,56 +946,62 @@ const ViewAthleteModal = ({ isOpen, onClose, athlete }) => {
         )}
 
         {/* Team Information */}
-        {(athlete?.team_name || athlete?.team_email || athlete?.team_email_2 || athlete?.director_info || athlete?.coach_info) && (
+        {(athlete?.team_name || athlete?.team_email || athlete?.team_email_2) && (
           <div className="bg-[#1a1a1a] border border-[#4B4C46] rounded-lg p-3 sm:p-6 mb-4 sm:mb-6">
             <h3 className="text-base sm:text-lg font-semibold text-white mb-3 sm:mb-4">Team Information</h3>
-            <div className="space-y-4">
-              {/* Team Details */}
-              {(athlete?.team_name || athlete?.team_email || athlete?.team_email_2) && (
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4">
+              {athlete?.team_name && (
                 <div>
-                  <h4 className="text-sm font-semibold text-[#D4BC6D] mb-2">Team Details</h4>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-                    {athlete?.team_name && (
-                      <div>
-                        <label className="block text-sm font-medium text-gray-400 mb-1">Team Name</label>
-                        <p className="text-white">{athlete.team_name}</p>
-                      </div>
-                    )}
-                    {athlete?.team_email && (
-                      <div>
-                        <label className="block text-sm font-medium text-gray-400 mb-1">Team Email</label>
-                        <p className="text-white">{athlete.team_email}</p>
-                      </div>
-                    )}
-                    {athlete?.team_email_2 && (
-                      <div>
-                        <label className="block text-sm font-medium text-gray-400 mb-1">Team Email 2</label>
-                        <p className="text-white">{athlete.team_email_2}</p>
-                      </div>
-                    )}
-                  </div>
+                  <label className="block text-sm font-medium text-gray-400 mb-1">Team Name</label>
+                  <p className="text-white">{athlete.team_name}</p>
                 </div>
               )}
-
-              {/* Athletic Director Information */}
+              {athlete?.team_email && (
+                <div>
+                  <label className="block text-sm font-medium text-gray-400 mb-1">Team Email</label>
+                  <p className="text-white">{athlete.team_email}</p>
+                </div>
+              )}
+              {athlete?.team_email_2 && (
+                <div>
+                  <label className="block text-sm font-medium text-gray-400 mb-1">Team Email 2</label>
+                  <p className="text-white">{athlete.team_email_2}</p>
+                </div>
+              )}
               {athlete?.director_info && (
                 <div>
-                  <h4 className="text-sm font-semibold text-[#D4BC6D] mb-2">Athletic Director Information</h4>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-400 mb-1">Director Info</label>
-                    <p className="text-white">{athlete.director_info}</p>
-                  </div>
+                  <label className="block text-sm font-medium text-gray-400 mb-1">Director Name</label>
+                  <p className="text-white">{athlete.director_info}</p>
                 </div>
               )}
-
-              {/* Coach Information */}
+              {athlete?.director_email && (
+                <div>
+                  <label className="block text-sm font-medium text-gray-400 mb-1">Director Email</label>
+                  <p className="text-white">{athlete.director_email}</p>
+                </div>
+              )}
+              {athlete?.director_phone && (
+                <div>
+                  <label className="block text-sm font-medium text-gray-400 mb-1">Director Phone</label>
+                  <p className="text-white">{athlete.director_phone}</p>
+                </div>
+              )}
               {athlete?.coach_info && (
                 <div>
-                  <h4 className="text-sm font-semibold text-[#D4BC6D] mb-2">Coach Information</h4>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-400 mb-1">Coach Info</label>
-                    <p className="text-white">{athlete.coach_info}</p>
-                  </div>
+                  <label className="block text-sm font-medium text-gray-400 mb-1">Coach Name</label>
+                  <p className="text-white">{athlete.coach_info}</p>
+                </div>
+              )}
+              {athlete?.coach_email && (
+                <div>
+                  <label className="block text-sm font-medium text-gray-400 mb-1">Coach Email</label>
+                  <p className="text-white">{athlete.coach_email}</p>
+                </div>
+              )}
+              {athlete?.coach_phone && (
+                <div>
+                  <label className="block text-sm font-medium text-gray-400 mb-1">Coach Phone</label>
+                  <p className="text-white">{athlete.coach_phone}</p>
                 </div>
               )}
             </div>
@@ -1046,67 +1036,66 @@ const ViewAthleteModal = ({ isOpen, onClose, athlete }) => {
         )}
 
         {/* Social Media Information */}
-        {(athlete?.instagram || athlete?.twitter || athlete?.youtube || athlete?.tiktok || athlete?.twitch || athlete?.other || athlete?.social_media_reach) && (
-          <div className="bg-[#1a1a1a] border border-[#4B4C46] rounded-lg p-3 sm:p-6 mb-4 sm:mb-6">
-            <h3 className="text-base sm:text-lg font-semibold text-white mb-3 sm:mb-4">Social Media</h3>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
+        <div className="bg-[#1a1a1a] border border-[#4B4C46] rounded-lg p-3 sm:p-6 mb-4 sm:mb-6">
+          <h3 className="text-base sm:text-lg font-semibold text-white mb-3 sm:mb-4">Social Media</h3>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
             {athlete?.instagram && (
               <div>
                 <label className="block text-sm font-medium text-gray-400 mb-1">Instagram</label>
-                <span className="flex items-center text-pink-500 hover:text-pink-400 transition-colors">
+                <a href={athlete.instagram} target="_blank" rel="noopener noreferrer" className="flex items-center text-pink-500 hover:text-pink-400 transition-colors">
                   <Instagram className="h-4 w-4 mr-2" />
                   <span className="text-sm truncate">{athlete?.instagram}</span>
-                </span>
+                </a>
               </div>
             )}
             {athlete?.twitter && (
               <div>
                 <label className="block text-sm font-medium text-gray-400 mb-1">Twitter</label>
-                <span className="flex items-center text-blue-400 hover:text-blue-300 transition-colors">
+                <a href={athlete.twitter} target="_blank" rel="noopener noreferrer" className="flex items-center text-blue-400 hover:text-blue-300 transition-colors">
                   <Twitter className="h-4 w-4 mr-2" />
                   <span className="text-sm truncate">{athlete?.twitter}</span>
-                </span>
+                </a>
               </div>
             )}
             {athlete?.youtube && (
               <div>
                 <label className="block text-sm font-medium text-gray-400 mb-1">YouTube</label>
-                <span className="flex items-center text-red-500 hover:text-red-400 transition-colors">
+                <a href={athlete.youtube} target="_blank" rel="noopener noreferrer" className="flex items-center text-red-500 hover:text-red-400 transition-colors">
                   <svg className="h-4 w-4 mr-2" fill="currentColor" viewBox="0 0 24 24">
                     <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
                   </svg>
                   <span className="text-sm truncate">{athlete?.youtube}</span>
-                </span>
+                </a>
               </div>
             )}
             {athlete?.tiktok && (
               <div>
                 <label className="block text-sm font-medium text-gray-400 mb-1">TikTok</label>
-                <span className="flex items-center text-white hover:text-gray-300 transition-colors">
+                <a href={athlete.tiktok} target="_blank" rel="noopener noreferrer" className="flex items-center text-white hover:text-gray-300 transition-colors">
                   <svg className="h-4 w-4 mr-2" fill="currentColor" viewBox="0 0 24 24">
                     <path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"/>
                   </svg>
                   <span className="text-sm truncate">{athlete?.tiktok}</span>
-                </span>
+                </a>
               </div>
             )}
             {athlete?.twitch && (
               <div>
                 <label className="block text-sm font-medium text-gray-400 mb-1">Twitch</label>
-                <span className="flex items-center text-purple-500 hover:text-purple-400 transition-colors">
+                <a href={athlete.twitch} target="_blank" rel="noopener noreferrer" className="flex items-center text-purple-500 hover:text-purple-400 transition-colors">
                   <svg className="h-4 w-4 mr-2" fill="currentColor" viewBox="0 0 24 24">
                     <path d="M11.571 4.714h1.715v5.143H11.57zm4.715 0H18v5.143h-1.714zM6 0L1.714 4.286v15.428h5.143V24l4.286-4.286h3.428L22.286 12V0zm14.571 11.143l-3.428 3.428h-3.429l-3 3v-3H6.857V1.714h13.714Z"/>
                   </svg>
                   <span className="text-sm truncate">{athlete?.twitch}</span>
-                </span>
+                </a>
               </div>
             )}
             {athlete?.other && (
               <div>
                 <label className="block text-sm font-medium text-gray-400 mb-1">Other</label>
-                <span className="flex items-center text-gray-400 hover:text-gray-300 transition-colors">
+                <a href={athlete.other} target="_blank" rel="noopener noreferrer" className="flex items-center text-gray-400 hover:text-gray-300 transition-colors">
                   <span className="text-sm truncate">{athlete?.other}</span>
-                </span>
+                </a>
               </div>
             )}
             {(!athlete?.instagram && !athlete?.twitter && !athlete?.youtube && !athlete?.tiktok && !athlete?.twitch && !athlete?.other) && (
@@ -1115,20 +1104,18 @@ const ViewAthleteModal = ({ isOpen, onClose, athlete }) => {
               </div>
             )}
           </div>
-          {/* {athlete?.social_media_reach && (
+          {athlete?.social_media_reach && (
             <div className="mt-3 sm:mt-4">
               <label className="block text-xs sm:text-sm font-medium text-gray-400 mb-1">Social Media Reach</label>
               <p className="text-white text-sm sm:text-base">{athlete.social_media_reach}</p>
             </div>
-          )} */}
-          </div>
-        )}
+          )}
+        </div>
 
         {/* Additional Information */}
-        {(athlete?.bio || athlete?.description || athlete?.furious || athlete?.card !== undefined) && (
-          <div className="bg-[#1a1a1a] border border-[#4B4C46] rounded-lg p-3 sm:p-6 mb-4 sm:mb-6">
-            <h3 className="text-base sm:text-lg font-semibold text-white mb-3 sm:mb-4">Additional Information</h3>
-            <div className="space-y-3 sm:space-y-4">
+        <div className="bg-[#1a1a1a] border border-[#4B4C46] rounded-lg p-3 sm:p-6 mb-4 sm:mb-6">
+          <h3 className="text-base sm:text-lg font-semibold text-white mb-3 sm:mb-4">Additional Information</h3>
+          <div className="space-y-3 sm:space-y-4">
             {athlete?.bio && (
               <div>
                 <label className="block text-sm font-medium text-gray-400 mb-1">Bio</label>
@@ -1163,13 +1150,12 @@ const ViewAthleteModal = ({ isOpen, onClose, athlete }) => {
                 )}
               </div>
             </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-400 mb-1">Last Updated</label>
-                <p className="text-white">{athlete?.updated_at ? new Date(athlete.updated_at).toLocaleString() : 'Not available'}</p>
-              </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-400 mb-1">Last Updated</label>
+              <p className="text-white">{athlete?.updated_at ? new Date(athlete.updated_at).toLocaleString() : 'Not available'}</p>
             </div>
           </div>
-        )}
+        </div>
 
         <div className="flex justify-end">
           <button
