@@ -143,6 +143,18 @@ const AthleteManagement = () => {
     }
   });
 
+  const typeMutation = useMutation({
+    mutationFn: ({ id, data }) => postRequest(`/admin/update-type-athlete/${id}`, data),
+    onSuccess: (res) => {
+      queryClient.invalidateQueries(['admin-athletes']);
+      toast.success(res?.message || 'Type updated successfully')
+    },
+    onError: (error) => {
+      console.error('Error updating type:', error);
+      toast.error('Failed to update type');
+    }
+  });
+
   const [selectedStatus, setSelectedStatus] = useState('All');
   const [isViewModalOpen, setIsViewModalOpen] = useState(false);
   const [selectedAthlete, setSelectedAthlete] = useState(null);
@@ -158,7 +170,18 @@ const AthleteManagement = () => {
     'accepted': 1,
   };
   
+  const numberToType = {
+    0: 'standard',
+    1: 'pro',
+  };
+  
+  const typeToNumber = {
+    'standard': 0,
+    'pro': 1,
+  };
+  
   const statusTypes = ['Pending', 'Accepted'];
+  const typeTypes = ['Standard', 'Pro'];
 
   // Filter athletes based on status and search term
   const filteredAthletes = athletes?.filter(athlete => {
@@ -222,6 +245,18 @@ const AthleteManagement = () => {
     });
   };
 
+  const handleTypeChange = (athleteId, newType) => {
+    // Map type to number for backend
+    const typeValue = typeToNumber[newType?.toLowerCase()] ?? typeToNumber[newType?.toLowerCase()];
+    typeMutation.mutate({
+      id: athleteId,
+      data: { type: typeValue }
+    });
+    setAthletes(athletes.map(athlete =>
+      athlete.id === athleteId ? { ...athlete, type: newType } : athlete
+    ));
+  };
+
   const getStatusColor = (status) => {
     switch (status) {
       case 'pending':
@@ -253,6 +288,17 @@ const AthleteManagement = () => {
         return 'text-purple-400';
       default:
         return 'text-blue-400';
+    }
+  };
+
+  const getTypeColor = (type) => {
+    switch (type) {
+      case 'standard':
+        return 'bg-blue-600 text-white';
+      case 'pro':
+        return 'bg-purple-600 text-white';
+      default:
+        return 'bg-gray-600 text-white';
     }
   };
 
@@ -362,6 +408,9 @@ const AthleteManagement = () => {
                     </th>
                     <th className="px-3 sm:px-6 py-4 text-left text-xs sm:text-sm font-medium text-gray-400 uppercase tracking-wider">
                       Status
+                    </th>
+                    <th className="px-3 sm:px-6 py-4 text-left text-xs sm:text-sm font-medium text-gray-400 uppercase tracking-wider">
+                      Type
                     </th>
                     <th className="px-3 sm:px-6 py-4 text-left text-xs sm:text-sm font-medium text-gray-400 uppercase tracking-wider">
                       Furious 5
@@ -481,6 +530,19 @@ const AthleteManagement = () => {
                         </select>
                       </td>
                       <td className="px-3 sm:px-6 py-4 whitespace-nowrap">
+                        <select
+                          value={numberToType[athlete?.type] || athlete?.type}
+                          onChange={(e) => handleTypeChange(athlete?.id, e.target.value)}
+                          className={`text-xs font-semibold rounded-full px-2 py-1 focus:outline-none focus:ring-2 focus:ring-[#D4BC6D] ${getTypeColor(numberToType[athlete.type] || athlete.type)}`}
+                        >
+                          {typeTypes.map(type => (
+                            <option key={type} value={type.toLowerCase()} className="bg-[#1a1a1a] text-white">
+                              {type}
+                            </option>
+                          ))}
+                        </select>
+                      </td>
+                      <td className="px-3 sm:px-6 py-4 whitespace-nowrap">
                         <div className="flex items-center">
                           <button
                             onClick={() => handleFuriousToggle(athlete?.id, athlete?.furious)}
@@ -589,21 +651,21 @@ const AthleteManagement = () => {
                 </button>
               </div>
 
-              {/* Details Grid */}
-              <div className="grid grid-cols-2 gap-3 mb-3">
+              {/* Details Grid - Top Row */}
+              <div className="grid grid-cols-3 gap-2 mb-3">
                 {/* Card Status */}
                 <div>
-                  <p className="text-xs font-medium text-gray-400 mb-1">Card Status</p>
-                  <div className="flex items-center">
+                  <p className="text-xs font-medium text-gray-400 mb-1">Card</p>
+                  <div className="flex items-center justify-center">
                     {athlete?.card ? (
                       <div className="flex items-center text-green-500">
                         <CreditCard className="h-3 w-3 mr-1" />
-                        <span className="text-xs font-medium">Card Added</span>
+                        <span className="text-xs font-medium">Yes</span>
                       </div>
                     ) : (
                       <div className="flex items-center text-red-500">
                         <CreditCard className="h-3 w-3 mr-1" />
-                        <span className="text-xs font-medium">No Card</span>
+                        <span className="text-xs font-medium">No</span>
                       </div>
                     )}
                   </div>
@@ -615,7 +677,7 @@ const AthleteManagement = () => {
                   <select
                     value={numberToStatus[athlete?.status] || athlete?.status}
                     onChange={(e) => handleStatusChange(athlete?.id, e.target.value)}
-                    className={`text-xs font-semibold rounded-full px-2 py-1 focus:outline-none focus:ring-2 focus:ring-[#D4BC6D] w-full ${getStatusColor(numberToStatus[athlete.status] || athlete.status)}`}
+                    className={`text-xs font-semibold rounded px-1 py-1 focus:outline-none focus:ring-1 focus:ring-[#D4BC6D] w-full ${getStatusColor(numberToStatus[athlete.status] || athlete.status)}`}
                   >
                     {statusTypes.map(status => (
                       <option key={status} value={status.toLowerCase()} className="bg-[#1a1a1a] text-white">
@@ -624,61 +686,80 @@ const AthleteManagement = () => {
                     ))}
                   </select>
                 </div>
+
+                {/* Type */}
+                <div>
+                  <p className="text-xs font-medium text-gray-400 mb-1">Type</p>
+                  <select
+                    value={numberToType[athlete?.type] || athlete?.type}
+                    onChange={(e) => handleTypeChange(athlete?.id, e.target.value)}
+                    className={`text-xs font-semibold rounded px-1 py-1 focus:outline-none focus:ring-1 focus:ring-[#D4BC6D] w-full ${getTypeColor(numberToType[athlete.type] || athlete.type)}`}
+                  >
+                    {typeTypes.map(type => (
+                      <option key={type} value={type.toLowerCase()} className="bg-[#1a1a1a] text-white">
+                        {type}
+                      </option>
+                    ))}
+                  </select>
+                </div>
               </div>
 
-              {/* Social Media & Furious Row */}
-              <div className="flex items-center justify-between">
+              {/* Social Media & Controls Row */}
+              <div className="flex items-start justify-between">
                 {/* Social Media */}
-                <div>
+                <div className="flex-1 mr-3">
                   <p className="text-xs font-medium text-gray-400 mb-1">Social Media</p>
                   <div className="flex flex-col space-y-1">
                     {athlete?.instagram && (
                       <div className="flex items-center space-x-1">
                         <Instagram className="h-3 w-3 text-pink-500" />
-                        <span className="text-xs text-gray-600">{athlete.instagram}</span>
+                        <span className="text-xs text-gray-600 truncate">{athlete.instagram.slice(0, 15)}...</span>
                       </div>
                     )}
                     {athlete?.twitter && (
                       <div className="flex items-center space-x-1">
                         <Twitter className="h-3 w-3 text-blue-400" />
-                        <span className="text-xs text-gray-600">{athlete.twitter}</span>
+                        <span className="text-xs text-gray-600 truncate">{athlete.twitter.slice(0, 15)}...</span>
                       </div>
                     )}
                     {athlete?.facebook && (
                       <div className="flex items-center space-x-1">
                         <Facebook className="h-3 w-3 text-blue-600" />
-                        <span className="text-xs text-gray-600">{athlete.facebook}</span>
+                        <span className="text-xs text-gray-600 truncate">{athlete.facebook.slice(0, 15)}...</span>
                       </div>
                     )}
                     {(!athlete?.instagram && !athlete?.twitter && !athlete?.facebook) && (
-                      <span className="text-xs text-gray-500">No social media</span>
+                      <span className="text-xs text-gray-500">None</span>
                     )}
                   </div>
                 </div>
 
-                {/* Furious 5 */}
-                <div>
-                  <p className="text-xs font-medium text-gray-400 mb-1">Furious 5</p>
-                  <div className="flex items-center">
-                    <button
-                      onClick={() => handleFuriousToggle(athlete?.id, athlete?.furious)}
-                      disabled={furiousMutation.isLoading}
-                      className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-[#D4BC6D] focus:ring-offset-2 focus:ring-offset-gray-800 ${
-                        athlete?.furious === "1" 
-                          ? 'bg-[#D4BC6D]' 
-                          : 'bg-gray-600'
-                      } ${furiousMutation.isLoading ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
-                      title={athlete?.furious === "1" ? "Remove from Furious 5" : "Add to Furious 5"}
-                    >
-                      <span
-                        className={`inline-block h-3 w-3 transform rounded-full bg-white transition-transform ${
-                          athlete?.furious === "1" ? 'translate-x-5' : 'translate-x-1'
-                        }`}
-                      />
-                    </button>
-                    {athlete?.furious === "1" && (
-                      <Star className="h-3 w-3 text-[#D4BC6D] ml-2" fill="currentColor" />
-                    )}
+                {/* Furious 5 & View Controls */}
+                <div className="flex flex-col items-end space-y-2">
+                  {/* Furious 5 */}
+                  <div className="text-center">
+                    <p className="text-xs font-medium text-gray-400 mb-1">Furious</p>
+                    <div className="flex items-center">
+                      <button
+                        onClick={() => handleFuriousToggle(athlete?.id, athlete?.furious)}
+                        disabled={furiousMutation.isLoading}
+                        className={`relative inline-flex h-4 w-8 items-center rounded-full transition-colors focus:outline-none focus:ring-1 focus:ring-[#D4BC6D] ${
+                          athlete?.furious === "1" 
+                            ? 'bg-[#D4BC6D]' 
+                            : 'bg-gray-600'
+                        } ${furiousMutation.isLoading ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
+                        title={athlete?.furious === "1" ? "Remove from Furious 5" : "Add to Furious 5"}
+                      >
+                        <span
+                          className={`inline-block h-3 w-3 transform rounded-full bg-white transition-transform ${
+                            athlete?.furious === "1" ? 'translate-x-4' : 'translate-x-0.5'
+                          }`}
+                        />
+                      </button>
+                      {athlete?.furious === "1" && (
+                        <Star className="h-3 w-3 text-[#D4BC6D] ml-1" fill="currentColor" />
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>
@@ -715,6 +796,11 @@ const ViewAthleteModal = ({ isOpen, onClose, athlete }) => {
     1: 'accepted',
   };
 
+  const numberToType = {
+    0: 'standard',
+    1: 'pro',
+  };
+
   const getStatusColor = (status) => {
     switch (status) {
       case 'pending':
@@ -725,6 +811,17 @@ const ViewAthleteModal = ({ isOpen, onClose, athlete }) => {
         return 'bg-blue-600 text-white';
       case 'pro':
         return 'bg-green-600 text-white';
+      default:
+        return 'bg-gray-600 text-white';
+    }
+  };
+
+  const getTypeColor = (type) => {
+    switch (type) {
+      case 'standard':
+        return 'bg-blue-600 text-white';
+      case 'pro':
+        return 'bg-purple-600 text-white';
       default:
         return 'bg-gray-600 text-white';
     }
@@ -911,6 +1008,13 @@ const ViewAthleteModal = ({ isOpen, onClose, athlete }) => {
                 <label className="block text-sm font-medium text-gray-400 mb-1">Status</label>
                 <span className={`inline-flex px-3 py-1 text-sm font-semibold rounded-full ${getStatusColor(numberToStatus[athlete?.status] || athlete?.status)}`}>
                   {numberToStatus[athlete?.status] ? numberToStatus[athlete?.status].charAt(0).toUpperCase() + numberToStatus[athlete?.status].slice(1) : (athlete?.status ? athlete?.status.charAt(0).toUpperCase() + athlete?.status.slice(1) : 'Unknown')}
+                </span>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-400 mb-1">Type</label>
+                <span className={`inline-flex px-3 py-1 text-sm font-semibold rounded-full ${getTypeColor(numberToType[athlete?.type] || athlete?.type)}`}>
+                  {numberToType[athlete?.type] ? numberToType[athlete?.type].charAt(0).toUpperCase() + numberToType[athlete?.type].slice(1) : (athlete?.type ? athlete?.type.charAt(0).toUpperCase() + athlete?.type.slice(1) : 'Standard')}
                 </span>
               </div>
 
