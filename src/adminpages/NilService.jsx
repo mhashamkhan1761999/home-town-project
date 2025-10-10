@@ -1236,13 +1236,13 @@ const ItemModal2 = ({ item = null, onClose, onSuccesActive, categoryId }) => {
                   { id: "merch", label: "Merch Collage", example: "/2.jpeg" },
                   { id: "favorite", label: "Favorite Picture", example: "/1.jpeg" },
                   { id: "logo", label: "Logo", example: "/3.jpeg" },
-                  { id: "other", label: "Other", example: "/question-mark.jpeg" },
+                  { id: "other", label: "Other", example: "/Graphic query question mark.jpg" },
                 ].map(({ id, label, example }) => {
                   const isSelected = watch("selectedCategory") === id;
                   return (
                     <label
                       key={id}
-                      className={`relative p-3 rounded-lg border cursor-pointer transition 
+                      className={`relative p-3 rounded-lg border cursor-pointer transition pb-10 
                                 ${isSelected ? "border-[#D4BC6D] bg-[rgba(212,188,109,0.1)] shadow-lg" : "border-[#4B4C46] hover:border-[#D4BC6D]"}`}
                     >
                       <input
