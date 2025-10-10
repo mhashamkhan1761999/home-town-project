@@ -475,7 +475,6 @@ const AthleteManagement = () => {
                           </div>
                         </div>
                       </td>
-                      {console.log(athlete?.social_media)}
                       <td className="px-3 sm:px-6 py-4 whitespace-nowrap">
                         <div className="flex flex-col space-y-1">
                           {athlete?.instagram && (
@@ -872,36 +871,29 @@ const ViewAthleteModal = ({ isOpen, onClose, athlete }) => {
         <div className="relative h-24 sm:h-32 lg:h-48 rounded-lg overflow-hidden mb-4 sm:mb-6">
           <img
             src={(() => {
-              let coverUrl = '/athlete-bg.jpg'; // default fallback
-              
+              // Priority: cover_photo_url > cover_photo > default fallback
               if (athlete?.cover_photo_url) {
-                // Handle JSON escaped slashes and backslashes
-                coverUrl = athlete.cover_photo_url
+                const cleanUrl = athlete.cover_photo_url
                   .replace(/\\\//g, '/') // Replace \/ with /
                   .replace(/\\/g, '/');  // Replace \ with /
-              } else if (athlete?.cover_photo) {
-                if (athlete.cover_photo.startsWith('http')) {
-                  coverUrl = athlete.cover_photo.replace(/\\/g, '/');
-                } else {
-                  coverUrl = `https://admin.hometownheroagency.com/storage/app/public/${athlete.cover_photo}`.replace(/\\/g, '/');
-                }
+                return cleanUrl;
               }
               
-              console.log('Cover photo URL:', coverUrl);
-              console.log('Original cover_photo_url:', athlete?.cover_photo_url);
-              return coverUrl;
+              if (athlete?.cover_photo) {
+                let constructedUrl;
+                if (athlete.cover_photo.startsWith('http')) {
+                  constructedUrl = athlete.cover_photo.replace(/\\/g, '/');
+                } else {
+                  constructedUrl = `https://admin.hometownheroagency.com/storage/app/${athlete.cover_photo}`.replace(/\\/g, '/');
+                }
+                return constructedUrl;
+              }
+              return '/athlete-bg.jpg';
             })()}
             alt="Cover"
             className="w-full h-full object-cover"
-            onError={(e) => {
-              console.log('Cover photo failed to load:', e.target.src);
-              e.target.src = '/athlete-bg.jpg';
-            }}
-            onLoad={(e) => {
-              console.log('Cover photo loaded successfully:', e.target.src);
-            }}
           />
-          <div className="absolute inset-0 bg-black bg-opacity-40"></div>
+         
           <div className="absolute bottom-2 sm:bottom-4 left-2 sm:left-4 flex items-center">
             <div className="h-12 w-12 sm:h-16 sm:w-16 lg:h-20 lg:w-20 rounded-full overflow-hidden border-2 sm:border-4 border-[#D4BC6D]">
               <img
