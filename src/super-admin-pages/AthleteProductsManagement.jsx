@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Search, Eye, Package, ShoppingBag, Tag, Upload, Plus, X } from 'lucide-react';
+import { Search, Eye, Package, ShoppingBag, Tag, Upload, Plus, X, ChevronDown, ChevronRight } from 'lucide-react';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { getRequest, postRequest } from '../api';
 import { queryClient } from '../main';
@@ -88,6 +88,7 @@ const AthleteProductsManagement = () => {
   const [isViewModalOpen, setIsViewModalOpen] = useState(false);
   const [isCreateAthleteModalOpen, setIsCreateAthleteModalOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
+  const [expandedGroups, setExpandedGroups] = useState(new Set());
   const [uploadedImages, setUploadedImages] = useState([]);
   const [uploadedImageFiles, setUploadedImageFiles] = useState([]); // Store actual File objects
   const [sizeChartImages, setSizeChartImages] = useState([]);
@@ -237,6 +238,44 @@ const AthleteProductsManagement = () => {
   // Use API data if available, otherwise fallback to static data
   const displayProducts = athleteProducts || products;
 
+  // Function to group products by concept_id
+  const groupProductsByConcept = (products) => {
+    const grouped = {};
+    
+    products.forEach(product => {
+      let conceptId = product.concept_id;
+      
+      // If no concept_id, treat each product as its own group
+      if (!conceptId || conceptId === null || conceptId === undefined) {
+        conceptId = `individual-${product.id}`;
+      }
+      
+      if (!grouped[conceptId]) {
+        grouped[conceptId] = [];
+      }
+      grouped[conceptId].push(product);
+    });
+
+    // Convert to array format with concept group info
+    return Object.entries(grouped).map(([conceptId, products]) => {
+      // Sort products within each group by creation date (newest first)
+      const sortedProducts = products.sort((a, b) => {
+        const dateA = new Date(a.created_at || 0);
+        const dateB = new Date(b.created_at || 0);
+        return dateB - dateA; // Descending order (newest first)
+      });
+      
+      const representativeProduct = sortedProducts[0]; // Use newest product as representative
+      return {
+        ...representativeProduct,
+        concept_id: conceptId,
+        conceptProducts: sortedProducts, // All products in this concept, sorted newest first
+        productCount: sortedProducts.length,
+        isConceptGroup: true
+      };
+    });
+  };
+
   // Extract unique athlete names from products
   const athleteNames = ['All', ...new Set(
     displayProducts.map(product => 
@@ -264,6 +303,30 @@ const AthleteProductsManagement = () => {
     const matchesServiceType = selectedServiceType === 'All' || serviceType === selectedServiceType;
 
     return matchesSearch && matchesStatus && matchesAthlete && matchesServiceType;
+  });
+
+  // Group filtered products by concept_id first
+  const groupedProducts = groupProductsByConcept(filteredProducts);
+
+  // Sort groups by the newest product in each group (newest first)
+  const sortedGroupedProducts = groupedProducts.sort((groupA, groupB) => {
+    // Find the newest product in each group
+    const newestInGroupA = groupA.conceptProducts.reduce((newest, product) => {
+      const currentDate = new Date(product.created_at || 0);
+      const newestDate = new Date(newest.created_at || 0);
+      return currentDate > newestDate ? product : newest;
+    });
+    
+    const newestInGroupB = groupB.conceptProducts.reduce((newest, product) => {
+      const currentDate = new Date(product.created_at || 0);
+      const newestDate = new Date(newest.created_at || 0);
+      return currentDate > newestDate ? product : newest;
+    });
+    
+    // Sort by newest product in each group (newest first)
+    const dateA = new Date(newestInGroupA.created_at || 0);
+    const dateB = new Date(newestInGroupB.created_at || 0);
+    return dateB - dateA; // Descending order (newest first)
   });
 
   const handleStatusChange = (productId, newStatus) => {
@@ -301,6 +364,21 @@ const AthleteProductsManagement = () => {
 
     // Fetch detailed product information
     viewProductMutation.mutate(product.id);
+  };
+
+  const toggleGroupExpansion = (conceptId) => {
+    const newExpandedGroups = new Set(expandedGroups);
+    if (newExpandedGroups.has(conceptId)) {
+      newExpandedGroups.delete(conceptId);
+    } else {
+      newExpandedGroups.add(conceptId);
+    }
+    setExpandedGroups(newExpandedGroups);
+  };
+
+  const handleStatusChangeInGroup = (productId, newStatus) => {
+    // Since we're using expandable rows, this is the same as regular status change
+    handleStatusChange(productId, newStatus);
   };
 
   const handleImageUpload = (event) => {
@@ -509,67 +587,173 @@ const AthleteProductsManagement = () => {
                 </tr>
               </thead>
               <tbody>
-                {filteredProducts.map((product) => (
-                  <tr key={product.id} className="border-b border-[#4B4C46] hover:bg-[#2a2a2a] transition-colors">
-                    <td className="py-3 sm:py-4 px-3 sm:px-6">
-                      <div className="text-white font-medium text-xs sm:text-sm">
-                        {product.athleteName || product.athlete?.athlete_name || 'N/A'}
-                      </div>
-                    </td>
-                    <td className="py-3 sm:py-4 px-3 sm:px-6">
-                      <div className="text-[#D4BC6D] font-medium text-xs sm:text-sm">
-                        {product.productName || product.name || 'N/A'}
-                      </div>
-                    </td>
-                    <td className="py-3 sm:py-4 px-3 sm:px-6">
-                      <div className="text-gray-300 text-xs sm:text-sm">
-                        {product.category?.name || product.category || 'N/A'}
-                      </div>
-                    </td>
-                    <td className="py-3 sm:py-4 px-3 sm:px-6">
-                      <select
-                        value={product.status?.charAt(0).toUpperCase() + product.status?.slice(1).toLowerCase() || 'Pending'}
-                        onChange={(e) => handleStatusChange(product.id, e.target.value.toLowerCase())}
-                        className={`px-2 sm:px-3 py-1 rounded-full text-xs font-medium cursor-pointer border-0 ${getStatusBadgeClass(product.status)}`}
-                        disabled={updateStatusMutation.isLoading}
-                      >
-                        {statusTypes.map(status => (
-                          <option key={status} value={status} className="bg-[#1a1a1a] text-white">
-                            {status}
-                          </option>
-                        ))}
-                      </select>
-                    </td>
-                    <td className="py-3 sm:py-4 px-3 sm:px-6">
-                      <div className="text-[#D4BC6D] font-bold text-xs sm:text-sm">
-                        {(() => {
-                          const daysRemaining = calculateDaysRemaining(product.created_at);
-                          if (daysRemaining === 0) {
-                            return <span className="text-red-400">Expired</span>;
-                          }
-                          return `${daysRemaining} days`;
-                        })()}
-                      </div>
-                    </td>
-                    <td className="py-3 sm:py-4 px-3 sm:px-6">
-                      <div className="flex gap-2">
-                        <button
-                          onClick={() => handleViewProduct(product)}
-                          className="p-1 sm:p-2 text-blue-400 hover:text-blue-300 transition-colors"
-                          title="View Details"
-                          disabled={viewProductMutation.isLoading}
-                        >
-                          <Eye className="h-4 w-4" />
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
+                {sortedGroupedProducts.map((productGroup) => (
+                  <React.Fragment key={`concept-${productGroup.concept_id}`}>
+                    {/* Main group row */}
+                    <tr className="border-b border-[#4B4C46] hover:bg-[#2a2a2a] transition-colors">
+                      <td className="py-3 sm:py-4 px-3 sm:px-6">
+                        <div className="flex items-center gap-2">
+                          {productGroup.productCount > 1 && (
+                            <button
+                              onClick={() => toggleGroupExpansion(productGroup.concept_id)}
+                              className="text-gray-400 hover:text-white transition-colors"
+                            >
+                              {expandedGroups.has(productGroup.concept_id) ? (
+                                <ChevronDown className="h-4 w-4" />
+                              ) : (
+                                <ChevronRight className="h-4 w-4" />
+                              )}
+                            </button>
+                          )}
+                          <div className="text-white font-medium text-xs sm:text-sm">
+                            {productGroup.athleteName || productGroup.athlete?.athlete_name || 'N/A'}
+                          </div>
+                        </div>
+                      </td>
+                      <td className="py-3 sm:py-4 px-3 sm:px-6">
+                        <div className="text-[#D4BC6D] font-medium text-xs sm:text-sm">
+                          {productGroup.productName || productGroup.name || 'N/A'}
+                          {productGroup.productCount > 1 && (
+                            <span className="ml-2 px-2 py-1 bg-[#D4BC6D] text-black text-xs rounded-full font-semibold">
+                              + {productGroup.productCount}
+                            </span>
+                          )}
+                        </div>
+                      </td>
+                      <td className="py-3 sm:py-4 px-3 sm:px-6">
+                        <div className="text-gray-300 text-xs sm:text-sm">
+                          {productGroup.category?.name || productGroup.category || 'N/A'}
+                        </div>
+                      </td>
+                      <td className="py-3 sm:py-4 px-3 sm:px-6">
+                        <div className="text-xs sm:text-sm">
+                          {productGroup.productCount > 1 ? (
+                            <div className="flex flex-wrap gap-1">
+                              {productGroup.conceptProducts.slice(0, 1).map((product, index) => (
+                                <span
+                                  onClick={() => toggleGroupExpansion(productGroup.concept_id)}
+                                  key={product.id}
+                                  className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusBadgeClass(product.status)}`}
+                                >
+                                  {product.status?.charAt(0).toUpperCase() + product.status?.slice(1).toLowerCase() || '-'}
+                                </span>
+                              ))}
+                              {productGroup.conceptProducts.length > 1 && (
+                                <span 
+                                  onClick={() => toggleGroupExpansion(productGroup.concept_id)}
+                                  className="px-2 py-1 rounded-full text-xs font-medium bg-gray-600 text-white"
+                                >
+                                  +{productGroup.conceptProducts.length-1}
+                                </span>
+                              )}
+                            </div>
+                          ) : (
+                            <select
+                              value={productGroup.status?.charAt(0).toUpperCase() + productGroup.status?.slice(1).toLowerCase() || 'Pending'}
+                              onChange={(e) => handleStatusChange(productGroup.id, e.target.value.toLowerCase())}
+                              className={`px-2 sm:px-3 py-1 rounded-full text-xs font-medium cursor-pointer border-0 ${getStatusBadgeClass(productGroup.status)}`}
+                              disabled={updateStatusMutation.isLoading}
+                            >
+                              {statusTypes.map(status => (
+                                <option key={status} value={status} className="bg-[#1a1a1a] text-white">
+                                  {status}
+                                </option>
+                              ))}
+                            </select>
+                          )}
+                        </div>
+                      </td>
+                      <td className="py-3 sm:py-4 px-3 sm:px-6">
+                        <div className="text-[#D4BC6D] font-bold text-xs sm:text-sm">
+                          {(() => {
+                            const daysRemaining = calculateDaysRemaining(productGroup.created_at);
+                            if (daysRemaining === 0) {
+                              return <span className="text-red-400">Expired</span>;
+                            }
+                            return `${daysRemaining} days`;
+                          })()}
+                        </div>
+                      </td>
+                      <td className="py-3 sm:py-4 px-3 sm:px-6">
+                        <div className="flex gap-2">
+                          {productGroup.productCount === 1 && (
+                            <button
+                              onClick={() => handleViewProduct(productGroup)}
+                              className="p-1 sm:p-2 text-blue-400 hover:text-blue-300 transition-colors"
+                              title="View Details"
+                              disabled={viewProductMutation.isLoading}
+                            >
+                              <Eye className="h-4 w-4" />
+                            </button>
+                          )}
+                        </div>
+                      </td>
+                    </tr>
+                    
+                    {/* Expanded products for multi-product groups */}
+                    {productGroup.productCount > 1 && expandedGroups.has(productGroup.concept_id) && productGroup.conceptProducts.map((product) => (
+                      <tr key={product.id} className="bg-[#1f1f1f] border-b border-[#3a3a3a]">
+                        <td className="py-2 sm:py-3 px-3 sm:px-6 pl-12">
+                          <div className="text-gray-300 text-xs sm:text-sm">
+                            {product.athleteName || product.athlete?.athlete_name || 'N/A'}
+                          </div>
+                        </td>
+                        <td className="py-2 sm:py-3 px-3 sm:px-6">
+                          <div className="text-[#D4BC6D] text-xs sm:text-sm">
+                            {product.productName || product.name || 'N/A'}
+                          </div>
+                        </td>
+                        <td className="py-2 sm:py-3 px-3 sm:px-6">
+                          <div className="text-gray-300 text-xs sm:text-sm">
+                            {product.category?.name || product.category || 'N/A'}
+                          </div>
+                        </td>
+                        <td className="py-2 sm:py-3 px-3 sm:px-6">
+                          <select
+                            value={product.status?.charAt(0).toUpperCase() + product.status?.slice(1).toLowerCase() || 'Pending'}
+                            onChange={(e) => handleStatusChange(product.id, e.target.value.toLowerCase())}
+                            className={`px-2 sm:px-3 py-1 rounded-full text-xs font-medium cursor-pointer border-0 ${getStatusBadgeClass(product.status)}`}
+                            disabled={updateStatusMutation.isLoading}
+                          >
+                            {statusTypes.map(status => (
+                              <option key={status} value={status} className="bg-[#1a1a1a] text-white">
+                                {status}
+                              </option>
+                            ))}
+                          </select>
+                        </td>
+                        <td className="py-2 sm:py-3 px-3 sm:px-6">
+                          <div className="text-[#D4BC6D] font-bold text-xs sm:text-sm">
+                            {(() => {
+                              const daysRemaining = calculateDaysRemaining(product.created_at);
+                              if (daysRemaining === 0) {
+                                return <span className="text-red-400">Expired</span>;
+                              }
+                              return `${daysRemaining} days`;
+                            })()}
+                          </div>
+                        </td>
+                        <td className="py-2 sm:py-3 px-3 sm:px-6">
+                          <div className="flex gap-2">
+                            <button
+                              onClick={() => handleViewProduct(product)}
+                              className="p-1 sm:p-2 text-blue-400 hover:text-blue-300 transition-colors"
+                              title="View Details"
+                              disabled={viewProductMutation.isLoading}
+                            >
+                              <Eye className="h-4 w-4" />
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </React.Fragment>
                 ))}
               </tbody>
             </table>
           </div>
 
-          {filteredProducts.length === 0 && (
+          {sortedGroupedProducts.length === 0 && (
             <div className="text-center py-8 sm:py-12">
               <Package className="h-12 w-12 sm:h-16 sm:w-16 text-gray-500 mx-auto mb-4" />
               <p className="text-gray-400 text-sm sm:text-base">No products found</p>
@@ -582,6 +766,10 @@ const AthleteProductsManagement = () => {
       {isViewModalOpen && selectedProduct && (
         <ProductViewModal
           product={selectedProduct}
+          handleStatusChange={handleStatusChange}
+          handleStatusChangeInGroup={handleStatusChangeInGroup}
+          statusTypes={statusTypes}
+          updateStatusMutation={updateStatusMutation}
           uploadedImages={uploadedImages}
           onImageUpload={handleImageUpload}
           onRemoveImage={removeImage}
@@ -611,6 +799,10 @@ const AthleteProductsManagement = () => {
 // Product View Modal Component
 const ProductViewModal = ({ 
   product, 
+  handleStatusChange,
+  handleStatusChangeInGroup,
+  statusTypes,
+  updateStatusMutation,
   uploadedImages, 
   onImageUpload, 
   onRemoveImage, 
@@ -711,13 +903,24 @@ const ProductViewModal = ({
 
                 <div>
                   <label className="block text-gray-400 text-sm mb-1">Status</label>
-                  <span className={`px-3 py-1 rounded-full text-xs font-medium ${product.status?.toLowerCase() === 'active' ? 'bg-green-600 text-white' :
-                    product.status?.toLowerCase() === 'inactive' ? 'bg-gray-600 text-white' :
+                  <select
+                    value={product.status?.charAt(0).toUpperCase() + product.status?.slice(1).toLowerCase() || 'Pending'}
+                    onChange={(e) => handleStatusChange(product.id, e.target.value.toLowerCase())}
+                    className={`px-3 py-1 rounded-full text-xs font-medium cursor-pointer border-0 bg-opacity-80 ${
+                      product.status?.toLowerCase() === 'active' ? 'bg-green-600 text-white' :
+                      product.status?.toLowerCase() === 'inactive' ? 'bg-gray-600 text-white' :
                       product.status?.toLowerCase() === 'pending' ? 'bg-yellow-600 text-white' :
-                        'bg-gray-600 text-white'
-                    }`}>
-                    {product.status?.charAt(0).toUpperCase() + product.status?.slice(1).toLowerCase() || 'N/A'}
-                  </span>
+                      product.status?.toLowerCase() === 'accepted' ? 'bg-green-600 text-white' :
+                      'bg-gray-600 text-white'
+                    }`}
+                    disabled={updateStatusMutation.isLoading}
+                  >
+                    {statusTypes.map(status => (
+                      <option key={status} value={status} className="bg-[#1a1a1a] text-white">
+                        {status}
+                      </option>
+                    ))}
+                  </select>
                 </div>
 
                 <div>
