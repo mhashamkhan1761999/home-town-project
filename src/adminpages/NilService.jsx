@@ -516,6 +516,7 @@ const ProductType = ({ handleActive, selectedCard, category, reload, selectedPro
 
 
   const [searchTerm, setSearchTerm] = useState("");
+  const [showServiceFeePopup, setShowServiceFeePopup] = useState(false);
   const [showFinalizeConfirm, setShowFinalizeConfirm] = useState(false);
   const [showSuccessPopup, setShowSuccessPopup] = useState(false);
   const [showSplash, setShowSplash] = useState(false);
@@ -574,7 +575,7 @@ const ProductType = ({ handleActive, selectedCard, category, reload, selectedPro
             {updateConceptMutation.isLoading ? 'Cancelling...' : 'Cancel Service'}
           </button>
           <button
-            onClick={() => setShowFinalizeConfirm(true)}
+            onClick={() => setShowServiceFeePopup(true)}
             className="bg-[#d4bc6d] rounded-full h-[40px] uppercase px-6 py-3 text-black text-sm font-semibold"
           >
             Complete Service Launch
@@ -692,6 +693,43 @@ const ProductType = ({ handleActive, selectedCard, category, reload, selectedPro
           ))}
         </div>
       </div>
+      
+      {/* SERVICE FEE POPUP */}
+      {showServiceFeePopup && (
+        <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
+            <div className="text-center">
+              <div className="mb-4">
+                <svg className="w-16 h-16 text-yellow-500 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.732-.833-2.464 0L4.35 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+                </svg>
+              </div>
+              <h2 className="text-xl font-bold text-black mb-4">Service Launch Fee Notice</h2>
+              <p className="text-gray-700 mb-6">
+                You're now eligible for the $25 service launch fee if you don't get a sale within 60 days.
+              </p>
+              <div className="flex justify-center space-x-3">
+                <button
+                  onClick={() => setShowServiceFeePopup(false)}
+                  className="px-6 py-2 bg-gray-400 text-white rounded-full hover:bg-gray-500 transition"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={() => {
+                    setShowServiceFeePopup(false);
+                    setShowFinalizeConfirm(true);
+                  }}
+                  className="px-6 py-2 bg-[#D4BC6D] text-black rounded-full hover:bg-[#b89f4e] transition"
+                >
+                  Continue
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* FINALIZE CONFIRM MODAL */}
       {showFinalizeConfirm && (
         <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50">
