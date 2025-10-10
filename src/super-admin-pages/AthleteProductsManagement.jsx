@@ -258,12 +258,19 @@ const AthleteProductsManagement = () => {
 
     // Convert to array format with concept group info
     return Object.entries(grouped).map(([conceptId, products]) => {
-      const representativeProduct = products[0]; // Use first product as representative
+      // Sort products within each group by creation date (newest first)
+      const sortedProducts = products.sort((a, b) => {
+        const dateA = new Date(a.created_at || 0);
+        const dateB = new Date(b.created_at || 0);
+        return dateB - dateA; // Descending order (newest first)
+      });
+      
+      const representativeProduct = sortedProducts[0]; // Use newest product as representative
       return {
         ...representativeProduct,
         concept_id: conceptId,
-        conceptProducts: products, // All products in this concept
-        productCount: products.length,
+        conceptProducts: sortedProducts, // All products in this concept, sorted newest first
+        productCount: sortedProducts.length,
         isConceptGroup: true
       };
     });
@@ -298,15 +305,29 @@ const AthleteProductsManagement = () => {
     return matchesSearch && matchesStatus && matchesAthlete && matchesServiceType;
   });
 
-  // Sort filtered products by creation date (newest first)
-  const sortedProducts = filteredProducts.sort((a, b) => {
-    const dateA = new Date(a.created_at || 0);
-    const dateB = new Date(b.created_at || 0);
+  // Group filtered products by concept_id first
+  const groupedProducts = groupProductsByConcept(filteredProducts);
+
+  // Sort groups by the newest product in each group (newest first)
+  const sortedGroupedProducts = groupedProducts.sort((groupA, groupB) => {
+    // Find the newest product in each group
+    const newestInGroupA = groupA.conceptProducts.reduce((newest, product) => {
+      const currentDate = new Date(product.created_at || 0);
+      const newestDate = new Date(newest.created_at || 0);
+      return currentDate > newestDate ? product : newest;
+    });
+    
+    const newestInGroupB = groupB.conceptProducts.reduce((newest, product) => {
+      const currentDate = new Date(product.created_at || 0);
+      const newestDate = new Date(newest.created_at || 0);
+      return currentDate > newestDate ? product : newest;
+    });
+    
+    // Sort by newest product in each group (newest first)
+    const dateA = new Date(newestInGroupA.created_at || 0);
+    const dateB = new Date(newestInGroupB.created_at || 0);
     return dateB - dateA; // Descending order (newest first)
   });
-
-  // Group sorted products by concept_id
-  const groupedProducts = groupProductsByConcept(sortedProducts);
 
   const handleStatusChange = (productId, newStatus) => {
     // Update local state immediately for better UX
@@ -566,7 +587,7 @@ const AthleteProductsManagement = () => {
                 </tr>
               </thead>
               <tbody>
-                {groupedProducts.map((productGroup) => (
+                {sortedGroupedProducts.map((productGroup) => (
                   <React.Fragment key={`concept-${productGroup.concept_id}`}>
                     {/* Main group row */}
                     <tr className="border-b border-[#4B4C46] hover:bg-[#2a2a2a] transition-colors">
@@ -732,7 +753,7 @@ const AthleteProductsManagement = () => {
             </table>
           </div>
 
-          {groupedProducts.length === 0 && (
+          {sortedGroupedProducts.length === 0 && (
             <div className="text-center py-8 sm:py-12">
               <Package className="h-12 w-12 sm:h-16 sm:w-16 text-gray-500 mx-auto mb-4" />
               <p className="text-gray-400 text-sm sm:text-base">No products found</p>
