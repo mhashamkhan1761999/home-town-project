@@ -231,10 +231,10 @@ const AthleteManagement = () => {
     const currentFuriousCount = athletes?.filter(athlete => athlete.furious === "1").length || 0;
     
     // If trying to turn on and already have 5 furious athletes
-    if (currentFuriousStatus === "0" && currentFuriousCount >= 5) {
-      toast.error('Maximum 5 athletes can be in Furious 5. Please remove another athlete first.');
-      return;
-    }
+    // if (currentFuriousStatus === "0" && currentFuriousCount >= 5) {
+    //   toast.error('Maximum 5 athletes can be in Furious 5. Please remove another athlete first.');
+    //   return;
+    // }
     
     // Toggle the furious status
     const newFuriousStatus = currentFuriousStatus === "1" ? 0 : 1;
@@ -413,7 +413,7 @@ const AthleteManagement = () => {
                       Type
                     </th>
                     <th className="px-3 sm:px-6 py-4 text-left text-xs sm:text-sm font-medium text-gray-400 uppercase tracking-wider">
-                      Furious 5
+                      Top Talents
                     </th>
                     <th className="px-3 sm:px-6 py-4 text-left text-xs sm:text-sm font-medium text-gray-400 uppercase tracking-wider">
                       Full Profile Info

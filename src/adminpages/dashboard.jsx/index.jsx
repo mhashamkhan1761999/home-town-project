@@ -148,7 +148,7 @@ const Dashboard = () => {
   };
 
   const calculateDaysRemaining = (createdAt) => {
-    if (!createdAt) return 0;
+    if (!createdAt) return null;
     
     const createdDate = new Date(createdAt);
     const currentDate = new Date();
@@ -497,7 +497,10 @@ const Dashboard = () => {
               <td className="px-2 sm:px-4 py-4 border-b border-[#323232]">
                 <div className="text-[#D4BC6D] font-bold text-xs sm:text-sm">
                   {(() => {
-                    const daysRemaining = calculateDaysRemaining(service.created_at);
+                    const daysRemaining = calculateDaysRemaining(service.first_accepted_updated_at);
+                    if(daysRemaining === null) {
+                      return "N/A";
+                    }
                     if (daysRemaining === 0) {
                       return <span className="text-red-400">Expired</span>;
                     }
