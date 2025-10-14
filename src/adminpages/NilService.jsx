@@ -840,6 +840,7 @@ const ItemModal = ({ item, onClose, onSuccesActive }) => {
 
   const [colorList, setColorList] = useState([]);
   const [image, setImage] = useState(null);
+  const [colorError, setColorError] = useState('');
 
   const mutation = useMutation({
     mutationKey: ['add-product'],
@@ -858,6 +859,17 @@ const ItemModal = ({ item, onClose, onSuccesActive }) => {
       alert("Minimum price should be 10");
       return;
     }
+    
+    // Check if colors are required for this category and validate
+    const excludedCategories = ["Strength Supplements", "Workout Supplements", "Self Care", "Health", "Coffee"];
+    if (!excludedCategories.includes(item?.category?.name) && (!colorList || colorList.length === 0)) {
+      setColorError("Please select at least one color option.");
+      return;
+    }
+    
+    // Clear color error if validation passes
+    setColorError('');
+    
     const conceptId = localStorage.getItem('concept_id');
 
     const formData = new FormData();
@@ -953,7 +965,7 @@ const ItemModal = ({ item, onClose, onSuccesActive }) => {
           {!["Strength Supplements", "Workout Supplements", "Self Care", "Health", "Coffee"].includes(item?.category?.name) && (
             <div className="mb-8">
               <label className="text-base font-semibold text-[#D4BC6D] mb-3 inline-block">
-                Color options
+                Color options <span className="text-red-500">*</span>
               </label>
               <Select
                 isMulti
@@ -968,14 +980,21 @@ const ItemModal = ({ item, onClose, onSuccesActive }) => {
                   )
                 }))}
                 value={colorList}
-                onChange={(selected) => setColorList(selected)}
+                onChange={(selected) => {
+                  setColorList(selected);
+                  // Clear error when user selects colors
+                  if (selected && selected.length > 0) {
+                    setColorError('');
+                  }
+                }}
                 closeMenuOnSelect={false}
+                placeholder="Select at least one color option..."
                 className="text-[#6B6B6B] text-sm"
                 styles={{
                   control: (base) => ({
                     ...base,
                     background: 'rgba(217,217,217,0.03)',
-                    border: '1px solid #4B4C46',
+                    border: `1px solid ${colorError ? '#ff6b6b' : (colorList && colorList.length > 0 ? '#4B4C46' : '#ff6b6b')}`,
                     borderRadius: '0.5rem',
                     color: '#6B6B6B',
                   }),
@@ -1000,6 +1019,9 @@ const ItemModal = ({ item, onClose, onSuccesActive }) => {
                   }),
                 }}
               />
+              {colorError && (
+                <p className="text-red-500 text-sm mt-2">{colorError}</p>
+              )}
             </div>
           )}
 
