@@ -397,6 +397,7 @@ const AddUserModal = ({ isOpen, onClose, users, setUsers }) => {
     role_type: 'User'
   });
   const [showPassword, setShowPassword] = useState(false);
+  const [passwordError, setPasswordError] = useState('');
 
   const mutation = useMutation({
     mutationFn: (data) => postRequest('/admin/users', data),
@@ -413,6 +414,11 @@ const AddUserModal = ({ isOpen, onClose, users, setUsers }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    if (formData.password.length < 8) {
+      setPasswordError('Password must be at least 8 characters long.');
+      return;
+    }
+    setPasswordError('');
     const newUser = {
       id: Math.max(...users.map(u => u.id)) + 1,
       ...formData
@@ -426,13 +432,7 @@ const AddUserModal = ({ isOpen, onClose, users, setUsers }) => {
       password: '',
       roleType: 'User'
     });
-    // const newUser = {
-    //   id: Math.max(...users.map(u => u.id)) + 1,
-    //   ...formData
-    // };
-    // setUsers([...users, newUser]);
     mutation.mutate(formData)
-
     setShowPassword(false);
   };
 
@@ -480,8 +480,15 @@ const AddUserModal = ({ isOpen, onClose, users, setUsers }) => {
                 type={showPassword ? "text" : "password"}
                 required
                 value={formData.password}
-                onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                className="w-full px-3 py-2 pr-10 bg-[#1a1a1a] border border-[#4B4C46] rounded-lg text-white focus:outline-none focus:border-[#D4BC6D] text-sm sm:text-base"
+                onChange={(e) => {
+                  setFormData({ ...formData, password: e.target.value });
+                  if (e.target.value.length < 8) {
+                    setPasswordError('Password must be at least 8 characters long.');
+                  } else {
+                    setPasswordError('');
+                  }
+                }}
+                className={`w-full px-3 py-2 pr-10 bg-[#1a1a1a] border border-[#4B4C46] rounded-lg text-white focus:outline-none focus:border-[#D4BC6D] text-sm sm:text-base ${passwordError ? 'border-red-500' : ''}`}
               />
               <button
                 type="button"
@@ -491,6 +498,9 @@ const AddUserModal = ({ isOpen, onClose, users, setUsers }) => {
                 {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
               </button>
             </div>
+            {passwordError && (
+              <p className="text-red-500 text-xs mt-1">{passwordError}</p>
+            )}
           </div>
 
           <div>
