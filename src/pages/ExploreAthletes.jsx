@@ -13,6 +13,7 @@ const ExploreAthletes = () => {
     const navigate = useNavigate();
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedFilter, setSelectedFilter] = useState('All');
+    const [showSuggestions, setShowSuggestions] = useState(false);
     const [showSeeMore, setShowSeeMore] = useState(false);
     const [currentPage, setCurrentPage] = useState(1);
     const [selectedTier, setSelectedTier] = useState('');
@@ -109,7 +110,43 @@ const ExploreAthletes = () => {
         return filtered;
     }, [athletesData, searchTerm, selectedFilter, furiousAthletesData]);
 
-    // Map filtered data to carousel format
+    // Get search suggestions based on current search term
+    const searchSuggestions = useMemo(() => {
+        if (!searchTerm || !Array.isArray(athletesData) || searchTerm.length < 1) return [];
+        
+        const suggestions = athletesData
+            .filter(athlete => {
+                const name = athlete?.athlete_name || athlete?.store || athlete?.store_name || '';
+                return name.toLowerCase().includes(searchTerm.toLowerCase());
+            })
+            .slice(0, 6) // Limit to 6 suggestions
+            .map(athlete => ({
+                id: athlete?.id,
+                name: athlete?.athlete_name || athlete?.store || athlete?.store_name || '',
+                image: athlete?.profile_picture_url || athlete?.profile_picture || '/logo1.png',
+                sport: athlete?.sport || '',
+                slug: athlete?.slug
+            }));
+            
+        return suggestions;
+    }, [athletesData, searchTerm]);
+
+    // Handle suggestion click
+    const handleSuggestionClick = (suggestion) => {
+        setSearchTerm(suggestion.name);
+        setShowSuggestions(false);
+        if (suggestion.slug) {
+            navigate(`/store-front/${suggestion.slug}`);
+        }
+    };
+
+    // Handle search input change
+    const handleSearchChange = (e) => {
+        const value = e.target.value;
+        setSearchTerm(value);
+        setShowSuggestions(value.length >= 1);
+    };
+
     const mapAthleteData = (athletes, defaultImage = '/logo1.png') => {
         console.log('Mapping athlete data:', athletes);
         return athletes.map((athlete) => {
@@ -304,24 +341,6 @@ const ExploreAthletes = () => {
                 {/* Filter & Search Row */}
                 <div className="w-full max-w-4xl px-2">
                     <div className="flex flex-col sm:flex-row items-center gap-4">
-                        {/* Filters Button */}
-                        {/* <button
-                            className="flex-shrink-0 w-full sm:w-auto flex items-center justify-center gap-x-2.5 px-5 py-3 rounded-full bg-[#2d2d2d] text-[#D4BC6D] font-semibold text-sm hover:bg-[#3a3a3a] transition"
-                            type="button"
-                        >
-                            <svg
-                                className="w-5 h-5"
-                                fill="none"
-                                viewBox="0 0 20 18"
-                                xmlns="http://www.w3.org/2000/svg"
-                            >
-                                <path d="M2 2H11" stroke="currentColor" strokeLinecap="round" strokeWidth="3" />
-                                <path d="M2 9H15" stroke="currentColor" strokeLinecap="round" strokeWidth="3" />
-                                <path d="M2 16H19" stroke="currentColor" strokeLinecap="round" strokeWidth="3" />
-                            </svg>
-                            <span>Filters</span>
-                        </button> */}
-
                         {/* Search Input */}
                         <div className="relative w-full">
                             <form onSubmit={handleSearch} className="flex items-center w-full p-1 rounded-full bg-[#2d2d2d] focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-offset-black focus-within:ring-[#D4BC6D] transition-all">
@@ -330,7 +349,9 @@ const ExploreAthletes = () => {
                                     placeholder="Search by name, sport, team..."
                                     type="search"
                                     value={searchTerm}
-                                    onChange={(e) => setSearchTerm(e.target.value)}
+                                    onChange={handleSearchChange}
+                                    onFocus={() => searchTerm.length >= 1 && setShowSuggestions(true)}
+                                    onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
                                 />
                                 <button
                                     className="flex-shrink-0 px-5 py-2.5 sm:px-8 rounded-full bg-[#D4BC6D] text-black font-semibold text-sm hover:bg-[#e0d1a6] transition"
@@ -339,6 +360,52 @@ const ExploreAthletes = () => {
                                     Search
                                 </button>
                             </form>
+                            
+                            {/* Search Suggestions Dropdown */}
+                            {showSuggestions && searchSuggestions.length > 0 && (
+                                <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-lg shadow-xl border border-gray-200 z-50 max-h-80 overflow-y-auto">
+                                    <div className="p-4">
+                                        <h3 className="text-sm font-medium text-gray-500 uppercase tracking-wide mb-3">
+                                            Suggestions
+                                        </h3>
+                                        <div className="space-y-2">
+                                            {searchSuggestions.map((suggestion, index) => (
+                                                <div
+                                                    key={suggestion.id || index}
+                                                    onClick={() => handleSuggestionClick(suggestion)}
+                                                    className="flex items-center space-x-3 p-2 rounded-lg hover:bg-gray-100 cursor-pointer transition-colors"
+                                                >
+                                                    <div className="flex-shrink-0">
+                                                        <img
+                                                            src={suggestion.image}
+                                                            alt={suggestion.name}
+                                                            className="w-10 h-10 rounded-full object-cover border border-gray-200"
+                                                            onError={(e) => {
+                                                                e.target.src = '/logo1.png';
+                                                            }}
+                                                        />
+                                                    </div>
+                                                    <div className="flex-1 min-w-0">
+                                                        <p className="text-sm font-medium text-gray-900 truncate">
+                                                            {suggestion.name}
+                                                        </p>
+                                                        {suggestion.sport && (
+                                                            <p className="text-xs text-gray-500 truncate">
+                                                                {suggestion.sport}
+                                                            </p>
+                                                        )}
+                                                    </div>
+                                                    <div className="flex-shrink-0">
+                                                        <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                                                        </svg>
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
                         </div>
                     </div>
                 </div>
