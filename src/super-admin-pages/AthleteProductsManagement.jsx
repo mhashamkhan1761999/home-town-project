@@ -85,6 +85,7 @@ const AthleteProductsManagement = () => {
   const [selectedStatus, setSelectedStatus] = useState('All');
   const [selectedAthlete, setSelectedAthlete] = useState('All');
   const [selectedServiceType, setSelectedServiceType] = useState('All');
+  const [selectedDaysRange, setSelectedDaysRange] = useState('All');
   const [isViewModalOpen, setIsViewModalOpen] = useState(false);
   const [isCreateAthleteModalOpen, setIsCreateAthleteModalOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
@@ -113,6 +114,19 @@ const AthleteProductsManagement = () => {
     'Health', 
     'Player Card', 
     'Acid Wash'
+  ];
+
+  // Days remaining filter options
+  const daysRangeOptions = [
+    'All',
+    '1-5 days',
+    '6-10 days',
+    '11-20 days',
+    '21-30 days',
+    '31-40 days',
+    '41-50 days',
+    '51-60 days',
+    'Expired'
   ];
 
   // API Query for fetching athlete launches
@@ -217,14 +231,20 @@ const AthleteProductsManagement = () => {
   });
 
     // Helper function to calculate days remaining
-  const calculateDaysRemaining = (createdAt) => {
+  const calculateDaysRemaining = (createdAt, updatedAt, status) => {
     if (!createdAt) return 0;
     
-    const createdDate = new Date(createdAt);
+    // If status is Pending, return 'N/A'
+    if (status?.toLowerCase() === 'pending') {
+      return 'N/A';
+    }
+    
+    // For Accepted status, use updatedAt if available, otherwise fall back to createdAt
+    const baseDate = status?.toLowerCase() === 'accepted' && updatedAt ? new Date(updatedAt) : new Date(createdAt);
     const currentDate = new Date();
     
     // Calculate the difference in time
-    const timeDifference = currentDate.getTime() - createdDate.getTime();
+    const timeDifference = currentDate.getTime() - baseDate.getTime();
     
     // Convert time difference from milliseconds to days
     const daysPassed = Math.floor(timeDifference / (1000 * 3600 * 24));
@@ -233,6 +253,41 @@ const AthleteProductsManagement = () => {
     const daysRemaining = Math.max(0, 60 - daysPassed);
     
     return daysRemaining;
+  };
+
+  // Helper function to check if a product matches the selected days range
+  const matchesDaysRange = (product, selectedRange) => {
+    if (selectedRange === 'All') return true;
+    
+    const daysRemaining = calculateDaysRemaining(
+      product.created_at || product.createdAt,
+      product.updated_at || product.updatedAt,
+      product.status
+    );
+    
+    // Handle N/A case (pending products)
+    if (daysRemaining === 'N/A') return false;
+    
+    switch (selectedRange) {
+      case '1-5 days':
+        return daysRemaining >= 1 && daysRemaining <= 5;
+      case '6-10 days':
+        return daysRemaining >= 6 && daysRemaining <= 10;
+      case '11-20 days':
+        return daysRemaining >= 11 && daysRemaining <= 20;
+      case '21-30 days':
+        return daysRemaining >= 21 && daysRemaining <= 30;
+      case '31-40 days':
+        return daysRemaining >= 31 && daysRemaining <= 40;
+      case '41-50 days':
+        return daysRemaining >= 41 && daysRemaining <= 50;
+      case '51-60 days':
+        return daysRemaining >= 51 && daysRemaining <= 60;
+      case 'Expired':
+        return daysRemaining === 0;
+      default:
+        return true;
+    }
   };
 
   // Use API data if available, otherwise fallback to static data
@@ -283,7 +338,7 @@ const AthleteProductsManagement = () => {
     ).filter(Boolean)
   )];
 
-  // Filter products based on search term, status, athlete, and service type
+  // Filter products based on search term, status, athlete, service type, and days range
   const filteredProducts = displayProducts.filter(product => {
     const matchesSearch =
       product.athleteName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -302,7 +357,9 @@ const AthleteProductsManagement = () => {
     const serviceType = product.category?.name || product.category || 'Unknown';
     const matchesServiceType = selectedServiceType === 'All' || serviceType === selectedServiceType;
 
-    return matchesSearch && matchesStatus && matchesAthlete && matchesServiceType;
+    const matchesDaysRangeFilter = matchesDaysRange(product, selectedDaysRange);
+
+    return matchesSearch && matchesStatus && matchesAthlete && matchesServiceType && matchesDaysRangeFilter;
   });
 
   // Group filtered products by concept_id first
@@ -508,53 +565,72 @@ const AthleteProductsManagement = () => {
                 />
               </div>
 
-              {/* Status Filter */}
-              <div className="flex flex-col gap-1">
-                <label className="text-xs text-gray-400 px-1">Status</label>
-                <select
-                  value={selectedStatus}
-                  onChange={(e) => setSelectedStatus(e.target.value)}
-                  className="px-4 py-2 bg-[#1a1a1a] border border-[#4B4C46] rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-[#D4BC6D] focus:border-transparent text-sm min-w-[120px]"
-                >
-                  {filterOptions.map(option => (
-                    <option key={option} value={option} className="bg-[#1a1a1a]">
-                      {option}
-                    </option>
-                  ))}
-                </select>
-              </div>
+              {/* Filters Row 1 */}
+              <div className="flex flex-wrap gap-4 justify-center items-center">
+                {/* Status Filter */}
+                <div className="flex flex-col gap-1">
+                  <label className="text-xs text-gray-400 px-1">Status</label>
+                  <select
+                    value={selectedStatus}
+                    onChange={(e) => setSelectedStatus(e.target.value)}
+                    className="px-4 py-2 bg-[#1a1a1a] border border-[#4B4C46] rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-[#D4BC6D] focus:border-transparent text-sm min-w-[120px]"
+                  >
+                    {filterOptions.map(option => (
+                      <option key={option} value={option} className="bg-[#1a1a1a]">
+                        {option}
+                      </option>
+                    ))}
+                  </select>
+                </div>
 
-              {/* Athlete Filter */}
-              <div className="flex flex-col gap-1">
-                <label className="text-xs text-gray-400 px-1">Athlete Name</label>
-                <select
-                  value={selectedAthlete}
-                  onChange={(e) => setSelectedAthlete(e.target.value)}
-                  className="px-4 py-2 bg-[#1a1a1a] border border-[#4B4C46] rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-[#D4BC6D] focus:border-transparent text-sm min-w-[140px]"
-                >
-                  {athleteNames.map(option => (
-                    <option key={option} value={option} className="bg-[#1a1a1a]">
-                      {option}
-                    </option>
-                  ))}
-                </select>
-              </div>
+                {/* Athlete Filter */}
+                <div className="flex flex-col gap-1">
+                  <label className="text-xs text-gray-400 px-1">Athlete Name</label>
+                  <select
+                    value={selectedAthlete}
+                    onChange={(e) => setSelectedAthlete(e.target.value)}
+                    className="px-4 py-2 bg-[#1a1a1a] border border-[#4B4C46] rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-[#D4BC6D] focus:border-transparent text-sm min-w-[140px]"
+                  >
+                    {athleteNames.map(option => (
+                      <option key={option} value={option} className="bg-[#1a1a1a]">
+                        {option}
+                      </option>
+                    ))}
+                  </select>
+                </div>
 
-              {/* Service Type Filter */}
-              <div className="flex flex-col gap-1">
-                <label className="text-xs text-gray-400 px-1">Service Category</label>
-                <select
-                  value={selectedServiceType}
-                  onChange={(e) => setSelectedServiceType(e.target.value)}
-                  className="px-4 py-2 bg-[#1a1a1a] border border-[#4B4C46] rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-[#D4BC6D] focus:border-transparent text-sm min-w-[160px] dropdown-scrollbar"
-                  size="1"
-                >
-                  {serviceTypes.map(option => (
-                    <option key={option} value={option} className="bg-[#1a1a1a] py-2 hover:bg-[#D4BC6D] hover:text-black">
-                      {option}
-                    </option>
-                  ))}
-                </select>
+                {/* Service Type Filter */}
+                <div className="flex flex-col gap-1">
+                  <label className="text-xs text-gray-400 px-1">Service Category</label>
+                  <select
+                    value={selectedServiceType}
+                    onChange={(e) => setSelectedServiceType(e.target.value)}
+                    className="px-4 py-2 bg-[#1a1a1a] border border-[#4B4C46] rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-[#D4BC6D] focus:border-transparent text-sm min-w-[160px] dropdown-scrollbar"
+                    size="1"
+                  >
+                    {serviceTypes.map(option => (
+                      <option key={option} value={option} className="bg-[#1a1a1a] py-2 hover:bg-[#D4BC6D] hover:text-black">
+                        {option}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* Days Range Filter */}
+                <div className="flex flex-col gap-1">
+                  <label className="text-xs text-gray-400 px-1">Days Remaining</label>
+                  <select
+                    value={selectedDaysRange}
+                    onChange={(e) => setSelectedDaysRange(e.target.value)}
+                    className="px-4 py-2 bg-[#1a1a1a] border border-[#4B4C46] rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-[#D4BC6D] focus:border-transparent text-sm min-w-[140px]"
+                  >
+                    {daysRangeOptions.map(option => (
+                      <option key={option} value={option} className="bg-[#1a1a1a]">
+                        {option}
+                      </option>
+                    ))}
+                  </select>
+                </div>
               </div>
             </div>
           </div>
@@ -666,7 +742,14 @@ const AthleteProductsManagement = () => {
                       <td className="py-3 sm:py-4 px-3 sm:px-6">
                         <div className="text-[#D4BC6D] font-bold text-xs sm:text-sm">
                           {(() => {
-                            const daysRemaining = calculateDaysRemaining(productGroup.created_at);
+                            const daysRemaining = calculateDaysRemaining(
+                              productGroup.created_at,
+                              productGroup.updated_at,
+                              productGroup.status
+                            );
+                            if (daysRemaining === 'N/A') {
+                              return <span className="text-gray-400">N/A</span>;
+                            }
                             if (daysRemaining === 0) {
                               return <span className="text-red-400">Expired</span>;
                             }
