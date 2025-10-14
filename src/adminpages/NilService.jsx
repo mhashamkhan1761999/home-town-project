@@ -1368,16 +1368,18 @@ const ServiceList = ({ onServiceClick }) => {
             onClick={handleServiceClick}
             style={{
               border: '3px solid transparent',
-              background: `url('/graphic.jpg')`,
-              backgroundSize: 'cover',
+              background: `url('/new-custom-graphic.png')`,
+              backgroundSize: 'contain',
+              backgroundRepeat: 'no-repeat',
               backgroundPosition: 'center',
-              height: '220px',
+              height: '250px',
+              width: '250px'
             }}
           >
             <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/40 to-transparent"></div>
             <div className="absolute inset-0 flex items-center justify-center">
               <h4 className="text-white font-extrabold text-2xl tracking-wide text-center px-4 drop-shadow-lg">
-                Custom Graphic Design
+                Commitment Graphic/Other Graphic 
               </h4>
             </div>
           </div>
