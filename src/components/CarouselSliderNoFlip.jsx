@@ -1,12 +1,33 @@
 import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
 import 'swiper/css/effect-coverflow';
-import React from 'react';
+import React, { useRef } from 'react';
 import { EffectCoverflow } from 'swiper/modules';
 
 const CarouselSliderNoFlip = ({ data }) => {
+  const swiperRef = useRef(null);
   return (
-    <div className="w-full py-10 infinite-slider2">
+    <div className="w-full py-10 infinite-slider2 relative">
+      {/* Left Arrow */}
+      <button
+        className="absolute left-4 top-1/2 z-30 transform -translate-y-1/2 w-12 h-12 flex items-center justify-center bg-black/70 border-2 border-yellow-400 text-white rounded-full shadow-lg transition-all duration-200 hover:bg-yellow-400 hover:text-black hover:scale-110 active:scale-95"
+        onClick={() => swiperRef.current?.slidePrev()}
+        aria-label="Previous Slide"
+      >
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="feather feather-chevron-left">
+          <polyline points="15 18 9 12 15 6" />
+        </svg>
+      </button>
+      {/* Right Arrow */}
+      <button
+        className="absolute right-4 top-1/2 z-30 transform -translate-y-1/2 w-12 h-12 flex items-center justify-center bg-black/70 border-2 border-yellow-400 text-white rounded-full shadow-lg transition-all duration-200 hover:bg-yellow-400 hover:text-black hover:scale-110 active:scale-95"
+        onClick={() => swiperRef.current?.slideNext()}
+        aria-label="Next Slide"
+      >
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="feather feather-chevron-right">
+          <polyline points="9 6 15 12 9 18" />
+        </svg>
+      </button>
       <Swiper
         dir='ltr'
         direction='horizontal'
@@ -29,6 +50,9 @@ const CarouselSliderNoFlip = ({ data }) => {
         spaceBetween={20}
         modules={[EffectCoverflow]}
         className="swiper-container"
+        onSwiper={(swiper) => {
+          swiperRef.current = swiper;
+        }}
       >
         {data?.map((props, index) => (
           <SwiperSlide key={index} className="group">
